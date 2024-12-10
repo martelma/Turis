@@ -1,0 +1,185 @@
+<div class="relative flex flex-auto h-full w-full bg-card dark:bg-transparent">
+    <!-- Service list -->
+    <div class="relative flex flex-auto flex-col w-full min-w-0 lg:min-w-160 lg:max-w-96 border-r z-10">
+        <!-- Header -->
+        <div
+            class="relative flex flex-0 items-center justify-between h-16 w-full px-4 border-b bg-gray-50 dark:bg-transparent">
+            <div class="flex flex-1 w-full items-center">
+                <!-- Sidebar toggle button -->
+                <button mat-icon-button (click)="serviceComponent.drawer?.toggle()">
+                    <mat-icon
+                        [svgIcon]="
+                            serviceComponent?.drawer?.opened ? 'heroicons_solid:funnel' : 'heroicons_outline:funnel'
+                        "></mat-icon>
+                </button>
+
+                <!-- Bookmarks filter -->
+                <button
+                    mat-icon-button
+                    (click)="toggleBookmarks()"
+                    [matTooltip]="
+                        (serviceParameters?.onlyBookmarks ? 'General.ShowAll' : 'General.ShowOnlyBookmarked')
+                            | transloco
+                    ">
+                    <mat-icon
+                        [svgIcon]="
+                            serviceParameters?.onlyBookmarks ? 'heroicons_solid:star' : 'heroicons_outline:star'
+                        "></mat-icon>
+                </button>
+
+                <!-- Filter -->
+                <app-search-input
+                    class="m-4 flex-1"
+                    [placeholder]="'Service.FilterByName'"
+                    (callbackFn)="filter($event)">
+                </app-search-input>
+            </div>
+
+            <!-- Loading bar -->
+            <mat-progress-bar
+                class="absolute inset-x-0 bottom-0 h-0.5"
+                *ngIf="itemsLoading"
+                [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+
+        <!-- Service list -->
+        <ng-container *ngIf="results?.items?.length > 0; else noService">
+            <div class="overflow-y-auto" #serviceList>
+                <!-- Service loop -->
+                <ng-container *ngFor="let item of results?.items; let i = index; trackBy: trackByFn">
+                    <!-- Service -->
+                    <div
+                        class="group relative flex border-t first:border-0 hover:bg-hover cursor-pointer"
+                        [routerLink]="[item.id]"
+                        (click)="onItemSelected(item)"
+                        (dblclick)="edit(item)"
+                        tabindex="0"
+                        (keyup)="(null)">
+                        <!-- Service content -->
+                        <a
+                            class="flex flex-col items-start justify-start w-full py-6 pr-4 pl-5 border-l-4 border-transparent">
+                            <!-- Service Info -->
+                            <div class="flex items-center w-full justify-between space-x-2 mb-2">
+                                <div class="flex items-center space-x-2">
+                                    <!-- Add/Remove bookmark -->
+                                    <mat-icon
+                                        (click)="handleBookmark(item)"
+                                        class="icon-size-2"
+                                        [svgIcon]="item.bookmarkId ? 'heroicons_solid:star' : 'heroicons_outline:star'"
+                                        [matTooltip]="
+                                            (item.bookmarkId ? 'General.RemoveBookmark' : 'General.MarkAsBookmark')
+                                                | transloco
+                                        "></mat-icon>
+
+                                    <!-- Code & Title -->
+                                    <div class="mr-2 font-semibold text-wrap" [matTooltip]="item.title">
+                                        {{ item.code }} - {{ item.title }}
+                                    </div>
+                                </div>
+
+                                <div class="flex space-x-2 items-center">
+                                    <div *ngFor="let lang of item.languages">
+                                        <span [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
+                                    </div>
+
+                                    <!-- Date -->
+                                    <div class="ml-auto text-md text-right whitespace-nowrap text-hint">
+                                        {{ item.date | date: 'dd MMM yy' }}
+                                    </div>
+
+                                    <!-- Actions Menu -->
+                                    <!-- <button
+                                        mat-icon-button
+                                        [matMenuTriggerFor]="roleMenu"
+                                        (click)="$event.stopPropagation()">
+                                        <mat-icon
+                                            class="icon-size-5"
+                                            [svgIcon]="'heroicons_mini:ellipsis-vertical'"></mat-icon>
+                                    </button>
+
+                                    <mat-menu #roleMenu="matMenu">
+                                        <button mat-menu-item (click)="copy(item)">
+                                            <span class="flex items-center">
+                                                <mat-icon
+                                                    class="icon-size-5 mr-3"
+                                                    [svgIcon]="'heroicons_outline:document-duplicate'"></mat-icon>
+                                                <span>{{ 'General.Copy' | transloco }}</span>
+                                            </span>
+                                        </button>
+                                        <button
+                                            mat-menu-item
+                                            color="warn"
+                                            (click)="$event.stopPropagation(); delete(item.id)">
+                                            <span class="flex items-center">
+                                                <mat-icon
+                                                    class="text-red-500 icon-size-5 mr-3"
+                                                    [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                                                <span>{{ 'General.Delete' | transloco }}</span>
+                                            </span>
+                                        </button>
+                                    </mat-menu> -->
+                                </div>
+                            </div>
+
+                            <div class="mt-1 leading-normal line-clamp-2 text-secondary whitespace-pre-wrap">
+                                <mat-icon
+                                    [svgIcon]="'heroicons_solid:map-pin'"
+                                    class="mr-2"
+                                    [matTooltip]="'Location'"></mat-icon>
+                                {{ item?.location }}
+                            </div>
+
+                            <div class="mt-1 leading-normal line-clamp-2 text-secondary whitespace-pre-wrap">
+                                <mat-icon
+                                    [svgIcon]="'heroicons_solid:user-circle'"
+                                    class="mr-2"
+                                    [matTooltip]="'Client'"></mat-icon>
+                                {{ item?.client?.fullName }}
+                            </div>
+
+                            <div class="mt-1 leading-normal line-clamp-2 text-secondary whitespace-pre-wrap">
+                                <mat-icon
+                                    [svgIcon]="'heroicons_solid:user'"
+                                    class="mr-2"
+                                    [matTooltip]="'Collaborator'"></mat-icon>
+                                {{ item?.collaborator?.fullName }}
+                            </div>
+
+                            <!-- Service Tags -->
+                            <!-- <tag-list [tags]="item?.tags"></tag-list> -->
+                        </a>
+                    </div>
+                </ng-container>
+            </div>
+        </ng-container>
+
+        <!-- Paginator -->
+        <mat-paginator
+            class="mt-auto border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+            [ngClass]="{ 'pointer-events-none': itemsLoading }"
+            [length]="results?.totalCount ?? 0"
+            [pageSize]="serviceParameters?.pageSize ?? 10"
+            [pageIndex]="serviceParameters?.pageIndex ?? 0"
+            [pageSizeOptions]="[5, 10, 25, 100]"
+            (page)="handlePageEvent($event)"
+            [showFirstLastButtons]="true"></mat-paginator>
+    </div>
+
+    <!-- No service template -->
+    <ng-template #noService>
+        <div class="z-100 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+            <mat-icon class="icon-size-24" [svgIcon]="'heroicons_outline:circle-stack'"></mat-icon>
+            <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">There are no service</div>
+        </div>
+    </ng-template>
+
+    <!-- Service details -->
+    <div
+        class="flex-auto"
+        [ngClass]="{
+            'z-20 absolute inset-0 lg:static lg:inset-auto flex': selectedItem && selectedItem.id,
+            'hidden lg:flex': !selectedItem || !selectedItem.id
+        }">
+        <router-outlet></router-outlet>
+    </div>
+</div>

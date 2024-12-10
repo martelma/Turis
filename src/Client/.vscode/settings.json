@@ -1,0 +1,25 @@
+{
+    "i18n-ally.localesPaths": ["src/assets/i18n", "src/app/layout/common/languages", "src/app/layout/common/messages"],
+    // Format on save
+    "editor.formatOnSave": true,
+    // General formatter
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "i18n-ally.keystyle": "nested",
+    // Default HTML formatter
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": "explicit"
+        },
+        "editor.formatOnSave": false
+    },
+    // HTML Wrapping strategies
+    "html.format.wrapAttributes": "force", // Wrap when the line length is exceeded
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": "explicit"
+        },
+        "editor.formatOnSave": false
+    }
+}

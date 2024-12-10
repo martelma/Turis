@@ -1,0 +1,33 @@
+<div class="flex flex-col flex-auto w-full h-full items-center px-5 relative">
+    <div class="absolute inset-0 w-full flex flex-col overflow-y-auto pb-5">
+        <form cdkTrapFocus [cdkTrapFocusAutoCapture]="true" [formGroup]="form" class="flex flex-col">
+            <!-- Input for name -->
+            <mat-form-field appearance="fill" class="w-full">
+                <mat-label>Name</mat-label>
+                <input matInput cdkFocusInitial formControlName="name" />
+            </mat-form-field>
+
+            <!-- Input for description -->
+            <mat-form-field appearance="fill" class="w-full">
+                <mat-label>Description</mat-label>
+                <textarea matInput formControlName="description"></textarea>
+            </mat-form-field>
+
+            <!-- Input for scope group -->
+            <mat-form-field appearance="fill" class="w-full">
+                <mat-label>Scope group</mat-label>
+                <mat-select matInput formControlName="scopeGroupId">
+                    <mat-option *ngFor="let scopeGroup of scopeGroups; trackBy: trackByFn" [value]="scopeGroup.id">
+                        {{ scopeGroup.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <div class="flex ml-auto mt-auto">
+                <button type="submit" mat-raised-button color="primary" (click)="onSave()" [disabled]="!form.valid">
+                    {{ 'General.Save' | transloco }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

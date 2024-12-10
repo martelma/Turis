@@ -1,0 +1,22 @@
+<!-- Filter -->
+<mat-form-field class="fuse-mat-dense w-full mb-2" [subscriptSizing]="'dynamic'">
+    <mat-label *ngIf="label">{{ label | transloco }}</mat-label>
+    <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_outline:magnifying-glass'"></mat-icon>
+
+    <input
+        matInput
+        [formControl]="searchInputControl"
+        [autocomplete]="'off'"
+        (keyup.enter)="filter()"
+        [placeholder]="placeholder | transloco" />
+
+    <button
+        type="button"
+        *ngIf="searchInputControl.value"
+        matSuffix
+        mat-icon-button
+        aria-label="Clear"
+        (click)="searchInputControl.setValue('')">
+        <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+    </button>
+</mat-form-field>

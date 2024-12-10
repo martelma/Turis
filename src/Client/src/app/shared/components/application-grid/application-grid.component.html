@@ -1,0 +1,89 @@
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full min-w-0">
+    <ng-container *ngFor="let item of items; trackBy: trackByFn">
+        <div class="flex flex-col flex-auto items-center overflow-hidden">
+            <div
+                (mouseleave)="withEffects && hideSubmenu()"
+                (mouseenter)="withEffects && showSubmenu(item)"
+                class="opacity-100 relative w-56 h-56 aspect-1 flex flex-col border rounded-2xl cursor-pointer bg-white scale-100 transition-all duration-1000 overflow-hidden max-h-56 watch"
+                (click)="onItemClicked(item)"
+                tabindex="0"
+                role="button"
+                (keyup)="(null)">
+                <img
+                    #itemImage
+                    class="absolute inset-0 w-56 h-56 aspect-1 max-h-56 z-10 object-fill"
+                    [src]="getItemImageUrl()"
+                    (error)="hide($event)"
+                    alt="" />
+
+                <div
+                    class="absolute w-56 h-56 opacity-60 inset-0 z-20 rounded-2xl"
+                    [style]="generateClass(item.name)"></div>
+
+                <div
+                    class="w-full flex flex-col items-center justify-start z-20 transition-all duration-400"
+                    [ngClass]="{ 'pt-8': withEffects && isHover(item), 'pt-1/4': !withEffects || !isHover(item) }">
+                    <mat-icon
+                        [svgIcon]="!!item.icon ? item.icon : 'heroicons_solid:chevron-double-right'"
+                        class="text-black overflow-hidden transition-all duration-400"
+                        [ngClass]="{
+                            'w-0 h-0 mb-0': withEffects && isHover(item),
+                            'icon-size-10 mb-4': withEffects && !isHover(item)
+                        }"></mat-icon>
+
+                    <div class="flex flex-col p-2 w-full justify-center">
+                        <span class="text-xl font-semibold w-full text-center">
+                            {{ item.name }}
+                        </span>
+                        <span class="w-full line-clamp-2 text-center" [@fadeInTop]="withEffects">
+                            {{ !item.description || item.description === '' ? 'No description' : item.description }}
+                        </span>
+                    </div>
+                </div>
+
+                <ng-container *ngIf="withActionButtons">
+                    <div
+                        @fadeInTop
+                        class="w-full flex flex-row justify-center transition-all duration-600 overflow-hidden z-20 gap-2 mt-auto mb-3"
+                        [ngClass]="{ 'h-auto': isHover(item), 'h-0': !isHover(item) }">
+                        <button
+                            mat-icon-button
+                            (click)="$event.stopPropagation() || onActionClicked(item, false)"
+                            [matTooltip]="'Open in a new tab'">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="icon-size-6 text-black">
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>
+                        </button>
+
+                        <button
+                            mat-icon-button
+                            (click)="$event.stopPropagation() || onActionClicked(item, true)"
+                            [matTooltip]="'Open in the same tab'">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="icon-size-6 text-black">
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M3 8.25V18a2.25 2.25 0 002.25 2.25h13.5A2.25 2.25 0 0021 18V8.25m-18 0V6a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 6v2.25m-18 0h18M5.25 6h.008v.008H5.25V6zM7.5 6h.008v.008H7.5V6zm2.25 0h.008v.008H9.75V6z" />
+                            </svg>
+                        </button>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </ng-container>
+</div>

@@ -1,0 +1,225 @@
+﻿{
+   "CodeGenerationMode": 3,
+   "ContextClassName": "MiBoxContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": "Models",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "MiBox",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 0,
+   "SelectedToBeGenerated": 0,
+   "Tables": [
+      {
+         "Name": "[dbo].[AspNetRoleClaims]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AspNetRoles]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AspNetUserClaims]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AspNetUserLogins]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AspNetUserRoles]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AspNetUsers]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AspNetUserTokens]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Audits]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Buildings]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CalendarDetails]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CalendarExceptions]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CalendarExtras]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Calendars]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CartBases]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CartRoutes]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CartRouteSerials]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Carts]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CartSerials]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Customers]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[DocumentFilters]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[DrawingArchives]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[DrawingArchiveUsers]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[DrawingRevisions]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ELMAH_Error]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EventLogs]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Links]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[MachineProgramsData]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Machines]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[MachineStatesData]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[MachineTypes]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[MachineVendors]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ProcessCustomers]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Processes]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ProcessTags]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ProductionCenters]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ProgramArchives]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ProgramArchiveUsers]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ProgramRevisionMachineFiles]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ProgramRevisionMachines]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ProgramRevisions]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Segments]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SerialMaterials]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Serials]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[WorkPhaseCarts]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[WorkPhases]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Workstations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[WorkstationsUsers]",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": "TSERV-LE21W0N50\\MM2019.MiBox",
+   "UncountableWords": null,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDateOnlyTimeOnly": true,
+   "UseDbContextSplitting": true,
+   "UseFluentApiOnly": true,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": true,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UseSchemaFolders": false,
+   "UseSpatial": false,
+   "UseT4": false
+}

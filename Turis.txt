@@ -1,0 +1,26 @@
+Gestione Utenti
+	nel pannello di login manca immagine 
+	nel pannello di login manca logo
+	
+
+siamo d'accordo per 5+5 in questo anno e 5+5 nel prossimo quello dopo ancora riparte il solo canone
+
+
+ricroda di eliminare tutti gli .AllowAnonymous()
+
+TODO:
+-------------------------------------------------------------------------------------------------
+gitinit
+
+Servizi
+	problema con new
+	
+	nel backend nell'update, ho per il momento disabilitato il filtro di validazione del modello: da rivedere / studiare
+	
+	gestire il menù con N opzioni nell'intestazione a dx
+
+	dare maggior evidenza al servizio selezionato (sfondo giallino?)
+
+	gestione degli attachements
+	
+implementare tutto il mondo tags

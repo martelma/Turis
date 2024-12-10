@@ -1,0 +1,99 @@
+<!-- Loading bar -->
+<fuse-loading-bar class="z-99999"></fuse-loading-bar>
+
+<!-- Navigation -->
+<ng-container *ngIf="isScreenSmall">
+    <fuse-vertical-navigation
+        class="dark bg-gray-900 print:hidden"
+        [mode]="'over'"
+        [name]="'mainNavigation'"
+        [navigation]="navigation.default"
+        [opened]="false">
+        <!-- Navigation header hook -->
+        <ng-container fuseVerticalNavigationContentHeader>
+            <!-- Logo -->
+            <div class="flex items-center h-20 pt-6 px-8">
+                <img class="w-60" src="assets/images/logo/logo.svg" alt="Logo image" />
+            </div>
+        </ng-container>
+    </fuse-vertical-navigation>
+</ng-container>
+
+<!-- Wrapper -->
+<div class="flex flex-col w-full min-w-0 h-full overflow-y-hidden">
+    <!-- Header -->
+    <div
+        class="relative flex flex-0 items-center w-full h-16 sm:h-20 px-4 md:px-6 z-49 shadow dark:shadow-none dark:border-b bg-card dark:bg-transparent print:hidden">
+        <ng-container *ngIf="!isScreenSmall">
+            <!-- Logo -->
+            <div class="flex items-center mx-2 lg:mr-8">
+                <div class="hidden lg:flex">
+                    <img class="dark:hidden w-60" src="assets/images/logo/logo.svg" alt="" />
+                    <img class="hidden dark:flex w-60" src="assets/images/logo/logo.svg" alt="" />
+                </div>
+                <img class="flex lg:hidden w-60" src="assets/images/logo/logo.svg" alt="" />
+            </div>
+            <!-- Horizontal navigation -->
+            <fuse-horizontal-navigation
+                class="mr-2"
+                [name]="'mainNavigation'"
+                [navigation]="navigation.horizontal"></fuse-horizontal-navigation>
+        </ng-container>
+        <!-- Navigation toggle button -->
+        <ng-container *ngIf="isScreenSmall">
+            <button mat-icon-button (click)="toggleNavigation('mainNavigation')">
+                <mat-icon [svgIcon]="'heroicons_outline:bars-3'"></mat-icon>
+            </button>
+        </ng-container>
+        <!-- Components -->
+        <div class="flex items-center pl-2 ml-auto space-x-0.5 sm:space-x-2">
+            <!-- <languages></languages> -->
+            <!-- <fuse-fullscreen class="hidden md:block"></fuse-fullscreen> -->
+            <!-- <search [appearance]="'bar'"></search> -->
+            <!-- <shortcuts></shortcuts> -->
+            <!-- <messages></messages> -->
+            <!-- <notifications></notifications> -->
+            <!-- <button
+                class="lg:hidden"
+                mat-icon-button
+                (click)="quickChat.toggle()">
+                <mat-icon [svgIcon]="'heroicons_outline:chat-bubble-left-right'"></mat-icon>
+            </button> -->
+            <user></user>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="flex flex-col overflow-y-hidden h-full w-full">
+        <!-- *ngIf="true" hack is required here for router-outlet to work correctly.
+             Otherwise, layout changes won't be registered and the view won't be updated! -->
+        <router-outlet *ngIf="true"></router-outlet>
+    </div>
+
+    <!-- Footer -->
+    <div
+        class="relative flex flex-0 items-center w-full h-8 sm:h-10 px-4 md:px-6 z-49 border-t bg-card dark:bg-transparent print:hidden">
+        <span class="font-medium text-secondary">Turis &copy; {{ currentYear }}</span>
+    </div>
+</div>
+
+<codedesign-modal
+    *ngIf="!!errorModal"
+    (closed)="(null)"
+    [resizable]="false"
+    [closable]="false"
+    [lgMinWidth]="500"
+    [minHeight]="200">
+    <div modal-content class="flex flex-col relative flex-auto w-full h-full p-6 max-w-128 gap-5">
+        <span class="font-bold text-warn text-xl">
+            {{ errorModal.title }}
+        </span>
+        <span class="text-lg">
+            {{ errorModal.message }}
+        </span>
+        <button mat-raised-button color="warn" class="ml-auto mt-auto" (click)="errorModal = undefined">Close</button>
+    </div>
+</codedesign-modal>
+
+<!-- Quick chat -->
+<!-- <quick-chat #quickChat="quickChat"></quick-chat> -->

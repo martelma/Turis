@@ -1,0 +1,48 @@
+.edit-service-tab-group {
+    display: flex;
+    flex: 1;
+    height: 100%;
+    margin-top: 1rem; /* 16px */
+}
+
+.edit-service-tab-group .mat-mdc-tab-body-wrapper {
+    flex-grow: 1;
+}
+
+.edit-service-tab-group .mat-mdc-tab-body-content {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+}
+
+.edit-service-tab-group .mat-mdc-tab.mat-mdc-tab-disabled {
+    opacity: 1;
+    pointer-events: none;
+}
+
+.mat-mdc-form-field-flex {
+    width: 100%;
+    height: 100%;
+}
+
+.option-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 3px;
+}
+
+.option-name {
+    font-weight: bold;
+}
+
+.option-email {
+    font-size: smaller;
+    color: gray;
+}
+
+input.ng-invalid.ng-touched {
+    border-color: red;
+}

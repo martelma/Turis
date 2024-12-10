@@ -1,0 +1,520 @@
+<div
+    class="relative flex flex-col flex-auto shrink-0 lg:shrink p-3 lg:overflow-y-auto bg-gray-100 dark:bg-transparent"
+    fuseScrollReset>
+    <div
+        class="absolute inset-0 flex flex-col flex-0 shadow rounded-2xl overflow-hidden bg-card dark:bg-black dark:bg-opacity-10 m-4">
+        <mat-tab-group
+            class="edit-service-tab-group"
+            mat-stretch-tabs="false"
+            [animationDuration]="'0'"
+            (selectedTabChange)="onSelectedTabChange()">
+            <!-- Service Info -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:information-circle'"></mat-icon>
+                    {{ 'Service.ServiceInfo' | transloco }}
+                </ng-template>
+                <ng-template matTabContent>
+                    <div class="flex flex-col flex-1 overflow-y-auto">
+                        <!-- Tags -->
+                        <!-- <tag-list [tags]="service?.tags" [viewMode]="'full'"></tag-list> -->
+
+                        <div class="flex flex-col">
+                            <div class="grid grid-cols-12 gap-2 w-full">
+                                <mat-form-field class="col-span-2">
+                                    <mat-label for="date">Date</mat-label>
+                                    <input
+                                        matInput
+                                        [matDatepicker]="picker"
+                                        class="form-control font-bold"
+                                        id="date"
+                                        name="date"
+                                        #name="ngModel"
+                                        required
+                                        [matDatepickerMin]="minDate"
+                                        [matDatepickerMax]="maxDate"
+                                        [(ngModel)]="item.date"
+                                        (ngModelChange)="checkChanged()" />
+                                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker></mat-datepicker>
+
+                                    <div *ngIf="date?.invalid && (date?.dirty || date?.touched)">
+                                        <div *ngIf="date?.errors?.required">Date is required.</div>
+                                        <div *ngIf="date?.errors?.matDatepickerMin">
+                                            Date must be after {{ minDate | date: 'shortDate' }}.
+                                        </div>
+                                        <div *ngIf="date?.errors?.matDatepickerMax">
+                                            Date must be before {{ maxDate | date: 'shortDate' }}.
+                                        </div>
+                                    </div>
+                                </mat-form-field>
+
+                                <mat-form-field class="col-span-2">
+                                    <mat-label for="code">Code</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="code"
+                                        name="code"
+                                        #name="ngModel"
+                                        required
+                                        [(ngModel)]="item.code"
+                                        (ngModelChange)="checkChanged()" />
+                                    <div *ngIf="code?.invalid && (code?.dirty || code?.touched)">
+                                        <div *ngIf="code?.errors?.required">Code is required.</div>
+                                    </div>
+                                </mat-form-field>
+
+                                <mat-form-field class="col-span-8">
+                                    <mat-label for="title">Title</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="title"
+                                        name="title"
+                                        #name="ngModel"
+                                        required
+                                        [(ngModel)]="item.title"
+                                        (ngModelChange)="checkChanged()" />
+                                    <div *ngIf="title?.invalid && (title?.dirty || title?.touched)">
+                                        <div *ngIf="title?.errors?.required">Title is required.</div>
+                                    </div>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="grid grid-cols-12 gap-2 w-full">
+                                <mat-form-field class="col-span-2">
+                                    <mat-label for="serviceType">Type</mat-label>
+                                    <mat-select
+                                        placeholder="Select a Type"
+                                        class="form-control font-bold"
+                                        id="serviceType"
+                                        name="serviceType"
+                                        #name="ngModel"
+                                        required
+                                        [(ngModel)]="item.serviceType"
+                                        (ngModelChange)="serviceTypeChanged()">
+                                        <mat-option *ngFor="let x of serviceTypes" [value]="x.value">
+                                            {{ x.text }}
+                                        </mat-option>
+                                    </mat-select>
+                                    <div *ngIf="serviceType?.invalid">
+                                        <div *ngIf="serviceType?.errors?.required">Type is required.</div>
+                                    </div>
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label for="durationType">Duration</mat-label>
+                                    <mat-select
+                                        placeholder="Select a Duration"
+                                        class="form-control font-bold"
+                                        id="durationType"
+                                        name="durationType"
+                                        #name="ngModel"
+                                        required
+                                        [(ngModel)]="item.durationType"
+                                        (ngModelChange)="durationTypeChanged()">
+                                        <mat-option *ngFor="let x of durationTypes" [value]="x.value">
+                                            {{ x.text }}
+                                        </mat-option>
+                                    </mat-select>
+                                    <div *ngIf="durationType?.invalid">
+                                        <div *ngIf="durationType?.errors?.required">Duration is required.</div>
+                                    </div>
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label for="people">People</mat-label>
+                                    <input
+                                        matInput
+                                        type="number"
+                                        class="form-control font-bold"
+                                        id="people"
+                                        name="people"
+                                        #name="ngModel"
+                                        required
+                                        min="1"
+                                        class="form-control font-bold"
+                                        [(ngModel)]="item.people"
+                                        (ngModelChange)="rebuild()" />
+                                    <div *ngIf="people?.invalid && (people?.dirty || people?.touched)">
+                                        <div *ngIf="people?.errors?.required">People is required.</div>
+                                        <div *ngIf="people.errors?.min">People must be greater than 0.</div>
+                                    </div>
+                                </mat-form-field>
+                                <mat-form-field class="col-span-6">
+                                    <mat-label>Price List</mat-label>
+                                    <mat-select
+                                        #name="ngModel"
+                                        placeholder="Select a Duration"
+                                        class="form-control font-bold"
+                                        [(ngModel)]="item.priceListId"
+                                        (selectionChange)="onPriceListSelected($event)">
+                                        <mat-option *ngFor="let x of priceLists" [value]="x">
+                                            {{ x.name }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="grid grid-cols-12 gap-2 w-full">
+                                <mat-form-field class="col-span-6">
+                                    <mat-label for="location">Location</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="location"
+                                        name="location"
+                                        #name="ngModel"
+                                        required
+                                        class="form-control font-bold"
+                                        [(ngModel)]="item.location"
+                                        (ngModelChange)="checkChanged()" />
+                                    <div *ngIf="title?.invalid && (title?.dirty || title?.touched)">
+                                        <div *ngIf="title?.errors?.required">Location is required.</div>
+                                    </div>
+                                </mat-form-field>
+                                <mat-form-field class="col-span-4">
+                                    <mat-label for="languages">Language</mat-label>
+                                    <mat-select
+                                        multiple
+                                        class="form-control font-bold"
+                                        id="languages"
+                                        name="languages"
+                                        #name="ngModel"
+                                        required
+                                        [(ngModel)]="item.languages"
+                                        (ngModelChange)="checkChanged()">
+                                        <mat-option *ngFor="let x of languages" [value]="x.code">{{
+                                            x.code
+                                        }}</mat-option>
+                                    </mat-select>
+                                    <div *ngIf="languages?.invalid">
+                                        <div *ngIf="languages?.errors?.required">Language is required.</div>
+                                    </div>
+                                </mat-form-field>
+                                <!-- <mat-form-field class="col-span-2">
+                                    <mat-label>Option Expiration</mat-label>
+                                    <input
+                                        matInput
+                                        [matDatepicker]="pickerOptionExpiration"
+                                        #name="ngModel"
+                                        class="form-control font-bold"
+                                        [(ngModel)]="item.optionExpiration"
+                                        (ngModelChange)="checkChanged()" />
+                                    <mat-datepicker-toggle
+                                        matIconSuffix
+                                        [for]="pickerOptionExpiration"></mat-datepicker-toggle>
+                                    <mat-datepicker #pickerOptionExpiration></mat-datepicker>
+                                </mat-form-field> -->
+                                <mat-form-field class="col-span-2">
+                                    <mat-label for="optionExpiration">Date</mat-label>
+                                    <input
+                                        matInput
+                                        [matDatepicker]="picker2"
+                                        class="form-control font-bold"
+                                        id="optionExpiration"
+                                        name="optionExpiration"
+                                        #name="ngModel"
+                                        required
+                                        [matDatepickerMin]="minDate"
+                                        [matDatepickerMax]="maxDate"
+                                        [(ngModel)]="item.optionExpiration"
+                                        (ngModelChange)="checkChanged()" />
+                                    <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker2></mat-datepicker>
+
+                                    <div *ngIf="date?.invalid && (date?.dirty || date?.touched)">
+                                        <div *ngIf="date?.errors?.required">Date is required.</div>
+                                        <div *ngIf="date?.errors?.matDatepickerMin">
+                                            Date must be after {{ minDate | date: 'shortDate' }}.
+                                        </div>
+                                        <div *ngIf="date?.errors?.matDatepickerMax">
+                                            Date must be before {{ maxDate | date: 'shortDate' }}.
+                                        </div>
+                                    </div>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="grid grid-cols-12 gap-2 w-full">
+                                <mat-form-field class="col-span-6">
+                                    <mat-label for="meetingPlace">Meeting Place</mat-label>
+                                    <input
+                                        matInput
+                                        id="meetingPlace"
+                                        name="meetingPlace"
+                                        #name="ngModel"
+                                        class="form-control font-bold"
+                                        [(ngModel)]="item.meetingPlace"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-4">
+                                    <mat-label for="referent">Referent</mat-label>
+                                    <input
+                                        matInput
+                                        id="referent"
+                                        name="referent"
+                                        #name="ngModel"
+                                        class="form-control font-bold"
+                                        [(ngModel)]="item.referent"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label for="referentPhone">Referent Phone</mat-label>
+                                    <input
+                                        matInput
+                                        id="referentPhone"
+                                        name="referentPhone"
+                                        #name="ngModel"
+                                        class="form-control font-bold"
+                                        class="form-control font-bold"
+                                        [(ngModel)]="item.referentPhone"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
+                            </div>
+                        </div>
+
+                        <mat-accordion class="flex flex-col">
+                            <mat-expansion-panel #card [expanded]="true">
+                                <mat-expansion-panel-header class="bg-primary py-4 px-8 rounded-none">
+                                    <mat-panel-title>
+                                        <div class="flex items-center gap-2 text-white text-lg">
+                                            <!-- <mat-icon [svgIcon]="'heroicons_solid:user-circle'"></mat-icon> -->
+                                            <span>Client</span>
+                                        </div>
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+
+                                <div class="flex flex-col">
+                                    <mat-form-field class="example-full-width">
+                                        <input
+                                            type="text"
+                                            class="form-control font-bold"
+                                            placeholder="Client"
+                                            aria-label="Client"
+                                            matInput
+                                            [formControl]="clientControl"
+                                            [matAutocomplete]="auto1" />
+                                        <mat-autocomplete
+                                            #auto1="matAutocomplete"
+                                            (optionSelected)="onSelectedClient($event)">
+                                            <mat-option
+                                                class="form-control font-bold"
+                                                *ngFor="let option of filteredClients | async"
+                                                [value]="option">
+                                                <div class="option-container">
+                                                    <div class="option-name">{{ option.companyName }}</div>
+                                                    <div class="option-email">
+                                                        {{ option.address }} {{ option.city }}
+                                                    </div>
+                                                </div>
+                                            </mat-option>
+                                        </mat-autocomplete>
+                                    </mat-form-field>
+                                </div>
+                                <div class="flex flex-col">
+                                    <div class="grid grid-cols-12 gap-2 w-full">
+                                        <mat-form-field class="col-span-2">
+                                            <mat-label for="priceCalculated">Price Calculated</mat-label>
+                                            <input
+                                                matInput
+                                                type="number"
+                                                class="form-control font-bold"
+                                                id="priceCalculated"
+                                                name="priceCalculated"
+                                                #name="ngModel"
+                                                min="0"
+                                                [(ngModel)]="item.priceCalculated" />
+                                        </mat-form-field>
+                                        <mat-form-field class="col-span-2">
+                                            <mat-label for="price">Price</mat-label>
+                                            <input
+                                                matInput
+                                                type="number"
+                                                class="form-control font-bold"
+                                                id="price"
+                                                name="price"
+                                                #name="ngModel"
+                                                min="0"
+                                                [(ngModel)]="item.price" />
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+
+                        <mat-accordion class="flex flex-col mt-1">
+                            <mat-expansion-panel #card [expanded]="true">
+                                <mat-expansion-panel-header class="bg-primary py-4 px-8 rounded-none">
+                                    <mat-panel-title>
+                                        <div class="flex items-center gap-2 text-white text-lg">
+                                            <!-- <mat-icon [svgIcon]="'heroicons_solid:user-circle'"></mat-icon> -->
+                                            <span>Collaborator</span>
+                                        </div>
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+
+                                <div class="flex flex-col">
+                                    <mat-form-field class="example-full-width">
+                                        <input
+                                            type="text"
+                                            class="form-control font-bold"
+                                            placeholder="Collaborator"
+                                            aria-label="Collaborator"
+                                            matInput
+                                            [formControl]="collaboratorControl"
+                                            [matAutocomplete]="auto2" />
+                                        <mat-autocomplete
+                                            #auto2="matAutocomplete"
+                                            (optionSelected)="onSelectedCollaborator($event)">
+                                            <mat-option
+                                                class="form-control font-bold"
+                                                *ngFor="let option of filteredCollaborators | async"
+                                                [value]="option">
+                                                <div class="option-container">
+                                                    <div class="option-name">{{ option.fullName }}</div>
+                                                    <div class="option-email">
+                                                        {{ option.address }} {{ option.city }}
+                                                    </div>
+                                                </div>
+                                            </mat-option>
+                                        </mat-autocomplete>
+                                    </mat-form-field>
+                                    <div class="grid grid-cols-12 gap-2 w-full">
+                                        <mat-form-field class="col-span-2">
+                                            <mat-labe for="commissionPercentage">Commission %</mat-labe>
+                                            <input
+                                                matInput
+                                                type="number"
+                                                class="form-control font-bold"
+                                                id="commissionPercentage"
+                                                name="commissionPercentage"
+                                                min="0"
+                                                max="100"
+                                                step="0.1"
+                                                [(ngModel)]="item.commissionPercentage"
+                                                (ngModelChange)="rebuild()" />
+                                        </mat-form-field>
+                                        <mat-form-field class="col-span-2">
+                                            <mat-label for="commissionCalculated">Commission Calculated</mat-label>
+                                            <input
+                                                matInput
+                                                type="number"
+                                                class="form-control font-bold"
+                                                id="commissionCalculated"
+                                                name="commissionCalculated"
+                                                min="0"
+                                                [(ngModel)]="item.commissionCalculated"
+                                                (ngModelChange)="checkChanged()" />
+                                        </mat-form-field>
+                                        <mat-form-field class="col-span-2">
+                                            <mat-label for="commission">Commission</mat-label>
+                                            <input
+                                                matInput
+                                                type="number"
+                                                class="form-control font-bold"
+                                                id="commission"
+                                                name="commission"
+                                                min="0"
+                                                [(ngModel)]="item.commission"
+                                                (ngModelChange)="checkChanged()" />
+                                        </mat-form-field>
+                                        <mat-form-field class="col-span-2">
+                                            <mat-label for="commissionPaymentDate">Commission Payment Date</mat-label>
+                                            <input
+                                                matInput
+                                                [matDatepicker]="picker3"
+                                                class="form-control font-bold"
+                                                id="commissionPaymentDate"
+                                                name="commissionPaymentDate"
+                                                #name="ngModel"
+                                                required
+                                                [matDatepickerMin]="minDate"
+                                                [matDatepickerMax]="maxDate"
+                                                [(ngModel)]="item.commissionPaymentDate"
+                                                (ngModelChange)="checkChanged()" />
+                                            <mat-datepicker-toggle
+                                                matIconSuffix
+                                                [for]="picker3"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker3></mat-datepicker>
+
+                                            <div
+                                                *ngIf="
+                                                    commissionPaymentDate?.invalid &&
+                                                    (commissionPaymentDate?.dirty || commissionPaymentDate?.touched)
+                                                ">
+                                                <div *ngIf="commissionPaymentDate?.errors?.required">
+                                                    Date is required.
+                                                </div>
+                                                <div *ngIf="commissionPaymentDate?.errors?.matDatepickerMin">
+                                                    Date must be after {{ minDate | date: 'shortDate' }}.
+                                                </div>
+                                                <div *ngIf="date?.errors?.matDatepickerMax">
+                                                    Date must be before {{ maxDate | date: 'shortDate' }}.
+                                                </div>
+                                            </div>
+                                        </mat-form-field>
+                                        <div class="col-span-2">
+                                            <mat-checkbox
+                                                class="form-control font-bold"
+                                                [(ngModel)]="service.commissionPaid"
+                                                (ngModelChange)="checkChanged()">
+                                                Commission Paid
+                                            </mat-checkbox>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-12 gap-2 w-full">
+                                        <mat-form-field class="col-span-12">
+                                            <mat-label for="commissionNote">Commission Note</mat-label>
+                                            <textarea
+                                                matInput
+                                                cdkTextareaAutosize
+                                                cdkAutosizeMinRows="2"
+                                                cdkAutosizeMaxRows="3"
+                                                class="form-control font-bold h-full"
+                                                id="commissionNote"
+                                                name="commissionNote"
+                                                #name="ngModel"
+                                                [(ngModel)]="item.commissionNote"
+                                                (ngModelChange)="checkChanged()"></textarea>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+                    </div>
+                </ng-template>
+            </mat-tab>
+
+            <!-- Note -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:identification'"></mat-icon>
+                    {{ 'Service.Note' | transloco }}
+                </ng-template>
+                <ng-template matTabContent>
+                    <div class="flex flex-col flex-1 overflow-y-auto">
+                        <div class="flex flex-col">
+                            <div class="grid grid-cols-12 gap-2 h-full w-full">
+                                <mat-form-field class="col-span-12">
+                                    <!-- <mat-label>Note</mat-label> -->
+                                    <textarea
+                                        matInput
+                                        cdkTextareaAutosize
+                                        cdkAutosizeMinRows="5"
+                                        class="form-control font-bold h-full"
+                                        id="note"
+                                        name="note"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.note"
+                                        (ngModelChange)="checkChanged()"></textarea>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>

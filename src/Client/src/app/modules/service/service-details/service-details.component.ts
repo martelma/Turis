@@ -1,0 +1,286 @@
+import { MatRippleModule } from '@angular/material/core';
+import { DatePipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle } from '@angular/common';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { FuseScrollResetDirective } from '@fuse/directives/scroll-reset';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { fuseAnimations } from '@fuse/animations';
+import { SpinnerButtonComponent } from 'app/shared/components/ui/spinner-button/spinner-button.component';
+import { Service } from '../service.types';
+import { ServiceService } from '../service.service';
+import { tap } from 'rxjs';
+import { ServiceEditComponent } from '../service-edit/service-edit.component';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ServiceViewComponent } from '../service-view/service-view.component';
+import { ServiceComponent } from '../service.component';
+import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
+
+@UntilDestroy()
+@Component({
+    selector: 'app-service-details',
+    templateUrl: './service-details.component.html',
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations,
+    standalone: true,
+    imports: [
+        NgIf,
+        NgFor,
+        NgClass,
+        NgStyle,
+        DatePipe,
+        JsonPipe,
+        RouterLink,
+        MatButtonModule,
+        MatCheckboxModule,
+        MatRippleModule,
+        MatIconModule,
+        MatMenuModule,
+        MatTooltipModule,
+        MatProgressSpinnerModule,
+        MatSnackBarModule,
+        FuseScrollResetDirective,
+        TranslocoModule,
+        ServiceViewComponent,
+        ServiceEditComponent,
+        SpinnerButtonComponent,
+    ],
+})
+export class ServiceDetailsComponent implements OnInit {
+    // @ViewChild(ParametersComponent) parameters: ParametersComponent;
+    @ViewChild(ServiceViewComponent) viewService: ServiceViewComponent;
+    @ViewChild(ServiceEditComponent) editService: ServiceEditComponent;
+
+    editMode = false;
+    isCreate = false;
+    isCopy = false;
+    isDownloading = false;
+    downloadingData = false;
+    validating = false;
+
+    service: Service;
+
+    //queste devono diventare scope
+    userCanDeleteService = true;
+    userCanUpdateService = true;
+    userCanValidateService = true;
+    userCanDownloadData = true;
+    userCanViewServiceStatistics = true;
+
+    constructor(
+        private _activatedRoute: ActivatedRoute,
+        private _router: Router,
+        private _serviceService: ServiceService,
+        private _fuseConfirmationService: FuseConfirmationService,
+        private _translocoService: TranslocoService,
+        private _bookmarkService: BookmarkService,
+        public snackBar: MatSnackBar,
+
+        public serviceComponent: ServiceComponent,
+    ) {}
+
+    ngOnInit(): void {
+        this._subscribeRouteParams();
+
+        this._subscribeSignalR();
+
+        this._subscribeService();
+        this._subscribeServiceEdited();
+    }
+
+    _subscribeSignalR(): void {
+        // this._signalRService.connect();
+        // this._signalRService.taskCompleted$
+        //     .pipe(
+        //         filter((obj: TaskCompletedMessage) => !!obj),
+        //         filter((obj: TaskCompletedMessage) => obj.adminMessage === false),
+        //         filter((obj: TaskCompletedMessage) => obj.correlationKey === 'DownloadData'),
+        //         untilDestroyed(this),
+        //     )
+        //     .subscribe((obj: TaskCompletedMessage) => {
+        //         // Opens the notification panel with the most recent completed jobs
+        //         BaseCommands.instance.openNotificationsPanel({ selectedJobStatus: 'Completed' });
+        //         this.downloadingData = false;
+        //         if (obj.status === 'OK') {
+        //             // IMPORTANT: SignalR sends two messages
+        //             // Avoids multiple file downloads when jobs are completed
+        //             if (!this.isDownloading) {
+        //                 this.isDownloading = true;
+        //                 const fileName = obj.data.data;
+        //                 this._downloadService
+        //                     .download(obj.data.jobId, fileName)
+        //                     .pipe(untilDestroyed(this))
+        //                     .subscribe((response: HttpResponse<Blob>) => {
+        //                         this._downloadService.saveResponseBlob(response, obj.data.data ?? fileName);
+        //                     })
+        //                     .add(() => {
+        //                         this.isDownloading = false;
+        //                     });
+        //             }
+        //         } else if (obj.status === 'KO') {
+        //             this.snackBar.open(obj.message, this._translocoService.translate('General.Dismiss'), {
+        //                 panelClass: ['error'],
+        //             });
+        //         }
+        //     });
+    }
+
+    private _subscribeRouteParams() {
+        console.log('_subscribeRouteParams');
+        this._activatedRoute.params
+            .pipe(
+                tap(params => {
+                    // Activates the create user mode
+                    this.isCreate = params.id === 'new';
+                }),
+                untilDestroyed(this),
+            )
+            .subscribe();
+    }
+
+    private _subscribeService() {
+        this._serviceService.service$.pipe(untilDestroyed(this)).subscribe((service: Service) => {
+            this.service = service;
+
+            this.editMode = service?.id === undefined;
+        });
+    }
+
+    private _subscribeServiceEdited(): void {
+        this._serviceService.serviceEdited$.pipe(untilDestroyed(this)).subscribe((serviceId: string) => {
+            if (serviceId != null) {
+                this._serviceService
+                    .getById(serviceId)
+                    .pipe(untilDestroyed(this))
+                    .subscribe(() => {
+                        this.editMode = true;
+                    });
+            } else {
+                this.editMode = this.service.id === undefined;
+            }
+        });
+    }
+
+    isDownloadDataButtonDisabled(): boolean {
+        return false;
+    }
+
+    edit(): void {
+        this._serviceService.editService(this.service.id);
+    }
+
+    cancel(): void {
+        this._serviceService.editService(null);
+
+        if (this.service?.id === undefined) {
+            this._router.navigate(['../'], { relativeTo: this._activatedRoute });
+        }
+    }
+
+    /*
+    toggleTag(tag: Tag): void {
+        let deleted = false;
+
+        // Update the service object
+        if (this.service.tags.includes(tag.id)) {
+            // Set the deleted
+            deleted = true;
+
+            // Delete the tag
+            this.service.tags.splice(this.service.tags.indexOf(tag.id), 1);
+        } else {
+            // Add the tag
+            this.service.tags.push(tag.id);
+        }
+
+        //TODO: da finire...
+    }
+    */
+
+    menuItem1(service: Service) {
+        console.log('menuItem1', service);
+    }
+
+    menuItem2(service: Service) {
+        console.log('menuItem2', service);
+    }
+
+    save(): void {
+        // if (this.isCopy) {
+        //     newValue.id = emptyGuid;
+        // }
+
+        this._serviceService
+            .update(this.service)
+            .pipe(untilDestroyed(this))
+            .subscribe(() => {
+                this._refresh();
+
+                this._serviceService.editService(null);
+                // this._serviceService.copyService(null);
+            });
+    }
+
+    private _refresh(): void {
+        this.snackBar.open(
+            this._translocoService.translate('Messages.ChangesSuccessfullySaved'),
+            this._translocoService.translate('General.Dismiss'),
+            {
+                panelClass: ['success'],
+            },
+        );
+
+        // Refresh the service information
+        if (this.service?.id) {
+            this._serviceService.getById(this.service?.id).pipe(untilDestroyed(this)).subscribe();
+        }
+
+        // Refresh the list of service
+        this._serviceService
+            .listEntities()
+            .pipe(untilDestroyed(this))
+            .subscribe(() => {
+                if (this.isCreate) {
+                    this._router.navigate(['../'], { relativeTo: this._activatedRoute });
+                }
+            });
+    }
+
+    handleBookmark(service: Service): void {
+        if (service.bookmarkId) {
+            this._bookmarkService
+                .delete(service.bookmarkId)
+                .pipe(untilDestroyed(this))
+                .subscribe(() => {
+                    // Refresh the selected service
+                    this._serviceService.getById(service.id).pipe(untilDestroyed(this)).subscribe();
+                });
+        } else {
+            this._bookmarkService
+                .create({
+                    entityName: 'Service',
+                    entityId: service.id,
+                })
+                .pipe(untilDestroyed(this))
+                .subscribe(() => {
+                    // Refresh the selected service
+                    this._serviceService.getById(service.id).pipe(untilDestroyed(this)).subscribe();
+                });
+        }
+    }
+
+    handleCheck(service: Service): void {
+        if (service.checked) {
+            this._serviceService.setCheck(service);
+        } else {
+            this._serviceService.setUnCheck(service);
+        }
+    }
+}

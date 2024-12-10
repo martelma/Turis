@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Configurations>Debug;Release;Staging</Configurations>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Config\**" />
+	  <EmbeddedResource Remove="Config\**" />
+	  <None Remove="Config\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
+		<PackageReference Include="Microsoft.SqlServer.TransactSql.ScriptDom" Version="161.9109.0" />
+		<PackageReference Include="StackExchange.Redis.Extensions.AspNetCore" Version="10.2.0" />
+		<PackageReference Include="StackExchange.Redis.Extensions.Newtonsoft" Version="10.2.0" />
+		<PackageReference Include="NPOI" Version="2.7.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\JeMa.Shared\src\JeMa.Shared.csproj" />
+	</ItemGroup>
+
+</Project>

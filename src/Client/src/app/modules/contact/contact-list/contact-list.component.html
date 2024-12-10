@@ -1,0 +1,137 @@
+<div class="relative flex flex-auto h-full w-full bg-card dark:bg-transparent">
+    <!-- Contact list -->
+    <div class="relative flex flex-auto flex-col w-full min-w-0 lg:min-w-160 lg:max-w-96 border-r z-10">
+        <!-- Header -->
+        <div
+            class="relative flex flex-0 items-center justify-between h-16 w-full px-4 border-b bg-gray-50 dark:bg-transparent">
+            <div class="flex flex-1 w-full items-center">
+                <!-- Sidebar toggle button -->
+                <button mat-icon-button (click)="contactComponent?.drawer?.toggle()">
+                    <mat-icon
+                        [svgIcon]="
+                            contactComponent?.drawer?.opened ? 'heroicons_solid:funnel' : 'heroicons_outline:funnel'
+                        "></mat-icon>
+                </button>
+
+                <!-- Bookmarks filter -->
+                <button
+                    mat-icon-button
+                    (click)="toggleBookmarks()"
+                    [matTooltip]="
+                        (contactParameters?.onlyBookmarks ? 'General.ShowAll' : 'General.ShowOnlyBookmarked')
+                            | transloco
+                    ">
+                    <mat-icon
+                        [svgIcon]="
+                            contactParameters?.onlyBookmarks ? 'heroicons_solid:star' : 'heroicons_outline:star'
+                        "></mat-icon>
+                </button>
+
+                <!-- Filter -->
+                <app-search-input
+                    class="m-4 flex-1"
+                    [placeholder]="'Contact.FilterByName'"
+                    (callbackFn)="filter($event)">
+                </app-search-input>
+            </div>
+
+            <!-- Loading bar -->
+            <mat-progress-bar
+                class="absolute inset-x-0 bottom-0 h-0.5"
+                *ngIf="itemsLoading"
+                [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+
+        <!-- Contact list -->
+        <ng-container *ngIf="results?.items?.length > 0; else noContact">
+            <div class="overflow-y-auto" #contactList>
+                <!-- Contact loop -->
+                <ng-container *ngFor="let item of results?.items; let i = index; trackBy: trackByFn">
+                    <!-- Contact -->
+                    <div
+                        class="group relative flex border-t first:border-0 hover:bg-hover cursor-pointer"
+                        [routerLink]="[item.id]"
+                        (click)="onItemSelected(item)"
+                        (dblclick)="edit(item)"
+                        tabindex="0"
+                        (keyup)="(null)">
+                        <!-- Contact content -->
+                        <a
+                            class="flex flex-col items-start justify-start w-full py-6 pr-4 pl-5 border-l-4 border-transparent">
+                            <!-- Contact Info -->
+                            <div class="flex items-center w-full justify-between space-x-2 mb-2">
+                                <div class="flex items-center space-x-2">
+                                    <!-- Add/Remove bookmark -->
+                                    <mat-icon
+                                        (click)="handleBookmark(item)"
+                                        class="icon-size-2"
+                                        [svgIcon]="item.bookmarkId ? 'heroicons_solid:star' : 'heroicons_outline:star'"
+                                        [matTooltip]="
+                                            (item.bookmarkId ? 'General.RemoveBookmark' : 'General.MarkAsBookmark')
+                                                | transloco
+                                        "></mat-icon>
+
+                                    <!-- Code & FullName -->
+                                    <div class="mr-2 font-semibold text-wrap" [matTooltip]="item.title">
+                                        {{ item.code }} - {{ item.fullName }}
+                                    </div>
+                                </div>
+
+                                <div class="flex space-x-2 items-center">
+                                    <div *ngFor="let lang of item.languages">
+                                        <span [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-1 leading-normal line-clamp-2 text-secondary whitespace-pre-wrap">
+                                <mat-icon
+                                    [svgIcon]="'heroicons_solid:map-pin'"
+                                    class="mr-2"
+                                    [matTooltip]="'Location'"></mat-icon>
+                                {{ item?.city }}
+                            </div>
+
+                            <div class="mt-1 leading-normal line-clamp-2 text-secondary whitespace-pre-wrap">
+                                <mat-icon
+                                    [svgIcon]="'heroicons_solid:envelope'"
+                                    class="mr-2"
+                                    [matTooltip]="'Email'"></mat-icon>
+                                {{ item?.eMail }}
+                            </div>
+                        </a>
+                    </div>
+                </ng-container>
+            </div>
+        </ng-container>
+
+        <!-- Paginator -->
+        <mat-paginator
+            class="mt-auto border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+            [ngClass]="{ 'pointer-events-none': itemsLoading }"
+            [length]="results?.totalCount ?? 0"
+            [pageSize]="contactParameters?.pageSize ?? 10"
+            [pageIndex]="contactParameters?.pageIndex ?? 0"
+            [pageSizeOptions]="[5, 10, 25, 100]"
+            (page)="handlePageEvent($event)"
+            [showFirstLastButtons]="true"></mat-paginator>
+    </div>
+
+    <!-- No contact template -->
+    <ng-template #noContact>
+        <div class="z-100 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+            <mat-icon class="icon-size-24" [svgIcon]="'heroicons_outline:circle-stack'"></mat-icon>
+            <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">There are no contact</div>
+        </div>
+    </ng-template>
+
+    <!-- Contact details -->
+    <div
+        class="flex-auto"
+        [ngClass]="{
+            'z-20 absolute inset-0 lg:static lg:inset-auto flex': selectedItem && selectedItem.id,
+            'hidden lg:flex': !selectedItem || !selectedItem.id
+        }">
+        <router-outlet></router-outlet>
+    </div>
+</div>

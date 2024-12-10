@@ -1,0 +1,130 @@
+<div class="flex flex-col flex-auto w-full h-full p-2">
+    <h3 class="text-3xl md:text-4xl font-semibold mt-4">
+        {{ 'General.Filters' | transloco }}
+    </h3>
+
+    <mat-form-field class="col-span-2">
+        <mat-label for="code">Code</mat-label>
+        <input
+            matInput
+            id="code"
+            name="code"
+            #name="ngModel"
+            class="form-control font-bold"
+            [(ngModel)]="serviceParameters.code"
+            (ngModelChange)="filter()" />
+    </mat-form-field>
+
+    <mat-form-field class="col-span-2">
+        <mat-label for="title">Title</mat-label>
+        <input
+            matInput
+            id="title"
+            name="title"
+            #name="ngModel"
+            class="form-control font-bold"
+            [(ngModel)]="serviceParameters.title"
+            (ngModelChange)="filter()" />
+    </mat-form-field>
+
+    <mat-form-field class="col-span-2">
+        <mat-label for="note">Note</mat-label>
+        <input
+            matInput
+            id="note"
+            name="note"
+            #name="ngModel"
+            class="form-control font-bold"
+            [(ngModel)]="serviceParameters.note"
+            (ngModelChange)="filter()" />
+    </mat-form-field>
+
+    <mat-form-field class="col-span-2">
+        <mat-label for="serviceType">Type</mat-label>
+        <mat-select
+            placeholder="Select a Type"
+            class="form-control font-bold"
+            id="serviceType"
+            name="serviceType"
+            #name="ngModel"
+            [(ngModel)]="serviceParameters.serviceType"
+            (ngModelChange)="filter()">
+            <mat-option *ngFor="let x of serviceTypes" [value]="x.value">
+                {{ x.text }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="col-span-2">
+        <mat-label for="durationType">Duration</mat-label>
+        <mat-select
+            placeholder="Select a Duration"
+            class="form-control font-bold"
+            id="durationType"
+            name="durationType"
+            #name="ngModel"
+            [(ngModel)]="serviceParameters.durationType"
+            (ngModelChange)="filter()">
+            <mat-option *ngFor="let x of durationTypes" [value]="x.value">
+                {{ x.text }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="col-span-4">
+        <mat-label for="languages">Language</mat-label>
+        <mat-select
+            multiple
+            class="form-control font-bold"
+            id="languages"
+            name="languages"
+            #name="ngModel"
+            [(ngModel)]="serviceParameters.languages"
+            (ngModelChange)="filter()">
+            <mat-option *ngFor="let x of languages" [value]="x.code">{{ x.code }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="col-span-2">
+        <mat-label for="dateFrom">Date From</mat-label>
+        <input
+            matInput
+            [matDatepicker]="picker1"
+            class="form-control font-bold"
+            id="dateFrom"
+            name="dateFrom"
+            #name="ngModel"
+            [(ngModel)]="dateFrom"
+            (ngModelChange)="filter()" />
+        <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker #picker1></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field class="col-span-2">
+        <mat-label for="dateTo">Date To</mat-label>
+        <input
+            matInput
+            [matDatepicker]="picker2"
+            class="form-control font-bold"
+            id="dateTo"
+            name="dateTo"
+            #name="ngModel"
+            [(ngModel)]="dateTo"
+            (ngModelChange)="filter()" />
+        <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+    </mat-form-field>
+
+    <!-- Tag Filters -->
+    <!-- <mat-label class="mx-4 mb-1 font-semibold">
+            {{ 'Tags.FilterByTags' | transloco }}
+        </mat-label>
+        <tag-filters class="flex flex-1" (selectionChange)="onTagsSelectionChange($event)"></tag-filters> -->
+
+    <div class="flex space-x-2">
+        <button mat-flat-button color="primary" (click)="clearFilters()">
+            <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:archive-box-x-mark'"></mat-icon>
+            <span>{{ 'General.ClearFilters' | transloco }}</span>
+        </button>
+    </div>
+</div>

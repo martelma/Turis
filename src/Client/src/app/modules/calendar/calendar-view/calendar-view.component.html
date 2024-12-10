@@ -1,0 +1,174 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+    <!-- Header -->
+    <div
+        class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+        <!-- Loader -->
+        <!-- <div class="absolute inset-x-0 bottom-0" *ngIf="itemsLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div> -->
+        <!-- Title -->
+        <div class="text-4xl font-extrabold tracking-tight">
+            {{ 'Navigation.Calendar' | transloco }}
+        </div>
+        <!-- Actions -->
+        <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+            <!-- Search -->
+            <app-search-input class="min-w-90" [placeholder]="'Service.Filter'" (callbackFn)="filter($event)">
+            </app-search-input>
+
+            <!-- Add priceList button -->
+            <button class="ml-4" mat-flat-button [color]="'primary'" (click)="create()">
+                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                <span class="ml-2 mr-1">{{ 'General.Add' | transloco }}</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+        <div class="flex flex-col flex-auto overflow-hidden sm:overflow-y-auto">
+            <div class="flex flex-1 flex-auto w-full h-full">
+                <full-calendar
+                    #fullCalendar
+                    class="w-full h-full"
+                    [options]="calendarOptions"
+                    [deepChangeDetection]="true"></full-calendar>
+            </div>
+
+            <!-- Tabs -->
+            <!-- <mat-tab-group class="sm:px-2" mat-stretch-tabs="false" [animationDuration]="'0'">
+                <mat-tab label="Calendar"> </mat-tab>
+                <mat-tab label="List">
+                    <ng-container *ngIf="list?.length > 0; else noData">
+                        <div class="grid">
+                            <div
+                                class="list-grid z-10 sticky top-0 grid gap-4 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                                <div class="hidden md:block"></div>
+                                <div class="hidden md:block"></div>
+                                <div class="hidden md:block"></div>
+                                <div class="hidden md:block"></div>
+                                <div class="hidden sm:block">{{ 'Service.Date' | transloco }}</div>
+                                <div class="hidden lg:block">{{ 'Service.Location' | transloco }}</div>
+                                <div class="hidden lg:block">{{ 'Service.MeetingPlace' | transloco }}</div>
+                                <div class="hidden lg:block">{{ 'Service.Title' | transloco }}</div>
+                                <div class="hidden lg:block">{{ 'Service.Client' | transloco }}</div>
+                                <div class="hidden lg:block">{{ 'Service.Collaborator' | transloco }}</div>
+                                <div class="hidden lg:block">{{ 'Service.Languages' | transloco }}</div>
+                                <div class="hidden lg:block">{{ 'Service.ServiceType' | transloco }}</div>
+                                <div class="hidden lg:block">{{ 'Service.DurationType' | transloco }}</div>
+                                <div class="hidden lg:block">{{ 'Service.People' | transloco }}</div>
+                            </div>
+                            <ng-container *ngIf="list">
+                                <ng-container *ngFor="let item of list; trackBy: trackByFn">
+                                    <div class="list-grid grid items-center gap-4 py-3 px-6 md:px-8 border-b">
+                                        <div>
+                                            <mat-icon
+                                                *ngIf="!item.checked"
+                                                [svgIcon]="'heroicons_solid:exclamation-circle'"
+                                                [ngClass]="{ 'text-red-500': true }"
+                                                matTooltip="Servizio NON verificato!"></mat-icon>
+                                            <mat-icon
+                                                *ngIf="item.checked"
+                                                [svgIcon]="'heroicons_solid:check-circle'"
+                                                [ngClass]="{ 'text-green-500': true }"
+                                                matTooltip="Servizio verificato"></mat-icon>
+                                        </div>
+
+                                        <div>
+                                            <mat-icon
+                                                *ngIf="item.workflowCollaboratorStatus === 'DaComunicare'"
+                                                [svgIcon]="'heroicons_solid:exclamation-circle'"
+                                                [ngClass]="{ 'text-red-500': true }"
+                                                matTooltip="Servizio Da Comunicare"></mat-icon>
+                                            <mat-icon
+                                                *ngIf="item.workflowCollaboratorStatus === 'InAttesaDiConferma'"
+                                                [svgIcon]="'heroicons_solid:clock'"
+                                                [ngClass]="{ 'text-gray-500': true }"
+                                                matTooltip="Servizio in attesa di conferma..."></mat-icon>
+                                            <mat-icon
+                                                *ngIf="item.workflowCollaboratorStatus === 'Confermato'"
+                                                [svgIcon]="'heroicons_solid:check-circle'"
+                                                [ngClass]="{ 'text-green-500': true }"
+                                                matTooltip="Servizio Confermato!"></mat-icon>
+                                        </div>
+
+                                        <div></div>
+
+                                        <div></div>
+
+                                        <div>
+                                            {{ item?.date | date: 'dd/MM/yyyy' }}
+                                        </div>
+
+                                        <div class="truncate">
+                                            {{ item.location }}
+                                        </div>
+
+                                        <div class="truncate">
+                                            {{ item?.meetingPlace }}
+                                        </div>
+
+                                        <div>
+                                            {{ item?.title }}
+                                        </div>
+
+                                        <div>
+                                            {{ item?.client?.name }}
+                                        </div>
+
+                                        <div>
+                                            {{ item?.contact?.name }}
+                                        </div>
+
+                                        <div>
+                                            {{ item?.languages }}
+                                        </div>
+
+                                        <div>
+                                            {{ item?.serviceType }}
+                                        </div>
+
+                                        <div>
+                                            {{ item?.durationType }}
+                                        </div>
+
+                                        <div>
+                                            {{ item?.people }}
+                                        </div>
+                                    </div>
+                                    <div class="grid">
+                                        <ng-container *ngIf="selectedItem?.id === item.id">
+                                            <ng-container
+                                                *ngTemplateOutlet="
+                                                    rowDetailsTemplate;
+                                                    context: { $implicit: item }
+                                                "></ng-container>
+                                        </ng-container>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                        </div>
+
+                        <mat-paginator
+                            class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                            [ngClass]="{ 'pointer-events-none': loading }"
+                            [length]="results?.totalCount ?? 0"
+                            [pageIndex]="queryParameters?.pageIndex ?? 0"
+                            [pageSize]="queryParameters?.pageSize ?? 10"
+                            [pageSizeOptions]="[5, 10, 25, 100]"
+                            (page)="handlePageEvent($event)"
+                            [showFirstLastButtons]="true"></mat-paginator>
+                    </ng-container>
+                    <ng-template #noData>
+                        <div
+                            class="z-100 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+                            <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">
+                                {{ 'Service.NoData' | transloco }}
+                            </div>
+                        </div>
+                    </ng-template>
+                </mat-tab>
+            </mat-tab-group> -->
+        </div>
+    </div>
+</div>

@@ -1,0 +1,95 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);1591;NU1605</NoWarn>
+		<PreserveCompilationContext>true</PreserveCompilationContext>
+		<IsWebConfigTransformDisabled>true</IsWebConfigTransformDisabled>
+		<Configurations>Debug;Release;Staging</Configurations>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="Controllers\**" />
+		<Compile Remove="Debug\**" />
+		<Compile Remove="Filters\Swagger\**" />
+		<Compile Remove="Helpers\**" />
+		<Compile Remove="Logs\**" />
+		<Compile Remove="Mail\**" />
+		<Compile Remove="Plugin\**" />
+		<Compile Remove="Services\**" />
+		<Content Remove="Controllers\**" />
+		<Content Remove="Debug\**" />
+		<Content Remove="Filters\Swagger\**" />
+		<Content Remove="Helpers\**" />
+		<Content Remove="Logs\**" />
+		<Content Remove="Mail\**" />
+		<Content Remove="Plugin\**" />
+		<Content Remove="Services\**" />
+		<EmbeddedResource Remove="Controllers\**" />
+		<EmbeddedResource Remove="Debug\**" />
+		<EmbeddedResource Remove="Filters\Swagger\**" />
+		<EmbeddedResource Remove="Helpers\**" />
+		<EmbeddedResource Remove="Logs\**" />
+		<EmbeddedResource Remove="Mail\**" />
+		<EmbeddedResource Remove="Plugin\**" />
+		<EmbeddedResource Remove="Services\**" />
+		<EmbeddedResource Remove="appsettings.json" />
+		<None Remove="Controllers\**" />
+		<None Remove="Debug\**" />
+		<None Remove="Filters\Swagger\**" />
+		<None Remove="Helpers\**" />
+		<None Remove="Logs\**" />
+		<None Remove="Mail\**" />
+		<None Remove="Plugin\**" />
+		<None Remove="Services\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Filters\ExternalDashboardAuthorizationService.cs" />
+	  <Compile Remove="Filters\HangFireAuthorizationFilter.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="ElmahCore" Version="2.1.2" />
+		<PackageReference Include="ElmahCore.Sql" Version="2.1.2" />
+		<PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="8.0.8" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Identity.Web" Version="3.1.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
+		<PackageReference Include="MimeMapping" Version="3.0.1" />
+		<PackageReference Include="MinimalHelpers.OpenApi" Version="2.0.12" />
+		<PackageReference Include="MinimalHelpers.Routing" Version="2.0.3" />
+		<PackageReference Include="NPOI" Version="2.7.1" />
+		<PackageReference Include="Scrutor" Version="4.2.2" />
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.1" />
+		<PackageReference Include="OperationResultTools.AspNetCore.Http" Version="1.0.22" />
+		<PackageReference Include="SimpleAuthenticationTools" Version="2.1.2" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.2" />
+		<PackageReference Include="TimeZoneConverter" Version="6.1.0" />
+
+		<PackageReference Include="StackExchange.Redis" Version="2.7.33" />
+		<PackageReference Include="StackExchange.Redis.Extensions.AspNetCore" Version="10.2.0" />
+		<PackageReference Include="StackExchange.Redis.Extensions.Newtonsoft" Version="10.2.0" />
+
+		<PackageReference Include="Hangfire.AspNetCore" Version="1.8.14" />
+		<PackageReference Include="Hangfire.Core" Version="1.8.14" />
+		<PackageReference Include="Hangfire.SqlServer" Version="1.8.14" />
+		<PackageReference Include="MassTransit.RabbitMQ" Version="8.2.2" />
+		<PackageReference Include="MediatR" Version="12.2.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Turis.BusinessLayer\Turis.BusinessLayer.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Cdn\Temp\" />
+	</ItemGroup>
+</Project>

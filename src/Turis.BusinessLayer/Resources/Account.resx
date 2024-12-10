@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ActiveFlag" xml:space="preserve">
+    <value>Attivo</value>
+  </data>
+  <data name="ApplicationIcon" xml:space="preserve">
+    <value>Icona applicazione</value>
+  </data>
+  <data name="ApplicationName" xml:space="preserve">
+    <value>Nome applicazione</value>
+  </data>
+  <data name="ApplicationUrl" xml:space="preserve">
+    <value>Url applicazione</value>
+  </data>
+  <data name="ChangePasswordButton" xml:space="preserve">
+    <value>Cambia password</value>
+  </data>
+  <data name="ChangePasswordSuccess" xml:space="preserve">
+    <value>La password è stata cambiata.</value>
+  </data>
+  <data name="ChangePasswordTitle1" xml:space="preserve">
+    <value>Cambia password per l'utente</value>
+  </data>
+  <data name="ChangePasswordTitle2" xml:space="preserve">
+    <value>Modifica della password corrente.</value>
+  </data>
+  <data name="ConfirmNewPassword" xml:space="preserve">
+    <value>Conferma password</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Conferma password</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>Abilita</value>
+  </data>
+  <data name="ErrorEmail" xml:space="preserve">
+    <value>Indirizzo email non trovato.</value>
+  </data>
+  <data name="ErrorLoginUserNoActive" xml:space="preserve">
+    <value>Utente non attivo.</value>
+  </data>
+  <data name="ErrorLoginUserPassword" xml:space="preserve">
+    <value>Nome utente e/o password non validi.</value>
+  </data>
+  <data name="ErrorPassword" xml:space="preserve">
+    <value>Si è verificato un errore.</value>
+  </data>
+  <data name="ErrorRegisterEmail" xml:space="preserve">
+    <value>Indirizzo email già presente a sistema per un altro utente.</value>
+  </data>
+  <data name="ErrorRegisterRoles" xml:space="preserve">
+    <value>Si è verificato un errore durante il salvataggio dei diritti. Riprovare.</value>
+  </data>
+  <data name="ExpirationDate" xml:space="preserve">
+    <value>Data di scadenza</value>
+  </data>
+  <data name="FieldExactLength" xml:space="preserve">
+    <value>Il campo '{PropertyName}' deve essere lungo {MinLength} caratteri</value>
+  </data>
+  <data name="FieldMaxLength" xml:space="preserve">
+    <value>Il campo '{PropertyName}' non può essere più lungo di {MaxLength} caratteri</value>
+  </data>
+  <data name="FieldRequired" xml:space="preserve">
+    <value>Il campo '{PropertyName}' è obbligatorio</value>
+  </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>name</value>
+  </data>
+  <data name="ForgotPasswordButton" xml:space="preserve">
+    <value>Invia</value>
+  </data>
+  <data name="ForgotPasswordLogin" xml:space="preserve">
+    <value>Password dimenticata?</value>
+  </data>
+  <data name="ForgotPasswordSuccess" xml:space="preserve">
+    <value>Controllare la posta elettronica per reimpostare la password.</value>
+  </data>
+  <data name="ForgotPasswordTitle" xml:space="preserve">
+    <value>Recupero password</value>
+  </data>
+  <data name="InvalidEmail" xml:space="preserve">
+    <value>L'indirizzo e-mail non è valido</value>
+  </data>
+  <data name="InvalidExpirationDate" xml:space="preserve">
+    <value>La data di scadenza dei codici di attivazione non può essere nel passato</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Lingua</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Cognome</value>
+  </data>
+  <data name="LockoutText" xml:space="preserve">
+    <value>Bloccato.</value>
+  </data>
+  <data name="LockuotError" xml:space="preserve">
+    <value>Questo account è stato bloccato, riprovare più tardi.</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nome</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>Nuova password</value>
+  </data>
+  <data name="NewPasswordCompare" xml:space="preserve">
+    <value>La nuova password e la password di conferma non corrispondono.</value>
+  </data>
+  <data name="NewUser" xml:space="preserve">
+    <value>Nuovo utente</value>
+  </data>
+  <data name="OldPassword" xml:space="preserve">
+    <value>Password corrente</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="PasswordCompare" xml:space="preserve">
+    <value>La password e la password di conferma non corrispondono.</value>
+  </data>
+  <data name="PasswordExpired" xml:space="preserve">
+    <value>La password è scaduta. </value>
+  </data>
+  <data name="PasswordLength" xml:space="preserve">
+    <value>La lunghezza di {0} deve essere di almeno {2} caratteri.</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Registrazione</value>
+  </data>
+  <data name="RegisterButton" xml:space="preserve">
+    <value>Registra</value>
+  </data>
+  <data name="RegisterTitle" xml:space="preserve">
+    <value>Nuovo utente</value>
+  </data>
+  <data name="ResetPasswordTitle" xml:space="preserve">
+    <value>Reimposta password</value>
+  </data>
+  <data name="RoleId" xml:space="preserve">
+    <value>ID ruolo</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Ruoli</value>
+  </data>
+  <data name="UnauthorizedRequest" xml:space="preserve">
+    <value>Utente non autorizzato ad eseguire l'operazione richiesta</value>
+  </data>
+  <data name="UnloggedRequest" xml:space="preserve">
+    <value>Utente non autenticato o autenticazione scaduta</value>
+  </data>
+  <data name="UserId" xml:space="preserve">
+    <value>ID utente</value>
+  </data>
+  <data name="UserName" xml:space="preserve">
+    <value>Nome utente</value>
+  </data>
+  <data name="UserRegisteredTitle" xml:space="preserve">
+    <value>Utente registrato</value>
+  </data>
+  <data name="ValidationError" xml:space="preserve">
+    <value>Si sono verificati errori di validazione sui dati</value>
+  </data>
+</root>

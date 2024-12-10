@@ -1,0 +1,98 @@
+﻿@{
+	Layout = @Model.LayoutFullFileName;
+}
+
+<table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto;">
+	<tr>
+		<td valign="middle" class="hero bg_white" style="padding: 2em 0 2em 0;">
+			<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+				<tr>
+					<td style="padding: 0 2.5em; text-align: left;">
+						<div class="text">
+							<h2>
+								@Model.SectionTitle
+							</h2>
+							<h3>
+								<strong>@Model.SectionSubTitle</strong>
+							</h3>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td valign="middle" class="hero bg_white" style="padding: 2em 0 2em 0;">
+			<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+				<tr>
+					<td width="60%" style="padding: 0 2.5em; text-align: left;">
+						<div class="text">
+							<h3>
+								<strong>Cart Code</strong>
+							</h3>
+						</div>
+					</td>
+					<td width="60%" style="padding: 0 2.5em; text-align: left;">
+						<div class="text">
+							<h3>
+								<strong>@Model.CartBaseCode</strong>
+							</h3>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td width="60%" style="padding: 0 2.5em; text-align: left;">
+						<div class="text">
+							<h3>
+								<strong>Cart Number</strong>
+							</h3>
+						</div>
+					</td>
+					<td width="60%" style="padding: 0 2.5em; text-align: left;">
+						<div class="text">
+							<h3>
+								<strong>@Model.CartNumber</strong>
+							</h3>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<table class="bg_white" role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr style="border-bottom: 1px solid rgba(0,0,0,.05);">
+				<td valign="middle" width="60%" style="text-align:left; padding: 0 2.5em;">
+					<div class="product-entry">
+						<div class="text">
+							<h3>@Model.MaterialOld.CodeMaterial</h3>
+							<span>@Model.MaterialOld.DesMaterial</span>
+						</div>
+					</div>
+				</td>
+				<td valign="middle" width="20%" style="text-align: center; padding: 0 2.5em;">
+					<span class="price" style="color: #000; font-size: 20px;">@Model.MaterialOld.UnitOfMeasureCode</span>
+				</td>
+				<td valign="middle" width="20%" style="text-align: right; padding: 0 2.5em;">
+					<span class="price" style="color: #000; font-size: 20px;">@Model.MaterialOld.Quantity</span>
+				</td>
+			</tr>
+			<tr style="border-bottom: 1px solid rgba(0,0,0,.05);">
+				<td valign="middle" width="60%" style="text-align: left; padding: 0 2.5em;">
+					<div class="product-entry">
+						<div class="text">
+							<h3>@Model.MaterialNew.CodeMaterial</h3>
+							<span>@Model.MaterialNew.DesMaterial</span>
+						</div>
+					</div>
+				</td>
+				<td valign="middle" width="20%" style="text-align: center; padding: 0 2.5em;">
+					<span class="price" style="color: #000; font-size: 20px;">@Model.MaterialNew.UnitOfMeasureCode</span>
+				</td>
+				<td valign="middle" width="20%" style="text-align: right; padding: 0 2.5em;">
+					<span class="price" style="color: #000; font-size: 20px;">@Model.MaterialNew.Quantity</span>
+				</td>
+			</tr>
+		</table>
+	</tr>
+</table>

@@ -1,0 +1,63 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <!-- Header -->
+    <div class="flex flex-col shadow bg-card">
+        <!-- User info -->
+        <div class="flex flex-col flex-0 items-center max-w-5xl w-full mx-auto p-8 bg-card">
+            <!-- Avatar -->
+            <div class="flex flex-auto items-end">
+                <div
+                    class="relative flex items-center justify-center w-32 h-32 rounded-full overflow-hidden ring-4 ring-bg-card">
+                    <!-- Upload / Remove avatar -->
+                    <div class="absolute inset-0 bg-black bg-opacity-50 z-10"></div>
+                    <div class="absolute inset-0 flex items-center justify-center z-20">
+                        <div>
+                            <label
+                                class="flex items-center justify-center w-10 h-10 rounded-full cursor-pointer hover:bg-hover"
+                                matRipple>
+                                <input
+                                    type="file"
+                                    id="avatar-input-file"
+                                    accept="image/*"
+                                    (change)="onFileChange($event)" />
+                                <mat-icon class="text-white" [svgIcon]="'heroicons_outline:camera'"></mat-icon>
+                            </label>
+                        </div>
+                        <div>
+                            <button mat-icon-button (click)="removeAvatar()">
+                                <mat-icon class="text-white" [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Image/Letter -->
+                    <img *ngIf="avatarUrl" class="object-cover w-full h-full" [src]="avatarUrl" alt="User avatar" />
+                    <div
+                        *ngIf="!avatarUrl"
+                        class="flex items-center justify-center w-full h-full rounded overflow-hidden uppercase text-8xl font-bold leading-none bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                        {{ user?.firstName[0] }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Details -->
+            <div class="flex flex-col items-center my-8">
+                <div class="text-lg font-bold leading-none mb-2">{{ user?.userName }}</div>
+                <div class="text-secondary">{{ user?.fullName }}</div>
+                <div class="flex items-center space-x-2">
+                    <mat-icon [svgIcon]="'heroicons_outline:envelope'"></mat-icon>
+                    <span class="text-secondary">{{ user?.email }}</span>
+                </div>
+            </div>
+
+            <!-- Password -->
+            <button mat-flat-button type="text" color="primary" (click)="changePassword()">
+                {{ 'UserProfile.ChangePassword' | transloco }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto justify-center w-full max-w-5xl mx-auto p-6 sm:p-8">
+        <!-- Column -->
+        <div class="hidden lg:flex flex-col items-start mr-8"></div>
+    </div>
+</div>

@@ -1,0 +1,42 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <!-- Header -->
+    <div
+        class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+        <div class="flex-1 min-w-0">
+            <!-- Title -->
+            <div class="flex space-x-2 items-center">
+                <mat-icon class="icon-size-12" [svgIcon]="'heroicons_outline:circle-stack'"></mat-icon>
+                <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                    {{ 'Navigation.Service' | transloco }}
+                </h2>
+            </div>
+        </div>
+        <div class="flex-1 min-w-0 justify-items-end">
+            <button class="flex space-x-2" mat-flat-button color="primary" (click)="createService()">
+                <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                <span>{{ 'General.Add' | transloco }}</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="relative flex flex-col flex-auto items-center justify-center h-full p-6 sm:p-10">
+        <div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
+            <mat-drawer-container class="flex-auto h-full">
+                <!-- Drawer -->
+                <mat-drawer class="w-90 dark:bg-gray-900" [mode]="drawerMode" [opened]="drawerOpened" #drawer>
+                    <!-- Queries sidebar -->
+                    <app-service-sidebar></app-service-sidebar>
+                </mat-drawer>
+
+                <!-- Drawer content -->
+                <mat-drawer-content class="flex flex-col overflow-hidden">
+                    <!-- Main -->
+                    <div class="flex flex-auto w-full overflow-hidden">
+                        <router-outlet></router-outlet>
+                    </div>
+                </mat-drawer-content>
+            </mat-drawer-container>
+        </div>
+    </div>
+</div>

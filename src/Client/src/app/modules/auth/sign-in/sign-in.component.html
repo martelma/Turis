@@ -1,0 +1,271 @@
+<div class="flex flex-col flex-auto items-center sm:justify-center min-w-0 md:p-8">
+    <div class="flex md:w-full md:max-w-6xl sm:rounded-2xl sm:shadow overflow-hidden sm:bg-card">
+        <div
+            class="relative hidden md:flex flex-auto items-center justify-center h-full p-16 lg:px-28 overflow-hidden bg-red-500 dark:border-r">
+            <!-- Background - @formatter:off -->
+            <!-- Rings -->
+            <svg
+                class="absolute inset-0 pointer-events-none"
+                viewBox="0 0 960 540"
+                width="100%"
+                height="100%"
+                preserveAspectRatio="xMidYMax slice"
+                xmlns="http://www.w3.org/2000/svg">
+                <g class="text-gray-700 opacity-25" fill="none" stroke="currentColor" stroke-width="100">
+                    <circle r="234" cx="196" cy="23"></circle>
+                    <circle r="234" cx="790" cy="491"></circle>
+                </g>
+            </svg>
+            <!-- Dots -->
+            <svg
+                class="absolute -top-16 -right-16 text-gray-700"
+                viewBox="0 0 220 192"
+                width="220"
+                height="192"
+                fill="none">
+                <defs>
+                    <pattern
+                        id="837c3e70-6c3a-44e6-8854-cc48c737b659"
+                        x="0"
+                        y="0"
+                        width="20"
+                        height="20"
+                        patternUnits="userSpaceOnUse">
+                        <rect x="0" y="0" width="4" height="4" fill="currentColor"></rect>
+                    </pattern>
+                </defs>
+                <rect width="220" height="192" fill="url(#837c3e70-6c3a-44e6-8854-cc48c737b659)"></rect>
+            </svg>
+            <!-- @formatter:on -->
+            <!-- Content -->
+            <div class="z-10 relative w-full max-w-2xl">
+                <div class="text-7xl font-bold leading-none text-white">
+                    <div>
+                        {{ 'SignIn.WelcomeTo' | transloco }}
+                    </div>
+                    <div>Turis</div>
+                </div>
+            </div>
+        </div>
+        <div class="w-full sm:w-auto py-8 px-4 sm:p-12 md:p-16">
+            <div class="w-full max-w-80 sm:w-80 mx-auto sm:mx-0">
+                <!-- Logo -->
+                <div class="w-full">
+                    <img src="assets/images/logo/logo.png" alt="" />
+                </div>
+
+                <!-- Title -->
+                <div class="mt-8 text-4xl font-extrabold tracking-tight leading-tight">
+                    {{ (!partialLogin ? 'SignIn.SignIn' : 'SignIn.ResetPassword') | transloco }}
+                </div>
+                <!-- <div *ngIf="!partialLogin" class="flex items-baseline mt-0.5 font-medium">
+                    <div>
+                        {{ 'SignIn.NoAccountLabel' | transloco }}
+                    </div>
+                    <a class="ml-1 text-primary-500 hover:underline" [routerLink]="['/support']">
+                        {{ 'SignIn.ContactUs' | transloco }}
+                    </a>
+                </div> -->
+
+                <!-- Alert -->
+                <fuse-alert
+                    class="mt-8 -mb-4"
+                    *ngIf="showAlert"
+                    [appearance]="'outline'"
+                    [showIcon]="false"
+                    [type]="alert.type"
+                    [@shake]="alert.type === 'error'">
+                    {{ alert.message }}
+                </fuse-alert>
+
+                <!-- Sign in form -->
+                <form
+                    cdkTrapFocus
+                    [cdkTrapFocusAutoCapture]="true"
+                    *ngIf="!partialLogin"
+                    class="mt-8"
+                    [formGroup]="signInForm">
+                    <!-- User name or email field -->
+                    <mat-form-field
+                        class="w-full"
+                        [ngClass]="{
+                            'mat-form-field-invalid ng-invalid': loginFailed
+                        }">
+                        <mat-label>
+                            {{ 'SignIn.UserNameOrEmailAddress' | transloco }}
+                        </mat-label>
+                        <input
+                            id="usernameEmail"
+                            matInput
+                            [formControlName]="'usernameEmail'"
+                            cdkFocusInitial
+                            #usernameEmailField />
+                        <mat-error *ngIf="signInForm.get('usernameEmail').hasError('required')">
+                            {{ 'SignIn.UserNameOrEmailAddressIsRequired' | transloco }}
+                        </mat-error>
+                        <mat-error *ngIf="signInForm.get('usernameEmail').hasError('email')">
+                            {{ 'SignIn.EmailIsNotValid' | transloco }}
+                        </mat-error>
+                        <mat-error *ngIf="signInForm.get('usernameEmail').hasError('pattern')">
+                            {{ 'SignIn.UserNameNotValid' | transloco }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <!-- Password field -->
+                    <mat-form-field
+                        class="w-full"
+                        [ngClass]="{
+                            'mat-form-field-invalid ng-invalid': loginFailed
+                        }">
+                        <mat-label>
+                            {{ 'SignIn.Password' | transloco }}
+                        </mat-label>
+                        <input id="password" matInput type="password" [formControlName]="'password'" #passwordField />
+                        <button
+                            mat-icon-button
+                            type="button"
+                            (click)="
+                                passwordField.type === 'password'
+                                    ? (passwordField.type = 'text')
+                                    : (passwordField.type = 'password')
+                            "
+                            matSuffix>
+                            <mat-icon
+                                class="icon-size-5"
+                                *ngIf="passwordField.type === 'password'"
+                                [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+                            <mat-icon
+                                class="icon-size-5"
+                                *ngIf="passwordField.type === 'text'"
+                                [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
+                        </button>
+                        <mat-error>
+                            {{ 'SignIn.PasswordIsRequired' | transloco }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-error *ngIf="loginFailed">
+                        {{ 'SignIn.LoginFailed' | transloco }}
+                    </mat-error>
+
+                    <!-- Actions -->
+                    <div class="flex items-center justify-end w-full mt-1.5">
+                        <a
+                            class="text-md font-medium text-primary-500 hover:underline"
+                            [routerLink]="['/forgot-password']">
+                            {{ 'SignIn.ForgotPassword' | transloco }}
+                        </a>
+                    </div>
+
+                    <!-- Sign In button -->
+                    <button
+                        class="fuse-mat-button-large w-full mt-6"
+                        mat-flat-button
+                        [color]="'primary'"
+                        [disabled]="signInForm.disabled"
+                        (click)="signIn()">
+                        <span *ngIf="!signInForm.disabled">
+                            {{ 'SignIn.SignIn' | transloco }}
+                        </span>
+                        <mat-progress-spinner
+                            *ngIf="signInForm.disabled"
+                            [diameter]="24"
+                            [mode]="'indeterminate'"></mat-progress-spinner>
+                    </button>
+                </form>
+
+                <!-- Reset Password form -->
+                <form *ngIf="partialLogin" class="mt-8" [formGroup]="resetPasswordForm">
+                    <!-- Password field -->
+                    <mat-form-field
+                        class="w-full"
+                        [ngClass]="{
+                            'mat-form-field-invalid ng-invalid': loginFailed
+                        }">
+                        <mat-label>
+                            {{ 'SignIn.Password' | transloco }}
+                        </mat-label>
+                        <input
+                            cdkFocusInitial
+                            id="password"
+                            matInput
+                            type="password"
+                            [formControlName]="'password'"
+                            #passwordField />
+                        <button
+                            mat-icon-button
+                            type="button"
+                            (click)="
+                                passwordField.type === 'password'
+                                    ? (passwordField.type = 'text')
+                                    : (passwordField.type = 'password')
+                            "
+                            matSuffix>
+                            <mat-icon
+                                class="icon-size-5"
+                                *ngIf="passwordField.type === 'password'"
+                                [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+                            <mat-icon
+                                class="icon-size-5"
+                                *ngIf="passwordField.type === 'text'"
+                                [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
+                        </button>
+                        <mat-error>
+                            {{ 'SignIn.PasswordIsRequired' | transloco }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <!-- Password field -->
+                    <mat-form-field class="w-full">
+                        <mat-label>
+                            {{ 'SignIn.PasswordConfirmation' | transloco }}
+                        </mat-label>
+                        <input
+                            id="password"
+                            matInput
+                            type="password"
+                            [formControlName]="'passwordConfirmation'"
+                            #passwordConfirmationField />
+                        <button
+                            mat-icon-button
+                            type="button"
+                            (click)="
+                                passwordConfirmationField.type === 'password'
+                                    ? (passwordConfirmationField.type = 'text')
+                                    : (passwordConfirmationField.type = 'password')
+                            "
+                            matSuffix>
+                            <mat-icon
+                                class="icon-size-5"
+                                *ngIf="passwordConfirmationField.type === 'password'"
+                                [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+                            <mat-icon
+                                class="icon-size-5"
+                                *ngIf="passwordConfirmationField.type === 'text'"
+                                [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
+                        </button>
+                        <mat-error>
+                            {{ 'SignIn.PasswordConfirmationIsRequired' | transloco }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <!-- Reset Password button -->
+                    <button
+                        class="fuse-mat-button-large w-full mt-6"
+                        mat-flat-button
+                        [color]="'primary'"
+                        [disabled]="resetPasswordForm.disabled"
+                        (click)="resetPassword()">
+                        <span *ngIf="!resetPasswordForm.disabled">
+                            {{ 'SignIn.ResetPassword' | transloco }}
+                        </span>
+                        <mat-progress-spinner
+                            *ngIf="resetPasswordForm.disabled"
+                            [diameter]="24"
+                            [mode]="'indeterminate'"></mat-progress-spinner>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

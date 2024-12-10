@@ -1,0 +1,41 @@
+<div class="spinner-button-container">
+    <div class="spinner-container" *ngIf="loading">
+        <mat-progress-spinner [diameter]="diameter" [mode]="mode"></mat-progress-spinner>
+    </div>
+
+    <!-- Raised -->
+    <button
+        *ngIf="style === 'raised'"
+        mat-raised-button
+        [type]="type"
+        [color]="color"
+        [disabled]="disabled || loading"
+        (click)="onClick()">
+        <mat-icon *ngIf="!loading && svgIcon" [svgIcon]="svgIcon" class="mr-2"></mat-icon>
+        <span *ngIf="!loading">{{ label | transloco }}</span>
+    </button>
+
+    <!-- Stroked -->
+    <button
+        *ngIf="style === 'stroked'"
+        mat-stroked-button
+        [type]="type"
+        [color]="color"
+        [disabled]="disabled || loading"
+        (click)="onClick()">
+        <mat-icon *ngIf="!loading && svgIcon" [svgIcon]="svgIcon" class="mr-2"></mat-icon>
+        <span *ngIf="!loading">{{ label | transloco }}</span>
+    </button>
+
+    <!-- Flat -->
+    <button
+        *ngIf="style === 'flat'"
+        mat-flat-button
+        [type]="type"
+        [color]="color"
+        [disabled]="disabled || loading"
+        (click)="onClick()">
+        <mat-icon *ngIf="!loading && svgIcon" [svgIcon]="svgIcon" class="mr-2"></mat-icon>
+        <span *ngIf="!loading">{{ label | transloco }}</span>
+    </button>
+</div>

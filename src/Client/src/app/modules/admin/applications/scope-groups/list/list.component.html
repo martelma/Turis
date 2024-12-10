@@ -1,0 +1,158 @@
+<div class="flex flex-col w-full min-w-0 sm:absolute sm:inset-0 sm:overflow-hidden">
+    <mat-drawer-container class="flex-auto sm:h-full">
+        <!-- Drawer -->
+        <mat-drawer
+            class="w-120 dark:bg-gray-900"
+            [autoFocus]="false"
+            [mode]="drawerMode"
+            [opened]="drawerOpened"
+            #drawer>
+            <!-- Header -->
+            <div class="flex flex-col flex-1 m-8 mr-6 sm:my-10">
+                <div class="flex items-center justify-between">
+                    <app-back-button></app-back-button>
+
+                    <!-- Close button -->
+                    <div class="lg:hidden">
+                        <button mat-icon-button (click)="drawer.close()">
+                            <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mt-4">
+                    <!-- Title -->
+                    <div class="flex flex-1 justify-between">
+                        <div class="text-4xl font-extrabold tracking-tight leading-none">
+                            {{ 'Navigation.ScopeGroups' | transloco }} {{ 'General.For' | transloco }}
+                            {{ application?.name }}
+                        </div>
+
+                        <!-- Add button -->
+                        <button class="ml-4" (click)="createScopeGroup()">
+                            <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex flex-1 mt-4 space-x-2">
+                    <!-- Search -->
+                    <div class="flex-auto">
+                        <mat-form-field class="fuse-mat-dense w-full min-w-50" subscriptSizing="dynamic">
+                            <mat-icon
+                                class="icon-size-5"
+                                matPrefix
+                                [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+
+                            <input
+                                matInput
+                                [formControl]="searchScopeGroupsInputControl"
+                                [autocomplete]="'off'"
+                                [placeholder]="'Search scope groups'" />
+
+                            <button
+                                type="button"
+                                *ngIf="searchScopeGroupsInputControl.value"
+                                matSuffix
+                                mat-icon-button
+                                aria-label="Clear"
+                                (click)="searchScopeGroupsInputControl.setValue('')">
+                                <mat-icon [svgIcon]="'heroicons_solid:x-mark'"></mat-icon>
+                            </button>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scope Group links -->
+            <div class="flex flex-col divide-y border-t border-b">
+                <ng-container *ngFor="let scopeGroup of filteredScopeGroups; trackBy: trackByFn">
+                    <div
+                        class="flex px-8 py-5 cursor-pointer"
+                        [ngClass]="{
+                            'hover:bg-gray-100 dark:hover:bg-hover':
+                                !selectedScopeGroup || selectedScopeGroup?.id !== scopeGroup.id,
+                            'bg-primary-50 dark:bg-hover': selectedScopeGroup && selectedScopeGroup.id === scopeGroup.id
+                        }"
+                        (click)="onScopeGroupSelected(scopeGroup)"
+                        scopeGroup="button"
+                        tabindex="0"
+                        (keypress)="($event.preventDefault)">
+                        <mat-icon
+                            [ngClass]="{
+                                'text-hint': !selectedScopeGroup || selectedScopeGroup !== scopeGroup.id,
+                                'text-primary dark:text-primary-500':
+                                    selectedScopeGroup && selectedScopeGroup === scopeGroup.id
+                            }"
+                            [svgIcon]="scopeGroup.icon"></mat-icon>
+                        <div class="ml-3">
+                            <div
+                                class="font-medium leading-6"
+                                [ngClass]="{
+                                    'text-primary dark:text-primary-500':
+                                        selectedScopeGroup && selectedScopeGroup === scopeGroup.id
+                                }">
+                                {{ scopeGroup.name }}
+                            </div>
+                            <div class="mt-0.5 text-secondary">
+                                {{ scopeGroup.description }}
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </mat-drawer>
+
+        <!-- Drawer content -->
+        <mat-drawer-content class="relative flex flex-col">
+            <ng-container *ngIf="selectedScopeGroup; else noSelectedScopeGroup">
+                <!-- Header -->
+                <div
+                    class="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between p-6 sm:py-12 md:px-8 border-b bg-card dark:bg-transparent">
+                    <!-- Drawer toggle -->
+                    <button class="lg:hidden -ml-2" mat-icon-button (click)="drawer.toggle()">
+                        <mat-icon [svgIcon]="'heroicons_outline:bars-3'"></mat-icon>
+                    </button>
+
+                    <!-- Title -->
+                    <div>
+                        <div class="text-4xl font-extrabold tracking-tight leading-none">
+                            {{ selectedScopeGroup?.name ?? ('General.New' | transloco) }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main -->
+                <div class="flex flex-col flex-1 h-full">
+                    <div class="flex flex-1 min-w-full min-h-full overflow-y-auto">
+                        <router-outlet></router-outlet>
+                    </div>
+                </div>
+            </ng-container>
+
+            <!-- No selected scopeGroup -->
+            <ng-template #noSelectedScopeGroup>
+                <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">
+                    {{ 'Applications.ScopeGroups.NoSelectedScopeGroup' | transloco }}
+                </div>
+            </ng-template>
+        </mat-drawer-content>
+    </mat-drawer-container>
+</div>
+
+<!-- Scopes creation/edit modal -->
+<codedesign-modal
+    *ngIf="scopesEditModal && isCreatingScope"
+    (closed)="isCreatingScope = false"
+    [resizable]="true"
+    [showBackground]="true"
+    [draggable]="true"
+    [lgMinWidth]="600"
+    [modalTitle]="!!selectedScope ? 'Edit ' + selectedScope.name : 'Create Scope'">
+    <application-scopeGroup-scope-modal
+        [scope]="selectedScope"
+        [scopeGroups]="scopeGroups"
+        (save)="saveScope($event)"
+        class="flex flex-col w-full h-full items-center px-5 relative flex-auto"
+        modal-content></application-scopeGroup-scope-modal>
+</codedesign-modal>

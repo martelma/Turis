@@ -1,0 +1,60 @@
+<div class="flex flex-col flex-auto w-full h-full p-2">
+    <h3 class="text-3xl md:text-4xl font-semibold mt-4">
+        {{ 'General.Filters' | transloco }}
+    </h3>
+
+    <mat-form-field class="col-span-2">
+        <mat-label for="code">Code</mat-label>
+        <input
+            matInput
+            id="code"
+            name="code"
+            #name="ngModel"
+            class="form-control font-bold"
+            [(ngModel)]="contactParameters.code"
+            (ngModelChange)="filter()" />
+    </mat-form-field>
+
+    <mat-form-field class="col-span-2">
+        <mat-label for="code">First Name</mat-label>
+        <input
+            matInput
+            id="firstName"
+            name="firstName"
+            #name="ngModel"
+            class="form-control font-bold"
+            [(ngModel)]="contactParameters.firstName"
+            (ngModelChange)="filter()" />
+    </mat-form-field>
+
+    <mat-form-field class="col-span-2">
+        <mat-label for="code">Last Name</mat-label>
+        <input
+            matInput
+            id="lastName"
+            name="lastName"
+            #name="ngModel"
+            class="form-control font-bold"
+            [(ngModel)]="contactParameters.lastName"
+            (ngModelChange)="filter()" />
+    </mat-form-field>
+
+    <mat-form-field class="col-span-2">
+        <mat-label for="code">Company Name</mat-label>
+        <input
+            matInput
+            id="companyName"
+            name="companyName"
+            #name="ngModel"
+            class="form-control font-bold"
+            [(ngModel)]="contactParameters.companyName"
+            (ngModelChange)="filter()" />
+    </mat-form-field>
+
+    <div class="flex space-x-2">
+        <button mat-flat-button color="primary" (click)="clearFilters()">
+            <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:archive-box-x-mark'"></mat-icon>
+            <span>{{ 'General.ClearFilters' | transloco }}</span>
+        </button>
+    </div>
+</div>

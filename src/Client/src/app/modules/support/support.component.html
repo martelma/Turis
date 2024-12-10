@@ -1,0 +1,96 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <!-- Main -->
+    <div class="flex flex-col flex-auto items-center p-6 sm:p-10">
+        <div class="flex flex-col w-full max-w-4xl">
+            <div class="-ml-4 sm:mt-8">
+                <app-back-button></app-back-button>
+            </div>
+            <div class="mt-2 text-4xl sm:text-7xl font-extrabold tracking-tight leading-tight">
+                {{ 'Contact.ContactSupport' | transloco }}
+            </div>
+            <!-- Form -->
+            <div class="mt-8 sm:mt-12 p-6 pb-7 sm:p-10 sm:pb-7 shadow rounded-2xl bg-card">
+                <!-- Alert -->
+                <fuse-alert class="mb-8" *ngIf="alert" [type]="alert.type" [showIcon]="false">
+                    {{ alert.message }}
+                </fuse-alert>
+                <form class="space-y-3" [formGroup]="supportForm" #supportNgForm="ngForm">
+                    <div class="mb-6">
+                        <div class="text-2xl font-bold tracking-tight">
+                            {{ 'Contact.SubmitYourRequest' | transloco }}
+                        </div>
+                        <div class="text-secondary">
+                            {{ 'Contact.YourRequestWillBeProcessed' | transloco }}
+                        </div>
+                    </div>
+                    <!-- Name -->
+                    <mat-form-field class="w-full">
+                        <input matInput [formControlName]="'name'" [required]="true" />
+                        <mat-label>
+                            {{ 'Contact.Name' | transloco }}
+                        </mat-label>
+                        <mat-error *ngIf="supportForm.get('name').hasError('required')">
+                            {{ 'Contact.Required' | transloco }}
+                        </mat-error>
+                    </mat-form-field>
+                    <!-- Email -->
+                    <mat-form-field class="w-full">
+                        <input type="email" matInput [formControlName]="'email'" [required]="true" />
+                        <mat-label>
+                            {{ 'Contact.Email' | transloco }}
+                        </mat-label>
+                        <mat-error *ngIf="supportForm.get('email').hasError('required')">
+                            {{ 'Contact.Required' | transloco }}
+                        </mat-error>
+                        <mat-error *ngIf="supportForm.get('email').hasError('email')">
+                            {{ 'Contact.EmailIsNotValid' | transloco }}
+                        </mat-error>
+                    </mat-form-field>
+                    <!-- Subject -->
+                    <mat-form-field class="w-full">
+                        <input matInput [formControlName]="'subject'" [required]="true" />
+                        <mat-label>
+                            {{ 'Contact.Subject' | transloco }}
+                        </mat-label>
+                        <mat-error *ngIf="supportForm.get('subject').hasError('required')">
+                            {{ 'Contact.Required' | transloco }}
+                        </mat-error>
+                    </mat-form-field>
+                    <!-- Message -->
+                    <mat-form-field class="w-full">
+                        <textarea
+                            matInput
+                            [formControlName]="'message'"
+                            [required]="true"
+                            [rows]="5"
+                            cdkTextareaAutosize></textarea>
+                        <mat-label>
+                            {{ 'Contact.Message' | transloco }}
+                        </mat-label>
+                        <mat-error *ngIf="supportForm.get('message').hasError('required')">
+                            {{ 'Contact.Required' | transloco }}
+                        </mat-error>
+                    </mat-form-field>
+                    <!-- Actions -->
+                    <div class="flex items-center justify-end">
+                        <button
+                            mat-button
+                            [color]="'accent'"
+                            [disabled]="supportForm.pristine || supportForm.untouched"
+                            (click)="clearForm()">
+                            {{ 'Contact.Clear' | transloco }}
+                        </button>
+                        <button
+                            class="ml-2"
+                            mat-flat-button
+                            [color]="'primary'"
+                            [disabled]="supportForm.pristine || supportForm.invalid"
+                            (click)="sendForm()">
+                            {{ 'Contact.Submit' | transloco }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

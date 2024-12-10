@@ -1,0 +1,37 @@
+<div class="flex flex-col flex-auto w-full h-full">
+    <h3 class="text-3xl md:text-4xl font-semibold ml-4 mt-4">
+        {{ 'General.Filters' | transloco }}
+    </h3>
+
+    <!-- Filter by text in descriptions -->
+    <app-search-input
+        class="mx-4 mb-4"
+        [label]="'General.FilterByTextInDescriptions'"
+        [parentFormGroup]="filters"
+        [controlName]="'descriptionsFilterText'"
+        [placeholder]="'Queries.FilterByTextInDescriptions' | transloco">
+    </app-search-input>
+
+    <form class="mx-4 mb-4" [formGroup]="filters">
+        <!-- Show only mine -->
+        <mat-checkbox color="primary" class="form-control" formControlName="onlyCreatedByMe">
+            {{ 'General.ShowOnlyCreatedByMe' | transloco }}
+        </mat-checkbox>
+
+        <!-- Show only published -->
+        <mat-checkbox
+            *ngIf="userCanPublishQueries"
+            color="primary"
+            class="form-control"
+            formControlName="onlyPublished">
+            {{ 'General.ShowOnlyPublished' | transloco }}
+        </mat-checkbox>
+    </form>
+
+    <!-- Language Filters -->
+    <mat-label class="mx-4 mb-1 font-semibold">
+        {{ 'Languages.FilterByLanguagesTitle' | transloco }}
+    </mat-label>
+
+    <language-filters class="flex flex-1" (selectionChange)="onLanguagesSelectionChange($event)"></language-filters>
+</div>

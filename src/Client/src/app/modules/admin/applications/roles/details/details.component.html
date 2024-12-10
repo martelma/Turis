@@ -1,0 +1,239 @@
+<mat-tab-group class="applications-roles-tab-group" [mat-stretch-tabs]="false">
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <span class="inline-flex items-center space-x-2">
+                <mat-icon [svgIcon]="'heroicons_outline:information-circle'"></mat-icon>
+                <span class="">{{ 'General.Information' | transloco }}</span>
+            </span>
+        </ng-template>
+
+        <div class="flex flex-1 overflow-hidden h-full">
+            <div class="flex flex-1 flex-col">
+                <div class="flex flex-1 flex-col overflow-hidden p-8">
+                    <form cdkTrapFocus [cdkTrapFocusAutoCapture]="true" [formGroup]="form">
+                        <!-- Name -->
+                        <div class="mt-8">
+                            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                                <mat-label>Name</mat-label>
+                                <input matInput cdkFocusInitial [formControlName]="'name'" [placeholder]="'name'" />
+                            </mat-form-field>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mt-8">
+                            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                                <mat-label>Description</mat-label>
+                                <input matInput [formControlName]="'description'" [placeholder]="'description'" />
+                            </mat-form-field>
+                        </div>
+                    </form>
+
+                    <!-- Scopes -->
+                    <fuse-card class="flex flex-1 flex-col p-6 mt-8">
+                        <div class="flex justify-between">
+                            <div class="text-3xl font-bold truncate">
+                                {{ 'Navigation.Scopes' | transloco }}
+                            </div>
+
+                            <div
+                                *ngIf="isUserOwner"
+                                class="flex flex-1 text-sm justify-end my-2 hover:cursor-pointer items-center space-x-4 ml-auto">
+                                <!-- Unselect All -->
+                                <span
+                                    (click)="unselectAll()"
+                                    tabindex="0"
+                                    (keypress)="(null)"
+                                    [matTooltip]="'General.UnselectAll' | transloco">
+                                    {{ 'General.UnselectAll' | transloco }}
+                                </span>
+
+                                <!-- Select All -->
+                                <span
+                                    (click)="selectAll()"
+                                    tabindex="0"
+                                    (keypress)="(null)"
+                                    [matTooltip]="'General.SelectAll' | transloco">
+                                    {{ 'General.SelectAll' | transloco }}
+                                </span>
+
+                                <!-- Add button -->
+                                <button mat-icon-button (click)="createScope()">
+                                    <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- List of scopes -->
+                        <div class="overflow-y-auto">
+                            <ng-container *ngFor="let group of groupedApplicationScopes | keyvalue; trackBy: trackByFn">
+                                <!-- Scope Group Title -->
+                                <span class="mt-4 flex items-center space-x-2 justify-between">
+                                    <mat-icon
+                                        class="icon-size-6"
+                                        [svgIcon]="'heroicons_outline:rectangle-group'"></mat-icon>
+                                    <span class="text-2xl font-semibold">{{ group?.key }}</span>
+                                    <div class="flex flex-1 text-sm justify-end my-2 hover:cursor-pointer space-x-4">
+                                        <!-- Unselect All -->
+                                        <span
+                                            (click)="unselectAllInScopeGroup(group?.key)"
+                                            tabindex="0"
+                                            (keypress)="(null)"
+                                            [matTooltip]="'General.UnselectAll' | transloco">
+                                            {{ 'General.UnselectAll' | transloco }}
+                                        </span>
+
+                                        <!-- Select All -->
+                                        <span
+                                            (click)="selectAllInScopeGroup(group?.key)"
+                                            tabindex="0"
+                                            (keypress)="(null)"
+                                            [matTooltip]="'General.SelectAll' | transloco">
+                                            {{ 'General.SelectAll' | transloco }}
+                                        </span>
+                                    </div>
+                                </span>
+
+                                <ng-container
+                                    *ngFor="
+                                        let scope of group.value;
+                                        let i = index;
+                                        trackBy: trackByFn;
+                                        let last = last
+                                    ">
+                                    <div
+                                        class="w-full bg-white p-3 flex flex-row items-center"
+                                        [ngClass]="{
+                                            'border-b': !last,
+                                            'border-0': last
+                                        }">
+                                        <div class="flex flex-col justify-center">
+                                            <!-- Checkbox to check scope -->
+                                            <mat-checkbox
+                                                class="scale-125"
+                                                color="primary"
+                                                [checked]="isScopeChecked(scope.id)"
+                                                (change)="toggleScope(scope.id)"></mat-checkbox>
+                                        </div>
+                                        <div class="flex items-center w-full h-full">
+                                            <span class="flex flex-col">
+                                                <span class="font-bold">
+                                                    {{ scope.name }}
+                                                </span>
+
+                                                <!-- Scope Description -->
+                                                <ng-container *ngIf="scope.description?.length">
+                                                    <span class="text-sm">{{ scope.description }}</span>
+                                                </ng-container>
+                                            </span>
+                                        </div>
+
+                                        <span *ngIf="isUserOwner" class="flex mr-6">
+                                            <button
+                                                mat-icon-button
+                                                [matMenuTriggerFor]="roleMenu"
+                                                (click)="$event.stopPropagation()">
+                                                <mat-icon
+                                                    class="icon-size-5"
+                                                    [svgIcon]="'heroicons_mini:ellipsis-vertical'"></mat-icon>
+                                            </button>
+                                            <mat-menu #roleMenu="matMenu">
+                                                <button
+                                                    mat-menu-item
+                                                    (click)="$event.stopPropagation(); openScopesEditModal(scope)">
+                                                    <span class="flex items-center">
+                                                        <mat-icon
+                                                            class="icon-size-5 mr-3"
+                                                            [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
+                                                        <span>{{ 'General.Edit' | transloco }}</span>
+                                                    </span>
+                                                </button>
+                                                <button
+                                                    mat-menu-item
+                                                    (click)="$event.stopPropagation(); deleteScope(scope)">
+                                                    <span class="flex items-center">
+                                                        <mat-icon
+                                                            class="text-red-600"
+                                                            [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                                                        <span>{{ 'General.Delete' | transloco }}</span>
+                                                    </span>
+                                                </button>
+                                            </mat-menu>
+                                        </span>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                        </div>
+                    </fuse-card>
+                </div>
+
+                <!-- Main actions -->
+                <div
+                    class="flex items-center mt-auto sm:mt-0 md:mt-4 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent h-20 p-6">
+                    <!-- Delete -->
+                    <button
+                        *ngIf="!isCreate"
+                        mat-button
+                        [color]="'warn'"
+                        [matTooltip]="'General.Delete' | transloco"
+                        (click)="deleteRole()">
+                        {{ 'General.Delete' | transloco }}
+                    </button>
+
+                    <!-- Cancel -->
+                    <button
+                        class="ml-auto"
+                        mat-button
+                        [matTooltip]="'General.Cancel' | transloco"
+                        (click)="closeDetails()">
+                        {{ 'General.Cancel' | transloco }}
+                    </button>
+
+                    <!-- Save -->
+                    <button
+                        class="ml-2"
+                        mat-flat-button
+                        [color]="'primary'"
+                        [matTooltip]="'General.Save' | transloco"
+                        (click)="updateOrCreateRole()">
+                        {{ 'General.Save' | transloco }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </mat-tab>
+
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <span class="inline-flex items-center space-x-2">
+                <span class="">{{ 'Navigation.Users' | transloco }}</span>
+                <span class="px-2 py-1 text-sm rounded-full bg-red-600 text-white">
+                    {{ role?.users?.length ?? 0 }}
+                </span>
+            </span>
+        </ng-template>
+
+        <ng-container *ngFor="let user of role?.users; trackBy: trackByFn">
+            <div class="group h-20 bg-white p-3 border-b last:border-b-0 flex flex-row justify-between items-center">
+                <div class="flex flex-col">
+                    <div class="text-2xl font-semibold leading-tight">
+                        {{ user.userName }}
+                    </div>
+                    <div class="text-md text-secondary">{{ user.fullName }}</div>
+                </div>
+
+                <button mat-icon-button [matMenuTriggerFor]="roleMenu" (click)="$event.stopPropagation()">
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_mini:ellipsis-vertical'"></mat-icon>
+                </button>
+
+                <mat-menu #roleMenu="matMenu">
+                    <button mat-menu-item (click)="$event.stopPropagation(); editUser(user?.id)">
+                        <span class="flex items-center">
+                            <mat-icon class="icon-size-5 mr-3" [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
+                            <span>{{ 'General.Edit' | transloco }}</span>
+                        </span>
+                    </button>
+                </mat-menu>
+            </div>
+        </ng-container>
+    </mat-tab>
+</mat-tab-group>

@@ -1,0 +1,106 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <!-- Header -->
+    <div class="bg-card">
+        <div class="flex flex-col w-full max-w-screen-xl mx-auto px-6 sm:px-8">
+            <div class="flex flex-col sm:flex-row flex-auto sm:items-center min-w-0 my-8 sm:my-12">
+                <!-- Avatar and name -->
+                <div class="flex flex-auto items-center min-w-0">
+                    <div class="flex-0 w-16 h-16 overflow-hidden">
+                        <img
+                            class="w-full h-full rounded-full"
+                            *ngIf="user?.avatarUrl"
+                            [src]="user?.avatarUrl"
+                            alt="User avatar" />
+                        <mat-icon
+                            class="icon-size-16"
+                            *ngIf="!user?.avatarUrl"
+                            [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
+                    </div>
+                    <div class="flex flex-col min-w-0 ml-4">
+                        <ng-container *transloco="let t">
+                            <div
+                                class="text-2xl md:text-5xl font-semibold tracking-tight leading-7 md:leading-snug truncate">
+                                {{ t('Dashboard.WelcomeBack') }}, {{ user?.fullName }}!
+                            </div>
+                        </ng-container>
+                        <!--<div class="flex items-center">
+                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bell'"></mat-icon>
+                            <div class="ml-1.5 leading-6 truncate text-secondary">
+                                You have 2 new messages and 15 new tasks
+                            </div>
+                        </div>-->
+                    </div>
+                </div>
+                <!-- Actions -->
+                <!--<div class="flex items-center mt-6 sm:mt-0 sm:ml-2 space-x-3">
+                    <button
+                        class="bg-accent"
+                        mat-flat-button
+                        [color]="'accent'">
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'heroicons_solid:envelope'"></mat-icon>
+                        <span class="ml-2">Messages</span>
+                    </button>
+                    <button
+                        mat-flat-button
+                        [color]="'primary'">
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'heroicons_solid:cog-8-tooth'"></mat-icon>
+                        <span class="ml-2">Settings</span>
+                    </button>
+                </div>-->
+            </div>
+            <!-- Project selector -->
+            <!--<div
+                class="relative flex self-start pt-2 pb-1 pl-5 pr-4 cursor-pointer overflow-hidden rounded-t-xl border border-b-0 bg-default"
+                matRipple
+                [matMenuTriggerFor]="projectsMenu">
+                <div class="flex items-center">
+                    <div class="overflow-hidden">
+                        <div class="font-medium leading-6 truncate">{{selectedProject}}</div>
+                    </div>
+                    <div class="flex items-center justify-center pl-2">
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'heroicons_mini:chevron-down'"></mat-icon>
+                    </div>
+                </div>
+                <mat-menu
+                    #projectsMenu="matMenu"
+                    [xPosition]="'before'">
+                    <button
+                        mat-menu-item
+                        (click)="selectedProject='ACME Corp. Backend App'">ACME Corp. Backend App
+                    </button>
+                    <button
+                        mat-menu-item
+                        (click)="selectedProject='ACME Corp. Frontend App'">ACME Corp. Frontend App
+                    </button>
+                    <button
+                        mat-menu-item
+                        (click)="selectedProject='Creapond'">Creapond
+                    </button>
+                    <button
+                        mat-menu-item
+                        (click)="selectedProject='Withinpixels'">Withinpixels
+                    </button>
+                </mat-menu>
+            </div>-->
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex-auto border-t -mt-px pt-4 sm:pt-6">
+        <div class="w-full max-w-screen-xl mx-auto">
+            <!-- Tabs -->
+            <mat-tab-group class="sm:px-2" mat-stretch-tabs="false" [animationDuration]="'0'">
+                <!-- Applications -->
+                <mat-tab label="My Home"> </mat-tab>
+                <mat-tab label="Admin"> </mat-tab>
+                <mat-tab label="Team"> </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
+</div>

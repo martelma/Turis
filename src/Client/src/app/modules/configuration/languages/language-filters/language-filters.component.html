@@ -1,0 +1,117 @@
+<div class="relative flex flex-auto w-full bg-card dark:bg-transparent">
+    <!-- <pre>
+        {{ selectedLanguages | json }}
+    </pre> -->
+    <!-- Languages list -->
+    <div class="relative flex flex-auto flex-col w-full border-r z-10">
+        <!-- Header -->
+        <div
+            class="relative flex flex-0 items-center justify-between px-4 pt-2 border-b border-t bg-gray-50 dark:bg-transparent">
+            <div class="flex flex-1 flex-col">
+                <div class="flex flex-1 items-center mt-2">
+                    <!-- Filter -->
+                    <app-search-input
+                        class="mx-4 w-full"
+                        [placeholder]="'Languages.FilterLanguages'"
+                        (callbackFn)="filter($event)">
+                    </app-search-input>
+                </div>
+
+                <div class="flex flex-1 text-sm justify-end my-2 hover:cursor-pointer space-x-4">
+                    <!-- Show Only Selected -->
+                    <span
+                        (click)="toggleOnlySelected()"
+                        tabindex="0"
+                        (keypress)="(null)"
+                        [matTooltip]="'General.ShowOnlySelected' | transloco">
+                        {{ (!showOnlySelected ? 'General.ShowOnlySelected' : 'General.ShowAll') | transloco }}
+                    </span>
+
+                    <!-- Unselect All -->
+                    <span
+                        (click)="unselectAll()"
+                        tabindex="0"
+                        (keypress)="(null)"
+                        [matTooltip]="'General.UnselectAll' | transloco">
+                        {{ 'General.UnselectAll' | transloco }}
+                    </span>
+
+                    <!-- Select All -->
+                    <span
+                        (click)="selectAll()"
+                        tabindex="0"
+                        (keypress)="(null)"
+                        [matTooltip]="'General.SelectAll' | transloco">
+                        {{ 'General.SelectAll' | transloco }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Loading bar -->
+            <mat-progress-bar
+                class="absolute inset-x-0 bottom-0 h-0.5"
+                *ngIf="itemsLoading"
+                [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+
+        <!-- Language list -->
+        <ng-container *ngIf="filteredResults?.items && filteredResults?.items?.length > 0; else noLanguages">
+            <div class="overflow-y-auto" #languageList>
+                <mat-selection-list multiple>
+                    <mat-list-option
+                        *ngFor="let language of filteredResults?.items; trackBy: trackByFn"
+                        [value]="getLanguage(language)"
+                        class="h-16 border-t first:border-0"
+                        [color]="'primary'"
+                        (click)="$event.stopPropagation(); toggleSelection(language)"
+                        [selected]="isSelectedLanguage(language)"
+                        [matTooltip]="getTranslation(language?.descriptions, activeLang) | transloco">
+                        <div class="flex items-center w-full truncate space-x-2">
+                            <!-- <mat-icon
+                                class="icon-size-8 p-2 rounded-md"
+                                [ngStyle]="{
+                                    'background-color': language.color,
+                                    color: getContrastYIQ(language.color)
+                                }"
+                                [svgIcon]="'heroicons_outline:language'"></mat-icon> -->
+                            <span class="flex flex-col truncate">
+                                <!-- Language Code -->
+                                <span>{{ language.code }}</span>
+                                <!-- Language Name -->
+                                <span>{{ language.name }}</span>
+
+                                <!-- Language Description -->
+                                <!-- <span class="leading-normal line-clamp-2 text-secondary whitespace-pre-wrap">
+                                    {{ getTranslation(language?.descriptions, activeLang) | transloco }}
+                                </span> -->
+                            </span>
+                        </div>
+                    </mat-list-option>
+                </mat-selection-list>
+            </div>
+        </ng-container>
+
+        <!-- Paginator -->
+        <mat-paginator
+            class="mt-auto border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+            [ngClass]="{ 'pointer-events-none': itemsLoading }"
+            [length]="filteredResults?.totalCount ?? 0"
+            [pageSize]="queryParameters?.pageSize ?? 10"
+            [pageIndex]="queryParameters?.pageIndex ?? 0"
+            [pageSizeOptions]="[5, 10, 25, 100]"
+            (page)="handlePageEvent($event)"
+            [showFirstLastButtons]="true"></mat-paginator>
+    </div>
+
+    <!-- No languages template -->
+    <ng-template #noLanguages>
+        <div
+            *ngIf="dataLoaded"
+            class="z-100 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+            <mat-icon class="icon-size-24" [svgIcon]="'heroicons_outline:language'"></mat-icon>
+            <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">
+                {{ 'Languages.NoLanguages' | transloco }}
+            </div>
+        </div>
+    </ng-template>
+</div>

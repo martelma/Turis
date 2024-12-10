@@ -1,0 +1,551 @@
+<div class="flex flex-col overflow-hidden flex-1">
+    <form [formGroup]="form" class="p-6 md:p-8">
+        <!-- Close button -->
+        <div class="flex items-center justify-end">
+            <a mat-icon-button [routerLink]="['../']">
+                <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+            </a>
+        </div>
+
+        <!-- Logo -->
+        <div class="mt-8">
+            <div class="flex flex-col flex-auto w-full p-8 text-center">
+                <div class="w-32 h-32 mx-auto overflow-hidden">
+                    <img class="w-full h-full object-cover" src="assets/images/background.jpg" alt="" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Name -->
+        <div class="mt-8">
+            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                <mat-label>Name</mat-label>
+                <input matInput [formControlName]="'name'" [placeholder]="'name'" />
+            </mat-form-field>
+        </div>
+
+        <!-- Description -->
+        <div class="mt-8">
+            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                <mat-label>Description</mat-label>
+                <input matInput [formControlName]="'description'" [placeholder]="'description'" />
+            </mat-form-field>
+        </div>
+
+        <!-- URL -->
+        <div class="mt-8">
+            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                <mat-label>URL</mat-label>
+                <input matInput [formControlName]="'url'" [placeholder]="'url'" />
+            </mat-form-field>
+        </div>
+    </form>
+
+    <!-- Actions -->
+    <div class="flex items-center mt-10 pl-1 border-t bg-gray-50 dark:bg-transparent p-6 md:p-8">
+        <!-- Delete -->
+        <button *ngIf="!isCreate" mat-button [color]="'warn'" [matTooltip]="'Delete'" (click)="deleteApplication()">
+            {{ 'General.Delete' | transloco }}
+        </button>
+        <!-- Cancel -->
+        <button class="ml-auto" mat-button [matTooltip]="'Cancel'" (click)="closeCreateApplicationDrawer()">
+            {{ 'General.Cancel' | transloco }}
+        </button>
+        <!-- Save -->
+        <button
+            class="ml-2"
+            mat-flat-button
+            [color]="'primary'"
+            [disabled]="form.invalid"
+            [matTooltip]="'Save'"
+            (click)="updateOrCreateApplication()">
+            {{ 'General.Save' | transloco }}
+        </button>
+    </div>
+
+    <!-- Tabs -->
+    <mat-tab-group class="flex flex-1 mt-4" mat-stretch-tabs="false" [animationDuration]="'0'" *ngIf="!isCreate">
+        <!-- Users -->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <span class="inline-flex items-center space-x-2">
+                    <span class="">{{ 'Navigation.Users' | transloco }}</span>
+                    <span class="px-2 py-1 text-sm rounded-full bg-red-600 text-white">
+                        {{ application?.users?.length ?? 0 }}
+                    </span>
+                </span>
+            </ng-template>
+
+            <div class="relative flex flex-col flex-auto overflow-hidden">
+                <!-- Users -->
+                <div class="flex justify-between">
+                    <div class="flex flex-1 space-x-2 justify-between mb-4">
+                        <!-- Filter -->
+                        <mat-form-field class="flex-1 fuse-mat-dense w-full" [subscriptSizing]="'dynamic'">
+                            <mat-icon
+                                class="icon-size-5"
+                                matPrefix
+                                [svgIcon]="'heroicons_outline:magnifying-glass'"></mat-icon>
+
+                            <input
+                                matInput
+                                [formControl]="usersSearchInputControl"
+                                [autocomplete]="'off'"
+                                (keyup.enter)="filterUsers()"
+                                [placeholder]="'General.Search' | transloco" />
+
+                            <button
+                                type="button"
+                                *ngIf="usersSearchInputControl.value"
+                                matSuffix
+                                mat-icon-button
+                                aria-label="Clear"
+                                (click)="usersSearchInputControl.setValue('')">
+                                <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                            </button>
+                        </mat-form-field>
+
+                        <div class="flex space-x-2">
+                            <!-- Edit button -->
+                            <button mat-icon-button [routerLink]="['/users']">
+                                <mat-icon [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
+                            </button>
+
+                            <!-- Add button -->
+                            <button mat-icon-button (click)="newUser()">
+                                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-1 flex-col h-full">
+                    <div class="overflow-y-auto h-[600px]">
+                        <ng-container *ngFor="let user of applicationUsers; trackBy: trackByFn">
+                            <div
+                                class="group bg-white p-3 border-b last:border-b-0 flex flex-row justify-between items-center">
+                                <div class="flex flex-col">
+                                    <div class="text-2xl font-semibold leading-tight">
+                                        {{ user.userName }}
+                                    </div>
+                                    <div class="text-md text-secondary">{{ user.fullName }}</div>
+                                </div>
+
+                                <!-- Actions Menu -->
+                                <button
+                                    mat-icon-button
+                                    [matMenuTriggerFor]="roleMenu"
+                                    (click)="$event.stopPropagation()">
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="'heroicons_mini:ellipsis-vertical'"></mat-icon>
+                                </button>
+
+                                <mat-menu #roleMenu="matMenu">
+                                    <!-- Edit -->
+                                    <button mat-menu-item (click)="$event.stopPropagation(); editUser(user?.id)">
+                                        <span class="flex items-center">
+                                            <mat-icon
+                                                class="icon-size-5 mr-3"
+                                                [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
+                                            <span>{{ 'General.Edit' | transloco }}</span>
+                                        </span>
+                                    </button>
+                                </mat-menu>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+
+                <mat-paginator
+                    class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                    [length]="application?.users?.length ?? 0"
+                    [pageIndex]="usersPageIndex"
+                    [pageSize]="usersPageSize"
+                    [pageSizeOptions]="[5, 10, 25, 100]"
+                    (page)="handleUsersPageEvent($event)"
+                    [showFirstLastButtons]="true"></mat-paginator>
+            </div>
+        </mat-tab>
+
+        <!-- Roles  -->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <span class="inline-flex items-center space-x-2">
+                    <span class="">{{ 'Navigation.Roles' | transloco }}</span>
+                    <span class="px-2 py-1 text-sm rounded-full bg-red-600 text-white">
+                        {{ application?.roles?.length ?? 0 }}
+                    </span>
+                </span>
+            </ng-template>
+
+            <!-- Roles -->
+            <div class="relative flex flex-col flex-auto overflow-hidden">
+                <div class="flex justify-between">
+                    <div class="flex flex-1 space-x-2 justify-between mb-4">
+                        <!-- Filter -->
+                        <mat-form-field class="flex-1 fuse-mat-dense w-full" [subscriptSizing]="'dynamic'">
+                            <mat-icon
+                                class="icon-size-5"
+                                matPrefix
+                                [svgIcon]="'heroicons_outline:magnifying-glass'"></mat-icon>
+
+                            <input
+                                matInput
+                                [formControl]="rolesSearchInputControl"
+                                [autocomplete]="'off'"
+                                (keyup.enter)="filterRoles()"
+                                [placeholder]="'General.Search' | transloco" />
+
+                            <button
+                                type="button"
+                                *ngIf="rolesSearchInputControl.value"
+                                matSuffix
+                                mat-icon-button
+                                aria-label="Clear"
+                                (click)="rolesSearchInputControl.setValue('')">
+                                <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                            </button>
+                        </mat-form-field>
+
+                        <div class="ml-auto">
+                            <!-- Edit button -->
+                            <button mat-icon-button (click)="openRoles()">
+                                <mat-icon [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
+                            </button>
+
+                            <!-- Add button -->
+                            <button mat-icon-button (click)="newRole()">
+                                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-1 flex-col h-full">
+                    <div class="overflow-y-auto h-[600px]">
+                        <ng-container *ngFor="let role of applicationRoles; trackBy: trackByFn">
+                            <div class="group bg-white p-3 border-b last:border-b-0 flex w-full">
+                                <div class="flex flex-col flex-1">
+                                    <div class="text-2xl font-semibold leading-tight">
+                                        <span> {{ role.name }} </span>
+                                    </div>
+                                    <div class="text-md text-secondary">
+                                        {{ role.description }}
+                                    </div>
+
+                                    <!-- Role scopes -->
+                                    <div class="flex flex-wrap space-x-2 space-y-2 items-end mt-2">
+                                        <span
+                                            *ngFor="let scope of role?.scopes; trackBy: trackByFn"
+                                            class="fuse-vertical-navigation-application-badge-content px-2.5 py-1 bg-teal-400 text-black rounded-full">
+                                            {{ scope.name }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Actions Menu -->
+                                <button
+                                    mat-icon-button
+                                    [matMenuTriggerFor]="roleMenu"
+                                    (click)="$event.stopPropagation()">
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="'heroicons_mini:ellipsis-vertical'"></mat-icon>
+                                </button>
+
+                                <mat-menu #roleMenu="matMenu">
+                                    <!-- Edit -->
+                                    <button mat-menu-item (click)="$event.stopPropagation(); openRoles(role?.id)">
+                                        <span class="flex items-center">
+                                            <mat-icon
+                                                class="icon-size-5 mr-3"
+                                                [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
+                                            <span>{{ 'General.Edit' | transloco }}</span>
+                                        </span>
+                                    </button>
+
+                                    <!-- Delete -->
+                                    <button
+                                        mat-menu-item
+                                        color="warn"
+                                        (click)="$event.stopPropagation(); deleteRole(role?.id)">
+                                        <span class="flex items-center">
+                                            <mat-icon
+                                                class="text-red-500 icon-size-5 mr-3"
+                                                [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                                            <span>{{ 'General.Delete' | transloco }}</span>
+                                        </span>
+                                    </button>
+                                </mat-menu>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+
+                <mat-paginator
+                    class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                    [length]="application?.roles?.length ?? 0"
+                    [pageIndex]="rolesPageIndex"
+                    [pageSize]="rolesPageSize"
+                    [pageSizeOptions]="[5, 10, 25, 100]"
+                    (page)="handleRolesPageEvent($event)"
+                    [showFirstLastButtons]="true"></mat-paginator>
+            </div>
+        </mat-tab>
+
+        <!-- Scopes  -->
+        <mat-tab *ngIf="isUserOwner">
+            <ng-template mat-tab-label>
+                <span class="inline-flex items-center space-x-2">
+                    <span class="">{{ 'Navigation.Scopes' | transloco }}</span>
+                    <span class="px-2 py-1 text-sm rounded-full bg-red-600 text-white">
+                        {{ application?.scopes?.length ?? 0 }}
+                    </span>
+                </span>
+            </ng-template>
+
+            <div class="relative flex flex-col flex-auto overflow-hidden">
+                <!-- Scopes -->
+                <div class="flex justify-between">
+                    <div class="flex flex-1 space-x-2 justify-between mb-4">
+                        <!-- Filter -->
+                        <mat-form-field class="flex-1 fuse-mat-dense w-full" [subscriptSizing]="'dynamic'">
+                            <mat-icon
+                                class="icon-size-5"
+                                matPrefix
+                                [svgIcon]="'heroicons_outline:magnifying-glass'"></mat-icon>
+
+                            <input
+                                matInput
+                                [formControl]="scopesSearchInputControl"
+                                [autocomplete]="'off'"
+                                (keyup.enter)="filterScopes()"
+                                [placeholder]="'General.Search' | transloco" />
+
+                            <button
+                                type="button"
+                                *ngIf="scopesSearchInputControl.value"
+                                matSuffix
+                                mat-icon-button
+                                aria-label="Clear"
+                                (click)="scopesSearchInputControl.setValue('')">
+                                <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                            </button>
+                        </mat-form-field>
+
+                        <div class="ml-auto">
+                            <!-- Edit button -->
+                            <button mat-icon-button (click)="openScopes()">
+                                <mat-icon [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
+                            </button>
+
+                            <!-- Add button -->
+                            <button mat-icon-button (click)="newScope()">
+                                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-1 flex-col h-full">
+                    <div class="overflow-y-auto h-[600px]">
+                        <ng-container *ngFor="let scope of applicationScopes; trackBy: trackByFn">
+                            <div class="group bg-white p-3 border-b last:border-b-0 flex w-full">
+                                <div class="flex flex-col flex-1">
+                                    <div class="text-2xl font-semibold leading-tight">
+                                        <span> {{ scope.name }} </span>
+                                    </div>
+                                    <div class="text-md text-secondary">
+                                        {{ scope.description }}
+                                    </div>
+
+                                    <!-- Scope Group scopes -->
+                                    <div class="flex flex-wrap space-x-2 space-y-2 items-end mt-2">
+                                        <span
+                                            *ngFor="let scopeGroup of scope?.scopeGroup; trackBy: trackByFn"
+                                            class="fuse-vertical-navigation-application-badge-content px-2.5 py-1 bg-teal-400 text-black rounded-full">
+                                            {{ scopeGroup.name }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Actions Menu -->
+                                <button
+                                    mat-icon-button
+                                    [matMenuTriggerFor]="roleMenu"
+                                    (click)="$event.stopPropagation()">
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="'heroicons_mini:ellipsis-vertical'"></mat-icon>
+                                </button>
+
+                                <mat-menu #roleMenu="matMenu">
+                                    <!-- Edit -->
+                                    <button mat-menu-item (click)="$event.stopPropagation(); openScopes(scope?.id)">
+                                        <span class="flex items-center">
+                                            <mat-icon
+                                                class="icon-size-5 mr-3"
+                                                [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
+                                            <span>{{ 'General.Edit' | transloco }}</span>
+                                        </span>
+                                    </button>
+
+                                    <!-- Delete -->
+                                    <button
+                                        mat-menu-item
+                                        color="warn"
+                                        (click)="$event.stopPropagation(); deleteScope(scope?.id)">
+                                        <span class="flex items-center">
+                                            <mat-icon
+                                                class="text-red-500 icon-size-5 mr-3"
+                                                [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                                            <span>{{ 'General.Delete' | transloco }}</span>
+                                        </span>
+                                    </button>
+                                </mat-menu>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+
+                <mat-paginator
+                    class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                    [length]="application?.scopes?.length ?? 0"
+                    [pageIndex]="scopesPageIndex"
+                    [pageSize]="scopesPageSize"
+                    [pageSizeOptions]="[5, 10, 25, 100]"
+                    (page)="handleScopesPageEvent($event)"
+                    [showFirstLastButtons]="true"></mat-paginator>
+            </div>
+        </mat-tab>
+
+        <!-- Scope Groups  -->
+        <mat-tab *ngIf="isUserOwner">
+            <ng-template mat-tab-label>
+                <span class="inline-flex items-center space-x-2">
+                    <span class="">{{ 'Navigation.ScopeGroups' | transloco }}</span>
+                    <span class="px-2 py-1 text-sm rounded-full bg-red-600 text-white">
+                        {{ application?.scopeGroups?.length ?? 0 }}
+                    </span>
+                </span>
+            </ng-template>
+
+            <div class="relative flex flex-col flex-auto overflow-hidden">
+                <!-- Scope Groups -->
+                <div class="flex justify-between">
+                    <div class="flex flex-1 space-x-2 justify-between mb-4">
+                        <!-- Filter -->
+                        <mat-form-field class="flex-1 fuse-mat-dense w-full" [subscriptSizing]="'dynamic'">
+                            <mat-icon
+                                class="icon-size-5"
+                                matPrefix
+                                [svgIcon]="'heroicons_outline:magnifying-glass'"></mat-icon>
+
+                            <input
+                                matInput
+                                [formControl]="scopeGroupsSearchInputControl"
+                                [autocomplete]="'off'"
+                                (keyup.enter)="filterScopeGroups()"
+                                [placeholder]="'General.Search' | transloco" />
+
+                            <button
+                                type="button"
+                                *ngIf="scopeGroupsSearchInputControl.value"
+                                matSuffix
+                                mat-icon-button
+                                aria-label="Clear"
+                                (click)="scopeGroupsSearchInputControl.setValue('')">
+                                <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                            </button>
+                        </mat-form-field>
+
+                        <div class="ml-auto">
+                            <!-- Edit button -->
+                            <button mat-icon-button (click)="openScopeGroups()">
+                                <mat-icon [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
+                            </button>
+
+                            <!-- Add button -->
+                            <button mat-icon-button (click)="newScopeGroup()">
+                                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-1 flex-col h-full">
+                    <div class="overflow-y-auto h-[600px]">
+                        <ng-container *ngFor="let scopeGroup of applicationScopeGroups; trackBy: trackByFn">
+                            <div class="group bg-white p-3 border-b last:border-b-0 flex w-full">
+                                <div class="flex flex-col flex-1">
+                                    <div class="text-2xl font-semibold leading-tight">
+                                        <span> {{ scopeGroup.name }} </span>
+                                    </div>
+                                    <div class="text-md text-secondary">
+                                        {{ scopeGroup.description }}
+                                    </div>
+
+                                    <!-- Scope Group scopes -->
+                                    <div class="flex flex-wrap space-x-2 space-y-2 items-end mt-2">
+                                        <span
+                                            *ngFor="let scope of scopeGroup?.scopes; trackBy: trackByFn"
+                                            class="fuse-vertical-navigation-application-badge-content px-2.5 py-1 bg-teal-400 text-black rounded-full">
+                                            {{ scope.name }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Actions Menu -->
+                                <button
+                                    mat-icon-button
+                                    [matMenuTriggerFor]="roleMenu"
+                                    (click)="$event.stopPropagation()">
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="'heroicons_mini:ellipsis-vertical'"></mat-icon>
+                                </button>
+
+                                <mat-menu #roleMenu="matMenu">
+                                    <!-- Edit -->
+                                    <button
+                                        mat-menu-item
+                                        (click)="$event.stopPropagation(); openScopeGroups(scopeGroup?.id)">
+                                        <span class="flex items-center">
+                                            <mat-icon
+                                                class="icon-size-5 mr-3"
+                                                [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
+                                            <span>{{ 'General.Edit' | transloco }}</span>
+                                        </span>
+                                    </button>
+
+                                    <!-- Delete -->
+                                    <button
+                                        mat-menu-item
+                                        color="warn"
+                                        (click)="$event.stopPropagation(); deleteScopeGroup(scopeGroup?.id)">
+                                        <span class="flex items-center">
+                                            <mat-icon
+                                                class="text-red-500 icon-size-5 mr-3"
+                                                [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                                            <span>{{ 'General.Delete' | transloco }}</span>
+                                        </span>
+                                    </button>
+                                </mat-menu>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+
+                <mat-paginator
+                    class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                    [length]="application?.scopeGroups?.length ?? 0"
+                    [pageIndex]="scopeGroupsPageIndex"
+                    [pageSize]="scopeGroupsPageSize"
+                    [pageSizeOptions]="[5, 10, 25, 100]"
+                    (page)="handleScopeGroupsPageEvent($event)"
+                    [showFirstLastButtons]="true"></mat-paginator>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</div>
