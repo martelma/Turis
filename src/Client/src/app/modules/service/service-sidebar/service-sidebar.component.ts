@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ServiceService } from '../service.service';
@@ -66,23 +66,13 @@ import { LanguageService } from 'app/modules/configuration/languages/language.se
 })
 export class ServiceSidebarComponent implements OnInit {
     @Input() debounce = 300;
+    @Output() onFilterChanged = new EventEmitter<ServiceSearchParameters>();
 
     dateFrom: Date;
     dateTo: Date;
     serviceParameters: ServiceSearchParameters;
 
     languages: Language[] = [];
-
-    // filters = this._formBuilder.group({
-    //     code: [''],
-    //     title: [''],
-    //     note: [''],
-    //     serviceType: [''],
-    //     durationType: [''],
-    //     dateFrom: [''],
-    //     dateTo: [''],
-    //     // tags: this._formBuilder.array([]),
-    // });
 
     minDate = new Date(2020, 0, 1); // 1 gennaio 2020
     maxDate = new Date(2030, 11, 31); // 31 dicembre 2030

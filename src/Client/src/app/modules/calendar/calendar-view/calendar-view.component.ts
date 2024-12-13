@@ -38,6 +38,8 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridWeekPlugin from '@fullcalendar/timegrid';
 import { DurationTypes, ServiceTypes, ServiceTypesColor } from 'app/constants';
 import { ServiceSidebarComponent } from 'app/modules/service/service-sidebar/service-sidebar.component';
+import { MatDrawer } from '@angular/material/sidenav';
+import { FuseDrawerComponent } from '@fuse/components/drawer';
 
 declare let $: any;
 
@@ -84,15 +86,20 @@ declare let $: any;
         MaterialModule,
         ApplicationGridComponent,
         FullCalendarModule,
+        FuseDrawerComponent,
         ServiceSidebarComponent,
     ],
 })
 export class CalendarViewComponent implements OnInit, AfterViewInit {
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
     @ViewChild(MatSort) private _sort: MatSort;
+    @ViewChild('detailsDrawer') detailsDrawer: MatDrawer;
 
     drawerMode: 'over' | 'side' = 'side';
     drawerOpened = true;
+
+    drawerMode2: 'over' | 'side' = 'side';
+    drawerOpened2 = true;
 
     viewMode: 'calendar' | 'list' = 'calendar';
 
@@ -101,7 +108,7 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
     results: PaginatedListResult<Service>;
     list: Service[] = [];
     itemsLoading = false;
-    queryParameters: ServiceSearchParameters;
+    serviceSearchParameters: ServiceSearchParameters;
 
     activeLang: string;
     selectedItem: Service | null = null;
@@ -135,6 +142,8 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
         initialDate: Date.now(),
         initialEvents: [],
 
+        events: [],
+
         customButtons: {
             prev: {
                 text: '<',
@@ -155,7 +164,7 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
         eventsSet: this.handleEvents.bind(this),
     };
 
-    currentEvents: EventApi[] = [];
+    currentEvent: EventApi;
 
     trackByFn = trackByFn;
 
@@ -169,18 +178,6 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.activeLang = this._translocoService.getActiveLang();
-
-        // Create the selected service form
-        this.selectedItemForm = this._formBuilder.group({
-            id: [''],
-            code: ['', [Validators.required]],
-            name: ['', [Validators.required]],
-            serviceType: [''],
-            durationType: [''],
-            maxCount: [''],
-            price: [''],
-            priceExtra: [''],
-        });
 
         // Services
         this._serviceService.services$.pipe(untilDestroyed(this)).subscribe((results: PaginatedListResult<Service>) => {
@@ -197,7 +194,7 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
         this._serviceService.serviceParameters$
             .pipe(untilDestroyed(this))
             .subscribe((queryParameters: ServiceSearchParameters) => {
-                this.queryParameters = queryParameters;
+                this.serviceSearchParameters = queryParameters;
             });
 
         // Subscribe to service changes
@@ -220,6 +217,13 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
         this.calendarApi = this.fullCalendar.getApi();
         this.calendarApi.render();
 
+        this.serviceSearchParameters = {
+            dateFrom: toUtcString(this.calendarApi.view.activeStart),
+            dateTo: toUtcString(this.calendarApi.view.activeEnd),
+            pageIndex: 0,
+            pageSize: 100,
+        };
+
         this._list();
     }
 
@@ -231,23 +235,51 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
 
     toggleViewMode() {
         this.viewMode = this.viewMode === 'calendar' ? 'list' : 'calendar';
+
+        setTimeout(() => {
+            this.calendarApi = this.fullCalendar.getApi();
+            this.calendarApi.render();
+
+            this._list();
+        }, 100);
+    }
+
+    serviceFilter(parameters: ServiceSearchParameters) {
+        console.log('filter', parameters);
+
+        this.serviceSearchParameters.pattern = parameters.pattern;
+        // this.serviceSearchParameters.onlyBookmarks = parameters.onlyBookmarks;
+        this.serviceSearchParameters.code = parameters.code;
+        this.serviceSearchParameters.title = parameters.title;
+        this.serviceSearchParameters.note = parameters.note;
+        this.serviceSearchParameters.serviceType = parameters.serviceType;
+        this.serviceSearchParameters.durationType = parameters.durationType;
+        this.serviceSearchParameters.languages = parameters.languages;
+
+        if (parameters.dateFrom) {
+            this.serviceSearchParameters.dateFrom = parameters.dateFrom;
+        }
+        if (parameters.dateTo) {
+            this.serviceSearchParameters.dateTo = parameters.dateTo;
+        }
+    }
+
+    filter(value: string): void {
+        this.serviceSearchParameters = { pattern: value };
+        this._list();
     }
 
     private _list(): void {
-        this.queryParameters = {
-            dateFrom: toUtcString(this.calendarApi.view.activeStart),
-            dateTo: toUtcString(this.calendarApi.view.activeEnd),
-            pageIndex: 0,
-            pageSize: 100,
-        };
+        this.serviceSearchParameters.pageIndex = 0;
+        this.serviceSearchParameters.pageSize = 100;
 
         this._serviceService
-            .listEntities({ ...this.queryParameters })
+            .listEntities({ ...this.serviceSearchParameters })
             .pipe(untilDestroyed(this))
             .subscribe({
-                next: (items: any) => {
-                    console.log('_list', items);
-                    this.list = items;
+                next: (data: PaginatedListResult<Service>) => {
+                    this.list = data.items;
+                    // console.log('_list - list', this.list);
 
                     this.moveToday();
                 },
@@ -259,11 +291,6 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
             .add(() => {
                 // this.loading = false;
             });
-    }
-
-    filter(value: string): void {
-        this.queryParameters = { pattern: value };
-        this._list();
     }
 
     movePrev() {
@@ -282,9 +309,36 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
     }
 
     prepareCalendarEvents() {
+        console.log('list', this.list);
         this.calendarApi.removeAllEvents();
 
-        this.queryParameters = {
+        this.list.forEach(item => {
+            const event = {
+                title: item.title,
+                date: item.date.toString().replace(/T.$/, ''),
+                start: item.start.toString().replace(/T.$/, ''),
+                end: item.end.toString().replace(/T.$/, ''),
+                extendedProps: item,
+                color: '',
+                // allDay: true,
+            };
+
+            if (item.serviceType == 'Guida') {
+                event.color = ServiceTypesColor.Guida;
+            } else if (item.serviceType == 'Accompagnamento') {
+                event.color = ServiceTypesColor.Accompagnamento;
+            } else if (item.serviceType == 'Altro') {
+                event.color = '#444fd1';
+            }
+
+            this.calendarApi?.addEvent(event);
+        });
+
+        this.calendarApi?.destroy();
+        this.calendarApi?.render();
+
+        /*
+        this.serviceSearchParameters = {
             dateFrom: toUtcString(this.calendarApi.view.activeStart),
             dateTo: toUtcString(this.calendarApi.view.activeEnd),
             pageIndex: 0,
@@ -293,7 +347,7 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
 
         let calendarItems;
         this._serviceService
-            .listEntities(this.queryParameters)
+            .listEntities(this.serviceSearchParameters)
             .pipe(untilDestroyed(this))
             .subscribe({
                 next: (response: any) => {
@@ -322,7 +376,7 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
                             color: x.color,
                             extendedProps: x,
                         };
-                        console.log('event', event);
+                        // console.log('event', event);
 
                         this.calendarApi?.addEvent(event);
                     }
@@ -348,6 +402,7 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
             .add(() => {
                 // this.loading = false;
             });
+        */
     }
 
     handleDateSelect(selectInfo: DateSelectArg) {
@@ -356,14 +411,31 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
 
     handleEventClick(clickInfo: EventClickArg) {
         console.log('handleEventClick', clickInfo);
+        this.currentEvent = clickInfo.event;
+        this.detailsDrawer.toggle();
     }
 
     handleEvents(events: EventApi[]) {
         console.log('handleEvents', events);
-        this.currentEvents = events;
     }
 
     create() {
         console.log('create');
+    }
+
+    closeDrawer(): void {
+        this.selectedItem = null;
+
+        this.detailsDrawer.close();
+
+        this._changeDetectorRef.detectChanges();
+    }
+
+    drawerOpenedChanged(opened: boolean): void {
+        if (!opened) {
+            this.selectedItem = null;
+        }
+
+        this._changeDetectorRef.detectChanges();
     }
 }

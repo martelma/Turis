@@ -198,19 +198,18 @@ export class ServiceService extends BaseEntityService<Service> {
         const url = `?${serviceString}`;
 
         return this.apiGet<PaginatedListResult<Service>>(url).pipe(
-            map((list: PaginatedListResult<Service>) => {
-                console.log('list', list);
-                // console.log('serviceParameters', this._serviceParameters);
-                this._services.next(list);
+            map((data: PaginatedListResult<Service>) => {
+                // console.log('list', data.items);
+                this._services.next(data);
 
                 this._serviceParameters.next({
                     ...this._serviceParameters,
                     ...params,
-                    pageIndex: list.pageIndex,
-                    pageSize: list.pageSize,
+                    pageIndex: data.pageIndex,
+                    pageSize: data.pageSize,
                 });
 
-                return list;
+                return data;
             }),
             finalize(() => {
                 this._servicesLoading.next(false);
