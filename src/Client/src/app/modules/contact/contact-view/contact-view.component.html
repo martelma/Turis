@@ -1,8 +1,7 @@
 <div
     class="relative flex flex-col flex-auto shrink-0 lg:shrink p-3 lg:overflow-y-auto bg-gray-100 dark:bg-transparent"
     fuseScrollReset>
-    <form
-        [formGroup]="form"
+    <div
         class="absolute inset-0 flex flex-col flex-0 shadow rounded-2xl overflow-hidden bg-card dark:bg-black dark:bg-opacity-10 m-4">
         <!-- Tabs -->
         <mat-tab-group
@@ -24,16 +23,7 @@
 
                         <div class="flex flex-col">
                             <div class="grid grid-cols-12 gap-2 w-full">
-                                <mat-form-field class="col-span-2">
-                                    <mat-label>Date</mat-label>
-                                    <input
-                                        matInput
-                                        type="text"
-                                        class="form-control font-bold"
-                                        [readonly]="true"
-                                        [value]="item?.dateText ? item.dateText : ''" />
-                                </mat-form-field>
-                                <mat-form-field class="col-span-2">
+                                <mat-form-field class="col-span-1">
                                     <mat-label>Code</mat-label>
                                     <input
                                         matInput
@@ -42,7 +32,7 @@
                                         [readonly]="true"
                                         [value]="item?.code ? item.code : ''" />
                                 </mat-form-field>
-                                <mat-form-field class="col-span-8">
+                                <mat-form-field class="col-span-2">
                                     <mat-label>Title</mat-label>
                                     <input
                                         matInput
@@ -51,10 +41,215 @@
                                         [readonly]="true"
                                         [value]="item?.title ? item.title : ''" />
                                 </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label>First Name</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.firstName ? item.firstName : ''" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label>Last Name</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.lastName ? item.lastName : ''" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-1">
+                                    <mat-label>Sex</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.sex ? item.sex : ''" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label>Birth Date</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="form-control font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.birthDateText ? item.birthDateText : ''" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label>Fiscal Code</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.fiscalCode ? item.fiscalCode : ''" />
+                                </mat-form-field>
                             </div>
                         </div>
                         <div class="flex flex-col">
                             <div class="grid grid-cols-12 gap-2 w-full">
+                                <mat-form-field class="col-span-10">
+                                    <mat-label>Company Name</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.companyName ? item.companyName : ''" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label>Tax Code</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.taxCode ? item.taxCode : ''" />
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="grid grid-cols-12 gap-2 w-full">
+                                <mat-form-field class="col-span-6">
+                                    <mat-label>Address</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.address ? item.address : ''" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-3">
+                                    <mat-label>City</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.city ? item.city : ''" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-1">
+                                    <mat-label>Cap</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.cap ? item.cap : ''" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-1">
+                                    <mat-label>Regional Code</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.regionalCode ? item.regionalCode : ''" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-1">
+                                    <mat-label>State Code</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.stateCode ? item.stateCode : ''" />
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="grid grid-cols-12 gap-2 w-full">
+                                <mat-form-field class="col-span-2">
+                                    <mat-label>Phone 1</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.phone1 ? item.phone1 : ''" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label>Phone 2</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.phone2 ? item.phone2 : ''" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label>Fax</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.fax ? item.fax : ''" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-6">
+                                    <mat-label>Web</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.web ? item.web : ''" />
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="grid grid-cols-12 gap-2 w-full">
+                                <mat-form-field class="col-span-4">
+                                    <mat-label>Email</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.eMail ? item.eMail : ''" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-4">
+                                    <mat-label>Email Accounting</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.eMailAccounting ? item.eMailAccounting : ''" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-4">
+                                    <mat-label>Pec</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.pec ? item.pec : ''" />
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="grid grid-cols-12 gap-2 w-full">
+                                <mat-form-field class="col-span-2">
+                                    <mat-label>External Code</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="form-control font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.externalCode ? item.externalCode : ''" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label>Document Type</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.documentType ? item.documentType : ''" />
+                                </mat-form-field>
                                 <mat-form-field class="col-span-2">
                                     <mat-label>Type</mat-label>
                                     <input
@@ -65,235 +260,36 @@
                                         [value]="item?.contactType ? item.contactType : ''" />
                                 </mat-form-field>
                                 <mat-form-field class="col-span-2">
-                                    <mat-label>Duration</mat-label>
+                                    <mat-label>Guida %</mat-label>
                                     <input
                                         matInput
                                         type="text"
                                         class="font-bold"
                                         [readonly]="true"
-                                        [value]="item?.durationType ? item.durationType : ''" />
+                                        [value]="item?.percentageGuida ? item.percentageGuida : ''" />
                                 </mat-form-field>
                                 <mat-form-field class="col-span-2">
-                                    <mat-label>People</mat-label>
+                                    <mat-label>Accompagnamento %</mat-label>
                                     <input
                                         matInput
                                         type="text"
                                         class="font-bold"
                                         [readonly]="true"
-                                        [value]="item?.people ? item.people : ''" />
+                                        [value]="
+                                            item?.percentageAccompagnamento ? item.percentageAccompagnamento : ''
+                                        " />
                                 </mat-form-field>
-                                <mat-form-field class="col-span-6">
-                                    <mat-label>Price List</mat-label>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label>Sdi Code</mat-label>
                                     <input
                                         matInput
                                         type="text"
                                         class="font-bold"
                                         [readonly]="true"
-                                        [value]="item?.priceList?.name ? item.priceList?.name : ''" />
+                                        [value]="item?.sdiCode ? item.sdiCode : ''" />
                                 </mat-form-field>
                             </div>
                         </div>
-                        <div class="flex flex-col">
-                            <div class="grid grid-cols-12 gap-2 w-full">
-                                <mat-form-field class="col-span-6">
-                                    <mat-label>Location</mat-label>
-                                    <input
-                                        matInput
-                                        type="text"
-                                        class="font-bold"
-                                        [readonly]="true"
-                                        [value]="item?.location ? item.location : ''" />
-                                </mat-form-field>
-                                <mat-form-field class="col-span-4">
-                                    <mat-label>Language</mat-label>
-                                    <input
-                                        matInput
-                                        type="text"
-                                        class="font-bold"
-                                        [readonly]="true"
-                                        [value]="item?.languages ? item.languages : ''" />
-                                </mat-form-field>
-                                <mat-form-field class="col-span-2">
-                                    <mat-label>Option Expiration</mat-label>
-                                    <input
-                                        matInput
-                                        type="text"
-                                        class="font-bold"
-                                        [readonly]="true"
-                                        [value]="item?.optionExpirationText ? item.optionExpirationText : ''" />
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <div class="flex flex-col">
-                            <div class="grid grid-cols-12 gap-2 w-full">
-                                <mat-form-field class="col-span-6">
-                                    <mat-label>Meeting Place</mat-label>
-                                    <input
-                                        matInput
-                                        type="text"
-                                        class="font-bold"
-                                        [readonly]="true"
-                                        [value]="item?.meetingPlace ? item.meetingPlace : ''" />
-                                </mat-form-field>
-                                <mat-form-field class="col-span-4">
-                                    <mat-label>Referent</mat-label>
-                                    <input
-                                        matInput
-                                        type="text"
-                                        class="font-bold"
-                                        [readonly]="true"
-                                        [value]="item?.referent ? item.referent : ''" />
-                                </mat-form-field>
-                                <mat-form-field class="col-span-2">
-                                    <mat-label>Referent Phone</mat-label>
-                                    <input
-                                        matInput
-                                        type="text"
-                                        class="font-bold"
-                                        [readonly]="true"
-                                        [value]="item?.referentPhone ? item.referentPhone : ''" />
-                                </mat-form-field>
-                            </div>
-                        </div>
-
-                        <mat-accordion class="flex flex-col">
-                            <mat-expansion-panel #card [expanded]="true">
-                                <mat-expansion-panel-header class="bg-primary py-4 px-8 rounded-none">
-                                    <mat-panel-title>
-                                        <div class="flex items-center gap-2 text-white text-lg">
-                                            <!-- <mat-icon [svgIcon]="'heroicons_solid:user-circle'"></mat-icon> -->
-                                            <span>Client</span>
-                                        </div>
-                                    </mat-panel-title>
-                                </mat-expansion-panel-header>
-
-                                <div class="flex flex-col">
-                                    <div class="grid grid-cols-12 gap-2 w-full">
-                                        <mat-form-field class="col-span-2">
-                                            <mat-label>Code</mat-label>
-                                            <input
-                                                matInput
-                                                type="text"
-                                                class="font-bold"
-                                                [readonly]="true"
-                                                [value]="item?.client?.code" />
-                                        </mat-form-field>
-                                        <mat-form-field class="col-span-10">
-                                            <mat-label>Company Name</mat-label>
-                                            <input
-                                                matInput
-                                                type="text"
-                                                class="font-bold"
-                                                [readonly]="true"
-                                                [value]="item?.client?.companyName ? item.client.companyName : ''" />
-                                        </mat-form-field>
-                                    </div>
-                                    <div class="grid grid-cols-12 gap-2 w-full">
-                                        <mat-form-field class="col-span-2">
-                                            <mat-label>Price Calculated</mat-label>
-                                            <input
-                                                matInput
-                                                type="text"
-                                                class="font-bold"
-                                                [readonly]="true"
-                                                [value]="item?.priceCalculated ? item.priceCalculated : ''" />
-                                        </mat-form-field>
-                                        <mat-form-field class="col-span-2">
-                                            <mat-label>Price</mat-label>
-                                            <input
-                                                matInput
-                                                type="text"
-                                                class="font-bold"
-                                                [readonly]="true"
-                                                [value]="item?.price ? item.price : ''" />
-                                        </mat-form-field>
-                                    </div>
-                                </div>
-                            </mat-expansion-panel>
-                        </mat-accordion>
-
-                        <mat-accordion class="flex flex-col mt-1">
-                            <mat-expansion-panel #card [expanded]="true">
-                                <mat-expansion-panel-header class="bg-primary py-4 px-8 rounded-none">
-                                    <mat-panel-title>
-                                        <div class="flex items-center gap-2 text-white text-lg">
-                                            <!-- <mat-icon [svgIcon]="'heroicons_solid:user-circle'"></mat-icon> -->
-                                            <span>Collaborator</span>
-                                        </div>
-                                    </mat-panel-title>
-                                </mat-expansion-panel-header>
-
-                                <div class="flex flex-col">
-                                    <div class="grid grid-cols-12 gap-2 w-full">
-                                        <mat-form-field class="col-span-2">
-                                            <mat-label>Code</mat-label>
-                                            <input
-                                                matInput
-                                                type="text"
-                                                class="font-bold"
-                                                [readonly]="true"
-                                                [value]="item?.collaborator?.code ? item.collaborator.code : ''" />
-                                        </mat-form-field>
-                                        <mat-form-field class="col-span-10">
-                                            <mat-label>Name</mat-label>
-                                            <input
-                                                matInput
-                                                type="text"
-                                                class="font-bold"
-                                                [readonly]="true"
-                                                [value]="
-                                                    item?.collaborator?.fullName ? item.collaborator.fullName : ''
-                                                " />
-                                        </mat-form-field>
-                                    </div>
-                                    <div class="grid grid-cols-12 gap-2 w-full">
-                                        <mat-form-field class="col-span-2">
-                                            <mat-label>Commission %</mat-label>
-                                            <input
-                                                matInput
-                                                type="number"
-                                                min="0"
-                                                max="100"
-                                                mdInput
-                                                class="font-bold"
-                                                [readonly]="true"
-                                                [value]="item.commissionPercentage"
-                                                percentFormatter
-                                                percentDigits="1.2-2" />
-                                        </mat-form-field>
-                                        <mat-form-field class="col-span-2">
-                                            <mat-label>Commission Calculated</mat-label>
-                                            <input
-                                                matInput
-                                                type="text"
-                                                class="font-bold"
-                                                [readonly]="true"
-                                                [value]="item?.commissionCalculated ? item.commissionCalculated : ''" />
-                                        </mat-form-field>
-                                        <mat-form-field class="col-span-2">
-                                            <mat-label>Commission</mat-label>
-                                            <input
-                                                matInput
-                                                type="text"
-                                                class="font-bold"
-                                                [readonly]="true"
-                                                [value]="item?.commission ? item.commission : ''" />
-                                        </mat-form-field>
-                                    </div>
-                                    <div class="grid grid-cols-12 gap-2 w-full">
-                                        <mat-form-field class="col-span-12">
-                                            <mat-label>Commission Note</mat-label>
-                                            <input
-                                                matInput
-                                                type="text"
-                                                class="font-bold"
-                                                [readonly]="true"
-                                                [value]="item?.commissionNote ? item.commissionNote : ''" />
-                                        </mat-form-field>
-                                    </div>
-                                </div>
-                            </mat-expansion-panel>
-                        </mat-accordion>
                     </div>
                 </ng-template>
             </mat-tab>
@@ -333,5 +329,5 @@
                 </ng-template>
             </mat-tab>
         </mat-tab-group>
-    </form>
+    </div>
 </div>

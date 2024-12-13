@@ -37,6 +37,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridWeekPlugin from '@fullcalendar/timegrid';
 import { DurationTypes, ServiceTypes, ServiceTypesColor } from 'app/constants';
+import { ServiceSidebarComponent } from 'app/modules/service/service-sidebar/service-sidebar.component';
 
 declare let $: any;
 
@@ -83,11 +84,17 @@ declare let $: any;
         MaterialModule,
         ApplicationGridComponent,
         FullCalendarModule,
+        ServiceSidebarComponent,
     ],
 })
 export class CalendarViewComponent implements OnInit, AfterViewInit {
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
     @ViewChild(MatSort) private _sort: MatSort;
+
+    drawerMode: 'over' | 'side' = 'side';
+    drawerOpened = true;
+
+    viewMode: 'calendar' | 'list' = 'calendar';
 
     flashMessage: 'success' | 'error' | null = null;
 
@@ -220,6 +227,10 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
         // this.queryParameters = { ...this.queryParameters, pageIndex: event.pageIndex, pageSize: event.pageSize };
 
         this._list();
+    }
+
+    toggleViewMode() {
+        this.viewMode = this.viewMode === 'calendar' ? 'list' : 'calendar';
     }
 
     private _list(): void {

@@ -21,34 +21,7 @@
 
                         <div class="flex flex-col">
                             <div class="grid grid-cols-12 gap-2 w-full">
-                                <!-- <mat-form-field class="col-span-2">
-                                    <mat-label for="date">Date</mat-label>
-                                    <input
-                                        matInput
-                                        [matDatepicker]="picker"
-                                        class="form-control font-bold"
-                                        id="date"
-                                        name="date"
-                                        #name="ngModel"
-                                        required
-                                        [matDatepickerMin]="minDate"
-                                        [matDatepickerMax]="maxDate"
-                                        [(ngModel)]="item.date"
-                                        (ngModelChange)="checkChanged()" />
-                                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                                    <mat-datepicker #picker></mat-datepicker>
-
-                                    <div *ngIf="date?.invalid && (date?.dirty || date?.touched)">
-                                        <div *ngIf="date?.errors?.required">Date is required.</div>
-                                        <div *ngIf="date?.errors?.matDatepickerMin">
-                                            Date must be after {{ minDate | date: 'shortDate' }}.
-                                        </div>
-                                        <div *ngIf="date?.errors?.matDatepickerMax">
-                                            Date must be before {{ maxDate | date: 'shortDate' }}.
-                                        </div>
-                                    </div>
-                                </mat-form-field> -->
-                                <mat-form-field class="col-span-2">
+                                <mat-form-field class="col-span-1">
                                     <mat-label for="code">Code</mat-label>
                                     <input
                                         matInput
@@ -56,23 +29,11 @@
                                         id="code"
                                         name="code"
                                         #name="ngModel"
-                                        required
                                         [(ngModel)]="item.code"
                                         (ngModelChange)="checkChanged()" />
-                                    <div *ngIf="code?.invalid && (code?.dirty || code?.touched)">
+                                    <!-- <div *ngIf="code?.invalid && (code?.dirty || code?.touched)">
                                         <div *ngIf="code?.errors?.required">Code is required.</div>
-                                    </div>
-                                </mat-form-field>
-                                <mat-form-field class="col-span-2">
-                                    <mat-label for="externalCode">External Code</mat-label>
-                                    <input
-                                        matInput
-                                        class="form-control font-bold"
-                                        id="externalCode"
-                                        name="externalCode"
-                                        #name="ngModel"
-                                        [(ngModel)]="item.externalCode"
-                                        (ngModelChange)="checkChanged()" />
+                                    </div> -->
                                 </mat-form-field>
                                 <mat-form-field class="col-span-2">
                                     <mat-label for="title">Title</mat-label>
@@ -86,6 +47,28 @@
                                         (ngModelChange)="checkChanged()" />
                                 </mat-form-field>
                                 <mat-form-field class="col-span-2">
+                                    <mat-label for="firstName">First Name</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="firstName"
+                                        name="firstName"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.firstName"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label for="lastName">Last Name</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="lastName"
+                                        name="lastName"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.lastName"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-1">
                                     <mat-label for="sex">Sex</mat-label>
                                     <mat-select
                                         placeholder="Select a Sex"
@@ -93,41 +76,257 @@
                                         id="sex"
                                         name="sex"
                                         #name="ngModel"
-                                        required
                                         [(ngModel)]="item.sex"
                                         (ngModelChange)="sexChanged()">
                                         <mat-option *ngFor="let x of sexs" [value]="x.value">
                                             {{ x.text }}
                                         </mat-option>
                                     </mat-select>
-                                    <div *ngIf="sex?.invalid">
+                                    <!-- <div *ngIf="sex?.invalid">
                                         <div *ngIf="sex?.errors?.required">Sex is required.</div>
-                                    </div>
+                                    </div> -->
                                 </mat-form-field>
-                                <mat-form-field class="col-span-4">
-                                    <mat-label for="languages">Language</mat-label>
-                                    <mat-select
-                                        multiple
+                                <mat-form-field class="col-span-2">
+                                    <mat-label for="birthDate">Birth Date</mat-label>
+                                    <input
+                                        matInput
+                                        [matDatepicker]="picker"
                                         class="form-control font-bold"
-                                        id="languages"
-                                        name="languages"
+                                        id="birthDate"
+                                        name="birthDate"
                                         #name="ngModel"
-                                        required
-                                        [(ngModel)]="item.languages"
-                                        (ngModelChange)="checkChanged()">
-                                        <mat-option *ngFor="let x of languages" [value]="x.code">{{
-                                            x.code
-                                        }}</mat-option>
-                                    </mat-select>
-                                    <div *ngIf="languages?.invalid">
-                                        <div *ngIf="languages?.errors?.required">Language is required.</div>
-                                    </div>
+                                        [matDatepickerMin]="minDate"
+                                        [matDatepickerMax]="maxDate"
+                                        [(ngModel)]="item.birthDate"
+                                        (ngModelChange)="checkChanged()" />
+                                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker></mat-datepicker>
+
+                                    <!-- <div *ngIf="birthDate?.invalid && (birthDate?.dirty || date?.touched)">
+                                        <div *ngIf="birthDate?.errors?.required">Date is required.</div>
+                                        <div *ngIf="birthDate?.errors?.matDatepickerMin">
+                                            Date must be after {{ minDate | date: 'shortDate' }}.
+                                        </div>
+                                        <div *ngIf="date?.errors?.matDatepickerMax">
+                                            Date must be before {{ maxDate | date: 'shortDate' }}.
+                                        </div>
+                                    </div> -->
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label for="fiscalCode">Fiscal Code</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="fiscalCode"
+                                        name="fiscalCode"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.fiscalCode"
+                                        (ngModelChange)="checkChanged()" />
                                 </mat-form-field>
                             </div>
                         </div>
                         <div class="flex flex-col">
                             <div class="grid grid-cols-12 gap-2 w-full">
-                                <!-- <mat-form-field class="col-span-2">
+                                <mat-form-field class="col-span-10">
+                                    <mat-label for="companyName">Company Name</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="companyName"
+                                        name="companyName"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.companyName"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label for="taxCode">Tax Code</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="taxCode"
+                                        name="taxCode"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.taxCode"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="grid grid-cols-12 gap-2 w-full">
+                                <mat-form-field class="col-span-6">
+                                    <mat-label for="address">Address</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="address"
+                                        name="address"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.address"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-3">
+                                    <mat-label for="city">City</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="city"
+                                        name="city"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.city"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-1">
+                                    <mat-label for="cap">Cap</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="cap"
+                                        name="cap"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.cap"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-1">
+                                    <mat-label for="regionalCode">Regional Code</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="regionalCode"
+                                        name="regionalCode"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.regionalCode"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-1">
+                                    <mat-label for="stateCode">State Code</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="stateCode"
+                                        name="stateCode"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.stateCode"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="grid grid-cols-12 gap-2 w-full">
+                                <mat-form-field class="col-span-2">
+                                    <mat-label for="phone1">Phone 1</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="phone1"
+                                        name="phone1"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.phone1"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label for="phone2">Phone 2</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="phone2"
+                                        name="phone2"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.phone2"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label for="fax">Fax</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="fax"
+                                        name="fax"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.fax"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-6">
+                                    <mat-label for="web">Web</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="web"
+                                        name="web"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.web"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="grid grid-cols-12 gap-2 w-full">
+                                <mat-form-field class="col-span-4">
+                                    <mat-label for="eMail">Email</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="eMail"
+                                        name="eMail"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.eMail"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-4">
+                                    <mat-label for="eMailAccounting">Email Accounting</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="eMailAccounting"
+                                        name="eMailAccounting"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.eMailAccounting"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-4">
+                                    <mat-label for="pec">Pec</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="pec"
+                                        name="pec"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.pec"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="grid grid-cols-12 gap-2 w-full">
+                                <mat-form-field class="col-span-2">
+                                    <mat-label for="externalCode">External Code</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="externalCode"
+                                        name="externalCode"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.externalCode"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label for="documentType">Document Type</mat-label>
+                                    <mat-select
+                                        placeholder="Select a Type"
+                                        class="form-control font-bold"
+                                        id="documentType"
+                                        name="documentType"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.documentType"
+                                        (ngModelChange)="documentTypeChanged()">
+                                        <mat-option *ngFor="let x of documentTypes" [value]="x.value">
+                                            {{ x.text }}
+                                        </mat-option>
+                                    </mat-select>
+                                    <!-- <div *ngIf="contactType?.invalid">
+                                        <div *ngIf="contactType?.errors?.required">Type is required.</div>
+                                    </div> -->
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
                                     <mat-label for="contactType">Type</mat-label>
                                     <mat-select
                                         placeholder="Select a Type"
@@ -147,128 +346,66 @@
                                     </div>
                                 </mat-form-field>
                                 <mat-form-field class="col-span-2">
-                                    <mat-label for="durationType">Duration</mat-label>
-                                    <mat-select
-                                        placeholder="Select a Duration"
-                                        class="form-control font-bold"
-                                        id="durationType"
-                                        name="durationType"
-                                        #name="ngModel"
-                                        required
-                                        [(ngModel)]="item.durationType"
-                                        (ngModelChange)="durationTypeChanged()">
-                                        <mat-option *ngFor="let x of durationTypes" [value]="x.value">
-                                            {{ x.text }}
-                                        </mat-option>
-                                    </mat-select>
-                                    <div *ngIf="durationType?.invalid">
-                                        <div *ngIf="durationType?.errors?.required">Duration is required.</div>
-                                    </div>
-                                </mat-form-field> -->
-                                <!-- <mat-form-field class="col-span-2">
-                                    <mat-label for="people">People</mat-label>
+                                    <mat-labe for="percentageGuida">Guida %</mat-labe>
                                     <input
                                         matInput
                                         type="number"
                                         class="form-control font-bold"
-                                        id="people"
-                                        name="people"
-                                        #name="ngModel"
-                                        required
-                                        min="1"
+                                        id="percentageGuida"
+                                        name="percentageGuida"
+                                        min="0"
+                                        max="100"
+                                        step="0.1"
+                                        [(ngModel)]="item.percentageGuida"
+                                        (ngModelChange)="contactTypeChanged()" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-labe for="percentageAccompagnamento">Accompagnamento %</mat-labe>
+                                    <input
+                                        matInput
+                                        type="number"
                                         class="form-control font-bold"
-                                        [(ngModel)]="item.people"
-                                        (ngModelChange)="rebuild()" />
-                                    <div *ngIf="people?.invalid && (people?.dirty || people?.touched)">
-                                        <div *ngIf="people?.errors?.required">People is required.</div>
-                                        <div *ngIf="people.errors?.min">People must be greater than 0.</div>
-                                    </div>
-                                </mat-form-field> -->
+                                        id="percentageAccompagnamento"
+                                        name="percentageAccompagnamento"
+                                        min="0"
+                                        max="100"
+                                        step="0.1"
+                                        [(ngModel)]="item.percentageAccompagnamento"
+                                        (ngModelChange)="contactTypeChanged()" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label for="sdiCode">Sdi Code</mat-label>
+                                    <input
+                                        matInput
+                                        class="form-control font-bold"
+                                        id="sdiCode"
+                                        name="sdiCode"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.sdiCode"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
                             </div>
                         </div>
                         <div class="flex flex-col">
                             <div class="grid grid-cols-12 gap-2 w-full">
-                                <!-- <mat-form-field class="col-span-6">
-                                    <mat-label for="location">Location</mat-label>
-                                    <input
-                                        matInput
+                                <mat-form-field class="col-span-6">
+                                    <mat-label for="languages">Language</mat-label>
+                                    <mat-select
+                                        multiple
                                         class="form-control font-bold"
-                                        id="location"
-                                        name="location"
+                                        id="languages"
+                                        name="languages"
                                         #name="ngModel"
-                                        required
-                                        class="form-control font-bold"
-                                        [(ngModel)]="item.location"
-                                        (ngModelChange)="checkChanged()" />
-                                    <div *ngIf="title?.invalid && (title?.dirty || title?.touched)">
-                                        <div *ngIf="title?.errors?.required">Location is required.</div>
-                                    </div>
-                                </mat-form-field> -->
-                                <!-- <mat-form-field class="col-span-2">
-                                    <mat-label for="optionExpiration">Date</mat-label>
-                                    <input
-                                        matInput
-                                        [matDatepicker]="picker2"
-                                        class="form-control font-bold"
-                                        id="optionExpiration"
-                                        name="optionExpiration"
-                                        #name="ngModel"
-                                        required
-                                        [matDatepickerMin]="minDate"
-                                        [matDatepickerMax]="maxDate"
-                                        [(ngModel)]="item.optionExpiration"
-                                        (ngModelChange)="checkChanged()" />
-                                    <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
-                                    <mat-datepicker #picker2></mat-datepicker>
-
-                                    <div *ngIf="date?.invalid && (date?.dirty || date?.touched)">
-                                        <div *ngIf="date?.errors?.required">Date is required.</div>
-                                        <div *ngIf="date?.errors?.matDatepickerMin">
-                                            Date must be after {{ minDate | date: 'shortDate' }}.
-                                        </div>
-                                        <div *ngIf="date?.errors?.matDatepickerMax">
-                                            Date must be before {{ maxDate | date: 'shortDate' }}.
-                                        </div>
-                                    </div>
-                                </mat-form-field> -->
-                            </div>
-                        </div>
-                        <div class="flex flex-col">
-                            <div class="grid grid-cols-12 gap-2 w-full">
-                                <!-- <mat-form-field class="col-span-6">
-                                    <mat-label for="meetingPlace">Meeting Place</mat-label>
-                                    <input
-                                        matInput
-                                        id="meetingPlace"
-                                        name="meetingPlace"
-                                        #name="ngModel"
-                                        class="form-control font-bold"
-                                        [(ngModel)]="item.meetingPlace"
-                                        (ngModelChange)="checkChanged()" />
-                                </mat-form-field> -->
-                                <!-- <mat-form-field class="col-span-4">
-                                    <mat-label for="referent">Referent</mat-label>
-                                    <input
-                                        matInput
-                                        id="referent"
-                                        name="referent"
-                                        #name="ngModel"
-                                        class="form-control font-bold"
-                                        [(ngModel)]="item.referent"
-                                        (ngModelChange)="checkChanged()" />
-                                </mat-form-field> -->
-                                <!-- <mat-form-field class="col-span-2">
-                                    <mat-label for="referentPhone">Referent Phone</mat-label>
-                                    <input
-                                        matInput
-                                        id="referentPhone"
-                                        name="referentPhone"
-                                        #name="ngModel"
-                                        class="form-control font-bold"
-                                        class="form-control font-bold"
-                                        [(ngModel)]="item.referentPhone"
-                                        (ngModelChange)="checkChanged()" />
-                                </mat-form-field> -->
+                                        [(ngModel)]="item.languages"
+                                        (ngModelChange)="checkChanged()">
+                                        <mat-option *ngFor="let x of languages" [value]="x.code">{{
+                                            x.code
+                                        }}</mat-option>
+                                    </mat-select>
+                                    <!-- <div *ngIf="languages?.invalid">
+                                        <div *ngIf="languages?.errors?.required">Language is required.</div>
+                                    </div> -->
+                                </mat-form-field>
                             </div>
                         </div>
                     </div>

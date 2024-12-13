@@ -9,6 +9,7 @@ using Turis.BusinessLayer.Parameters;
 using Turis.BusinessLayer.Parameters.Base;
 using Turis.BusinessLayer.Resources;
 using Turis.BusinessLayer.Services.Interfaces;
+using Turis.Common.Enums;
 using Turis.Common.Models;
 using Turis.Common.Models.Requests;
 using Turis.DataAccessLayer;
@@ -119,11 +120,11 @@ public class ContactService(IDbContext dbContext, ILogger<ContactService> logger
 		dbContact.BirthPlace = contact.BirthPlace;
 		dbContact.Address = contact.Address;
 		dbContact.City = contact.City;
-		dbContact.CAP = contact.CAP;
+		dbContact.Cap = contact.Cap;
 		dbContact.RegionalCode = contact.RegionalCode;
 		dbContact.StateCode = contact.StateCode;
-		dbContact.Phone = contact.Phone;
-		dbContact.PhoneCell = contact.PhoneCell;
+		dbContact.Phone1 = contact.Phone1;
+		dbContact.Phone2 = contact.Phone2;
 		dbContact.Fax = contact.Fax;
 		dbContact.Web = contact.Web;
 		dbContact.EMail = contact.EMail;
@@ -131,11 +132,11 @@ public class ContactService(IDbContext dbContext, ILogger<ContactService> logger
 		dbContact.Pec = contact.Pec;
 		dbContact.SdiCode = contact.SdiCode;
 		dbContact.Note = contact.Note;
-		dbContact.DocumentType = contact.DocumentType;
+
+		dbContact.DocumentType = (DocumentType)Enum.Parse(typeof(DocumentType), contact.DocumentType);
+		dbContact.ContactType = (ContactType)Enum.Parse(typeof(ContactType), contact.ContactType);
 		dbContact.PercentageGuida = contact.PercentageGuida;
 		dbContact.PercentageAccompagnamento = contact.PercentageAccompagnamento;
-		dbContact.IsClient = contact.IsClient;
-		dbContact.IsCollaborator = contact.IsCollaborator;
 
 		await dbContext.SaveAsync();
 
@@ -157,7 +158,7 @@ public class ContactService(IDbContext dbContext, ILogger<ContactService> logger
 	public async Task<Result<IEnumerable<ContactModel>>> FilterClients(string pattern)
 	{
 		var query = dbContext.GetData<Contact>()
-			.Where(x => x.IsClient)
+			.Where(x => x.ContactType == ContactType.Client)
 			.Where(x => x.CompanyName.Contains(pattern))
 			.OrderBy(x => x.CompanyName)
 			;
@@ -169,7 +170,7 @@ public class ContactService(IDbContext dbContext, ILogger<ContactService> logger
 	public async Task<Result<IEnumerable<ContactModel>>> FilterCollaborators(string pattern)
 	{
 		var query = dbContext.GetData<Contact>()
-			.Where(x => x.IsCollaborator)
+			.Where(x => x.ContactType == ContactType.Collaborator)
 			.Where(x => x.FirstName.Contains(pattern) || x.LastName.Contains(pattern))
 			.OrderBy(x => x.FirstName)
 			.ThenBy(x => x.LastName)

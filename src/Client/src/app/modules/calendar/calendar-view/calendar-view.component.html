@@ -23,20 +23,74 @@
             </button>
         </div>
     </div>
+    <div class="flex space-x-2 mb-2">
+        <button mat-flat-button color="primary" class="ml-2" (click)="drawerOpened = !drawerOpened">
+            <mat-icon
+                *ngIf="!drawerOpened"
+                class="icon-size-5 mr-2"
+                [svgIcon]="'heroicons_outline:chevron-double-right'"></mat-icon>
+            <mat-icon
+                *ngIf="drawerOpened"
+                class="icon-size-5 mr-2"
+                [svgIcon]="'heroicons_outline:chevron-double-left'"></mat-icon>
+            <span class="ml-2">{{ 'General.Filters' | transloco }}</span>
+        </button>
+
+        <button mat-flat-button color="primary" class="ml-2" (click)="toggleViewMode()">
+            <mat-icon
+                *ngIf="viewMode === 'calendar'"
+                class="icon-size-5 mr-2"
+                [svgIcon]="'heroicons_outline:list-bullet'"></mat-icon>
+            <mat-icon
+                *ngIf="viewMode === 'list'"
+                class="icon-size-5 mr-2"
+                [svgIcon]="'heroicons_outline:calendar'"></mat-icon>
+            <span class="ml-2">{{ viewMode === 'calendar' ? 'Switch to List View' : 'Switch to Calendar View' }}</span>
+        </button>
+    </div>
 
     <!-- Main -->
-    <div class="flex flex-auto overflow-hidden">
+    <div class="relative flex flex-col flex-auto items-center justify-center h-full p-6 sm:p-10">
+        <div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
+            <mat-drawer-container class="flex-auto h-full">
+                <!-- Drawer -->
+                <mat-drawer class="w-90 dark:bg-gray-900" [mode]="drawerMode" [opened]="drawerOpened" #drawer>
+                    <!-- Queries sidebar -->
+                    <app-service-sidebar></app-service-sidebar>
+                </mat-drawer>
+
+                <!-- Drawer content -->
+                <mat-drawer-content class="flex flex-col overflow-hidden">
+                    <!-- Main -->
+                    <div class="flex flex-auto w-full overflow-hidden">
+                        <full-calendar
+                            *ngIf="viewMode === 'calendar'"
+                            #fullCalendar
+                            class="w-full h-full"
+                            [options]="calendarOptions"
+                            [deepChangeDetection]="true"></full-calendar>
+                        <div *ngIf="viewMode === 'list'">todo</div>
+                    </div>
+                </mat-drawer-content>
+            </mat-drawer-container>
+        </div>
+    </div>
+
+    <!-- <div class="flex flex-auto overflow-hidden">
         <div class="flex flex-col flex-auto overflow-hidden sm:overflow-y-auto">
             <div class="flex flex-1 flex-auto w-full h-full">
+                <app-service-sidebar></app-service-sidebar>
                 <full-calendar
                     #fullCalendar
                     class="w-full h-full"
                     [options]="calendarOptions"
                     [deepChangeDetection]="true"></full-calendar>
             </div>
+        </div>
+    </div> -->
 
-            <!-- Tabs -->
-            <!-- <mat-tab-group class="sm:px-2" mat-stretch-tabs="false" [animationDuration]="'0'">
+    <!-- Tabs -->
+    <!-- <mat-tab-group class="sm:px-2" mat-stretch-tabs="false" [animationDuration]="'0'">
                 <mat-tab label="Calendar"> </mat-tab>
                 <mat-tab label="List">
                     <ng-container *ngIf="list?.length > 0; else noData">
@@ -169,6 +223,4 @@
                     </ng-template>
                 </mat-tab>
             </mat-tab-group> -->
-        </div>
-    </div>
 </div>

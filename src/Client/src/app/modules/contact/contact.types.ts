@@ -15,14 +15,15 @@ export class Contact {
     taxCode: string;
     companyName: string;
     birthDate: Date;
+    birthDateText: string;
     birthPlace: string;
     address: string;
     city: string;
-    cAP: string;
+    cap: string;
     regionalCode: string;
     stateCode: string;
-    phone: string;
-    phoneCell: string;
+    phone1: string;
+    phone2: string;
     fax: string;
     web: string;
     eMail: string;
@@ -31,10 +32,9 @@ export class Contact {
     sdiCode: string;
     note: string;
     documentType: string;
+    contactType: string;
     percentageGuida: number;
     percentageAccompagnamento: number;
-    isAgenzia: boolean;
-    isCollaboratore: boolean;
 
     bookmarkId: string;
 }

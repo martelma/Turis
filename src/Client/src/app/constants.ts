@@ -20,6 +20,19 @@ export const Sexs = [
     { value: 'G', text: 'G' },
 ];
 
+export const ContactTypes = [
+    { value: 'Client', text: 'Client' },
+    { value: 'Collaborator', text: 'Collaborator' },
+];
+
+export const DocumentTypes = [
+    { value: '', text: '' },
+    { value: 'FIV', text: 'FIV' },
+    { value: 'FEI', text: 'FEI' },
+    { value: 'FIVA', text: 'FIVA' },
+    { value: 'RIT', text: 'RIT' },
+];
+
 export const ServiceTypesColor = {
     Guida: '#ef1616',
     Accompagnamento: '#444fd1',

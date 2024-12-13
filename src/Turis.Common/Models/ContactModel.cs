@@ -1,4 +1,5 @@
-﻿using Turis.Common.Models.Base;
+﻿using Turis.Common.Enums;
+using Turis.Common.Models.Base;
 
 namespace Turis.Common.Models;
 
@@ -15,14 +16,15 @@ public class ContactModel : BaseModel
 	public string TaxCode { get; set; }
 	public string CompanyName { get; set; }
 	public DateTimeOffset? BirthDate { get; set; }
+	public string BirthDateText { get; set; }
 	public string BirthPlace { get; set; }
 	public string Address { get; set; }
 	public string City { get; set; }
-	public string CAP { get; set; }
+	public string Cap { get; set; }
 	public string RegionalCode { get; set; }
 	public string StateCode { get; set; }
-	public string Phone { get; set; }
-	public string PhoneCell { get; set; }
+	public string Phone1 { get; set; }
+	public string Phone2 { get; set; }
 	public string Fax { get; set; }
 	public string Web { get; set; }
 	public string EMail { get; set; }
@@ -31,18 +33,17 @@ public class ContactModel : BaseModel
 	public string SdiCode { get; set; }
 	public string Note { get; set; }
 	public string DocumentType { get; set; }
+	public string ContactType { get; set; }
 	public decimal PercentageGuida { get; set; }
 	public decimal PercentageAccompagnamento { get; set; }
-	public bool IsClient { get; set; }
-	public bool IsCollaborator { get; set; }
 
 	public string FullName
 	{
 		get
 		{
-			if (IsCollaborator)
+			if (ContactType == Enums.ContactType.Collaborator.ToString())
 				return $"{FirstName} {LastName}";
-			if (IsClient)
+			if (ContactType == Enums.ContactType.Client.ToString())
 				return CompanyName;
 			return string.Empty;
 		}

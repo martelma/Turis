@@ -15,7 +15,6 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { LanguageService } from 'app/shared/modules/language/language.service';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -30,6 +29,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { SearchInputComponent } from 'app/shared/components/ui/search-input/search-input.component';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { trackByFn } from 'app/shared';
+import { LanguageService } from '../language.service';
 
 @UntilDestroy()
 @Component({

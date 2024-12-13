@@ -19,7 +19,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MY_DATE_FORMATS, Sexs } from 'app/constants';
+import { ContactTypes, DocumentTypes, MY_DATE_FORMATS, Sexs } from 'app/constants';
 import { PriceListService } from 'app/modules/configuration/price-list/price-list.service';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { LanguageService } from 'app/modules/configuration/languages/language.service';
@@ -106,6 +106,9 @@ export class ContactEditComponent implements OnInit {
     @ViewChild(MatTabGroup) matTabGroup: MatTabGroup;
 
     trackByFn = trackByFn;
+
+    contactTypes = ContactTypes;
+    documentTypes = DocumentTypes;
 
     constructor(
         private _formBuilder: UntypedFormBuilder,
