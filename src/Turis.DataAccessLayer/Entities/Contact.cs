@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Xml.Linq;
 using Turis.Common.Enums;
 using Turis.DataAccessLayer.Entities.Base;
 
@@ -11,8 +10,9 @@ public class Contact : BaseEntity
 	public string ExternalCode { get; set; }
 	public string Title { get; set; }
 	public string Sex { get; set; }
-	public Guid? LanguageId { get; set; }
-	public Language? Language { get; set; }
+	public string? Languages { get; set; }
+	//public Guid? LanguageId { get; set; }
+	//public Language? Language { get; set; }
 	public string FirstName { get; set; }
 	public string LastName { get; set; }
 	public string FiscalCode { get; set; }
@@ -38,6 +38,7 @@ public class Contact : BaseEntity
 	public ContactType? ContactType { get; set; }
 	public decimal PercentageGuida { get; set; }
 	public decimal PercentageAccompagnamento { get; set; }
+	public string AvatarUrl { get; set; }
 
 	[NotMapped] public string FullName => $"{FirstName} {LastName}";
 }

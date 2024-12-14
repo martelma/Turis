@@ -22,7 +22,7 @@ import { ShortcutsComponent } from 'app/layout/common/shortcuts/shortcuts.compon
 import { UserComponent } from 'app/layout/common/user/user.component';
 import { CdModalComponent } from 'app/shared/components/cd-modal/cd-modal.component';
 import { ErrorModalCommand } from 'app/shared/types/error-modal.types';
-import { map, tap } from 'rxjs';
+import { filter, map, tap } from 'rxjs';
 import packageInfo from '../../../../../../package.json';
 import { isDevMode, isStagingMode } from 'app/shared/utils';
 import { AdminService } from 'app/modules/admin/admin.service';
@@ -88,12 +88,17 @@ export class ClassyLayoutComponent implements OnInit {
 
     private _loadData(): void {
         // LOADS USER PROFILE
-        this._userService
-            .me()
-            .pipe(untilDestroyed(this))
-            .subscribe(user => {
-                this.user = user;
-            });
+        this._userService.me().pipe(untilDestroyed(this)).subscribe();
+
+        this._userService.user$
+            .pipe(
+                filter(user => !!user),
+                tap(user => {
+                    this.user = user;
+                }),
+                untilDestroyed(this),
+            )
+            .subscribe();
 
         this._navigationService.navigation$
             .pipe(
@@ -147,5 +152,9 @@ export class ClassyLayoutComponent implements OnInit {
 
     getEnvironment(): string {
         return this.apiConfigurations.find(x => x.key === 'Environment')?.value;
+    }
+
+    log(obj: any) {
+        console.log(obj);
     }
 }

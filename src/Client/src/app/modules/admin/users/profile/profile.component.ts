@@ -20,7 +20,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { ImageCropperComponent } from 'app/shared/components/image-cropper/image-cropper.component';
 import { Observable, tap } from 'rxjs';
 import { SafeUrl } from '@angular/platform-browser';
-import { UsersService } from '../users.service';
+import { AvatarUsersService } from '../avatar-users.service';
 import { dataURItoBlob } from 'app/shared';
 import { getSuccessModal } from 'app/shared/types/confirm-modal.types';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
@@ -57,8 +57,8 @@ export class ProfileComponent implements OnInit {
 
     constructor(
         private _userService: UserService,
+        private _usersService: AvatarUsersService,
         private _matDialog: MatDialog,
-        private _usersService: UsersService,
         private _fuseConfirmationService: FuseConfirmationService,
         private _changeDetectorRef: ChangeDetectorRef,
         private _activatedRoute: ActivatedRoute,

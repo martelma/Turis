@@ -12,6 +12,8 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { ServiceService } from '../service.service';
 import { Service } from '../service.types';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { Router, RouterLink } from '@angular/router';
+import { Contact } from 'app/modules/contact/contact.types';
 
 @UntilDestroy()
 @Component({
@@ -25,6 +27,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
         NgFor,
         DatePipe,
         JsonPipe,
+        RouterLink,
         FormsModule,
         ReactiveFormsModule,
         MatTabsModule,
@@ -55,6 +58,7 @@ export class ServiceViewComponent implements OnInit, OnChanges {
     constructor(
         private _formBuilder: UntypedFormBuilder,
         private _serviceService: ServiceService,
+        private router: Router,
     ) {}
 
     ngOnChanges(): void {}
@@ -65,4 +69,9 @@ export class ServiceViewComponent implements OnInit, OnChanges {
     }
 
     onSelectedTabChange(): void {}
+
+    openContact(contact: Contact) {
+        const url = this.router.serializeUrl(this.router.createUrlTree(['/contact', contact?.id]));
+        window.open(url, '_blank');
+    }
 }

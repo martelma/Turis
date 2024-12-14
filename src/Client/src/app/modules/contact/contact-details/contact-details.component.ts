@@ -16,17 +16,25 @@ import { SpinnerButtonComponent } from 'app/shared/components/ui/spinner-button/
 import { Contact } from '../contact.types';
 import { ContactComponent } from '../contact.component';
 import { ContactService } from '../contact.service';
-import { tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
 import { ContactViewComponent } from '../contact-view/contact-view.component';
 import { ContactEditComponent } from '../contact-edit/contact-edit.component';
+import { SafeUrl } from '@angular/platform-browser';
+import { ImageCropperComponent } from 'app/shared/components/image-cropper/image-cropper.component';
+import { MatDialog } from '@angular/material/dialog';
+import { dataURItoBlob } from 'app/shared';
+import { getSuccessModal } from 'app/shared/types/confirm-modal.types';
+import { FuseCardComponent } from '@fuse/components/card';
+import { TextFieldModule } from '@angular/cdk/text-field';
 
 @UntilDestroy()
 @Component({
     selector: 'app-contact-details',
     templateUrl: './contact-details.component.html',
+    styleUrls: ['./contact-details.component.scss'],
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations,
     standalone: true,
@@ -51,6 +59,8 @@ import { ContactEditComponent } from '../contact-edit/contact-edit.component';
         ContactViewComponent,
         ContactEditComponent,
         SpinnerButtonComponent,
+        FuseCardComponent,
+        TextFieldModule,
     ],
 })
 export class ContactDetailsComponent implements OnInit {
@@ -67,6 +77,9 @@ export class ContactDetailsComponent implements OnInit {
 
     contact: Contact;
 
+    avatarUrl: SafeUrl;
+    contactAvatar: any;
+
     //queste devono diventare scope
     userCanDeleteContact = true;
     userCanUpdateContact = true;
@@ -81,6 +94,7 @@ export class ContactDetailsComponent implements OnInit {
         private _fuseConfirmationService: FuseConfirmationService,
         private _translocoService: TranslocoService,
         private _bookmarkService: BookmarkService,
+        private _matDialog: MatDialog,
         public snackBar: MatSnackBar,
 
         public contactComponent: ContactComponent,
@@ -146,11 +160,26 @@ export class ContactDetailsComponent implements OnInit {
     }
 
     private _subscribeContact() {
-        this._contactService.contact$.pipe(untilDestroyed(this)).subscribe((contact: Contact) => {
-            this.contact = contact;
+        this._contactService.contact$
+            .pipe(
+                tap((contact: Contact) => {
+                    this.setContact(contact);
+                }),
+                untilDestroyed(this),
+            )
+            .subscribe((contact: Contact) => {
+                this.contact = contact;
 
-            this.editMode = contact?.id === undefined;
-        });
+                this.editMode = contact?.id === undefined;
+            });
+    }
+
+    private setContact(contact: Contact): void {
+        // Get the contact
+        this.contact = contact;
+
+        // Sets the avatar
+        this.avatarUrl = this.contact.avatarUrl;
     }
 
     private _subscribeContactEdited(): void {
@@ -256,11 +285,73 @@ export class ContactDetailsComponent implements OnInit {
         }
     }
 
-    // handleCheck(contact: Contact): void {
-    //     if (contact.checked) {
-    //         this._contactService.setCheck(contact);
-    //     } else {
-    //         this._contactService.setUnCheck(contact);
-    //     }
-    // }
+    onFileChange(event: any) {
+        const files = event.target.files as FileList;
+
+        if (files.length > 0) {
+            const _fileName = files[0].name;
+            const _file = URL.createObjectURL(files[0]);
+            this.openAvatarEditor(_file)
+                .pipe(
+                    tap(result => {
+                        // No avatar selected
+                        if (!result) {
+                            return;
+                        }
+
+                        this.contactAvatar = {
+                            file: result,
+                            fileName: _fileName,
+                        };
+                        this.avatarUrl = result;
+
+                        this.saveAvatar();
+                    }),
+                    untilDestroyed(this),
+                )
+                .subscribe();
+        }
+    }
+
+    openAvatarEditor(image: string): Observable<string> {
+        const dialogRef = this._matDialog.open(ImageCropperComponent, {
+            maxWidth: '80vw',
+            maxHeight: '80vh',
+            data: image,
+        });
+
+        return dialogRef.afterClosed();
+    }
+
+    saveAvatar = (): void => {
+        if (!this.contactAvatar) return;
+
+        const formData = new FormData();
+        formData.append('file', dataURItoBlob(this.contactAvatar?.file), this.contactAvatar?.fileName);
+
+        this._contactService
+            .saveAvatar(formData, this.contact?.id)
+            .pipe(untilDestroyed(this))
+            .subscribe(() => {
+                this._fuseConfirmationService.open(getSuccessModal());
+
+                // this._userService.me().pipe(untilDestroyed(this)).subscribe();
+            });
+    };
+
+    removePreviewAvatar(): void {
+        this.avatarUrl = null;
+        this.contactAvatar = null;
+    }
+
+    removeAvatar(): void {
+        this._contactService
+            .resetAvatar(this.contact?.id)
+            .pipe(untilDestroyed(this))
+            .subscribe(() => {
+                this._fuseConfirmationService.open(getSuccessModal());
+
+                // this._userService.me().pipe(untilDestroyed(this)).subscribe();
+            });
+    }
 }

@@ -4,7 +4,7 @@ using Turis.BusinessLayer.Services.Base;
 
 namespace Turis.BusinessLayer.Services.Interfaces;
 
-public interface IAvatarService : IService
+public interface IAvatarUserService : IService
 {
 	Task<Result<IdentityResult>> SaveAsync(Guid id, Stream stream, string fileName);
 

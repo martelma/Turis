@@ -9,7 +9,8 @@ public class ContactModel : BaseModel
 	public string ExternalCode { get; set; }
 	public string Title { get; set; }
 	public string Sex { get; set; }
-	public LanguageModel Language { get; set; }
+	public string[] Languages { get; set; }
+	//public LanguageModel Language { get; set; }
 	public string FirstName { get; set; }
 	public string LastName { get; set; }
 	public string FiscalCode { get; set; }
@@ -36,6 +37,7 @@ public class ContactModel : BaseModel
 	public string ContactType { get; set; }
 	public decimal PercentageGuida { get; set; }
 	public decimal PercentageAccompagnamento { get; set; }
+	public string Avatar { get; set; }
 
 	public string FullName
 	{

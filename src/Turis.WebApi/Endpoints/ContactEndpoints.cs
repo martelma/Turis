@@ -1,4 +1,7 @@
-﻿using Turis.BusinessLayer.Parameters;
+﻿using Microsoft.AspNetCore.Mvc;
+using MinimalHelpers.OpenApi;
+using Turis.BusinessLayer.Erorrs;
+using Turis.BusinessLayer.Parameters;
 using Turis.BusinessLayer.Services.Interfaces;
 using Turis.Common.Models.Requests;
 
@@ -17,6 +20,49 @@ public class ContactEndpoints : IEndpointRouteHandlerBuilder
 		templateApiGroup.MapPost(string.Empty, Save);
 		templateApiGroup.MapPut(string.Empty, Save);
 		templateApiGroup.MapDelete("{id:guid}", Delete);
+
+		var avatarsApiGroup = endpoints.MapGroup("/api/contact/{id:guid}/avatar");
+
+		avatarsApiGroup.MapGet(string.Empty, GetAvatarAsync)
+			.AllowAnonymous()
+			.Produces<FileContentResult>(StatusCodes.Status200OK)
+			.Produces<ServiceError>(StatusCodes.Status404NotFound)
+			.WithOpenApi(operation =>
+			{
+				operation.Summary = "Get the contact's avatar";
+
+				operation.Response(StatusCodes.Status200OK).Description = "The contact's avatar";
+				operation.Response(StatusCodes.Status404NotFound).Description = "Avatar not found";
+
+				return operation;
+			});
+
+		avatarsApiGroup.MapPost(string.Empty, SaveAvatarAsync)
+			.Produces(StatusCodes.Status204NoContent)
+			.Produces<ServiceError>(StatusCodes.Status404NotFound)
+			.DisableAntiforgery()
+			.WithOpenApi(operation =>
+			{
+				operation.Summary = "Saves a contact avatar in CDN and stores the avatar path in database";
+
+				operation.Response(StatusCodes.Status204NoContent).Description = "The avatar has been stored successfully";
+				operation.Response(StatusCodes.Status404NotFound).Description = "Contact not found";
+
+				return operation;
+			});
+
+		avatarsApiGroup.MapDelete(string.Empty, DeleteAvatarAsync)
+			.Produces(StatusCodes.Status204NoContent)
+			.Produces<ServiceError>(StatusCodes.Status404NotFound)
+			.WithOpenApi(operation =>
+			{
+				operation.Summary = "Removes a contact avatar";
+
+				operation.Response(StatusCodes.Status204NoContent).Description = "The avatar has been removed successfully";
+				operation.Response(StatusCodes.Status404NotFound).Description = "Contact not found";
+
+				return operation;
+			});
 	}
 
 	private static async Task<IResult> Get(HttpContext httpContext, IContactService service, Guid id)
@@ -36,4 +82,29 @@ public class ContactEndpoints : IEndpointRouteHandlerBuilder
 
 	private static async Task<IResult> Delete(HttpContext httpContext, IContactService service, Guid id)
 		=> (await service.DeleteAsync(id)).ToResponse(httpContext);
+
+	private static async Task<IResult> GetAvatarAsync(Guid id, IAvatarContactService avatarContactService, HttpContext httpContext)
+	{
+		var result = await avatarContactService.GetAsync(id);
+		var response = httpContext.CreateResponse(result);
+
+		return response;
+	}
+
+	private static async Task<IResult> SaveAvatarAsync(Guid id, IFormFile file, IAvatarContactService avatarContactService, HttpContext httpContext)
+	{
+		using var stream = file.OpenReadStream();
+		var result = await avatarContactService.SaveAsync(id, stream, file.FileName);
+		var response = httpContext.CreateResponse(result);
+
+		return response;
+	}
+
+	private static async Task<IResult> DeleteAvatarAsync(Guid id, IAvatarContactService avatarContactService, HttpContext httpContext)
+	{
+		var result = await avatarContactService.DeleteAsync(id);
+		var response = httpContext.CreateResponse(result);
+
+		return response;
+	}
 }

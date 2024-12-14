@@ -18,7 +18,7 @@ import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { debounceTime, map, tap } from 'rxjs';
-import { UsersService } from '../users.service';
+import { AvatarUsersService } from '../avatar-users.service';
 import { TranslocoModule } from '@ngneat/transloco';
 import { SearchPipe } from 'app/pipes';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -86,7 +86,7 @@ export class UsersListComponent implements OnInit {
 
     constructor(
         private _activatedRoute: ActivatedRoute,
-        private _usersService: UsersService,
+        private _usersService: AvatarUsersService,
         private _router: Router,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _formBuilder: FormBuilder,

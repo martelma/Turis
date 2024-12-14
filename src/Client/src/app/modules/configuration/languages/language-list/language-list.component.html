@@ -41,8 +41,8 @@
                     <div
                         class="list-grid z-10 sticky top-0 grid gap-4 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
                         <div class="hidden md:block">{{ 'Languages.Code' | transloco }}</div>
-                        <div class="hidden sm:block">{{ 'Languages.Name' | transloco }}</div>
                         <div class="hidden lg:block">{{ 'Languages.CodeIso' | transloco }}</div>
+                        <div class="hidden sm:block">{{ 'Languages.Name' | transloco }}</div>
                     </div>
                     <!-- Rows -->
                     <ng-container *ngIf="list">
@@ -53,14 +53,14 @@
                                     {{ language?.code }}
                                 </div>
 
+                                <!-- CodeIso -->
+                                <div class="sm:block whitespace-pre-wrap">
+                                    {{ language?.codeIso }}
+                                </div>
+
                                 <!-- Name -->
                                 <div class="truncate">
                                     {{ language.name }}
-                                </div>
-
-                                <!-- Color -->
-                                <div class="sm:block whitespace-pre-wrap">
-                                    {{ language?.codeIso }}
                                 </div>
 
                                 <!-- Details button -->
@@ -111,24 +111,26 @@
                         <form class="flex flex-col w-full" [formGroup]="selectedItemForm">
                             <div class="flex flex-col sm:flex-row p-8">
                                 <div class="flex flex-auto flex-wrap">
-                                    <div class="flex flex-col w-full lg:w-2/4 sm:pl-8">
-                                        <!-- Code -->
-                                        <mat-form-field class="flex flex-1">
-                                            <mat-label>{{ 'Languages.Code' | transloco }}</mat-label>
-                                            <input matInput [formControlName]="'code'" />
-                                        </mat-form-field>
+                                    <div class="flex flex-col w-full sm:p-8">
+                                        <div class="grid grid-cols-12 gap-2 w-full">
+                                            <!-- Code -->
+                                            <mat-form-field class="col-span-2">
+                                                <mat-label>{{ 'Languages.Code' | transloco }}</mat-label>
+                                                <input matInput [formControlName]="'code'" />
+                                            </mat-form-field>
 
-                                        <!-- Name -->
-                                        <mat-form-field class="flex flex-1">
-                                            <mat-label>{{ 'Languages.Name' | transloco }}</mat-label>
-                                            <input matInput [formControlName]="'name'" />
-                                        </mat-form-field>
+                                            <!-- CodeIso -->
+                                            <mat-form-field class="col-span-2">
+                                                <mat-label>{{ 'Languages.CodeIso' | transloco }}</mat-label>
+                                                <input matInput [formControlName]="'codeIso'" />
+                                            </mat-form-field>
 
-                                        <!-- CodeIso -->
-                                        <mat-form-field class="flex flex-1">
-                                            <mat-label>{{ 'Languages.CodeIso' | transloco }}</mat-label>
-                                            <input matInput [formControlName]="'codeIso'" />
-                                        </mat-form-field>
+                                            <!-- Name -->
+                                            <mat-form-field class="col-span-8">
+                                                <mat-label>{{ 'Languages.Name' | transloco }}</mat-label>
+                                                <input matInput [formControlName]="'name'" />
+                                            </mat-form-field>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

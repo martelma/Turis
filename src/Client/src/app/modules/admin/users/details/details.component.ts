@@ -22,7 +22,7 @@ import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/route
 import { FuseFindByKeyPipe } from '@fuse/pipes/find-by-key/find-by-key.pipe';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { debounceTime, map, tap } from 'rxjs';
-import { UsersService } from '../users.service';
+import { AvatarUsersService } from '../avatar-users.service';
 import { UsersListComponent } from '../list/list.component';
 import { SafeUrl } from '@angular/platform-browser';
 import { UserService } from 'app/core/user/user.service';
@@ -107,7 +107,7 @@ export class UsersDetailsComponent implements OnInit {
         private _activatedRoute: ActivatedRoute,
         private _changeDetectorRef: ChangeDetectorRef,
         private _usersListComponent: UsersListComponent,
-        private _usersService: UsersService,
+        private _usersService: AvatarUsersService,
         private _formBuilder: UntypedFormBuilder,
         private _fuseConfirmationService: FuseConfirmationService,
         private _router: Router,

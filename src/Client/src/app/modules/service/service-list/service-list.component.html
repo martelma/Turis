@@ -72,14 +72,16 @@
                                         "></mat-icon>
 
                                     <!-- Code & Title -->
-                                    <div class="mr-2 font-semibold text-wrap" [matTooltip]="item.title">
-                                        {{ item.code }} - {{ item.title }}
+                                    <div class="mr-2 font-extrabold text-wrap">
+                                        {{ item.title }}
                                     </div>
                                 </div>
 
                                 <div class="flex space-x-2 items-center">
                                     <div *ngFor="let lang of item.languages">
-                                        <span [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
+                                        <span
+                                            [matTooltip]="lang"
+                                            [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
                                     </div>
 
                                     <!-- Date -->

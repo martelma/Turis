@@ -10,7 +10,7 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Injectable({ providedIn: 'root' })
-export class UsersService extends BaseEntityService<User> {
+export class AvatarUsersService extends BaseEntityService<User> {
     private _user: BehaviorSubject<User> = new BehaviorSubject(null);
     private _users: BehaviorSubject<PaginatedList<User>> = new BehaviorSubject({
         items: [],

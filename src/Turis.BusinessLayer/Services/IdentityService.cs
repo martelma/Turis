@@ -40,7 +40,7 @@ public class IdentityService(ApplicationDbContext dbContext,
     IOptions<AuthenticationSettings> authenticationSettingsOptions,
     IOptions<JwtBearerSettings> jwtBearerSettingsOptions,
     IHttpContextAccessor httpContextAccessor,
-    IAvatarService avatarService,
+    IAvatarUserService avatarUserService,
     ITimeLimitedDataProtector dataProtector,
     IJwtBearerService jwtBearerService,
     IEmailService emailService,
@@ -309,7 +309,7 @@ public class IdentityService(ApplicationDbContext dbContext,
                 Language = u.Language,
                 IsActive = u.LockoutEnd.GetValueOrDefault(DateTimeOffset.MinValue) < DateTime.UtcNow,
                 AccountType = u.PasswordHash != null ? AccountType.Local : AccountType.AzureActiveDirectory,
-                Avatar = (await avatarService.GetAsync(u.Id))?.Content != null ? (await avatarService.GetAsync(u.Id))?.Content.Content.ConvertToBase64String() : null
+                Avatar = (await avatarUserService.GetAsync(u.Id))?.Content != null ? (await avatarUserService.GetAsync(u.Id))?.Content.Content.ConvertToBase64String() : null
             });
 
         var result = new PaginatedList<UserModel>(data.ToList().Take(paginator.PageSize), totalCount, paginator.PageIndex, paginator.PageSize);
@@ -370,7 +370,7 @@ public class IdentityService(ApplicationDbContext dbContext,
             }).ToList(),
         };
 
-        var avatar = (await avatarService.GetAsync(user.Id))?.Content;
+        var avatar = (await avatarUserService.GetAsync(user.Id))?.Content;
         if (avatar != null)
             user.Avatar = avatar.Content.ConvertToBase64String();
 

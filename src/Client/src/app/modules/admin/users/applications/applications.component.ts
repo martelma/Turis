@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
-import { UsersService } from '../users.service';
+import { AvatarUsersService } from '../avatar-users.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { ApplicationsService } from 'app/modules/admin/applications/applications.service';
@@ -130,7 +130,7 @@ export class ContactApplicationsComponent implements OnInit {
     selectedScopeGroup: ApplicationScopeGroup = null;
 
     constructor(
-        private _usersService: UsersService,
+        private _usersService: AvatarUsersService,
         private _activatedRoute: ActivatedRoute,
         private _router: Router,
         private _applicationsService: ApplicationsService,

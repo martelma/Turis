@@ -47,6 +47,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Endpoints\AvatarContactsEndpoints.cs" />
 	  <Compile Remove="Filters\ExternalDashboardAuthorizationService.cs" />
 	  <Compile Remove="Filters\HangFireAuthorizationFilter.cs" />
 	</ItemGroup>

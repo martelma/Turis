@@ -21,7 +21,9 @@ namespace Turis.BusinessLayer.Services;
 public class ServiceService(IDbContext dbContext,
 	ILogger<ServiceService> logger,
 	IBookmarkService bookmarkService,
-	IUserService userService) : IServiceService
+	IUserService userService,
+	IAvatarContactService avatarContactService
+	) : IServiceService
 {
 	public async Task<Result<PaginatedList<ServiceModel>>> ListAsync(ServiceSearchParameters parameters)
 	{
@@ -98,7 +100,15 @@ public class ServiceService(IDbContext dbContext,
 			.Skip(paginator.PageIndex * paginator.PageSize).Take(paginator.PageSize + 1)
 			.ToList();
 
-		var model = data.ToModel(bookmarks);
+		var model = await data.ToModel(bookmarks, avatarContactService);
+
+		//foreach (var item in model.Where(x => x.Collaborator != null))
+		//{
+		//	item.Collaborator.Avatar = (await avatarContactService.GetAsync(item.Collaborator.Id))?.Content != null
+		//		? (await avatarContactService.GetAsync(item.Collaborator.Id))?.Content.Content.ConvertToBase64String()
+		//		: null;
+		//}
+
 
 		var result = new PaginatedList<ServiceModel>(model, totalCount, data.Count > parameters.PageSize);
 		return result;
@@ -108,13 +118,15 @@ public class ServiceService(IDbContext dbContext,
 	{
 		var bookmarks = await bookmarkService.ListAsync(userService.GetUserId(), nameof(Service));
 
-		var service = dbContext.GetData<Service>()
+		var query = dbContext.GetData<Service>()
 			.Include(x => x.PriceList)
 			.Include(x => x.Client)
 			.Include(x => x.Collaborator)
 			.Where(x => x.Id == serviceId)
-			.ToModel(bookmarks)
 			.FirstOrDefault();
+
+
+		var service = await query.ToModelAsync(bookmarks, avatarContactService);
 
 		if (service is null)
 			return Result.Fail(FailureReasons.ItemNotFound);
@@ -192,7 +204,7 @@ public class ServiceService(IDbContext dbContext,
 		service.Id = dbService.Id;
 
 		var bookmarks = await bookmarkService.ListAsync(userService.GetUserId(), nameof(Service));
-		return dbService.ToModel(bookmarks);
+		return await dbService.ToModelAsync(bookmarks, avatarContactService);
 	}
 
 	public async Task<Result> DeleteAsync(Guid serviceId)

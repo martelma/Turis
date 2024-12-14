@@ -123,36 +123,39 @@
                         <form class="flex flex-col w-full" [formGroup]="selectedItemForm">
                             <div class="flex flex-col sm:flex-row p-8">
                                 <div class="flex flex-auto flex-wrap">
-                                    <div class="flex flex-col w-full lg:w-2/4 sm:pl-8">
-                                        <!-- Code -->
-                                        <mat-form-field class="flex flex-1">
-                                            <mat-label>{{ 'AliquotaIvas.Code' | transloco }}</mat-label>
-                                            <input matInput [formControlName]="'code'" />
-                                        </mat-form-field>
+                                    <div class="flex flex-col w-full sm:p-8">
+                                        <div class="grid grid-cols-12 gap-2 w-full">
+                                            <!-- Code -->
+                                            <mat-form-field class="col-span-2">
+                                                <mat-label>{{ 'AliquotaIvas.Code' | transloco }}</mat-label>
+                                                <input matInput [formControlName]="'code'" />
+                                            </mat-form-field>
 
-                                        <!-- Name -->
-                                        <mat-form-field class="flex flex-1">
-                                            <mat-label>{{ 'AliquotaIvas.Name' | transloco }}</mat-label>
-                                            <input matInput [formControlName]="'name'" />
-                                        </mat-form-field>
+                                            <!-- Name -->
+                                            <mat-form-field class="col-span-6">
+                                                <mat-label>{{ 'AliquotaIvas.Name' | transloco }}</mat-label>
+                                                <input matInput [formControlName]="'name'" />
+                                            </mat-form-field>
 
-                                        <!-- Description -->
-                                        <mat-form-field class="flex flex-1">
-                                            <mat-label>{{ 'AliquotaIvas.Description' | transloco }}</mat-label>
-                                            <input matInput [formControlName]="'description'" />
-                                        </mat-form-field>
+                                            <!-- Aliquota -->
+                                            <mat-form-field class="col-span-2">
+                                                <mat-label>{{ 'AliquotaIvas.Aliquota' | transloco }}</mat-label>
+                                                <input matInput [formControlName]="'aliquota'" />
+                                            </mat-form-field>
 
-                                        <!-- Aliquota -->
-                                        <mat-form-field class="flex flex-1">
-                                            <mat-label>{{ 'AliquotaIvas.Aliquota' | transloco }}</mat-label>
-                                            <input matInput [formControlName]="'aliquota'" />
-                                        </mat-form-field>
-
-                                        <!-- CodiceNatura -->
-                                        <mat-form-field class="flex flex-1">
-                                            <mat-label>{{ 'AliquotaIvas.CodiceNatura' | transloco }}</mat-label>
-                                            <input matInput [formControlName]="'codiceNatura'" />
-                                        </mat-form-field>
+                                            <!-- CodiceNatura -->
+                                            <mat-form-field class="col-span-2">
+                                                <mat-label>{{ 'AliquotaIvas.CodiceNatura' | transloco }}</mat-label>
+                                                <input matInput [formControlName]="'codiceNatura'" />
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="grid grid-cols-12 gap-2 w-full">
+                                            <!-- Description -->
+                                            <mat-form-field class="col-span-12">
+                                                <mat-label>{{ 'AliquotaIvas.Description' | transloco }}</mat-label>
+                                                <input matInput [formControlName]="'description'" />
+                                            </mat-form-field>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

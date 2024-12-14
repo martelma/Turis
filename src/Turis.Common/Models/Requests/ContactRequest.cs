@@ -8,7 +8,8 @@ public class ContactRequest : BaseRequest
 	public string ExternalCode { get; set; }
 	public string Title { get; set; }
 	public string Sex { get; set; }
-	public Guid? LanguageId { get; set; }
+	public string[] Languages { get; set; }
+	//public Guid? LanguageId { get; set; }
 	public string FirstName { get; set; }
 	public string LastName { get; set; }
 	public string FiscalCode { get; set; }

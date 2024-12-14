@@ -160,9 +160,15 @@
                             <mat-expansion-panel #card [expanded]="true">
                                 <mat-expansion-panel-header class="bg-primary py-4 px-8 rounded-none">
                                     <mat-panel-title>
-                                        <div class="flex items-center gap-2 text-white text-lg">
+                                        <div class="flex flex-1 justify-between items-center gap-2 text-white text-lg">
                                             <!-- <mat-icon [svgIcon]="'heroicons_solid:user-circle'"></mat-icon> -->
                                             <span>Client</span>
+                                            <button
+                                                mat-button
+                                                class="flex flex-1 justify-end"
+                                                (click)="openContact(item?.client); $event.stopPropagation()">
+                                                View
+                                            </button>
                                         </div>
                                     </mat-panel-title>
                                 </mat-expansion-panel-header>
@@ -216,9 +222,15 @@
                             <mat-expansion-panel #card [expanded]="true">
                                 <mat-expansion-panel-header class="bg-primary py-4 px-8 rounded-none">
                                     <mat-panel-title>
-                                        <div class="flex items-center gap-2 text-white text-lg">
+                                        <div class="flex flex-1 justify-between items-center gap-2 text-white text-lg">
                                             <!-- <mat-icon [svgIcon]="'heroicons_solid:user-circle'"></mat-icon> -->
                                             <span>Collaborator</span>
+                                            <button
+                                                mat-button
+                                                class="flex flex-1 justify-end"
+                                                (click)="openContact(item?.collaborator); $event.stopPropagation()">
+                                                View
+                                            </button>
                                         </div>
                                     </mat-panel-title>
                                 </mat-expansion-panel-header>

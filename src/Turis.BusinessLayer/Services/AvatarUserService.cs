@@ -6,7 +6,9 @@ using Turis.BusinessLayer.Services.Interfaces;
 
 namespace Turis.BusinessLayer.Services;
 
-public class AvatarService(IOptions<CdnSettings> cdnSettings, IFileService fileService, UserManager<ApplicationUser> userManager) : IAvatarService
+public class AvatarUserService(IOptions<CdnSettings> cdnSettings
+	, IFileService fileService
+	, UserManager<ApplicationUser> userManager) : IAvatarUserService
 {
 	private readonly CdnSettings cdnSettings = cdnSettings.Value;
 
@@ -55,9 +57,6 @@ public class AvatarService(IOptions<CdnSettings> cdnSettings, IFileService fileS
 		return result;
 	}
 
-	private async Task<ApplicationUser> GetApplicationUserAsync(Guid id)
-	{
-		var user = await userManager.FindByIdAsync(id.ToString());
-		return user;
-	}
+	private async Task<ApplicationUser> GetApplicationUserAsync(Guid id) 
+		=> await userManager.FindByIdAsync(id.ToString());
 }

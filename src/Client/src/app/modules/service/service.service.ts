@@ -90,7 +90,7 @@ export class ServiceService extends BaseEntityService<Service> {
             referent: '',
             referentPhone: '',
             note: '',
-            language: null,
+            // language: null,
             languages: [],
             userId: undefined,
             creationDate: undefined,

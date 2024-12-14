@@ -1,4 +1,5 @@
 ﻿using Turis.Common.Enums;
+using Turis.Common.Models;
 using Turis.DataAccessLayer.Entities.Base;
 
 namespace Turis.DataAccessLayer.Entities;

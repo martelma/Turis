@@ -14,12 +14,13 @@ public class ContactConfiguration : BaseEntityConfiguration<Entities.Contact>
 		builder.Property(x => x.ExternalCode).HasMaxLength(20);
 		builder.Property(x => x.Title).HasMaxLength(20);
 		builder.Property(x => x.Sex).HasMaxLength(2);
+		builder.Property(x => x.Languages).HasMaxLength(50);
 
-		builder
-			.HasOne(x => x.Language)
-			.WithMany()
-			.HasForeignKey(x => x.LanguageId)
-			.IsRequired(false);
+		//builder
+		//	.HasOne(x => x.Language)
+		//	.WithMany()
+		//	.HasForeignKey(x => x.LanguageId)
+		//	.IsRequired(false);
 
 		builder.Property(x => x.FirstName).HasMaxLength(150);
 		builder.Property(x => x.LastName).HasMaxLength(150);
@@ -41,7 +42,6 @@ public class ContactConfiguration : BaseEntityConfiguration<Entities.Contact>
 		builder.Property(x => x.EMailAccounting).HasMaxLength(50);
 		builder.Property(x => x.Pec).HasMaxLength(50);
 		builder.Property(x => x.SdiCode).HasMaxLength(50);
-		builder.Property(x => x.Note);
 
 		builder
 			.Property(x => x.DocumentType)
@@ -58,5 +58,6 @@ public class ContactConfiguration : BaseEntityConfiguration<Entities.Contact>
 		builder.Property(x => x.PercentageGuida);
 		builder.Property(x => x.PercentageAccompagnamento);
 		builder.Property(x => x.Note);
+		builder.Property(x => x.AvatarUrl);
 	}
 }

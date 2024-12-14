@@ -29,7 +29,7 @@ import { SearchInputComponent } from 'app/shared/components/ui/search-input/sear
     styles: [
         `
             .list-grid {
-                grid-template-columns: 1fr 2fr 100px 50px;
+                grid-template-columns: 1fr 1fr 3fr 1fr;
             }
         `,
     ],

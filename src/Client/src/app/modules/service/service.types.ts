@@ -17,7 +17,7 @@ export class Service {
     referent: string;
     referentPhone: string;
     note: string;
-    language: Language;
+    // language: Language;
     languages: string[] = [];
     userId: string;
     creationDate: Date;

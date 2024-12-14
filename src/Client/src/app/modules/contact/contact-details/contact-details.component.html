@@ -69,8 +69,52 @@
                 <div class="flex flex-wrap items-center py-4 px-6">
                     <div class="relative flex flex-auto flex-col text-2xl">
                         <div class="flex justify-between mb-4">
-                            <div class="flex flex-1 items-center space-x-2 z-10">
-                                <!-- Add/Remove bookmark -->
+                            <!-- Avatar -->
+                            <div class="col-span-1">
+                                <div class="flex flex-auto items-end">
+                                    <div
+                                        class="relative flex items-center justify-center w-20 h-20 rounded-full overflow-hidden ring-4 ring-bg-card mr-3">
+                                        <!-- Upload / Remove avatar -->
+                                        <div class="absolute inset-0 bg-black bg-opacity-50 z-10"></div>
+                                        <div class="absolute inset-0 flex items-center justify-center z-20">
+                                            <div>
+                                                <label
+                                                    class="flex items-center justify-center w-10 h-10 rounded-full cursor-pointer hover:bg-hover"
+                                                    matRipple>
+                                                    <input
+                                                        type="file"
+                                                        id="avatar-input-file"
+                                                        accept="image/*"
+                                                        (change)="onFileChange($event)" />
+                                                    <mat-icon
+                                                        class="text-white"
+                                                        [svgIcon]="'heroicons_outline:camera'"></mat-icon>
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <button mat-icon-button (click)="removeAvatar()">
+                                                    <mat-icon
+                                                        class="text-white"
+                                                        [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <!-- Image/Letter -->
+                                        <img
+                                            *ngIf="avatarUrl"
+                                            class="object-cover w-full h-full"
+                                            [src]="avatarUrl"
+                                            alt="User avatar" />
+                                        <div
+                                            *ngIf="!avatarUrl"
+                                            class="flex items-center justify-center w-full h-full rounded overflow-hidden uppercase text-8xl font-bold leading-none bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                                            {{ contact?.fullName[0] }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- <div class="flex flex-1 items-center space-x-2 z-10">
                                 <mat-icon
                                     (click)="handleBookmark(contact)"
                                     class="icon-size-2"
@@ -80,11 +124,40 @@
                                         (contact.bookmarkId ? 'General.RemoveBookmark' : 'General.MarkAsBookmark')
                                             | transloco
                                     "></mat-icon>
+                                <span class="flex flex-1">{{ contact.fullName }}</span>
+                            </div> -->
 
-                                <span class="">[{{ contact.code }}] - {{ contact.title }}</span>
+                            <div class="flex w-full items-center space-x-2 z-10">
+                                <div class="ml-4 min-w-0">
+                                    <div>
+                                        <mat-icon
+                                            (click)="handleBookmark(contact)"
+                                            class="icon-size-2"
+                                            [ngClass]="contact.bookmarkId ? 'text-yellow-500' : ''"
+                                            [svgIcon]="
+                                                contact.bookmarkId ? 'heroicons_solid:star' : 'heroicons_outline:star'
+                                            "
+                                            [matTooltip]="
+                                                (contact.bookmarkId
+                                                    ? 'General.RemoveBookmark'
+                                                    : 'General.MarkAsBookmark'
+                                                ) | transloco
+                                            "></mat-icon>
+                                        <span class="ml-3 font-bold">{{ contact.fullName }}</span>
+                                    </div>
+                                    <div class="flex space-x-2 items-center">
+                                        <span class="mr-5">{{ contact.contactType }}</span>
+                                        <div *ngFor="let lang of contact.languages">
+                                            <span
+                                                [matTooltip]="lang"
+                                                [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+
                             <div class="flex flex-1 w-full space-x-2 z-10" style="justify-content: end">
-                                <mat-icon
+                                <!-- <mat-icon
                                     (click)="handleCheck(contact)"
                                     class="icon-size-2"
                                     [ngClass]="contact.checked ? 'text-green-500' : ''"
@@ -96,7 +169,7 @@
                                     [matTooltip]="
                                         (contact.bookmarkId ? 'General.RemoveBookmark' : 'General.MarkAsBookmark')
                                             | transloco
-                                    "></mat-icon>
+                                    "></mat-icon> -->
                             </div>
                         </div>
                     </div>

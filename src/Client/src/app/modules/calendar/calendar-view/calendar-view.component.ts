@@ -1,14 +1,6 @@
 import { CommonModule, CurrencyPipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
-import {
-    AfterViewInit,
-    ChangeDetectorRef,
-    Component,
-    NgModule,
-    OnInit,
-    ViewChild,
-    ViewEncapsulation,
-} from '@angular/core';
-import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
@@ -33,13 +25,17 @@ import { MaterialModule } from 'app/modules/material.module';
 import { ApplicationGridComponent } from 'app/shared/components/application-grid/application-grid.component';
 import { CalendarOptions, DateSelectArg, EventApi, EventClickArg } from '@fullcalendar/core';
 import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
-import interactionPlugin from '@fullcalendar/interaction';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridWeekPlugin from '@fullcalendar/timegrid';
-import { DurationTypes, ServiceTypes, ServiceTypesColor } from 'app/constants';
+import { DurationTypes, ServiceTypes } from 'app/constants';
 import { ServiceSidebarComponent } from 'app/modules/service/service-sidebar/service-sidebar.component';
 import { MatDrawer } from '@angular/material/sidenav';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ez } from '@fullcalendar/core/internal-common';
+import interactionPlugin from '@fullcalendar/interaction';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridWeekPlugin from '@fullcalendar/timegrid';
+import { DomSanitizer } from '@angular/platform-browser';
+import { RouterLink } from '@angular/router';
 
 declare let $: any;
 
@@ -47,6 +43,7 @@ declare let $: any;
 @Component({
     selector: 'app-calendar-view',
     templateUrl: './calendar-view.component.html',
+    styleUrls: ['./calendar-view.component.scss'],
     styles: [
         `
             .list-grid {
@@ -63,6 +60,7 @@ declare let $: any;
         NgClass,
         NgStyle,
         CurrencyPipe,
+        RouterLink,
         FormsModule,
         ReactiveFormsModule,
         MatProgressBarModule,
@@ -78,6 +76,7 @@ declare let $: any;
         MatOptionModule,
         MatCheckboxModule,
         MatRippleModule,
+        MatTooltipModule,
         TranslocoModule,
         SearchInputComponent,
         JsonPipe,
@@ -162,9 +161,20 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
         select: this.handleDateSelect.bind(this),
         eventClick: this.handleEventClick.bind(this),
         eventsSet: this.handleEvents.bind(this),
+
+        eventContent: function (arg) {
+            let template;
+            if (arg.view.type === 'dayGridMonth') {
+                template = monthTemplate(arg.event);
+            } else {
+                template = weekDayTemplate(arg.event);
+            }
+            return template;
+        },
     };
 
     currentEvent: EventApi;
+    currentService: Service;
 
     trackByFn = trackByFn;
 
@@ -174,6 +184,7 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
         private _formBuilder: UntypedFormBuilder,
         private _serviceService: ServiceService,
         private _translocoService: TranslocoService,
+        private _sanitizer: DomSanitizer,
     ) {}
 
     ngOnInit(): void {
@@ -279,7 +290,22 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
             .subscribe({
                 next: (data: PaginatedListResult<Service>) => {
                     this.list = data.items;
-                    // console.log('_list - list', this.list);
+
+                    this.list.forEach(item => {
+                        if (item.collaborator) {
+                            item.collaborator.avatarUrl = item.collaborator.avatar
+                                ? this._sanitizer.bypassSecurityTrustResourceUrl(
+                                      `data:image/jpg;base64, ${item.collaborator.avatar}`,
+                                  )
+                                : undefined;
+
+                            item.collaborator.avatarUrl2 = this._sanitizer.bypassSecurityTrustUrl(
+                                item.collaborator?.avatar,
+                            );
+                        }
+                    });
+
+                    console.log('_list', this.list);
 
                     this.moveToday();
                 },
@@ -323,6 +349,7 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
                 // allDay: true,
             };
 
+            /*
             if (item.serviceType == 'Guida') {
                 event.color = ServiceTypesColor.Guida;
             } else if (item.serviceType == 'Accompagnamento') {
@@ -330,6 +357,7 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
             } else if (item.serviceType == 'Altro') {
                 event.color = '#444fd1';
             }
+            */
 
             this.calendarApi?.addEvent(event);
         });
@@ -412,6 +440,7 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
     handleEventClick(clickInfo: EventClickArg) {
         console.log('handleEventClick', clickInfo);
         this.currentEvent = clickInfo.event;
+        this.currentService = clickInfo.event.extendedProps as Service;
         this.detailsDrawer.toggle();
     }
 
@@ -437,5 +466,78 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
         }
 
         this._changeDetectorRef.detectChanges();
+    }
+}
+
+function weekDayTemplate(event: ez): any {
+    const service = event?.extendedProps as Service;
+
+    // console.log('service.collaborator?.avatarUrl', service.collaborator?.avatarUrl);
+
+    // service.collaborator.avatarUrl = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde';
+
+    if (service.collaboratorId) {
+        return {
+            html: `
+                    <div class="fc-event-avatar">
+                        <div class="event-details">
+                            <div class="event-title" [matTooltip]="Titolo">${service.title}</div>
+                            <div class="event-info">Servizio: ${service.serviceType}</div>
+                            <div class="event-info" [matTooltip]="Location">Location: ${service.location}</div>
+                            <div class="event-info">People: ${service.people}</div>
+                            <div class="event-info">Collaborator:</div>
+                            <div class="event-info">${service.collaborator?.fullName}</div>
+                            <img *ngIf="avatarUrl" class="avatar-img" alt="Avatar" [src]="${service.collaborator?.avatarUrl}" />
+                        </div>
+                    </div>
+                    `,
+        };
+    } else {
+        const description = event.extendedProps.description;
+        return {
+            html: `
+                    <div class="fc-event-description">
+                    <div class="event-title">${event.title}</div>
+                    <div class="event-description">${description}</div>
+                    </div>
+                    `,
+        };
+    }
+}
+
+function monthTemplate(event: ez): any {
+    const service = event.extendedProps as Service;
+    if (service.collaboratorId) {
+        const avatarUrl = service.collaborator?.avatarUrl;
+        return {
+            html: `
+                    <div class="fc-event-content" style="display: flex; align-items: center;">
+                        <img src="${avatarUrl}" alt="Avatar" class="avatar-img" style="width: 20px; height: 20px; margin-right: 15px;" />
+                        <div>
+                            <div class="event-title" style="font-weight: bold; font-size: 1.2em;">
+                                ${service.title}
+                            </div>
+                            <!--<div class="event-fullname" style="font-size: 0.9em;">
+                                ${service.collaborator?.fullName}
+                            </div>-->
+                        </div>
+                    </div>
+                    `,
+        };
+    } else {
+        return {
+            html: `
+                    <div class="fc-event-content" style="display: flex; align-items: center;">
+                        <div>
+                            <div class="event-title" style="font-weight: bold; font-size: 1.2em;">
+                                ${service.title}
+                            </div>
+                            <div class="event-fullname" style="font-size: 0.9em;">
+                                ${service.collaborator?.fullName}
+                            </div>
+                        </div>
+                    </div>
+                    `,
+        };
     }
 }

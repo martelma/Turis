@@ -1,5 +1,6 @@
 ﻿using System.Linq.Dynamic.Core;
 using System.Linq.Dynamic.Core.Exceptions;
+using JeMa.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OperationResults;
@@ -17,7 +18,10 @@ using Turis.DataAccessLayer.Entities;
 
 namespace Turis.BusinessLayer.Services;
 
-public class ContactService(IDbContext dbContext, ILogger<ContactService> logger) : IContactService
+public class ContactService(IDbContext dbContext,
+	ILogger<ContactService> logger,
+	IAvatarContactService avatarContactService
+	) : IContactService
 {
 	public async Task<Result<PaginatedList<ContactModel>>> ListAsync(ContactSearchParameters parameters)
 	{
@@ -49,10 +53,10 @@ public class ContactService(IDbContext dbContext, ILogger<ContactService> logger
 
 		if (parameters.Pattern.HasValue())
 			query = query.Where(x => x.Code.Contains(parameters.Pattern)
-			                         || x.FirstName.Contains(parameters.Pattern)
-			                         || x.LastName.Contains(parameters.Pattern)
-			                         || x.CompanyName.Contains(parameters.Pattern)
-			                         || x.Note.Contains(parameters.Pattern));
+									 || x.FirstName.Contains(parameters.Pattern)
+									 || x.LastName.Contains(parameters.Pattern)
+									 || x.CompanyName.Contains(parameters.Pattern)
+									 || x.Note.Contains(parameters.Pattern));
 
 		var totalCount = await query.CountAsync();
 
@@ -76,6 +80,12 @@ public class ContactService(IDbContext dbContext, ILogger<ContactService> logger
 			.ToList();
 
 		var model = data.ToModel();
+		foreach (var item in model)
+		{
+			item.Avatar = (await avatarContactService.GetAsync(item.Id))?.Content != null
+				? (await avatarContactService.GetAsync(item.Id))?.Content.Content.ConvertToBase64String()
+				: null;
+		}
 
 		var result = new PaginatedList<ContactModel>(model, totalCount, data.Count > parameters.PageSize);
 		return result;
@@ -90,6 +100,10 @@ public class ContactService(IDbContext dbContext, ILogger<ContactService> logger
 
 		if (contact is null)
 			return Result.Fail(FailureReasons.ItemNotFound);
+
+		var avatar = (await avatarContactService.GetAsync(contact.Id))?.Content;
+		if (avatar != null)
+			contact.Avatar = avatar.Content.ConvertToBase64String();
 
 		return contact;
 	}
@@ -110,7 +124,8 @@ public class ContactService(IDbContext dbContext, ILogger<ContactService> logger
 		dbContact.ExternalCode = contact.ExternalCode;
 		dbContact.Title = contact.Title;
 		dbContact.Sex = contact.Sex;
-		dbContact.LanguageId = contact.LanguageId;
+		dbContact.Languages = contact.Languages.ToCSV();
+		//dbContact.LanguageId = contact.LanguageId;
 		dbContact.FirstName = contact.FirstName;
 		dbContact.LastName = contact.LastName;
 		dbContact.FiscalCode = contact.FiscalCode;
@@ -133,8 +148,16 @@ public class ContactService(IDbContext dbContext, ILogger<ContactService> logger
 		dbContact.SdiCode = contact.SdiCode;
 		dbContact.Note = contact.Note;
 
-		dbContact.DocumentType = (DocumentType)Enum.Parse(typeof(DocumentType), contact.DocumentType);
-		dbContact.ContactType = (ContactType)Enum.Parse(typeof(ContactType), contact.ContactType);
+		if (contact.DocumentType.IsNullOrEmpty())
+			dbContact.DocumentType = DocumentType.Undefined;
+		else
+			dbContact.DocumentType = (DocumentType)Enum.Parse(typeof(DocumentType), contact.DocumentType);
+
+		if (contact.ContactType.IsNullOrEmpty())
+			dbContact.ContactType = ContactType.Undefined;
+		else
+			dbContact.ContactType = (ContactType)Enum.Parse(typeof(ContactType), contact.ContactType);
+
 		dbContact.PercentageGuida = contact.PercentageGuida;
 		dbContact.PercentageAccompagnamento = contact.PercentageAccompagnamento;
 

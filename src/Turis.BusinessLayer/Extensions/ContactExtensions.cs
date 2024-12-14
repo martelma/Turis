@@ -1,4 +1,5 @@
-﻿using Turis.Common.Models;
+﻿using JeMa.Shared.Extensions;
+using Turis.Common.Models;
 using Turis.DataAccessLayer.Entities;
 
 namespace Turis.BusinessLayer.Extensions;
@@ -14,7 +15,8 @@ public static class ContactExtensions
 			ExternalCode = entity.ExternalCode,
 			Title = entity.Title,
 			Sex = entity.Sex,
-			Language = entity.Language?.ToModel(),
+			Languages = entity.Languages?.SplitCsv()?.Select(x => x.ToLower()).ToArray(),
+			//Language = entity.Language?.ToModel(),
 			FirstName = entity.FirstName,
 			LastName = entity.LastName,
 			FiscalCode = entity.FiscalCode,

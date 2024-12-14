@@ -6,7 +6,7 @@ import { AvailableLangs, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
-import { UsersService } from 'app/modules/admin/users/users.service';
+import { AvatarUsersService } from 'app/modules/admin/users/avatar-users.service';
 import { trackByFn } from 'app/shared';
 
 @UntilDestroy()
@@ -31,7 +31,7 @@ export class LanguagesComponent implements OnInit {
     constructor(
         private _translocoService: TranslocoService,
         private _userService: UserService,
-        private _usersService: UsersService,
+        private _usersService: AvatarUsersService,
     ) {}
 
     ngOnInit(): void {

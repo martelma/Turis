@@ -3,7 +3,7 @@ import { UsersDetailsComponent } from './details/details.component';
 import { UsersListComponent } from './list/list.component';
 import { UsersComponent } from './users.component';
 import { ContactApplicationsComponent as UserApplicationsComponent } from './applications/applications.component';
-import { UsersService } from './users.service';
+import { AvatarUsersService } from './avatar-users.service';
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { ApplicationsService } from '../applications/applications.service';
@@ -15,7 +15,7 @@ import { ApplicationsService } from '../applications/applications.service';
  * @param state
  */
 const userResolver = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
-    const usersService = inject(UsersService);
+    const usersService = inject(AvatarUsersService);
     const router = inject(Router);
 
     return usersService.getUserById(route.paramMap.get('id')).pipe(
@@ -83,7 +83,7 @@ export default [
                 path: '',
                 component: UsersListComponent,
                 resolve: {
-                    users: () => inject(UsersService).getUsers(),
+                    users: () => inject(AvatarUsersService).getUsers(),
                 },
                 children: [
                     {

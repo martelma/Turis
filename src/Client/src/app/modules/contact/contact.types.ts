@@ -1,5 +1,6 @@
 import { BaseSearchParameters } from 'app/shared/types/shared.types';
 import { Language } from '../configuration/languages/language.types';
+import { SafeUrl } from '@angular/platform-browser';
 
 export class Contact {
     id: string;
@@ -7,7 +8,8 @@ export class Contact {
     externalCode: string;
     title: string;
     sex: string;
-    language: Language;
+    // language: Language;
+    languages: string[] = [];
     firstName: string;
     lastName: string;
     fullName: string;
@@ -35,6 +37,9 @@ export class Contact {
     contactType: string;
     percentageGuida: number;
     percentageAccompagnamento: number;
+    avatar?: string;
+    avatarUrl?: SafeUrl;
+    avatarUrl2?: SafeUrl;
 
     bookmarkId: string;
 }

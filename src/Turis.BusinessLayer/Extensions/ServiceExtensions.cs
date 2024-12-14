@@ -1,4 +1,6 @@
 ﻿using JeMa.Shared.Extensions;
+using TinyHelpers.Extensions;
+using Turis.BusinessLayer.Services.Interfaces;
 using Turis.Common.Models;
 using Turis.DataAccessLayer.Entities;
 
@@ -6,11 +8,11 @@ namespace Turis.BusinessLayer.Extensions;
 
 public static class ServiceExtensions
 {
-	public static ServiceModel ToModel(this Service entity, IEnumerable<Bookmark> bookmarks)
+	public static async Task<ServiceModel> ToModelAsync(this Service entity, IEnumerable<Bookmark> bookmarks, IAvatarContactService avatarContactService)
 	{
 		var bookmarkId = bookmarks.FirstOrDefault(x => x.EntityId == entity.Id)?.Id;
 
-		return new ServiceModel
+		var model =  new ServiceModel
 		{
 			Id = entity.Id,
 			Code = entity.Code,
@@ -55,15 +57,23 @@ public static class ServiceExtensions
 
 			BookmarkId = bookmarkId.HasValue() ? bookmarkId.ToString() : string.Empty,
 		};
+		if (model.Collaborator != null)
+		{
+			model.Collaborator.Avatar = (await avatarContactService.GetAsync(model.Collaborator.Id))?.Content != null
+				? (await avatarContactService.GetAsync(model.Collaborator.Id))?.Content.Content.ConvertToBase64String()
+				: null;
+		}
+
+		return model;
 	}
 
-	public static IEnumerable<ServiceModel> ToModel(this IQueryable<Service> query, IEnumerable<Bookmark> bookmarks)
+	public static Task<IEnumerable<ServiceModel>> ToModel(this IQueryable<Service> query, IEnumerable<Bookmark> bookmarks, IAvatarContactService avatarContactService)
 	{
-		return query.AsEnumerable().ToModel(bookmarks);
+		return query.AsEnumerable().ToModel(bookmarks, avatarContactService);
 	}
 
-	public static IEnumerable<ServiceModel> ToModel(this IEnumerable<Service> list, IEnumerable<Bookmark> bookmarks)
+	public static Task<IEnumerable<ServiceModel>> ToModel(this IEnumerable<Service> list, IEnumerable<Bookmark> bookmarks, IAvatarContactService avatarContactService)
 	{
-		return list.Select(x => x.ToModel(bookmarks));
+		return list.SelectAsync(x => x.ToModelAsync(bookmarks, avatarContactService));
 	}
 }

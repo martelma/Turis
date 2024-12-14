@@ -1,10 +1,24 @@
 import { Collaborator } from './../service/service.types';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { BehaviorSubject, Observable, filter, finalize, map, of, switchMap, take, tap, throwError } from 'rxjs';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
+import {
+    BehaviorSubject,
+    Observable,
+    catchError,
+    filter,
+    finalize,
+    map,
+    of,
+    switchMap,
+    take,
+    tap,
+    throwError,
+} from 'rxjs';
 import { Contact, ContactSearchParameters } from './contact.types';
 import { emptyGuid, PaginatedListResult } from 'app/shared/services/shared.types';
 import { BaseEntityService } from 'app/shared/services';
+import { environment } from 'environments/environment';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Injectable({ providedIn: 'root' })
 export class ContactService extends BaseEntityService<Contact> {
@@ -20,7 +34,10 @@ export class ContactService extends BaseEntityService<Contact> {
         pageIndex: 0,
         pageSize: 10,
     });
-    constructor(http: HttpClient) {
+    constructor(
+        http: HttpClient,
+        private _sanitizer: DomSanitizer,
+    ) {
         super(http);
         this.defaultApiController = 'contact';
     }
@@ -66,6 +83,9 @@ export class ContactService extends BaseEntityService<Contact> {
     getById(id: string): Observable<Contact> {
         return this.getSingle(id).pipe(
             map(contact => {
+                contact.avatarUrl = contact.avatar
+                    ? this._sanitizer.bypassSecurityTrustResourceUrl(`data:image/jpg;base64, ${contact.avatar}`)
+                    : undefined;
                 this._contact.next(contact);
 
                 return contact;
@@ -162,6 +182,16 @@ export class ContactService extends BaseEntityService<Contact> {
 
         return this.apiGet<PaginatedListResult<Contact>>(url).pipe(
             map((list: PaginatedListResult<Contact>) => {
+                list = {
+                    ...list,
+                    items: list.items.map(contact => ({
+                        ...contact,
+                        avatarUrl: contact.avatar
+                            ? this._sanitizer.bypassSecurityTrustResourceUrl(`data:image/jpg;base64, ${contact.avatar}`)
+                            : undefined,
+                    })),
+                };
+
                 this._contacts.next(list);
 
                 this._contactParameters.next({
@@ -219,5 +249,37 @@ export class ContactService extends BaseEntityService<Contact> {
 
     editContact(contactId: string): void {
         this._contactEdited.next(contactId);
+    }
+
+    saveAvatar(formData: FormData, contactId: string): Observable<ArrayBuffer> {
+        return this.apiPost<any>(`${contactId}/avatar`, formData);
+    }
+
+    resetAvatar(contactId: string): Observable<void> {
+        if (!contactId) {
+            return of(null);
+        }
+
+        return this.apiDelete<void>(`${contactId}/avatar`);
+    }
+
+    getAvatar(contactId: string): Observable<any> {
+        if (!contactId) {
+            return of(null);
+        }
+
+        return this.http
+            .get(`${environment.baseUrl}/api/contact/${contactId}/avatar`, {
+                observe: 'response',
+                responseType: 'arraybuffer',
+            })
+            .pipe(
+                map((response: HttpResponse<ArrayBuffer>) => {
+                    return response.body;
+                }),
+                catchError(() => {
+                    return of(false);
+                }),
+            );
     }
 }
