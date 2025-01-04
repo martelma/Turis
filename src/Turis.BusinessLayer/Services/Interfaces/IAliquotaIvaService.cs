@@ -9,7 +9,7 @@ namespace Turis.BusinessLayer.Services.Interfaces;
 public interface IAliquotaIvaService : IService
 {
 	Task<Result<AliquotaIvaModel>> GetAsync(Guid id);
-	Task<Result<AliquotaIvaModel>> GetAsync(string codeIso);
+	Task<Result<AliquotaIvaModel>> GetAsync(string code);
 	Task<Result<PaginatedList<AliquotaIvaModel>>> ListAsync(AliquotaIvaSearchParameters parameters);
 	Task<Result> SaveAsync(AliquotaIvaRequest model);
 	Task<Result> DeleteAsync(Guid id);

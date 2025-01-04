@@ -169,9 +169,6 @@ public class AuthEndpoints : IEndpointRouteHandlerBuilder
 		});
 	}
 
-	private static async Task<IResult> InitAuth(HttpContext httpContext, IAuthService service)
-		=> (await service.InitAuth()).ToResponse(httpContext);
-
 	private static Task<IResult> Check(HttpContext httpContext)
 	{
 		var result = OperationResults.Result.Ok();

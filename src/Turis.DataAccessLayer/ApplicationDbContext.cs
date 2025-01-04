@@ -15,6 +15,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 	public DbSet<PriceList> PriceLists { get; set; }
 	public DbSet<Service> Services { get; set; }
 	public DbSet<Contact> Contacts { get; set; }
+	public DbSet<Document> Documents { get; set; }
+	public DbSet<DocumentItem> DocumentItems { get; set; }
+	public DbSet<Attachment> Attachments { get; set; }
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{

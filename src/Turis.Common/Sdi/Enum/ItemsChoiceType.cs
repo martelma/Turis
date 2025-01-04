@@ -1,0 +1,20 @@
+﻿namespace Turis.Common.Sdi.Enum;
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
+[Serializable()]
+[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2", IncludeInSchema=false)]
+public enum ItemsChoiceType {
+    
+	/// <remarks/>
+	[System.Xml.Serialization.XmlEnumAttribute(":Cognome")]
+	Cognome,
+    
+	/// <remarks/>
+	[System.Xml.Serialization.XmlEnumAttribute(":Denominazione")]
+	Denominazione,
+    
+	/// <remarks/>
+	[System.Xml.Serialization.XmlEnumAttribute(":Nome")]
+	Nome,
+}

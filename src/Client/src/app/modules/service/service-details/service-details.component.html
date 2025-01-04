@@ -104,7 +104,6 @@
                     <div class="relative flex flex-auto flex-col text-2xl">
                         <div class="flex justify-between mb-4">
                             <div class="flex flex-1 items-center space-x-2 z-10">
-                                <!-- Add/Remove bookmark -->
                                 <mat-icon
                                     (click)="handleBookmark(service)"
                                     class="icon-size-2"
@@ -115,9 +114,6 @@
                                             | transloco
                                     "></mat-icon>
 
-                                <span class="">[{{ service.code }}] - {{ service.title }}</span>
-                            </div>
-                            <div class="flex flex-1 w-full space-x-2 z-10" style="justify-content: end">
                                 <mat-icon
                                     (click)="handleCheck(service)"
                                     class="icon-size-2"
@@ -128,10 +124,27 @@
                                             : 'heroicons_outline:check-circle'
                                     "
                                     [matTooltip]="
-                                        (service.bookmarkId ? 'General.RemoveBookmark' : 'General.MarkAsBookmark')
+                                        (service.checked ? 'Service.Checked' : 'Service.ToBeCheck')
                                             | transloco
                                     "></mat-icon>
+
+                                <span class="">[{{ service.code }}] - {{ service.title }}</span>
                             </div>
+                            <!-- <div class="flex flex-1 w-full space-x-2 z-10" style="justify-content: end">
+                                <mat-icon
+                                    (click)="handleCheck(service)"
+                                    class="icon-size-2"
+                                    [ngClass]="service.checked ? 'text-green-500' : ''"
+                                    [svgIcon]="
+                                        service.checked
+                                            ? 'heroicons_solid:check-circle'
+                                            : 'heroicons_outline:check-circle'
+                                    "
+                                    [matTooltip]="
+                                        (service.checked ? 'Service.Checked' : 'Service.ToBeCheck')
+                                            | transloco
+                                    "></mat-icon>
+                            </div> -->
                         </div>
                     </div>
                 </div>

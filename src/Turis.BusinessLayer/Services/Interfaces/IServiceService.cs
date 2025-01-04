@@ -11,4 +11,5 @@ public interface IServiceService : IService
 	Task<Result<ServiceModel>> GetAsync(Guid serviceId);
 	Task<Result<ServiceModel>> SaveAsync(ServiceRequest model);
 	Task<Result> DeleteAsync(Guid serviceId);
+	Task<Result<PaginatedList<ServiceModel>>> AccountStatement(AccountStatementParameters parameters);
 }

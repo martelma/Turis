@@ -8,4 +8,5 @@ public interface IAdminService : IService
 {
     Task<Result<IEnumerable<KeyValue>>> GetBackendConfiguration();
     Task<Result> TruncateElmah();
+    Task<Result> ResetAdminPassword();
 }

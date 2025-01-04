@@ -5,7 +5,7 @@ using JeMa.Shared.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Turis.BusinessLayer.Services.Email;
+namespace Turis.BusinessLayer.Settings;
 
 public class MailNotificationService
 {

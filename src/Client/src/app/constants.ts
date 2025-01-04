@@ -1,3 +1,4 @@
+import { Service } from 'app/modules/service/service.types';
 import { MatDateFormats, MAT_DATE_FORMATS } from '@angular/material/core';
 
 export const ServiceTypes = [
@@ -12,6 +13,25 @@ export const DurationTypes = [
     { value: 'HalfDay', text: 'Half Day' },
     { value: 'FullDay', text: 'Full Day' },
     { value: 'Altro', text: 'Altro' },
+];
+
+export const StatusTypes = [
+    { value: 'New', text: 'New', colorClass: 'bg-gray-500' },
+    { value: 'Confirmed', text: 'Confirmed', colorClass: 'bg-yellow-500' },
+    { value: 'Closed', text: 'Closed', colorClass: 'bg-green-500' },
+    { value: 'Option', text: 'Option', colorClass: 'bg-orange-500' },
+    { value: 'Cancelled', text: 'Cancelled', colorClass: 'bg-red-500' },
+];
+
+export const BillingStatusTypes = [
+    { value: 'CashedIn', text: 'Cashed In', colorClass: 'bg-green-500' },
+    { value: 'ToBeCashed', text: 'To Be Cashed', colorClass: 'bg-yellow-500' },
+    { value: 'ToBeInvoiced', text: 'To Be Invoiced', colorClass: 'bg-red-500' },
+];
+
+export const CommissionStatusTypes = [
+    { value: 'Paid', text: 'Paid', colorClass: 'bg-green-500' },
+    { value: 'ToBePaid', text: 'To Be Paid', colorClass: 'bg-yellow-500' },
 ];
 
 export const Sexs = [
@@ -38,6 +58,12 @@ export const ServiceTypesColor = {
     Accompagnamento: '#444fd1',
 };
 
+export const AppSettings = {
+    Calendar: 'Calendar',
+    Contact: 'Contact',
+    Service: 'Service',
+};
+
 export const MY_DATE_FORMATS: MatDateFormats = {
     parse: {
         dateInput: 'DD/MM/YYYY',
@@ -49,3 +75,27 @@ export const MY_DATE_FORMATS: MatDateFormats = {
         monthYearA11yLabel: 'MMMM YYYY',
     },
 };
+
+export function getStatusColorClass(item: Service) {
+    return StatusTypes.find(x => x.value === item.status)?.colorClass || 'bg-default';
+}
+
+export function getStatusText(item: Service) {
+    return StatusTypes.find(x => x.value === item.status)?.text || '';
+}
+
+export function getBillingStatusColorClass(item: Service) {
+    return BillingStatusTypes.find(x => x.value === item.billingStatus)?.colorClass || 'bg-default';
+}
+
+export function getBillingStatusText(item: Service) {
+    return BillingStatusTypes.find(x => x.value === item.billingStatus)?.text || '';
+}
+
+export function getCommissionStatusColorClass(item: Service) {
+    return CommissionStatusTypes.find(x => x.value === item.commissionStatus)?.colorClass || 'bg-default';
+}
+
+export function getCommissionStatusText(item: Service) {
+    return CommissionStatusTypes.find(x => x.value === item.commissionStatus)?.text || '';
+}

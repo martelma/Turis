@@ -24,8 +24,6 @@ using Turis.Authentication.Entities;
 using Turis.Authentication.Settings;
 using Turis.BusinessLayer.EventInterceptor.Base;
 using Turis.BusinessLayer.Projections.Base;
-using Turis.BusinessLayer.Services;
-using Turis.BusinessLayer.Services.Email;
 using Turis.BusinessLayer.Validations;
 using Turis.Common.Interfaces;
 using Turis.Common.Services;
@@ -44,6 +42,9 @@ using Microsoft.AspNetCore.Http.Connections;
 using Turis.Common.Hubs;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using Turis.WebApi.ClientContext;
+using Microsoft.Net.Http.Headers;
+using Turis.DataAccessLayer.Entities.Base;
+using Turis.BusinessLayer.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,6 +65,7 @@ app.Run();
 
 void ConfigureServices(IServiceCollection services, IConfiguration configuration)
 {
+	var appSettings = services.ConfigureAndGet<AppSettings>(configuration, nameof(AppSettings));
 	var cdnSettings = services.ConfigureAndGet<CdnSettings>(configuration, nameof(CdnSettings));
 	var smtpSettings = services.ConfigureAndGet<SmtpSettings>(configuration, nameof(SmtpSettings));
 	var swaggerSettings = services.ConfigureAndGet<SwaggerSettings>(configuration, nameof(SwaggerSettings));
@@ -72,6 +74,32 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 	var redisConfiguration = services.ConfigureAndGet<RedisConfiguration>(configuration, nameof(RedisConfiguration));
 
 	services.AddEndpointsApiExplorer();
+    services.AddHttpContextAccessor();
+
+    services.ConfigureHttpJsonOptions(options =>
+    {
+	    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+	    options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+	    options.SerializerOptions.Converters.Add(new StringEnumMemberConverter());
+	    options.SerializerOptions.Converters.Add(new UtcDateTimeConverter());
+    });
+
+    services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>();
+
+    services.AddDefaultProblemDetails();
+    services.AddDefaultExceptionHandler();
+
+    services.AddOperationResult(options =>
+    {
+	    options.ErrorResponseFormat = ErrorResponseFormat.List;
+
+	    options.StatusCodesMapping.Add(CustomFailureReasons.InvalidToken, StatusCodes.Status419AuthenticationTimeout);
+	    options.StatusCodesMapping.Add(CustomFailureReasons.LockedOut, StatusCodes.Status403Forbidden);
+	    options.StatusCodesMapping.Add(CustomFailureReasons.NotAllowded, StatusCodes.Status424FailedDependency);
+	    options.StatusCodesMapping.Add(CustomFailureReasons.PasswordExpired, StatusCodes.Status408RequestTimeout);
+    });
+
+    services.AddRequestLocalization("it", "en");
 
 	services.AddDbContext<IDbContext, ApplicationDbContext>(options =>
 	{
@@ -87,101 +115,32 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 		options.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
 	});
 
-	services.AddElmah<SqlErrorLog>(options =>
+	services.AddScoped<IRoleValidator<ApplicationRole>, ApplicationRoleValidator>();
+	services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+		{
+			options.User.RequireUniqueEmail = true;
+			options.SignIn.RequireConfirmedEmail = true;
+			options.Lockout.MaxFailedAccessAttempts = authenticationSettings.Lockout.MaxFailedAccessAttempts;
+			options.Lockout.DefaultLockoutTimeSpan = authenticationSettings.Lockout.DefaultLockout;
+			options.Password.RequiredLength = authenticationSettings.Password.RequiredLength;
+			options.Password.RequireNonAlphanumeric = authenticationSettings.Password.RequireNonAlphanumeric;
+			options.Password.RequireLowercase = authenticationSettings.Password.RequireLowercase;
+			options.Password.RequireUppercase = authenticationSettings.Password.RequireUppercase;
+			options.Password.RequireDigit = authenticationSettings.Password.RequireDigit;
+		})
+		.AddEntityFrameworkStores<ApplicationDbContext>()
+		.AddRoleValidator<ApplicationRoleValidator>()
+		.AddDefaultTokenProviders()
+		.AddErrorDescriber<LocalizedIdentityErrorDescriber>();
+	
+	services.AddSimpleAuthentication(configuration).AddMicrosoftIdentityWebApi(configuration, jwtBearerScheme: AzureAdSettings.AzureActiveDirectoryBearer);
+	services.Configure<JwtBearerOptions>(AzureAdSettings.AzureActiveDirectoryBearer, options =>
 	{
-		options.ConnectionString = configuration.GetConnectionString("DefaultConnection");
+		options.TokenValidationParameters.NameClaimType = "preferred_username";
 	});
-
-	services.AddOperationResult(options =>
-	{
-		options.ErrorResponseFormat = ErrorResponseFormat.List;
-
-		options.StatusCodesMapping.Add(CustomFailureReasons.InvalidToken, StatusCodes.Status419AuthenticationTimeout);
-		options.StatusCodesMapping.Add(CustomFailureReasons.LockedOut, StatusCodes.Status403Forbidden);
-		options.StatusCodesMapping.Add(CustomFailureReasons.NotAllowded, StatusCodes.Status424FailedDependency);
-		options.StatusCodesMapping.Add(CustomFailureReasons.PasswordExpired, StatusCodes.Status408RequestTimeout);
-	});
-
-	services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>();
-
-	services.AddHttpClient();
-
-	services.AddHttpContextAccessor();
-
-	services.AddSingleton<ExternalDashboardAuthorizationService>();
-
-	services.ConfigureHttpJsonOptions(options =>
-	{
-		options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
-		options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-		options.SerializerOptions.Converters.Add(new StringEnumMemberConverter());
-		options.SerializerOptions.Converters.Add(new UtcDateTimeConverter());
-	});
-
-	services.AddSingleton<ScopedServiceProviderAccessor>();
-	services.AddSingleton<RedisService>();
-
-	services.Scan(scan => scan
-		.FromAssemblyOf<BaseProjection>()
-		.AddClasses(classes => classes.AssignableTo<IProjection>())
-		.AsSelf()
-		.WithScopedLifetime()
-	);
-
-	services.Scan(scan => scan
-		.FromAssemblyOf<IService>()
-		.AddClasses(classes => classes.AssignableTo<IService>())
-		.AsImplementedInterfaces()
-		.WithScopedLifetime()
-	);
-
-	//services.AddSimpleAuthentication(builder.Configuration);
-	//services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
-	//{
-	//	options.RequireHttpsMetadata = false;
-	//	options.SaveToken = true;
-
-	//	// Sending the access token in the query string is required due to
-	//	// a limitation in Browser APIs. We restrict it to only calls to the
-	//	// SignalR hub in this code.
-	//	// See https://docs.microsoft.com/aspnet/core/signalr/security#access-token-logging
-	//	// for more information about security considerations when using
-	//	// the query string to transmit the access token.
-	//	options.Events = new JwtBearerEvents
-	//	{
-	//		OnMessageReceived = context =>
-	//		{
-	//			var token = context.Request.Query["access_token"];
-
-	//			// If the request is for our hub...
-	//			var path = context.HttpContext.Request.Path;
-	//			if (!string.IsNullOrEmpty(token) &&
-	//			    path.StartsWithSegments("/notificationHub"))
-	//			{
-	//				// Read the token out of the query string
-	//				context.Token = token;
-	//			}
-
-	//			return Task.CompletedTask;
-	//		}
-	//	};
-	//});
-
-	services.AddSignalR(hubOptions =>
-	{
-		hubOptions.EnableDetailedErrors = true;
-		//hubOptions.KeepAliveInterval = TimeSpan.FromMinutes(1);
-	});
-
 
 	services.AddIdentityServices(builder.Configuration);
 	services.AddApplicationId(builder.Configuration, configuration.GetValue<Guid>("AuthenticationSettings:ApplicationId"));
-
-	services.AddClientContextAccessor(options =>
-	{
-		options.TimeZoneHeader = "timezone";
-		options.DefaultTimeZone = Turis.Common.Constants.DefaultTimeZoneInfo;
-	});
 
 	// Set all endpoints as authorized by default.
 	// Otherwise, they remain as anonymous
@@ -190,34 +149,20 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 		options.FallbackPolicy = options.DefaultPolicy;
 	});
 
-	services.AddDefaultProblemDetails();
-	services.AddDefaultExceptionHandler();
+	services.AddDataProtection()
+		.SetApplicationName(builder.Environment.ApplicationName)
+		.PersistKeysToDbContext<ApplicationDbContext>();
 
-	services.AddStackExchangeRedisExtensions<NewtonsoftSerializer>(redisConfiguration);
-
-	//Add FluentEmail.MailKit + FluentEmail.Razor
-	var smtpClientOptions = new SmtpClientOptions
+	services.AddScoped(services =>
 	{
-		Server = smtpSettings.Host,
-		Port = smtpSettings.Port,
-		UseSsl = smtpSettings.UseSsl,
-		RequiresAuthentication = smtpSettings.RequiresAuthentication,
-		User = smtpSettings.Username,
-		Password = smtpSettings.Password,
-		SocketOptions = smtpSettings.SocketOptions,
-	};
-	services.AddFluentEmail(notificationSettings.SenderEmail, notificationSettings.SenderName)
-	  .AddRazorRenderer()
-	  .AddMailKitSender(smtpClientOptions);
-	services.AddScoped<MailNotificationService>();
-
-	services.ConfigureHttpJsonOptions(options =>
-	{
-		options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+		var provider = services.GetRequiredService<IDataProtectionProvider>();
+		return provider.CreateProtector("timeLimitedProtector").ToTimeLimitedDataProtector();
 	});
 
-	services.AddMemoryCache();
-	services.AddCors();
+	services.AddElmah<SqlErrorLog>(options =>
+	{
+		options.ConnectionString = configuration.GetConnectionString("DefaultConnection");
+	});
 
 	if (swaggerSettings.IsEnabled)
 	{
@@ -244,6 +189,65 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 		});
 	}
 
+	services.AddSingleton<ExternalDashboardAuthorizationService>();
+
+	services.AddSingleton<ScopedServiceProviderAccessor>();
+
+	services.Scan(scan => scan
+		.FromAssemblyOf<BaseProjection>()
+		.AddClasses(classes => classes.AssignableTo<IProjection>())
+		.AsSelf()
+		.WithScopedLifetime()
+	);
+
+	services.Scan(scan => scan
+		.FromAssemblyOf<IService>()
+		.AddClasses(classes => classes.AssignableTo<IService>())
+		.AsImplementedInterfaces()
+		.WithScopedLifetime()
+	);
+
+	services.AddSingleton<RedisService>();
+
+	services.AddHttpClient();
+
+	services.AddSignalR(hubOptions =>
+	{
+		hubOptions.EnableDetailedErrors = true;
+		//hubOptions.KeepAliveInterval = TimeSpan.FromMinutes(1);
+	});
+
+	services.AddStackExchangeRedisExtensions<NewtonsoftSerializer>(redisConfiguration);
+
+	//Add FluentEmail.MailKit + FluentEmail.Razor
+	var smtpClientOptions = new SmtpClientOptions
+	{
+		Server = smtpSettings.Host,
+		Port = smtpSettings.Port,
+		UseSsl = smtpSettings.UseSsl,
+		RequiresAuthentication = smtpSettings.RequiresAuthentication,
+		User = smtpSettings.Username,
+		Password = smtpSettings.Password,
+		SocketOptions = smtpSettings.SocketOptions,
+	};
+	services.AddFluentEmail(notificationSettings.SenderEmail, notificationSettings.SenderName)
+	  .AddRazorRenderer()
+	  .AddMailKitSender(smtpClientOptions);
+	services.AddScoped<MailNotificationService>();
+
+	services.ConfigureHttpJsonOptions(options =>
+	{
+		options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+	});
+
+	services.AddClientContextAccessor(options =>
+	{
+		options.TimeZoneHeader = "timezone";
+		options.DefaultTimeZone = Turis.Common.Constants.DefaultTimeZoneInfo;
+	});
+
+	services.AddMemoryCache();
+
 	services.AddMediatR(config =>
 	{
 		config.RegisterServicesFromAssemblyContaining<Program>();
@@ -267,46 +271,6 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 			  });
 	});
 	services.AddHangfireServer();
-
-	services.AddDataProtection()
-		.SetApplicationName(builder.Environment.ApplicationName)
-		.PersistKeysToDbContext<ApplicationDbContext>();
-
-	services.AddScoped(services =>
-	{
-		var provider = services.GetRequiredService<IDataProtectionProvider>();
-		return provider.CreateProtector("security_codes").ToTimeLimitedDataProtector();
-	});
-
-	services.AddScoped(services =>
-	{
-		var provider = services.GetRequiredService<IDataProtectionProvider>();
-		return provider.CreateProtector("protection");
-	});
-
-	services.AddScoped<IRoleValidator<ApplicationRole>, ApplicationRoleValidator>();
-	services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
-	{
-		options.User.RequireUniqueEmail = true;
-		options.SignIn.RequireConfirmedEmail = true;
-		options.Lockout.MaxFailedAccessAttempts = authenticationSettings.Lockout.MaxFailedAccessAttempts;
-		options.Lockout.DefaultLockoutTimeSpan = authenticationSettings.Lockout.DefaultLockout;
-		options.Password.RequiredLength = authenticationSettings.Password.RequiredLength;
-		options.Password.RequireNonAlphanumeric = authenticationSettings.Password.RequireNonAlphanumeric;
-		options.Password.RequireLowercase = authenticationSettings.Password.RequireLowercase;
-		options.Password.RequireUppercase = authenticationSettings.Password.RequireUppercase;
-		options.Password.RequireDigit = authenticationSettings.Password.RequireDigit;
-	})
-	.AddEntityFrameworkStores<ApplicationDbContext>()
-	.AddRoleValidator<ApplicationRoleValidator>()
-	.AddDefaultTokenProviders()
-	.AddErrorDescriber<LocalizedIdentityErrorDescriber>();
-
-	services.AddSimpleAuthentication(configuration).AddMicrosoftIdentityWebApi(configuration, jwtBearerScheme: AzureAdSettings.AzureActiveDirectoryBearer);
-	services.Configure<JwtBearerOptions>(AzureAdSettings.AzureActiveDirectoryBearer, options =>
-	{
-		options.TokenValidationParameters.NameClaimType = "preferred_username";
-	});
 
 	services.AddIdentityServices(configuration);
 	services.AddTransient<IAuthorizationHandler, ApplicationAuthorizationHandler>();
@@ -335,7 +299,17 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
         });*/
 	});
 
-	//services.AddRequestLocalization("it", "en");
+	services.AddScoped(services =>
+	{
+		var provider = services.GetRequiredService<IDataProtectionProvider>();
+		return provider.CreateProtector("security_codes").ToTimeLimitedDataProtector();
+	});
+
+	services.AddScoped(services =>
+	{
+		var provider = services.GetRequiredService<IDataProtectionProvider>();
+		return provider.CreateProtector("protection");
+	});
 
 	#region Localization
 
@@ -353,6 +327,19 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 	});
 
 	#endregion
+
+	services.AddCors(options =>
+	{
+		options.AddDefaultPolicy(builder =>
+		{
+			builder
+				.AllowAnyHeader()
+				.AllowAnyMethod()
+				.SetIsOriginAllowed(_ => true)
+				.AllowCredentials()
+				.WithExposedHeaders(HeaderNames.ContentDisposition);
+		});
+	});
 }
 
 void Configure(WebApplication app, IWebHostEnvironment env)
@@ -376,10 +363,7 @@ void Configure(WebApplication app, IWebHostEnvironment env)
 		// specifying the Swagger JSON endpoint.
 		app.UseSwaggerUI(options =>
 		{
-			options.RoutePrefix = string.Empty;
-			options.SwaggerEndpoint("swagger/v1/swagger.json", "Turis Web API");
-			//options.SwaggerEndpoint("swagger/v1/swagger.json", $"{Turis.Common.Constants.ApplicationName} Web API");
-            options.InjectStylesheet("/css/swagger.css");
+			options.SwaggerEndpoint("/swagger/v1/swagger.json", "Turis Web API");
 			options.DocExpansion(DocExpansion.None);
 		});
 	}
@@ -435,15 +419,12 @@ void Configure(WebApplication app, IWebHostEnvironment env)
 
 void InitRedisConfiguration(IServiceProvider serviceProvider)
 {
-	//var redisService = serviceProvider.GetService<RedisService>();
+	var redisService = serviceProvider.GetService<RedisService>();
 
-	//var assembly = typeof(ProductionCenter).Assembly;
-	//var types = assembly.GetTypes()
-	//	.Where(x => !x.IsAbstract)
-	//	.Where(x => !x.IsInterface)
-	//	.Where(x => typeof(ICachedEntity).IsAssignableFrom(x))
-	//	.ToList();
-
-	//foreach (var type in types)
-	//	redisService.DataModel.Add(type);
+	var assembly = typeof(BaseEntity).Assembly;
+	var types = assembly.GetTypes()
+		.Where(x => !x.IsAbstract)
+		.Where(x => !x.IsInterface)
+		.Where(x => typeof(ICachedEntity).IsAssignableFrom(x))
+		.ToList();
 }

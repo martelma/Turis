@@ -6,7 +6,7 @@
             class="relative flex flex-0 items-center justify-between h-16 w-full px-4 border-b bg-gray-50 dark:bg-transparent">
             <div class="flex flex-1 w-full items-center">
                 <!-- Sidebar toggle button -->
-                <button mat-icon-button (click)="contactComponent?.drawer?.toggle()">
+                <button mat-icon-button (click)="contactComponent?.toggleFilter()">
                     <mat-icon
                         [svgIcon]="
                             contactComponent?.drawer?.opened ? 'heroicons_solid:funnel' : 'heroicons_outline:funnel'

@@ -7,13 +7,14 @@ import { FuseScrollResetDirective } from '@fuse/directives/scroll-reset';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { DatePipe, JsonPipe, NgFor, NgIf } from '@angular/common';
+import { DatePipe, JsonPipe, NgFor, NgIf, NgClass } from '@angular/common';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ServiceService } from '../service.service';
 import { Service } from '../service.types';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { Router, RouterLink } from '@angular/router';
 import { Contact } from 'app/modules/contact/contact.types';
+import { getStatusColorClass, getStatusText, StatusTypes } from 'app/constants';
 
 @UntilDestroy()
 @Component({
@@ -25,6 +26,7 @@ import { Contact } from 'app/modules/contact/contact.types';
     imports: [
         NgIf,
         NgFor,
+        NgClass,
         DatePipe,
         JsonPipe,
         RouterLink,
@@ -54,6 +56,9 @@ export class ServiceViewComponent implements OnInit, OnChanges {
     @ViewChild(MatTabGroup) matTabGroup: MatTabGroup;
 
     form: UntypedFormGroup;
+
+    getStatusColorClass = getStatusColorClass;
+    getStatusText = getStatusText;
 
     constructor(
         private _formBuilder: UntypedFormBuilder,

@@ -6,7 +6,6 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AuthService } from 'app/core/auth/auth.service';
 import { MaterialModule } from 'app/modules/material.module';
-import { ApplicationGridComponent } from 'app/shared/components/application-grid/application-grid.component';
 import { User } from 'app/core/user/user.types';
 import { Otp } from 'app/core/auth/auth.types';
 import { Observable } from 'rxjs';
@@ -25,7 +24,6 @@ import { ActivatedRoute, Router } from '@angular/router';
         ReactiveFormsModule,
         MaterialModule,
         TranslocoModule,
-        ApplicationGridComponent,
     ],
 })
 export class DashboardComponent implements OnInit {

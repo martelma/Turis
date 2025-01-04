@@ -5,8 +5,7 @@ using StackExchange.Redis.Extensions.Core.Configuration;
 
 namespace Turis.Common.Services;
 
-public class RedisService(IOptions<RedisConfiguration> redisConfigurationOptions,
-	IRedisClient redisClient)
+public class RedisService(IOptions<RedisConfiguration> redisConfigurationOptions, IRedisClient redisClient)
 {
 	private readonly RedisConfiguration _redisConfiguration = redisConfigurationOptions.Value;
 
@@ -39,5 +38,15 @@ public class RedisService(IOptions<RedisConfiguration> redisConfigurationOptions
 	public async Task<bool> KeyRenameAsync(IBatch batch, RedisKey key, string newKey)
 	{
 		return await batch.KeyRenameAsync(key, newKey);
+	}
+
+	public async Task HashAddAsync(string key, string field, string value)
+	{
+		await RedisDb.HashSetAsync(key, field, value);
+	}
+
+	public async Task<RedisValue> HashGetAsync(string key, string field)
+	{
+		return await RedisDb.HashGetAsync(key, field);
 	}
 }

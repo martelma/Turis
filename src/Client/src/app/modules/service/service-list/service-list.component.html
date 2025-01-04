@@ -6,7 +6,7 @@
             class="relative flex flex-0 items-center justify-between h-16 w-full px-4 border-b bg-gray-50 dark:bg-transparent">
             <div class="flex flex-1 w-full items-center">
                 <!-- Sidebar toggle button -->
-                <button mat-icon-button (click)="serviceComponent.drawer?.toggle()">
+                <button mat-icon-button (click)="serviceComponent.toggleFilter()">
                     <mat-icon
                         [svgIcon]="
                             serviceComponent?.drawer?.opened ? 'heroicons_solid:funnel' : 'heroicons_outline:funnel'
@@ -65,11 +65,28 @@
                                     <mat-icon
                                         (click)="handleBookmark(item)"
                                         class="icon-size-2"
+                                        [ngClass]="item.bookmarkId ? 'text-yellow-500' : ''"
                                         [svgIcon]="item.bookmarkId ? 'heroicons_solid:star' : 'heroicons_outline:star'"
                                         [matTooltip]="
                                             (item.bookmarkId ? 'General.RemoveBookmark' : 'General.MarkAsBookmark')
                                                 | transloco
                                         "></mat-icon>
+
+                                    <mat-icon
+                                        (click)="handleCheck(item)"
+                                        class="icon-size-2"
+                                        [ngClass]="item.checked ? 'text-green-500' : ''"
+                                        [svgIcon]="
+                                            item.checked
+                                                ? 'heroicons_solid:check-circle'
+                                                : 'heroicons_outline:check-circle'
+                                        "
+                                        [matTooltip]="
+                                            (item.checked ? 'Service.Checked' : 'Service.ToBeCheck')
+                                                | transloco
+                                        "></mat-icon>
+
+                                    <span [ngClass]="getStatusColorClass(item)" class="color-box" [matTooltip]="item.status"></span>
 
                                     <!-- Code & Title -->
                                     <div class="mr-2 font-extrabold text-wrap">

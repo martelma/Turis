@@ -1,6 +1,5 @@
 Gestione Utenti
 	nel pannello di login manca immagine 
-	nel pannello di login manca logo
 	
 
 siamo d'accordo per 5+5 in questo anno e 5+5 nel prossimo quello dopo ancora riparte il solo canone
@@ -24,3 +23,4 @@ Servizi
 	gestione degli attachements
 	
 implementare tutto il mondo tags
+

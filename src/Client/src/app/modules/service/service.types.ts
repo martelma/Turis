@@ -50,6 +50,9 @@ export class Service {
     commissionPaymentDate: Date;
 
     bookmarkId: string;
+
+    billingStatus: string;
+    commissionStatus: string;
 }
 
 export type Collaborator = Contact;
@@ -63,6 +66,14 @@ export class ServiceSearchParameters extends BaseSearchParameters {
     serviceType?: string;
     durationType?: string;
     languages?: string[];
+    dateFrom?: string;
+    dateTo?: string;
+}
+
+export class AccountStatementParameters extends BaseSearchParameters {
+    contactId?: string;
+    serviceType?: string;
+    durationType?: string;
     dateFrom?: string;
     dateTo?: string;
 }

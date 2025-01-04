@@ -12,6 +12,7 @@ public class AdminEndpoints : IEndpointRouteHandlerBuilder
 
 		templateApiGroup.MapPost("truncate-elmah", TruncateElmah);
 		templateApiGroup.MapPost("rebuild-all-projections", RebuildAllProjections);
+		templateApiGroup.MapPost("reset-admin-password", ResetAdminPassword).AllowAnonymous();
     }
 
     private static async Task<IResult> BackendConfiguration(HttpContext httpContext, IAdminService service)
@@ -22,4 +23,7 @@ public class AdminEndpoints : IEndpointRouteHandlerBuilder
 
 	private static async Task<IResult> RebuildAllProjections(HttpContext httpContext, IProjectionService service)
         => (await service.RebuildAllProjectionsAsync()).ToResponse(httpContext);
+
+	private static async Task<IResult> ResetAdminPassword(HttpContext httpContext, IAdminService service)
+        => (await service.ResetAdminPassword()).ToResponse(httpContext);
 }

@@ -1,174 +1,189 @@
 {
-  "General": {
-    "Add": "Aggiungere",
-    "Delete": "Cancella",
-    "Cancel": "Chiudi",
-    "Update": "Aggiorna",
-    "Save": "Salva",
-    "Edit": "Editare",
-    "For": "per",
-    "Information": "Informazione",
-    "New": "Nuovo/a",
-    "Search": "Cerca",
-    "UnselectAll": "Deseleziona tutto",
-    "SelectAll": "Seleziona tutto",
-    "ExpandAll": "Espandi tutto",
-    "CollapseAll": "Comprimi tutto",
-    "Filters": "Filtri",
-    "ClearFilters": "Clear Filters"
-  },
-  "Dashboard": {
-    "WelcomeBack": "Bentornato"
-  },
-  "SignIn": {
-    "WelcomeTo": "Benvenuto in",
-    "NoAccountLabel": "Non hai un account?",
-    "ContactUs": "Contattaci",
-    "UserNameOrEmailAddress": "Nome utente o indirizzo e-mail",
-    "UserNameOrEmailAddressIsRequired": "Il Nome utente o l'indirizzo e-mail è obbligatorio",
-    "EmailIsNotValid": "Inseririci un indirizzo email valido",
-    "UserNameNotValid": "Il nome utente fornito non è valido",
-    "Password": "Password",
-    "PasswordIsRequired": "La password è obbligatoria",
-    "ForgotPassword": "Hai dimenticato la password?",
-    "SignIn": "Accedi",
-    "LoginFailed": "Accesso non riuscito. Hai dimenticato il nome utente o la password?",
-    "ResetPassword": "Reset Password",
-    "PasswordConfirmation": "Conferma la nuova password",
-    "PasswordConfirmationIsRequired": "La password è obbligatoria"
-  },
-  "SignOut": {
-    "Goodbye": "Arrivederci!",
-    "SignOut": "Ti sei disconnesso!",
-    "RedirectingIn": "Reindirizzamento in",
-    "BeingRedirected": "Ora verrai reindirizzato!",
-    "GoTo": "Vai a",
-    "SignIn": "Accedi"
-  },
-  "Contact": {
-    "Code": "Code",
-    "Name": "Name"
-  },
-  "Navigation": {
-    "Home": "Home",
-    "Admin": "Admin",
-    "Elmah": "Elmah",
-    "Swagger": "Swagger",
-    "Hangfire": "Hangfire",
-    "Users": "Utenti",
-    "Console": "Console",
-    "Configuration": "Configurazioni",
-    "TipiPagamenti": "Tipi Pagamenti",
-    "Languages": "Lingue",
-    "AliquoteIva": "Aliquote Iva",
-    "PriceList": "Listini",
-    "Calendar": "Agenda",
-    "Service": "Servizi",
-    "Contact": "Contact",
-    "Back": "Indietro"
-  },
-  "Languages": {
-    "Code": "Code",
-    "Name": "Name",
-    "CodeIso": "Code Iso"
-  },
-  "Calendar": {
-    "Code": "Code",
-    "Name": "Name"
-  },
-  "Service": {
-    "Code": "Code",
-    "Name": "Name",
-    "ServiceInfo": "Info",
-    "ServiceNote": "Note",
-    "ServiceAttachment": "Attachment",
-    "FilterByCode": "Code",
-    "FilterByTitle": "Title",
-    "FilterByNote": "Note",
-    "FilterByServiceType": "Service Type",
-    "FilterByDurationType": "Duration Type",
-    "FilterByDateFrom": "Date From",
-    "FilterByDateTo": "Date To"
-  },
-  "PriceList": {
-    "Code": "Code",
-    "Name": "Name"
-  },
-  "AliquotaIva": {
-    "Code": "Code",
-    "Name": "Name",
-    "Description": "Description",
-    "Aliquota": "Aliquota",
-    "CodiceNatura": "Codice Natura"
-  },
-  "Users": {
-    "ShowUser": "Mostra utente",
-    "NoRoles": "Non ci sono ancora ruoli!",
-    "ResetPassword": "Reimposta la password",
-    "ResetDefaultPassword": "Reimposta la password a default",
-    "NoScopesInScopeGroup": "Non ci sono ancora ambiti assegnati a questo gruppo di ambiti",
-    "NoScopeGroups": "Al momento non ci sono gruppi di ambito per l'applicazione selezionata",
-    "NoScopes": "Al momento non sono definiti ambiti per l'applicazione selezionata",
-    "NoScopesInRole": "Non ci sono ambiti assegnati a questo ruolo"
-  },
-  "Admin": {
-    "Console": {
-      "Title": "Admin Console",
-      "TruncateElmah": "Svuota Elmah",
-      "TruncateJobs": "Cancella HangFire Jobs",
-      "Utilities": "Utilità",
-      "BackendConfiguration": "Configurazione del back-end",
-      "Configuration": "Configurazione",
-      "ClientConfiguration": "Configurazione cliente",
-      "Value": "Valore",
-      "Key": "Chiave"
+    "General": {
+        "RemoveBookmark": "Remove Bookmark",
+        "MarkAsBookmark": "Mark As Bookmark",
+        "Add": "Aggiungere",
+        "Delete": "Cancella",
+        "Cancel": "Chiudi",
+        "Update": "Aggiorna",
+        "Save": "Salva",
+        "Edit": "Editare",
+        "For": "per",
+        "Information": "Informazione",
+        "New": "Nuovo/a",
+        "Search": "Cerca",
+        "UnselectAll": "Deseleziona tutto",
+        "SelectAll": "Seleziona tutto",
+        "ExpandAll": "Espandi tutto",
+        "CollapseAll": "Comprimi tutto",
+        "Filters": "Filtri",
+        "ClearFilters": "Clear Filters",
+        "Notes": "Notes",
+        "Attachments": "Attachments",
+        "Json": "Json"
+    },
+    "Dashboard": {
+        "WelcomeBack": "Bentornato"
+    },
+    "SignIn": {
+        "WelcomeTo": "Benvenuto in",
+        "NoAccountLabel": "Non hai un account?",
+        "ContactUs": "Contattaci",
+        "UserNameOrEmailAddress": "Nome utente o indirizzo e-mail",
+        "UserNameOrEmailAddressIsRequired": "Il Nome utente o l'indirizzo e-mail è obbligatorio",
+        "EmailIsNotValid": "Inseririci un indirizzo email valido",
+        "UserNameNotValid": "Il nome utente fornito non è valido",
+        "Password": "Password",
+        "PasswordIsRequired": "La password è obbligatoria",
+        "ForgotPassword": "Hai dimenticato la password?",
+        "SignIn": "Accedi",
+        "LoginFailed": "Accesso non riuscito. Hai dimenticato il nome utente o la password?",
+        "ResetPassword": "Reset Password",
+        "PasswordConfirmation": "Conferma la nuova password",
+        "PasswordConfirmationIsRequired": "La password è obbligatoria"
+    },
+    "SignOut": {
+        "Goodbye": "Arrivederci!",
+        "SignOut": "Ti sei disconnesso!",
+        "RedirectingIn": "Reindirizzamento in",
+        "BeingRedirected": "Ora verrai reindirizzato!",
+        "GoTo": "Vai a",
+        "SignIn": "Accedi"
+    },
+    "Contact": {
+        "Code": "Code",
+        "Name": "Name"
+    },
+    "Navigation": {
+        "Home": "Home",
+        "Admin": "Admin",
+        "Elmah": "Elmah",
+        "Swagger": "Swagger",
+        "Hangfire": "Hangfire",
+        "Users": "Utenti",
+        "Console": "Console",
+        "Configuration": "Configurazioni",
+        "TipiPagamenti": "Tipi Pagamenti",
+        "Languages": "Lingue",
+        "AliquoteIva": "Aliquote Iva",
+        "PriceList": "Listini",
+        "Calendar": "Agenda",
+        "Service": "Servizi",
+        "Contact": "Contact",
+        "Back": "Indietro"
+    },
+    "Languages": {
+        "Code": "Code",
+        "Name": "Name",
+        "CodeIso": "Code Iso"
+    },
+    "Calendar": {
+        "Code": "Code",
+        "Name": "Name"
+    },
+    "Service": {
+        "Date": "Data",
+        "Code": "Codice",
+        "Title": "Titolo",
+        "ServiceType": "Tipo",
+        "DurationType": "Durata",
+        "People": "Persone",
+        "PriceCalculated": "Prezzo Calcolato",
+        "Price": "Prezzo Praticato",
+        "Note": "Note",
+        "CommissionCalculated": "Commissione Calcolata",
+        "ServiceInfo": "Info",
+        "FilterByCode": "Code",
+        "FilterByTitle": "Title",
+        "FilterByNote": "Note",
+        "FilterByServiceType": "Service Type",
+        "FilterByDurationType": "Duration Type",
+        "FilterByDateFrom": "Date From",
+        "FilterByDateTo": "Date To",
+        "ContactInfo": "Contact Info",
+        "ContactAccountStatement": "Account Statement",
+        "Checked": "Checked",
+        "ToBeCheck": "To Be Check"
+    },
+    "PriceList": {
+        "Code": "Code",
+        "Name": "Name"
+    },
+    "AliquotaIva": {
+        "Code": "Code",
+        "Name": "Name",
+        "Description": "Description",
+        "Aliquota": "Aliquota",
+        "CodiceNatura": "Codice Natura"
+    },
+    "Users": {
+        "ShowUser": "Mostra utente",
+        "NoRoles": "Non ci sono ancora ruoli!",
+        "ResetPassword": "Reimposta la password",
+        "ResetDefaultPassword": "Reimposta la password a default",
+        "NoScopesInScopeGroup": "Non ci sono ancora ambiti assegnati a questo gruppo di ambiti",
+        "NoScopeGroups": "Al momento non ci sono gruppi di ambito per l'applicazione selezionata",
+        "NoScopes": "Al momento non sono definiti ambiti per l'applicazione selezionata",
+        "NoScopesInRole": "Non ci sono ambiti assegnati a questo ruolo"
+    },
+    "Admin": {
+        "Console": {
+            "Title": "Admin Console",
+            "TruncateElmah": "Svuota Elmah",
+            "TruncateJobs": "Cancella HangFire Jobs",
+            "Utilities": "Utilità",
+            "BackendConfiguration": "Configurazione del back-end",
+            "Configuration": "Configurazione",
+            "ClientConfiguration": "Configurazione cliente",
+            "Value": "Valore",
+            "Key": "Chiave"
+        }
+    },
+    "Unauthorized": {
+        "ErrorMessage": "Non sei autorizzato a visualizzare questa pagina",
+        "GoBackToHome": "Ritorna a Home"
+    },
+    "User": {
+        "SignedInAs": "Registrato come",
+        "Profile": "Profilo",
+        "SignOut": "Disconnessione"
+    },
+    "ChangePassword": {
+        "Title": "Cambia password",
+        "OldPassword": "Vecchia password",
+        "NewPassword": "Nuova password",
+        "PasswordConfirmation": "Conferma la nuova password",
+        "OldPasswordRequiredError": "Vecchia password è obbigatoria",
+        "NewPasswordRequiredError": "Nuova password è obbigatoria",
+        "PasswordConfirmationRequiredError": "La conferma della nuova password è obbigatoria",
+        "PasswordsMustMatchError": "Passwords must match"
+    },
+    "UserProfile": {
+        "ChangePassword": "Cambia password"
+    },
+    "ForgotPassword": {
+        "Title": "Hai dimenticato la password?",
+        "SubTitle": "Compila il modulo per reimpostare la password",
+        "EmailAddress": "Indirizzo e-mail",
+        "EmailAddressIsRequired": "L'indirizzo e-mail è obbligatorio",
+        "PleaseEnterAValidEmailAddress": "Si prega di inserire un indirizzo email valido",
+        "SendResetLink": "Invia reset link",
+        "ReturnTo": "Ritorna a",
+        "SignIn": "Accedi"
+    },
+    "ResetPassword": {
+        "Title": "Reimposta la tua password",
+        "SubTitle": "Crea una nuova password per il tuo account",
+        "Password": "Password",
+        "PasswordIsRequired": "La password è obbigatoria",
+        "PasswordConfirmation": "Password (Conferma)",
+        "PasswordConfirmationIsRequired": "La conferma della password è obbligatoria",
+        "PasswordsMustMatch": "Le password devono corrispondere",
+        "ResetYourPassword": "Reimposta la tua password",
+        "SignIn": "Accedi"
+    },
+    "ServiceUnavailable": {
+        "ErrorMessage": "Turis Workspace non è al momento disponibile o è temporaneamente inattivo",
+        "ContactHelpDesk": "Contatta l'HelpDesk IT"
     }
-  },
-  "Unauthorized": {
-    "ErrorMessage": "Non sei autorizzato a visualizzare questa pagina",
-    "GoBackToHome": "Ritorna a Home"
-  },
-  "User": {
-    "SignedInAs": "Registrato come",
-    "Profile": "Profilo",
-    "SignOut": "Disconnessione"
-  },
-  "ChangePassword": {
-    "Title": "Cambia password",
-    "OldPassword": "Vecchia password",
-    "NewPassword": "Nuova password",
-    "PasswordConfirmation": "Conferma la nuova password",
-    "OldPasswordRequiredError": "Vecchia password è obbigatoria",
-    "NewPasswordRequiredError": "Nuova password è obbigatoria",
-    "PasswordConfirmationRequiredError": "La conferma della nuova password è obbigatoria",
-    "PasswordsMustMatchError": "Passwords must match"
-  },
-  "UserProfile": {
-    "ChangePassword": "Cambia password"
-  },
-  "ForgotPassword": {
-    "Title": "Hai dimenticato la password?",
-    "SubTitle": "Compila il modulo per reimpostare la password",
-    "EmailAddress": "Indirizzo e-mail",
-    "EmailAddressIsRequired": "L'indirizzo e-mail è obbligatorio",
-    "PleaseEnterAValidEmailAddress": "Si prega di inserire un indirizzo email valido",
-    "SendResetLink": "Invia reset link",
-    "ReturnTo": "Ritorna a",
-    "SignIn": "Accedi"
-  },
-  "ResetPassword": {
-    "Title": "Reimposta la tua password",
-    "SubTitle": "Crea una nuova password per il tuo account",
-    "Password": "Password",
-    "PasswordIsRequired": "La password è obbigatoria",
-    "PasswordConfirmation": "Password (Conferma)",
-    "PasswordConfirmationIsRequired": "La conferma della password è obbligatoria",
-    "PasswordsMustMatch": "Le password devono corrispondere",
-    "ResetYourPassword": "Reimposta la tua password",
-    "SignIn": "Accedi"
-  },
-  "ServiceUnavailable": {
-    "ErrorMessage": "Turis Workspace non è al momento disponibile o è temporaneamente inattivo",
-    "ContactHelpDesk": "Contatta l'HelpDesk IT"
-  }
 }

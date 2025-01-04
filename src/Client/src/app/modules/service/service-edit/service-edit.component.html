@@ -50,6 +50,32 @@
                                 </mat-form-field>
 
                                 <mat-form-field class="col-span-2">
+                                    <mat-label for="status">Status</mat-label>
+                                    <mat-select
+                                        placeholder="Select a Status"
+                                        class="form-control font-bold"
+                                        id="status"
+                                        name="status"
+                                        #name="ngModel"
+                                        required
+                                        [(ngModel)]="item.status"
+                                        (ngModelChange)="statusTypeChanged()">
+                                        <mat-select-trigger>
+                                            <span [ngClass]="getStatusColorClass(item)"
+                                                class="color-box"></span>
+                                            {{ getStatusText(item) }}
+                                        </mat-select-trigger>
+                                        <mat-option *ngFor="let x of statusTypes" [value]="x.value">
+                                            <span [ngClass]="x.colorClass" class="color-box"></span>
+                                            {{ x.text }}
+                                        </mat-option>
+                                    </mat-select>
+                                    <div *ngIf="status?.invalid">
+                                        <div *ngIf="status?.errors?.required">Status is required.</div>
+                                    </div>
+                                </mat-form-field>
+
+                                <mat-form-field class="col-span-2">
                                     <mat-label for="code">Code</mat-label>
                                     <input
                                         matInput
@@ -65,7 +91,7 @@
                                     </div>
                                 </mat-form-field>
 
-                                <mat-form-field class="col-span-8">
+                                <mat-form-field class="col-span-6">
                                     <mat-label for="title">Title</mat-label>
                                     <input
                                         matInput

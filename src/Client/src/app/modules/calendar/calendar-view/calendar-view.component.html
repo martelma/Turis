@@ -2,10 +2,6 @@
     <!-- Header -->
     <div
         class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
-        <!-- Loader -->
-        <!-- <div class="absolute inset-x-0 bottom-0" *ngIf="itemsLoading">
-            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
-        </div> -->
         <!-- Title -->
         <div class="text-4xl font-extrabold tracking-tight">
             {{ 'Navigation.Calendar' | transloco }}
@@ -24,13 +20,13 @@
         </div>
     </div>
     <div class="flex space-x-2 mb-2">
-        <button mat-flat-button color="primary" class="ml-2" (click)="drawerOpened = !drawerOpened">
+        <button mat-flat-button color="primary" class="ml-2" (click)="toggleFilter()">
             <mat-icon
-                *ngIf="!drawerOpened"
+                *ngIf="!drawerFilterOpened"
                 class="icon-size-5 mr-2"
                 [svgIcon]="'heroicons_outline:chevron-double-right'"></mat-icon>
             <mat-icon
-                *ngIf="drawerOpened"
+                *ngIf="drawerFilterOpened"
                 class="icon-size-5 mr-2"
                 [svgIcon]="'heroicons_outline:chevron-double-left'"></mat-icon>
             <span class="ml-2">{{ 'General.Filters' | transloco }}</span>
@@ -54,7 +50,7 @@
         <div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
             <mat-drawer-container class="flex-auto h-full">
                 <!-- Drawer -->
-                <mat-drawer class="w-90 dark:bg-gray-900" [mode]="drawerMode" [opened]="drawerOpened" #drawer>
+                <mat-drawer class="w-90 dark:bg-gray-900" [mode]="drawerFilterMode" [opened]="drawerFilterOpened" #drawer>
                     <!-- Queries sidebar -->
                     <app-service-sidebar (onFilterChanged)="serviceFilter($event)"></app-service-sidebar>
                 </mat-drawer>
@@ -62,24 +58,6 @@
                 <!-- Drawer content -->
                 <mat-drawer-content class="flex flex-col overflow-hidden">
                     <mat-drawer-container class="flex-auto sm:h-full">
-                        <!-- <mat-drawer
-                            class="sm:w-96 dark:bg-gray-900"
-                            [autoFocus]="false"
-                            [mode]="drawerMode2"
-                            [opened]="drawerOpened2"
-                            #matDrawer2>
-                            <div class="flex items-center justify-between m-8 mr-6 sm:my-10">
-                                <div class="text-4xl font-extrabold tracking-tight leading-none">Service</div>
-                                <div class="lg:hidden">
-                                    <button mat-icon-button (click)="matDrawer2.close()">
-                                        <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="flex flex-col divide-y border-t border-b">
-                                <ng-container> </ng-container>
-                            </div>
-                        </mat-drawer> -->
                         <mat-drawer-content class="flex flex-col">
                             <!-- Main -->
                             <div class="flex flex-auto w-full overflow-hidden">
@@ -253,7 +231,7 @@
     [mode]="'over'"
     [name]="'detailsDrawer'"
     [position]="'right'"
-    (openedChanged)="drawerOpenedChanged($event)"
+    (openedChanged)="drawerDetailsChanged($event)"
     #detailsDrawer>
     <div class="flex flex-col flex-auto p-3">
         <div class="flex flex-col w-full overflow-auto bg-card">

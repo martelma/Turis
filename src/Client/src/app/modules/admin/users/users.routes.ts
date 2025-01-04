@@ -2,11 +2,9 @@ import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, Routes } from '@an
 import { UsersDetailsComponent } from './details/details.component';
 import { UsersListComponent } from './list/list.component';
 import { UsersComponent } from './users.component';
-import { ContactApplicationsComponent as UserApplicationsComponent } from './applications/applications.component';
 import { AvatarUsersService } from './avatar-users.service';
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
-import { ApplicationsService } from '../applications/applications.service';
 
 /**
  * User resolver
@@ -102,21 +100,5 @@ export default [
                 ],
             },
         ],
-    },
-    {
-        path: ':id/applications',
-        component: UserApplicationsComponent,
-        resolve: {
-            applications: () => inject(ApplicationsService).getApplications(),
-            user: userResolver,
-        },
-    },
-    {
-        path: ':id/applications/:applicationId',
-        component: UserApplicationsComponent,
-        resolve: {
-            applications: () => inject(ApplicationsService).getApplications(),
-            user: userResolver,
-        },
     },
 ] as Routes;

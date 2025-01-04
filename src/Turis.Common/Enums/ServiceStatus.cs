@@ -2,10 +2,9 @@
 
 public enum ServiceStatus
 {
-	Undefined,
-	Inserito,
-	Confermato,
-	Chiuso,
-	Opzione,
-	Annullato
+	New,
+	Confirmed,
+	Closed,
+	Option,
+	Cancelled
 }

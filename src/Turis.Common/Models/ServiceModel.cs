@@ -46,4 +46,41 @@ public class ServiceModel : BaseModel
 	public bool CommissionPaid { get; set; }
 	public DateTimeOffset? CommissionPaymentDate { get; set; }
 	public string BookmarkId { get; set; }
+
+	public string BillingStatus
+	{
+		get
+		{
+			if (CashedIn)
+				return "CashedIn";
+
+			//TODO: check if the service is invoiced
+
+			return string.Empty;
+		}
+	}
+
+	public string CommissionStatus
+	{
+		get
+		{
+			if (CommissionPaid)
+				return "Paid";
+
+			return "ToBePaid";
+		}
+	}
+
+	/*
+	export const BillingStatusTypes = [
+	   { value: 'CashedIn', text: 'Cashed In', colorClass: 'bg-green-500' },
+	   { value: 'ToBeCashed', text: 'To Be Cashed', colorClass: 'bg-yellow-500' },
+	   { value: 'ToBeInvoiced', text: 'To Be Invoiced', colorClass: 'bg-red-500' },
+	];
+
+	export const CommissionStatusTypes = [
+	   { value: 'Paid', text: 'Paid', colorClass: 'bg-green-500' },
+	   { value: 'ToBePaid', text: 'To Be Paid', colorClass: 'bg-yellow-500' },
+	];
+	*/
 }

@@ -21,13 +21,20 @@ namespace Turis.BusinessLayer.Services;
 public class ServiceService(IDbContext dbContext,
 	ILogger<ServiceService> logger,
 	IBookmarkService bookmarkService,
+	IContactService contactService,
 	IUserService userService,
 	IAvatarContactService avatarContactService
 	) : IServiceService
 {
-	public async Task<Result<PaginatedList<ServiceModel>>> ListAsync(ServiceSearchParameters parameters)
+	private async Task<List<Bookmark>> GetMyBookmarks()
 	{
 		var bookmarks = await bookmarkService.ListAsync(userService.GetUserId(), nameof(Service));
+		return bookmarks;
+	}
+
+	public async Task<Result<PaginatedList<ServiceModel>>> ListAsync(ServiceSearchParameters parameters)
+	{
+		var bookmarks = await GetMyBookmarks();
 
 		var paginator = new Paginator(parameters);
 
@@ -134,6 +141,79 @@ public class ServiceService(IDbContext dbContext,
 		return service;
 	}
 
+	public async Task<Result<PaginatedList<ServiceModel>>> AccountStatement(AccountStatementParameters parameters)
+	{
+		var bookmarks = await GetMyBookmarks();
+
+		var paginator = new Paginator(parameters);
+
+		var query = dbContext.GetData<Service>()
+			.Include(x => x.PriceList)
+			.Include(x => x.Client)
+			.Include(x => x.Collaborator)
+			.AsQueryable();
+
+		var contact = (await contactService.GetAsync(parameters.ContactId)).Content;
+		if (contact is null)
+			throw new Exception("Contact not found");
+
+		if (contact.ContactType == ContactType.Client.ToString())
+			query = query.Where(x => x.ClientId == parameters.ContactId);
+		else if (contact.ContactType == ContactType.Collaborator.ToString())
+			query = query.Where(x => x.CollaboratorId == parameters.ContactId);
+
+		if (parameters.DateFrom.HasValue())
+		{
+			var dateFrom = DateTime.ParseExact(parameters.DateFrom, "yyyyMMdd", CultureInfo.InvariantCulture);
+			query = query.Where(x => x.Date >= dateFrom);
+		}
+		if (parameters.DateTo.HasValue())
+		{
+			var dateTo = DateTime.ParseExact(parameters.DateTo, "yyyyMMdd", CultureInfo.InvariantCulture);
+			query = query.Where(x => x.Date <= dateTo);
+		}
+
+		if (parameters.ServiceType.HasValue())
+		{
+			var serviceType = (ServiceType)Enum.Parse(typeof(ServiceType), parameters.ServiceType);
+			query = query.Where(x => x.ServiceType == serviceType);
+		}
+
+		if (parameters.DurationType.HasValue())
+		{
+			var durationType = (DurationType)Enum.Parse(typeof(DurationType), parameters.DurationType);
+			query = query.Where(x => x.DurationType == durationType);
+		}
+
+		var totalCount = await query.AsSplitQuery().CountAsync();
+
+		if (parameters.OrderBy.HasValue())
+		{
+			try
+			{
+				query = query.OrderBy(parameters.OrderBy);
+			}
+			catch (ParseException ex)
+			{
+				logger.LogError(ex, Errors.OrderByLoggerError, parameters.OrderBy);
+				return Result.Fail(FailureReasons.ClientError, string.Format(Errors.OrderByError, parameters.OrderBy));
+			}
+		}
+		else
+			query = query.OrderByDescending(x => x.Date);
+
+
+		// Prova a prendere un elemento in più di quelli richiesti per controllare se ci sono pagine successive.
+		var data = query
+			.Skip(paginator.PageIndex * paginator.PageSize).Take(paginator.PageSize + 1)
+			.ToList();
+
+		var model = await data.ToModel(bookmarks, avatarContactService);
+
+		var result = new PaginatedList<ServiceModel>(model, totalCount, data.Count > parameters.PageSize);
+		return result;
+	}
+
 	public async Task<Result<ServiceModel>> SaveAsync(ServiceRequest service)
 	{
 		var dbService = await dbContext.GetData<Service>(true)
@@ -179,7 +259,7 @@ public class ServiceService(IDbContext dbContext,
 		dbService.CommissionNote = service.CommissionNote;
 
 		if (service.Status.IsNullOrEmpty())
-			dbService.Status = ServiceStatus.Undefined;
+			dbService.Status = ServiceStatus.New;
 		else
 			dbService.Status = (ServiceStatus)Enum.Parse(typeof(ServiceStatus), service.Status);
 

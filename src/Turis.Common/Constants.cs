@@ -9,11 +9,15 @@ public class Constants
 
 	//costanti utilizzate per la gestione di Redis
 	public const int BatchSize = 20000;
-	public const string RedisKeyPrefix = "box";
-	public const string PrefixEntityKey = "box:obj";
-	//public const string PrefixIndexPrimaryKey = "box:obj:pk";
-	public const string PrefixIndexKey = "box:idx";
-	public const string PrefixIndexSortedKey = "box:idx";
+	public const string RedisKeyPrefix = "turis";
+	public const string PrefixEntityKey = "turis:obj";
+	public const string PrefixIndexKey = "turis:idx";
+	public const string PrefixIndexSortedKey = "turis:idx";
+
+	public const string CodiceFattura = "F";
+	public const string CodiceNotaDiCredito = "N";
+
+	public const string UserSettings = "turis:UserSettings";
 
 	//workaround perché non è possibile definire una costante di tipo DateTime
 	public static readonly DateTime BaseDate = new DateTime(1970, 1, 1, 0, 0, 0);

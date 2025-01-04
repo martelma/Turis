@@ -1,5 +1,5 @@
 import { TranslocoModule } from '@ngneat/transloco';
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -8,6 +8,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ContactSidebarComponent } from './contact-sidebar/contact-sidebar.component';
 import { ContactListComponent } from './contact-list/contact-list.component';
+import { UserSettingsService } from 'app/shared/services/user-setting.service';
+import { AppSettings } from 'app/constants';
 
 @UntilDestroy()
 @Component({
@@ -26,15 +28,16 @@ import { ContactListComponent } from './contact-list/contact-list.component';
         ContactListComponent,
     ],
 })
-export class ContactComponent {
+export class ContactComponent implements OnInit, AfterViewInit {
     @ViewChild('drawer') drawer: MatDrawer;
 
-    drawerMode: 'over' | 'side' = 'side';
-    drawerOpened = false;
+    drawerFilterMode: 'over' | 'side' = 'side';
+    drawerFilterOpened = false;
 
     constructor(
         private _activatedRoute: ActivatedRoute,
         private _router: Router,
+        private _userSettingsService: UserSettingsService,
     ) {
         const snapshot = this._activatedRoute.snapshot;
         const params = { ...snapshot.queryParams };
@@ -44,7 +47,23 @@ export class ContactComponent {
         }
     }
 
+    async ngOnInit(): Promise<void> {
+    }
+
+    async ngAfterViewInit(): Promise<void> {
+        const toggleFilterValue = await this._userSettingsService.getValue(`${AppSettings.Contact}:toggleFilter`);
+        this.drawerFilterOpened = toggleFilterValue === '' ? false : toggleFilterValue === 'true';
+        // console.log('drawerFilterOpened', this.drawerFilterOpened)
+    }
+
     createContact(): void {
         this._router.navigate(['./', 'new'], { relativeTo: this._activatedRoute });
+    }
+
+    async toggleFilter() {
+        this.drawerFilterOpened = !this.drawerFilterOpened;
+
+        const value = this.drawerFilterOpened ? 'true' : 'false';
+        await this._userSettingsService.setValue(`${AppSettings.Contact}:toggleFilter`, value);
     }
 }

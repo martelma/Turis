@@ -7,7 +7,7 @@
     "i18n-ally.keystyle": "nested",
     // Default HTML formatter
     "[html]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.defaultFormatter": "vscode.html-language-features",
         "editor.codeActionsOnSave": {
             "source.fixAll.eslint": "explicit"
         },
@@ -16,10 +16,13 @@
     // HTML Wrapping strategies
     "html.format.wrapAttributes": "force", // Wrap when the line length is exceeded
     "[typescript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.defaultFormatter": "vscode.typescript-language-features",
         "editor.codeActionsOnSave": {
             "source.fixAll.eslint": "explicit"
         },
         "editor.formatOnSave": false
+    },
+    "[scss]": {
+        "editor.defaultFormatter": "vscode.css-language-features"
     }
 }

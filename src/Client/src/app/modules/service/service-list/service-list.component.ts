@@ -34,7 +34,7 @@ import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/route
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
-import { DurationTypes, ServiceTypes } from 'app/constants';
+import { DurationTypes, getStatusColorClass, getStatusText, ServiceTypes, StatusTypes } from 'app/constants';
 import { UserService } from 'app/core/user/user.service';
 import { ServiceViewComponent } from '../service-view/service-view.component';
 
@@ -42,6 +42,7 @@ import { ServiceViewComponent } from '../service-view/service-view.component';
 @Component({
     selector: 'app-service-list',
     templateUrl: './service-list.component.html',
+    styleUrls: ['./service-list.component.scss'],
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations,
     standalone: true,
@@ -84,6 +85,7 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
     @ViewChild(MatSort) private _sort: MatSort;
 
+    statusTypes = StatusTypes;
     flashMessage: 'success' | 'error' | null = null;
 
     results: PaginatedListResult<Service>;
@@ -99,6 +101,8 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
     durationTypes = DurationTypes;
 
     trackByFn = trackByFn;
+    getStatusColorClass = getStatusColorClass;
+    getStatusText = getStatusText;
 
     constructor(
         private _router: Router,
@@ -111,7 +115,7 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
         private _translocoService: TranslocoService,
 
         public serviceComponent: ServiceComponent,
-    ) {}
+    ) { }
 
     ngOnInit(): void {
         this.activeLang = this._translocoService.getActiveLang();
@@ -240,134 +244,13 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
         }
     }
 
-    /*
-    create(): void {
-        // Create the service
-        this._serviceService
-            .createEntity()
-            .pipe(untilDestroyed(this))
-            .subscribe(item => {
-                this._updateSelectedItem(item);
-            });
-    }
-
-    private _updateSelectedItem(item: Service): void {
-        // Go to new tag
-        this.selectedItem = item;
-
-        // Fill the form
-        this.selectedItemForm.patchValue(item);
-
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-    }
-
-    updateSelectedItem(): void {
-        // Get the service object
-        const service = {
-            ...this.selectedItemForm.getRawValue(),
-        };
-
-        // Update the service on the server
-        this._serviceService
-            .saveEntity(service.id, service)
-            .pipe(untilDestroyed(this))
-            .subscribe(() => {
-                // this._fuseConfirmationService.open(getSuccessModal());
-
-                setTimeout(() => {
-                    this.closeDetails();
-                    this._list();
-                    // this._serviceService.list().pipe(untilDestroyed(this)).subscribe();
-                }, 2000);
-            });
-    }
-
-    deleteSelectedItem(): void {
-        // Open the confirmation dialog
-        const confirmation = this._fuseConfirmationService.open({
-            title: this._translocoService.translate('Services.DeleteService'),
-            message: this._translocoService.translate('Questions.AreYouSure'),
-            actions: {
-                cancel: {
-                    label: this._translocoService.translate('General.Cancel'),
-                },
-                confirm: {
-                    label: this._translocoService.translate('General.Delete'),
-                },
-            },
-        });
-
-        // Subscribe to the confirmation dialog closed action
-        confirmation
-            .afterClosed()
-            .pipe(untilDestroyed(this))
-            .subscribe(result => {
-                // If the confirm button pressed...
-                if (result === 'confirmed') {
-                    // Get the service object
-                    const service = this.selectedItemForm.getRawValue();
-
-                    // Delete the service on the server
-                    this._serviceService
-                        .deleteEntity(service.id)
-                        .pipe(untilDestroyed(this))
-                        .subscribe(() => {
-                            // Close the details
-                            this.closeDetails();
-                        });
-                }
-            });
-    }
-
-    showFlashMessage(type: 'success' | 'error'): void {
-        // Show the message
-        this.flashMessage = type;
-
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-
-        // Hide it after 3 seconds
-        setTimeout(() => {
-            this.flashMessage = null;
-
-            // Mark for check
-            this._changeDetectorRef.markForCheck();
-        }, 3000);
-    }
-
-    toggleDetails(serviceId: string): void {
-        // If the service is already selected...
-        if (this.selectedItem && this.selectedItem.id === serviceId) {
-            // Close the details
-            this.closeDetails();
-            return;
+    handleCheck(service: Service): void {
+        if (service.checked) {
+            this._serviceService.setCheck(service);
+        } else {
+            this._serviceService.setUnCheck(service);
         }
-
-        // Get the service by id
-        this._serviceService
-            .getById(serviceId)
-            .pipe(untilDestroyed(this))
-            .subscribe(item => {
-                // Set the selected role
-                this.selectedItem = item;
-
-                // Fill the form
-                this.selectedItemForm.patchValue(item);
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-
-                this._changeDetectorRef.detectChanges();
-            });
     }
-
-    closeDetails(): void {
-        this.selectedItem = null;
-
-        this.selectedItemForm.reset();
-    }
-    */
 
     onItemSelected(service: Service): void {
         this.selectedItem = service;
@@ -393,7 +276,7 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
         this._list();
     }
 
-    onServiceTypeChange() {}
+    onServiceTypeChange() { }
 
-    onDurationTypeChange() {}
+    onDurationTypeChange() { }
 }

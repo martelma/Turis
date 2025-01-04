@@ -17,7 +17,7 @@
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
-                        "outputPath": "../_deploy/app",
+                        "outputPath": "../../_deploy/production-app",
                         "index": "src/index.html",
                         "main": "src/main.ts",
                         "polyfills": [
@@ -38,8 +38,6 @@
                             "guid-typescript"
                         ],
                         "assets": [
-                            // "src/favicon-16x16.png",
-                            // "src/favicon-32x32.png",
                             "src/assets",
                             "src/web.config"
                         ],
@@ -60,7 +58,7 @@
                     },
                     "configurations": {
                         "production": {
-                            "outputPath": "../_deploy/app",
+                            "outputPath": "../../_deploy/production-app",
                             "budgets": [
                                 {
                                     "type": "initial",
@@ -82,7 +80,7 @@
                             "outputHashing": "all"
                         },
                         "staging": {
-                            "outputPath": "../_deploy/app-staging",
+                            "outputPath": "../../_deploy/staging-app",
                             "budgets": [
                                 {
                                     "type": "initial",

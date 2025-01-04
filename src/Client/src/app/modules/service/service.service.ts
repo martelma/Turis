@@ -4,7 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, filter, finalize, map, of, switchMap, take, tap, throwError } from 'rxjs';
 import { BaseEntityService } from 'app/shared/services';
 import { emptyGuid, PaginatedListResult } from 'app/shared/services/shared.types';
-import { Service, ServiceSearchParameters } from './service.types';
+import { AccountStatementParameters, Service, ServiceSearchParameters } from './service.types';
 
 @Injectable({ providedIn: 'root' })
 export class ServiceService extends BaseEntityService<Service> {
@@ -123,6 +123,9 @@ export class ServiceService extends BaseEntityService<Service> {
             commissionPaymentDate: undefined,
 
             bookmarkId: undefined,
+
+            billingStatus: undefined,
+            commissionStatus: undefined,
         };
 
         this._service.next(service);
@@ -200,6 +203,43 @@ export class ServiceService extends BaseEntityService<Service> {
         return this.apiGet<PaginatedListResult<Service>>(url).pipe(
             map((data: PaginatedListResult<Service>) => {
                 // console.log('list', data.items);
+                this._services.next(data);
+
+                this._serviceParameters.next({
+                    ...this._serviceParameters,
+                    ...params,
+                    pageIndex: data.pageIndex,
+                    pageSize: data.pageSize,
+                });
+
+                return data;
+            }),
+            finalize(() => {
+                this._servicesLoading.next(false);
+            }),
+        );
+    }
+
+    listAccountStatement(params?: AccountStatementParameters): Observable<PaginatedListResult<Service>> {
+        this._servicesLoading.next(true);
+
+        let httpParams = new HttpParams();
+        httpParams = httpParams.append('contactid', params?.contactId);
+        httpParams = httpParams.append('pageIndex', params?.pageIndex ?? 0);
+        httpParams = httpParams.append('pageSize', params?.pageSize ?? 10);
+        httpParams = httpParams.append('orderBy', params?.orderBy?.toString() ?? '');
+        httpParams = httpParams.append('pattern', params?.pattern ?? '');
+        httpParams = httpParams.append('serviceType', params?.serviceType ?? '');
+        httpParams = httpParams.append('durationType', params?.durationType ?? '');
+        httpParams = httpParams.append('dateFrom', params?.dateFrom ?? '');
+        httpParams = httpParams.append('dateTo', params?.dateTo ?? '');
+
+        const serviceString = httpParams.toString();
+
+        const url = `account-statement?${serviceString}`;
+
+        return this.apiGet<PaginatedListResult<Service>>(url).pipe(
+            map((data: PaginatedListResult<Service>) => {
                 this._services.next(data);
 
                 this._serviceParameters.next({

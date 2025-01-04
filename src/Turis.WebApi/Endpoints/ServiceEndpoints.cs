@@ -4,6 +4,7 @@ using Turis.BusinessLayer.Erorrs;
 using Turis.BusinessLayer.Parameters;
 using Turis.BusinessLayer.Services.Interfaces;
 using Turis.Common.Models;
+using Turis.DataAccessLayer.Entities;
 using Turis.WebApi.Filters;
 
 namespace Turis.WebApi.Endpoints;
@@ -37,6 +38,8 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 
 				return operation;
 			});
+
+		templateApiGroup.MapGet("account-statement", AccountStatement);
 
 		templateApiGroup.MapPost(string.Empty, SaveAsync)
 			.WithValidation<ServiceRequest>()
@@ -88,9 +91,12 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 	private static async Task<IResult> GetAsync(HttpContext httpContext, IServiceService service, Guid serviceId)
 		=> (await service.GetAsync(serviceId)).ToResponse(httpContext);
 
+	private static async Task<IResult> AccountStatement(HttpContext httpContext, IServiceService service, [AsParameters] AccountStatementParameters parameters)
+		=> (await service.AccountStatement(parameters)).ToResponse(httpContext);
+
 	private static async Task<IResult> SaveAsync(HttpContext httpContext, IServiceService service, ServiceRequest request)
 		=> (await service.SaveAsync(request)).ToResponse(httpContext);
-	
+
 	private static async Task<IResult> DeleteAsync(HttpContext httpContext, IServiceService service, Guid serviceId)
 		=> (await service.DeleteAsync(serviceId)).ToResponse(httpContext);
 }

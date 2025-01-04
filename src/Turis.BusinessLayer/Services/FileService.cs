@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using NPOI.XSSF.UserModel;
 using Turis.BusinessLayer.Services.Interfaces;
+using Turis.BusinessLayer.Settings;
 
 namespace Turis.BusinessLayer.Services;
 
@@ -106,11 +107,4 @@ public class FileService(IOptions<CdnSettings> cdnSettings) : IFileService
 	private string GetFullTempRoot() => Path.Combine(cdnSettings.Root, cdnSettings.TempFolder);
 
 	private string GetFullTempPath(string relativePath) => Path.Combine(GetFullTempRoot(), relativePath);
-}
-public class CdnSettings
-{
-	public string Root { get; set; }
-	public string AvatarFolder { get; set; }
-	public string TempFolder { get; set; }
-	public int MinutesExpiration { get; set; }
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DiscoveryClientResultsFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Results>
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.DiscoveryDocumentReference" url="https://hubfe.solutiondocondemand.com/solutiondoc_hub.asmx?disco" filename="solutiondoc_hub.disco" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="https://hubfe.solutiondocondemand.com/solutiondoc_hub.asmx?wsdl" filename="solutiondoc_hub.wsdl" />
+  </Results>
+</DiscoveryClientResultsFile>

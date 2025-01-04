@@ -12,6 +12,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { ContactService } from '../contact.service';
 import { Contact } from '../contact.types';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { AccountStatementComponent } from "../account-statement/account-statement.component";
 
 @UntilDestroy()
 @Component({
@@ -21,27 +22,30 @@ import { MatExpansionModule } from '@angular/material/expansion';
     styleUrls: ['./contact-view.component.scss'],
     standalone: true,
     imports: [
-        NgIf,
-        NgFor,
-        DatePipe,
-        JsonPipe,
-        FormsModule,
-        ReactiveFormsModule,
-        MatTabsModule,
-        MatIconModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        MatExpansionModule,
-        FuseScrollResetDirective,
-        TranslocoModule,
-    ],
+    NgIf,
+    NgFor,
+    DatePipe,
+    JsonPipe,
+    FormsModule,
+    ReactiveFormsModule,
+    MatTabsModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatExpansionModule,
+    FuseScrollResetDirective,
+    TranslocoModule,
+    AccountStatementComponent
+],
 })
 export class ContactViewComponent implements OnInit {
     item: Contact;
     @Input()
     set contact(value: Contact) {
         this.item = value;
+
+        this.loadAttachments();
     }
 
     get contact(): Contact {
@@ -63,4 +67,8 @@ export class ContactViewComponent implements OnInit {
     }
 
     onSelectedTabChange(): void {}
+
+    loadAttachments(){
+
+    }
 }

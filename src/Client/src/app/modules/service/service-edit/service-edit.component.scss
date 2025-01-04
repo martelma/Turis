@@ -2,7 +2,8 @@
     display: flex;
     flex: 1;
     height: 100%;
-    margin-top: 1rem; /* 16px */
+    margin-top: 1rem;
+    /* 16px */
 }
 
 .edit-service-tab-group .mat-mdc-tab-body-wrapper {
@@ -45,4 +46,13 @@
 
 input.ng-invalid.ng-touched {
     border-color: red;
+}
+
+.color-box {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    vertical-align: middle;
+    border: 1px solid black;
 }

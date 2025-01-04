@@ -22,10 +22,9 @@ import { SearchInputComponent } from 'app/shared/components/ui/search-input/sear
 import { Service, ServiceSearchParameters } from 'app/modules/service/service.types';
 import { ServiceService } from 'app/modules/service/service.service';
 import { MaterialModule } from 'app/modules/material.module';
-import { ApplicationGridComponent } from 'app/shared/components/application-grid/application-grid.component';
 import { CalendarOptions, DateSelectArg, EventApi, EventClickArg } from '@fullcalendar/core';
 import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
-import { DurationTypes, ServiceTypes } from 'app/constants';
+import { AppSettings, DurationTypes, ServiceTypes } from 'app/constants';
 import { ServiceSidebarComponent } from 'app/modules/service/service-sidebar/service-sidebar.component';
 import { MatDrawer } from '@angular/material/sidenav';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
@@ -36,6 +35,9 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridWeekPlugin from '@fullcalendar/timegrid';
 import { DomSanitizer } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
+import { UserService } from 'app/core/user/user.service';
+import { constant } from 'lodash';
+import { UserSettingsService } from 'app/shared/services/user-setting.service';
 
 declare let $: any;
 
@@ -83,7 +85,6 @@ declare let $: any;
         SearchInputComponent,
         CommonModule,
         MaterialModule,
-        ApplicationGridComponent,
         FullCalendarModule,
         FuseDrawerComponent,
         ServiceSidebarComponent,
@@ -94,13 +95,13 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
     @ViewChild(MatSort) private _sort: MatSort;
     @ViewChild('detailsDrawer') detailsDrawer: MatDrawer;
 
-    drawerMode: 'over' | 'side' = 'side';
-    drawerOpened = true;
+    drawerFilterMode: 'over' | 'side' = 'side';
+    drawerFilterOpened = true;
 
-    drawerMode2: 'over' | 'side' = 'side';
-    drawerOpened2 = true;
+    drawerDetailMode: 'over' | 'side' = 'side';
 
-    viewMode: 'calendar' | 'list' = 'calendar';
+    // viewMode: 'calendar' | 'list' = 'calendar';
+    viewMode: string = 'calendar';
 
     flashMessage: 'success' | 'error' | null = null;
 
@@ -185,9 +186,10 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
         private _serviceService: ServiceService,
         private _translocoService: TranslocoService,
         private _sanitizer: DomSanitizer,
-    ) {}
+        private _userSettingsService: UserSettingsService,
+    ) { }
 
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
         this.activeLang = this._translocoService.getActiveLang();
 
         // Services
@@ -215,7 +217,7 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
         });
     }
 
-    ngAfterViewInit(): void {
+    async ngAfterViewInit(): Promise<void> {
         if (this._sort && this._paginator) {
             // Set the initial sort
             this._sort.sort({
@@ -235,6 +237,16 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
             pageSize: 100,
         };
 
+        const toggleFilterValue = await this._userSettingsService.getValue(`${AppSettings.Calendar}:toggleFilter`);
+        this.drawerFilterOpened = toggleFilterValue === '' ? false : toggleFilterValue === 'true';
+        // console.log('drawerFilterOpened', this.drawerFilterOpened)
+
+        const toggleViewModeValue = await this._userSettingsService.getValue(`${AppSettings.Calendar}:toggleViewMode`);
+        this.viewMode = toggleViewModeValue === '' ? 'calendar' : toggleViewModeValue;
+        // console.log('viewMode', this.viewMode)
+
+        // this._changeDetectorRef.detectChanges();
+
         this._list();
     }
 
@@ -244,8 +256,10 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
         this._list();
     }
 
-    toggleViewMode() {
+    async toggleViewMode() {
         this.viewMode = this.viewMode === 'calendar' ? 'list' : 'calendar';
+
+        await this._userSettingsService.setValue(`${AppSettings.Calendar}:toggleViewMode`, this.viewMode);
 
         setTimeout(() => {
             this.calendarApi = this.fullCalendar.getApi();
@@ -283,6 +297,8 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
     private _list(): void {
         this.serviceSearchParameters.pageIndex = 0;
         this.serviceSearchParameters.pageSize = 100;
+        this.serviceSearchParameters.dateFrom = toUtcString(this.calendarApi.view.activeStart);
+        this.serviceSearchParameters.dateTo = toUtcString(this.calendarApi.view.activeEnd);
 
         this._serviceService
             .listEntities({ ...this.serviceSearchParameters })
@@ -295,8 +311,8 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
                         if (item.collaborator) {
                             item.collaborator.avatarUrl = item.collaborator.avatar
                                 ? this._sanitizer.bypassSecurityTrustResourceUrl(
-                                      `data:image/jpg;base64, ${item.collaborator.avatar}`,
-                                  )
+                                    `data:image/jpg;base64, ${item.collaborator.avatar}`,
+                                )
                                 : undefined;
 
                             item.collaborator.avatarUrl2 = this._sanitizer.bypassSecurityTrustUrl(
@@ -307,7 +323,8 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
 
                     console.log('_list', this.list);
 
-                    this.moveToday();
+                    // this.moveToday();
+                    this.prepareCalendarEvents();
                 },
                 error: error => {
                     console.error(error);
@@ -321,17 +338,20 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
 
     movePrev() {
         this.calendarApi.prev();
-        this.prepareCalendarEvents();
+        this._list();
+        // this.prepareCalendarEvents();
     }
 
     moveNext() {
         this.calendarApi.next();
-        this.prepareCalendarEvents();
+        this._list();
+        // this.prepareCalendarEvents();
     }
 
     moveToday() {
         this.calendarApi.today();
-        this.prepareCalendarEvents();
+        this._list();
+        // this.prepareCalendarEvents();
     }
 
     prepareCalendarEvents() {
@@ -444,6 +464,13 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
         this.detailsDrawer.toggle();
     }
 
+    async toggleFilter() {
+        this.drawerFilterOpened = !this.drawerFilterOpened;
+
+        const value = this.drawerFilterOpened ? 'true' : 'false';
+        await this._userSettingsService.setValue(`${AppSettings.Calendar}:toggleFilter`, value);
+    }
+
     handleEvents(events: EventApi[]) {
         console.log('handleEvents', events);
     }
@@ -460,7 +487,7 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
         this._changeDetectorRef.detectChanges();
     }
 
-    drawerOpenedChanged(opened: boolean): void {
+    async drawerDetailsChanged(opened: boolean): Promise<void> {
         if (!opened) {
             this.selectedItem = null;
         }
@@ -476,6 +503,9 @@ function weekDayTemplate(event: ez): any {
 
     // service.collaborator.avatarUrl = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde';
 
+    // questa riga l'ho tolta perché funziona solo se abbiamo un url già risolto come quello qui sopra.
+    // <img *ngIf="avatarUrl" class="avatar-img" alt="Avatar" [src]="${service.collaborator?.avatarUrl}" />
+
     if (service.collaboratorId) {
         return {
             html: `
@@ -487,7 +517,6 @@ function weekDayTemplate(event: ez): any {
                             <div class="event-info">People: ${service.people}</div>
                             <div class="event-info">Collaborator:</div>
                             <div class="event-info">${service.collaborator?.fullName}</div>
-                            <img *ngIf="avatarUrl" class="avatar-img" alt="Avatar" [src]="${service.collaborator?.avatarUrl}" />
                         </div>
                     </div>
                     `,

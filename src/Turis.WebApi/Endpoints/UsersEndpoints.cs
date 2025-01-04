@@ -151,7 +151,6 @@ public class UsersEndpoints : IEndpointRouteHandlerBuilder
                 return operation;
             });
         
-
         usersApiGroup.MapPut("{id:guid}/Language", UpdateUserLanguageAsync)
            .Produces(StatusCodes.Status204NoContent)
            .Produces<ServiceError>(StatusCodes.Status404NotFound)

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, ReplaySubject, map } from 'rxjs';
+import { Observable, ReplaySubject, map, lastValueFrom } from 'rxjs';
 import { User } from './user.types';
 import { HttpClient } from '@angular/common/http';
 import { BaseEntityService } from 'app/shared/services';

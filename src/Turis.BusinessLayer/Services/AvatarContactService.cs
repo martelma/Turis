@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using OperationResults;
 using Turis.Authentication.Entities;
 using Turis.BusinessLayer.Services.Interfaces;
-using Turis.Common.Models;
+using Turis.BusinessLayer.Settings;
 using Turis.DataAccessLayer;
 
 namespace Turis.BusinessLayer.Services;

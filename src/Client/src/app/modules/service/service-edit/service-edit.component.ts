@@ -8,7 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { Collaborator, Service } from '../service.types';
-import { AsyncPipe, JsonPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe, JsonPipe, NgFor, NgIf, NgClass } from '@angular/common';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ServiceService } from '../service.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -21,7 +21,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { DurationTypes, MY_DATE_FORMATS, ServiceTypes } from 'app/constants';
+import { DurationTypes, getStatusColorClass, getStatusText, MY_DATE_FORMATS, ServiceTypes, StatusTypes } from 'app/constants';
 import { PriceList } from 'app/modules/configuration/price-list/price-list.types';
 import { PriceListService } from 'app/modules/configuration/price-list/price-list.service';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -56,6 +56,7 @@ import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/mat
         ReactiveFormsModule,
         NgIf,
         NgFor,
+        NgClass,
         AsyncPipe,
         JsonPipe,
         FormsModule,
@@ -115,6 +116,7 @@ export class ServiceEditComponent implements OnInit, OnChanges {
 
     serviceTypes = ServiceTypes;
     durationTypes = DurationTypes;
+    statusTypes = StatusTypes;
 
     originalPriceLists: PriceList[] = [];
     priceLists: PriceList[] = [];
@@ -126,6 +128,9 @@ export class ServiceEditComponent implements OnInit, OnChanges {
     collaboratorControl = new FormControl();
 
     trackByFn = trackByFn;
+    getStatusColorClass = getStatusColorClass;
+    getStatusText = getStatusText;
+
 
     constructor(
         private _formBuilder: UntypedFormBuilder,
@@ -227,6 +232,9 @@ export class ServiceEditComponent implements OnInit, OnChanges {
     durationTypeChanged(): void {
         this.filterPriceList();
         this.rebuild();
+    }
+
+    statusTypeChanged(): void {
     }
 
     peopleChanged(): void {

@@ -2,7 +2,8 @@
     display: flex;
     flex: 1;
     height: 100%;
-    margin-top: 1rem; /* 16px */
+    margin-top: 1rem;
+    /* 16px */
 }
 
 .view-service-tab-group .mat-mdc-tab-body-wrapper {
@@ -16,4 +17,18 @@
     left: 0;
     right: 0;
     display: flex;
+}
+
+.status-container {
+    display: flex;
+    align-items: center;
+}
+
+.color-box {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    vertical-align: middle;
+    border: 1px solid black;
 }

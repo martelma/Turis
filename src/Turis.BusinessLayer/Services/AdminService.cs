@@ -1,14 +1,17 @@
 ﻿using JeMa.Shared;
 using JeMa.Shared.Helpers;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using OperationResults;
+using Turis.Authentication.Entities;
 using Turis.BusinessLayer.Services.Base;
 using Turis.BusinessLayer.Services.Interfaces;
+using Turis.Common;
 
 namespace Turis.BusinessLayer.Services;
 
-public class AdminService(IConfiguration configuration) : BaseService, IAdminService
+public class AdminService(IConfiguration configuration, UserManager<ApplicationUser> userManager) : BaseService, IAdminService
 {
 	public async Task<Result<IEnumerable<KeyValue>>> GetBackendConfiguration()
     {
@@ -37,5 +40,24 @@ public class AdminService(IConfiguration configuration) : BaseService, IAdminSer
 		sqlHelper.TruncateElmah();
 
 		return Task.FromResult(Result.Ok());
+	}
+
+    public async Task<Result> ResetAdminPassword()
+	{
+		var user = await userManager.FindByNameAsync("mario");
+		if (user is null)
+		{
+			return Result.Fail(FailureReasons.ItemNotFound);
+		}
+
+		var passwordResetToken = await userManager.GeneratePasswordResetTokenAsync(user);
+
+		var result = await userManager.ResetPasswordAsync(user, passwordResetToken, Constants.DefaultPassword);
+		if (result.Succeeded)
+		{
+			return Result.Ok();
+		}
+
+		return Result.Fail(FailureReasons.ClientError, result.Errors?.Select(e => new ValidationError(e.Code, e.Description)));
 	}
 }

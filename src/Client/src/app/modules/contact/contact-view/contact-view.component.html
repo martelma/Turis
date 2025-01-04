@@ -14,7 +14,7 @@
             <mat-tab>
                 <ng-template mat-tab-label>
                     <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:information-circle'"></mat-icon>
-                    {{ 'Item.ContactInfo' | transloco }}
+                    {{ 'Service.ContactInfo' | transloco }}
                 </ng-template>
                 <ng-template matTabContent>
                     <div class="flex flex-col flex-1 overflow-y-auto">
@@ -296,7 +296,7 @@
             <mat-tab>
                 <ng-template mat-tab-label>
                     <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
-                    {{ 'Item.ContactNote' | transloco }}
+                    {{ 'General.Notes' | transloco }}
                 </ng-template>
                 <ng-template matTabContent>
                     <div class="flex flex-col flex-1 overflow-y-auto">
@@ -309,7 +309,7 @@
             <mat-tab>
                 <ng-template mat-tab-label>
                     <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:paper-clip'"></mat-icon>
-                    {{ 'Item.ContactAttachment' | transloco }}
+                    {{ 'General.Attachments' | transloco }}
                 </ng-template>
                 <ng-template matTabContent>
                     <div class="flex flex-col flex-1 overflow-y-auto">..todo..</div>
@@ -317,8 +317,17 @@
             </mat-tab>
             <mat-tab>
                 <ng-template mat-tab-label>
+                    <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:square-3-stack-3d'"></mat-icon>
+                    {{ 'Service.ContactAccountStatement' | transloco }}
+                </ng-template>
+                <ng-template matTabContent>
+                    <app-account-statement [contactId]="item?.id" class="h-full w-full"></app-account-statement>
+                </ng-template>
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>
                     <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:code-bracket'"></mat-icon>
-                    {{ 'Item.ContactJson' | transloco }}
+                    {{ 'General.Json' | transloco }}
                 </ng-template>
                 <ng-template matTabContent>
                     <div class="flex flex-col flex-1 overflow-y-auto">
