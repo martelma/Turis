@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
 using OperationResults;
 using TinyHelpers.Extensions;
@@ -20,9 +21,17 @@ public class DocumentService(ApplicationDbContext dbContext
 {
 	private readonly DbSet<Document> context = dbContext.Documents;
 
+	private IIncludableQueryable<Document, Contact> Query()
+	{
+		return context
+			.Include(x => x.DocumentRef)
+			.Include(x => x.Client)
+			.Include(x => x.Collaborator);
+	}
+
 	public async Task<Result<DocumentModel>> GetAsync(Guid id)
 	{
-		var record = await context.AsNoTracking()
+		var record = await Query()
 			.FirstOrDefaultAsync(x => x.Id == id);
 
 		if (record is null)
@@ -33,7 +42,7 @@ public class DocumentService(ApplicationDbContext dbContext
 
 	public async Task<Result<DocumentModel>> GetAsync(string sectional, int number)
 	{
-		var record = await context.AsNoTracking()
+		var record = await Query()
 			.FirstOrDefaultAsync(x => x.Sectional == sectional && x.Number == number);
 
 		if (record is null)
@@ -46,7 +55,7 @@ public class DocumentService(ApplicationDbContext dbContext
 	{
 		var paginator = new Paginator(parameters);
 
-		var query = context.AsNoTracking();
+		var query = Query().AsNoTracking();
 
 		// Filter by search pattern
 		if (parameters.Pattern.HasValue())

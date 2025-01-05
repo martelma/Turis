@@ -1,0 +1,175 @@
+<div class="flex flex-col flex-auto overflow-y-auto lg:overflow-hidden bg-card dark:bg-default">
+    <ng-container *ngIf="document; else selectDocumentToView">
+        <!-- Header -->
+        <div class="z-10 relative flex flex-col flex-0 w-full border-b">
+            <!-- Toolbar -->
+            <div class="flex items-center min-h-16 px-4 md:px-6 border-b bg-gray-50 dark:bg-transparent space-x-2">
+                <!-- Back button -->
+                <a class="lg:hidden md:-ml-2" mat-icon-button [routerLink]="['./../']">
+                    <mat-icon [svgIcon]="'heroicons_outline:arrow-long-left'"></mat-icon>
+                </a>
+
+                <!-- View Mode -->
+                <ng-container *ngIf="!editMode">
+                    <div class="flex flex-1 justify-between items-center">
+                        <div class="flex space-x-2">
+                            <!-- Edit Document -->
+                            <button *ngIf="userCanUpdateDocument" mat-flat-button color="primary" (click)="edit()">
+                                <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
+                                <span>{{ 'General.Edit' | transloco }}</span>
+                            </button>
+                        </div>
+
+                        <!-- <div class="flex flex-1 space-x-2 justify-end">
+                            <app-spinner-button
+                                *ngIf="userCanDownloadData"
+                                [disabled]="isDownloadDataButtonDisabled()"
+                                [label]="'Document.DownloadData' | transloco"
+                                [svgIcon]="'heroicons_outline:document-arrow-down'"
+                                (callbackFn)="downloadDataWithVariables()"></app-spinner-button>
+                        </div> -->
+                    </div>
+
+                    <!-- Toolbar -->
+                    <div class="flex items-center min-h-16 px-4 md:px-6 border-b bg-gray-50 dark:bg-transparent">
+                        <!-- Back button -->
+                        <a class="lg:hidden md:-ml-2" mat-icon-button [routerLink]="['./../']">
+                            <mat-icon [svgIcon]="'heroicons_outline:arrow-long-left'"></mat-icon>
+                        </a>
+
+                        <!-- Toggle tags button & menu -->
+                        <!-- <button class="ml-auto" mat-icon-button [matMenuTriggerFor]="toggleTagMenu">
+                            <mat-icon [svgIcon]="'heroicons_outline:tag'"></mat-icon>
+                        </button>
+                        <mat-menu #toggleTagMenu="matMenu">
+                            <ng-container *ngFor="let tag of tags; trackBy: trackByFn">
+                                <div mat-menu-item (click)="toggleTag(tag)" matRipple>
+                                    <mat-checkbox
+                                        class="pointer-events-none"
+                                        [color]="'primary'"
+                                        [checked]="mail.tags.includes(tag.id)"
+                                        [disableRipple]="true">
+                                        {{ label.title }}
+                                    </mat-checkbox>
+                                </div>
+                            </ng-container>
+                        </mat-menu> -->
+
+                        <!-- Toggle important button -->
+                        <!-- <button class="ml-2" mat-icon-button (click)="toggleImportant()">
+                            <mat-icon
+                                [ngClass]="{ 'text-red-600 dark:text-red-500': mail.important }"
+                                [svgIcon]="'heroicons_outline:exclamation-circle'"></mat-icon>
+                        </button> -->
+
+                        <!-- Other actions button & menu -->
+                        <button class="ml-2" mat-icon-button [matMenuTriggerFor]="mailMenu">
+                            <mat-icon [svgIcon]="'heroicons_outline:ellipsis-vertical'"></mat-icon>
+                        </button>
+                        <mat-menu #mailMenu="matMenu">
+                            <button mat-menu-item (click)="menuItem1(document)">
+                                <mat-icon [svgIcon]="'heroicons_outline:envelope-open'"></mat-icon>
+                                <span>Menu Item 1</span>
+                            </button>
+                            <button mat-menu-item (click)="menuItem1(document)">
+                                <mat-icon [svgIcon]="'heroicons_outline:envelope'"></mat-icon>
+                                <span>Menu Item 2</span>
+                            </button>
+                        </mat-menu>
+                    </div>
+                </ng-container>
+
+                <!-- Edit Mode -->
+                <ng-container *ngIf="editMode">
+                    <!-- Cancel Edit Document -->
+                    <button mat-stroked-button (click)="cancel()">
+                        <span>{{ 'General.Cancel' | transloco }}</span>
+                    </button>
+
+                    <!-- Save Document -->
+                    <button
+                        *ngIf="userCanUpdateDocument"
+                        mat-flat-button
+                        color="primary"
+                        (click)="save()"
+                        [disabled]="!editDocument?.changed">
+                        <span>{{ 'General.Save' | transloco }}</span>
+                    </button>
+                </ng-container>
+            </div>
+
+            <ng-container *ngIf="!editMode">
+                <!-- Document Info -->
+                <div class="flex flex-wrap items-center py-4 px-6">
+                    <div class="relative flex flex-auto flex-col text-2xl">
+                        <div class="flex justify-between mb-4">
+                            <div class="flex flex-1 items-center space-x-2 z-10">
+                                <mat-icon
+                                    (click)="handleBookmark(document)"
+                                    class="icon-size-2"
+                                    [ngClass]="document.bookmarkId ? 'text-yellow-500' : ''"
+                                    [svgIcon]="document.bookmarkId ? 'heroicons_solid:star' : 'heroicons_outline:star'"
+                                    [matTooltip]="
+                                        (document.bookmarkId ? 'General.RemoveBookmark' : 'General.MarkAsBookmark')
+                                            | transloco
+                                    "></mat-icon>
+
+                                <mat-icon
+                                    (click)="handleCheck(document)"
+                                    class="icon-size-2"
+                                    [ngClass]="document.checked ? 'text-green-500' : ''"
+                                    [svgIcon]="
+                                        document.checked
+                                            ? 'heroicons_solid:check-circle'
+                                            : 'heroicons_outline:check-circle'
+                                    "
+                                    [matTooltip]="
+                                        (document.checked ? 'Document.Checked' : 'Document.ToBeCheck')
+                                            | transloco
+                                    "></mat-icon>
+
+                                <span class="">[{{ document.code }}] - {{ document.title }}</span>
+                            </div>
+                            <!-- <div class="flex flex-1 w-full space-x-2 z-10" style="justify-content: end">
+                                <mat-icon
+                                    (click)="handleCheck(document)"
+                                    class="icon-size-2"
+                                    [ngClass]="document.checked ? 'text-green-500' : ''"
+                                    [svgIcon]="
+                                        document.checked
+                                            ? 'heroicons_solid:check-circle'
+                                            : 'heroicons_outline:check-circle'
+                                    "
+                                    [matTooltip]="
+                                        (document.checked ? 'Document.Checked' : 'Document.ToBeCheck')
+                                            | transloco
+                                    "></mat-icon>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+
+        <!-- View Mode -->
+        <ng-container *ngIf="!editMode">
+            <!-- not edit mode -->
+            <app-document-view #viewDocument class="flex flex-1" [document]="document"></app-document-view>
+        </ng-container>
+
+        <!-- Edit Mode -->
+        <ng-container *ngIf="editMode">
+            <!-- edit mode -->
+            <app-document-edit #editDocument class="flex flex-1" [document]="document"></app-document-edit>
+        </ng-container>
+    </ng-container>
+
+    <!-- Select document to view template -->
+    <ng-template #selectDocumentToView>
+        <div class="flex flex-col flex-auto items-center justify-center bg-gray-100 dark:bg-transparent">
+            <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">
+                {{ 'Document.SelectADocument' | transloco }}
+            </div>
+        </div>
+    </ng-template>
+</div>

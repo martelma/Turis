@@ -1,7 +1,6 @@
 <div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
     <!-- Header -->
-    <div
-        class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+    <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
         <!-- Title -->
         <div class="text-4xl font-extrabold tracking-tight">
             {{ 'Navigation.Calendar' | transloco }}
@@ -9,36 +8,43 @@
         <!-- Actions -->
         <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
             <!-- Search -->
-            <app-search-input class="min-w-90" [placeholder]="'Service.Filter'" (callbackFn)="filter($event)">
+            <app-search-input class="min-w-90"
+                [placeholder]="'General.Filter'"
+                (callbackFn)="filter($event)">
             </app-search-input>
 
             <!-- Add priceList button -->
-            <button class="ml-4" mat-flat-button [color]="'primary'" (click)="create()">
+            <button class="ml-4"
+                mat-flat-button
+                [color]="'primary'"
+                (click)="createService()">
                 <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
                 <span class="ml-2 mr-1">{{ 'General.Add' | transloco }}</span>
             </button>
         </div>
     </div>
     <div class="flex space-x-2 mb-2">
-        <button mat-flat-button color="primary" class="ml-2" (click)="toggleFilter()">
-            <mat-icon
-                *ngIf="!drawerFilterOpened"
+        <button mat-flat-button
+            color="primary"
+            class="ml-2"
+            (click)="toggleFilter()">
+            <mat-icon *ngIf="!drawerFilterOpened"
                 class="icon-size-5 mr-2"
                 [svgIcon]="'heroicons_outline:chevron-double-right'"></mat-icon>
-            <mat-icon
-                *ngIf="drawerFilterOpened"
+            <mat-icon *ngIf="drawerFilterOpened"
                 class="icon-size-5 mr-2"
                 [svgIcon]="'heroicons_outline:chevron-double-left'"></mat-icon>
             <span class="ml-2">{{ 'General.Filters' | transloco }}</span>
         </button>
 
-        <button mat-flat-button color="primary" class="ml-2" (click)="toggleViewMode()">
-            <mat-icon
-                *ngIf="viewMode === 'calendar'"
+        <button mat-flat-button
+            color="primary"
+            class="ml-2"
+            (click)="toggleViewMode()">
+            <mat-icon *ngIf="viewMode === 'calendar'"
                 class="icon-size-5 mr-2"
                 [svgIcon]="'heroicons_outline:list-bullet'"></mat-icon>
-            <mat-icon
-                *ngIf="viewMode === 'list'"
+            <mat-icon *ngIf="viewMode === 'list'"
                 class="icon-size-5 mr-2"
                 [svgIcon]="'heroicons_outline:calendar'"></mat-icon>
             <span class="ml-2">{{ viewMode === 'calendar' ? 'Switch to List View' : 'Switch to Calendar View' }}</span>
@@ -50,7 +56,10 @@
         <div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
             <mat-drawer-container class="flex-auto h-full">
                 <!-- Drawer -->
-                <mat-drawer class="w-90 dark:bg-gray-900" [mode]="drawerFilterMode" [opened]="drawerFilterOpened" #drawer>
+                <mat-drawer class="w-90 dark:bg-gray-900"
+                    [mode]="drawerFilterMode"
+                    [opened]="drawerFilterOpened"
+                    #drawer>
                     <!-- Queries sidebar -->
                     <app-service-sidebar (onFilterChanged)="serviceFilter($event)"></app-service-sidebar>
                 </mat-drawer>
@@ -61,8 +70,7 @@
                         <mat-drawer-content class="flex flex-col">
                             <!-- Main -->
                             <div class="flex flex-auto w-full overflow-hidden">
-                                <full-calendar
-                                    *ngIf="viewMode === 'calendar'"
+                                <full-calendar *ngIf="viewMode === 'calendar'"
                                     #fullCalendar
                                     class="w-full h-full"
                                     [options]="calendarOptions"
@@ -225,8 +233,7 @@
             </mat-tab-group> -->
 </div>
 
-<fuse-drawer
-    class="w-screen min-w-screen sm:w-128 sm:min-w-128 z-999"
+<fuse-drawer class="w-screen min-w-screen sm:w-128 sm:min-w-128 z-999"
     fixed
     [mode]="'over'"
     [name]="'detailsDrawer'"
@@ -236,24 +243,41 @@
     <div class="flex flex-col flex-auto p-3">
         <div class="flex flex-col w-full overflow-auto bg-card">
             <div class="flex flex-row items-center px-6 h-20 min-h-20 text-white bg-primary">
-                <mat-icon class="icon-size-7 text-current" [svgIcon]="'heroicons_outline:square-3-stack-3d'"></mat-icon>
+                <mat-icon class="icon-size-7 text-current"
+                    [svgIcon]="'heroicons_outline:square-3-stack-3d'"></mat-icon>
                 <div class="ml-3 text-2xl font-semibold tracking-tight">Service Details</div>
-                <button class="ml-auto" mat-icon-button (click)="closeDrawer()">
-                    <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                <button class="ml-auto"
+                    mat-icon-button
+                    (click)="closeDrawer()">
+                    <mat-icon class="text-current"
+                        [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
                 </button>
             </div>
 
-            <a [routerLink]="['/service', currentService?.id]" target="_blank">
+            <a [routerLink]="['/service', currentService?.id]"
+                target="_blank">
                 <div class="flex-1 flex-col mt-2">
-                    <span class="text-lg font-extrabold"
-                        >[{{ currentService?.code }}] - {{ currentService?.title }}</span
-                    >
+                    <span class="text-lg font-extrabold">[{{ currentService?.code }}] - {{ currentService?.title }}</span>
                 </div>
             </a>
 
             <!-- Information -->
             <div class="text-lg font-semibold mt-8">Information</div>
             <div class="flex flex-col mt-4 border-t border-b divide-y font-medium">
+                <div class="flex items-center justify-between py-3">
+                    <div class="text-secondary">Status</div>
+                    <div>
+                        <span [ngClass]="getStatusColorClass(currentService)"
+                            class="color-box mr-3"
+                            [matTooltip]="currentService?.status"></span>
+                        <span [ngClass]="getBillingStatusColorClass(currentService)"
+                            class="color-box mr-3"
+                            [matTooltip]="currentService?.billingStatus"></span>
+                        <span [ngClass]="getCommissionStatusColorClass(currentService)"
+                            class="color-box"
+                            [matTooltip]="currentService?.commissionStatus"></span>
+                    </div>
+                </div>
                 <div class="flex items-center justify-between py-3">
                     <div class="text-secondary">Date</div>
                     <div>{{ currentService?.dateText }}</div>
@@ -271,7 +295,8 @@
                     <!-- <div>{{ currentService?.languages }}</div> -->
                     <div class="flex space-x-2 items-center">
                         <div *ngFor="let lang of currentService?.languages">
-                            <span [matTooltip]="lang" [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
+                            <span [matTooltip]="lang"
+                                [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
                         </div>
                     </div>
                 </div>
@@ -297,10 +322,42 @@
                 </div>
             </div>
 
+            <div class="text-secondary mt-3 mb-1">Client</div>
             <div class="flex w-full items-center mt-3">
-                <a [routerLink]="['/contact', currentService?.collaborator?.id]" target="_blank">
+                <a [routerLink]="['/contact', currentService?.client?.id]"
+                    target="_blank">
                     <div class="flex h-10 w-10 flex-0 items-center justify-center overflow-hidden rounded-full">
-                        <img alt="Avatar" class="h-full w-full" [src]="currentService?.collaborator?.avatarUrl" />
+                        <img alt="Avatar"
+                            class="h-full w-full"
+                            [src]="currentService?.client?.avatarUrl" />
+                    </div>
+                </a>
+                <div class="ml-4 min-w-0">
+                    <div class="truncate font-extrabold">{{ currentService?.client?.fullName }}</div>
+
+                    <div class="flex space-x-2 items-center">
+                        <div *ngFor="let lang of currentService?.client?.languages">
+                            <span [matTooltip]="lang"
+                                [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
+                        </div>
+                    </div>
+
+                    <!-- <div class="truncate font-semibold">{{ currentService?.collaborator?.fullName }}</div> -->
+                    <!-- <div class="mt-0.5 flex items-center leading-5">
+                <div>to</div>
+                <div class="ml-1 font-semibold">me</div>
+            </div> -->
+                </div>
+            </div>
+
+            <div class="text-secondary mt-3 mb-1">Collaborator</div>
+            <div class="flex w-full items-center mt-3">
+                <a [routerLink]="['/contact', currentService?.collaborator?.id]"
+                    target="_blank">
+                    <div class="flex h-10 w-10 flex-0 items-center justify-center overflow-hidden rounded-full">
+                        <img alt="Avatar"
+                            class="h-full w-full"
+                            [src]="currentService?.collaborator?.avatarUrl" />
                     </div>
                 </a>
                 <div class="ml-4 min-w-0">
@@ -308,15 +365,16 @@
 
                     <div class="flex space-x-2 items-center">
                         <div *ngFor="let lang of currentService?.collaborator?.languages">
-                            <span [matTooltip]="lang" [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
+                            <span [matTooltip]="lang"
+                                [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
                         </div>
                     </div>
 
                     <!-- <div class="truncate font-semibold">{{ currentService?.collaborator?.fullName }}</div> -->
                     <!-- <div class="mt-0.5 flex items-center leading-5">
-                        <div>to</div>
-                        <div class="ml-1 font-semibold">me</div>
-                    </div> -->
+                    <div>to</div>
+                    <div class="ml-1 font-semibold">me</div>
+                </div> -->
                 </div>
             </div>
 

@@ -2,8 +2,6 @@
 
 public enum DocumentStatus
 {
-	Undefined,
-	Salvato,
 	Preview,
-	Emesso,
+	Issued,
 }

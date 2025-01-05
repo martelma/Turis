@@ -7,4 +7,5 @@ public enum DocumentType
 	FEI,
 	FIVA,
 	RIT,
+	N,
 }

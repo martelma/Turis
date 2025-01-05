@@ -104,7 +104,8 @@ public class AuthEndpoints : IEndpointRouteHandlerBuilder
 
 		templateApiGroup.MapPost("reset-password", ResetPasswordAsync)
 			.AllowAnonymous()
-			.WithValidation<ResetPasswordRequest>()
+			//TODO: da riattivare questa riga dopo una verifica da fare anche lato Workspace
+			//.WithValidation<ResetPasswordRequest>()
 			.Produces(StatusCodes.Status204NoContent)
 			.Produces<ServiceError>(StatusCodes.Status404NotFound)
 			.ProducesValidationProblem()

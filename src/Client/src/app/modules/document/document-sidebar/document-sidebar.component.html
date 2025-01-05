@@ -1,0 +1,96 @@
+<div class="flex flex-col flex-auto w-full h-full p-2">
+    <h3 class="text-3xl md:text-4xl font-semibold mt-4">
+        {{ 'General.Filters' | transloco }}
+    </h3>
+
+    <mat-form-field class="col-span-2">
+        <mat-label for="documentType">Type</mat-label>
+        <mat-select
+            placeholder="Select a Type"
+            class="form-control font-bold"
+            id="documentType"
+            name="documentType"
+            #name="ngModel"
+            [(ngModel)]="documentParameters.documentType"
+            (ngModelChange)="filter()">
+            <mat-option *ngFor="let x of documentTypes" [value]="x.value">
+                {{ x.text }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="col-span-2">
+        <mat-label for="sectional">Sectional</mat-label>
+        <input
+            matInput
+            id="sectional"
+            name="sectional"
+            #name="ngModel"
+            class="form-control font-bold"
+            [(ngModel)]="documentParameters.sectional"
+            (ngModelChange)="filter()" />
+    </mat-form-field>
+
+    <mat-form-field class="col-span-2">
+        <mat-label for="numberFrom">Number From</mat-label>
+        <input
+            matInput
+            type="number"
+            id="numberFrom"
+            name="numberFrom"
+            #name="ngModel"
+            class="form-control font-bold"
+            [(ngModel)]="documentParameters.numberFrom"
+            (ngModelChange)="filter()" />
+    </mat-form-field>
+
+    <mat-form-field class="col-span-2">
+        <mat-label for="numberTo">Number To</mat-label>
+        <input
+            matInput
+            type="number"
+            id="numberTo"
+            name="numberTo"
+            #name="ngModel"
+            class="form-control font-bold"
+            [(ngModel)]="documentParameters.numberTo"
+            (ngModelChange)="filter()" />
+    </mat-form-field>
+
+    <mat-form-field class="col-span-2">
+        <mat-label for="dateFrom">Date From</mat-label>
+        <input
+            matInput
+            [matDatepicker]="picker1"
+            class="form-control font-bold"
+            id="dateFrom"
+            name="dateFrom"
+            #name="ngModel"
+            [(ngModel)]="dateFrom"
+            (ngModelChange)="filter()" />
+        <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker #picker1></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field class="col-span-2">
+        <mat-label for="dateTo">Date To</mat-label>
+        <input
+            matInput
+            [matDatepicker]="picker2"
+            class="form-control font-bold"
+            id="dateTo"
+            name="dateTo"
+            #name="ngModel"
+            [(ngModel)]="dateTo"
+            (ngModelChange)="filter()" />
+        <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+    </mat-form-field>
+
+    <div class="flex space-x-2">
+        <button mat-flat-button color="primary" (click)="clearFilters()">
+            <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:archive-box-x-mark'"></mat-icon>
+            <span>{{ 'General.ClearFilters' | transloco }}</span>
+        </button>
+    </div>
+</div>

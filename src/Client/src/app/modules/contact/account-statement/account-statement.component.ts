@@ -1,8 +1,7 @@
-import { PaginatedList } from 'app/shared/types/shared.types';
 import { AccountStatementParameters, Service } from 'app/modules/service/service.types';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { DatePipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
-import { AfterViewInit, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -10,25 +9,17 @@ import { FuseScrollResetDirective } from '@fuse/directives/scroll-reset';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { fuseAnimations } from '@fuse/animations';
 import { SpinnerButtonComponent } from 'app/shared/components/ui/spinner-button/spinner-button.component';
-import { Contact } from '../contact.types';
-import { ContactComponent } from '../contact.component';
 import { ContactService } from '../contact.service';
-import { Observable, tap } from 'rxjs';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
 import { ContactViewComponent } from '../contact-view/contact-view.component';
 import { ContactEditComponent } from '../contact-edit/contact-edit.component';
-import { SafeUrl } from '@angular/platform-browser';
-import { ImageCropperComponent } from 'app/shared/components/image-cropper/image-cropper.component';
 import { MatDialog } from '@angular/material/dialog';
-import { dataURItoBlob } from 'app/shared';
-import { getSuccessModal } from 'app/shared/types/confirm-modal.types';
 import { FuseCardComponent } from '@fuse/components/card';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { ServiceService } from 'app/modules/service/service.service';
@@ -40,7 +31,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
-import { getBillingStatusColorClass, getCommissionStatusColorClass, getStatusColorClass } from 'app/constants';
+import { getBillingStatusColorClass, getCommissionStatusColorClass, getStatusColorClass, ContactTypes } from 'app/constants';
+import { UntypedFormGroup } from '@angular/forms';
 
 @UntilDestroy()
 @Component({
@@ -50,7 +42,7 @@ import { getBillingStatusColorClass, getCommissionStatusColorClass, getStatusCol
     styles: [
         `
             .list-grid {
-                grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+                grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
             }
         `,
     ],
@@ -105,10 +97,15 @@ export class AccountStatementComponent implements OnInit, AfterViewInit, OnChang
         return this._contactId;
     }
 
+    @Input() contactType : string
+
     results: PaginatedListResult<Service>;
     list: Service[] = [];
     itemsLoading = false;
     accountStatementParameters: AccountStatementParameters = new AccountStatementParameters();
+
+    selectedItem: Service | null = null;
+    selectedItemForm: UntypedFormGroup;
 
     getStatusColorClass = getStatusColorClass;
     getBillingStatusColorClass = getBillingStatusColorClass;
@@ -123,6 +120,7 @@ export class AccountStatementComponent implements OnInit, AfterViewInit, OnChang
         private _translocoService: TranslocoService,
         private _bookmarkService: BookmarkService,
         private _matDialog: MatDialog,
+        private _changeDetectorRef: ChangeDetectorRef,
         public snackBar: MatSnackBar,
     ) { }
 
@@ -163,6 +161,31 @@ export class AccountStatementComponent implements OnInit, AfterViewInit, OnChang
         this.accountStatementParameters = { ...this.accountStatementParameters, pageIndex: event.pageIndex, pageSize: event.pageSize };
 
         this.loadAccountStatement();
+    }
+
+    toggleDetails(item: Service): void {
+        // If the service is already selected...
+        if (this.selectedItem && this.selectedItem.id === item.id) {
+            // Close the details
+            this.closeDetails();
+            return;
+        }
+
+        this.selectedItem = item;
+
+        // Fill the form
+        this.selectedItemForm.patchValue(item);
+
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
+
+        this._changeDetectorRef.detectChanges();
+    }
+
+    closeDetails(): void {
+        this.selectedItem = null;
+
+        this.selectedItemForm.reset();
     }
 }
 

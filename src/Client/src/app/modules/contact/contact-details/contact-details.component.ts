@@ -147,7 +147,7 @@ export class ContactDetailsComponent implements OnInit {
     }
 
     private _subscribeRouteParams() {
-        console.log('_subscribeRouteParams');
+        // console.log('_subscribeRouteParams');
         this._activatedRoute.params
             .pipe(
                 tap(params => {

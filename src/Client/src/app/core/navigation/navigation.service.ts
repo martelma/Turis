@@ -89,6 +89,13 @@ export class NavigationService {
                     link: '/contact',
                 },
                 {
+                    id: 'document',
+                    title: 'Navigation.Document',
+                    type: 'basic',
+                    icon: 'heroicons_outline:document-duplicate',
+                    link: '/document',
+                },
+                {
                     id: 'configuration',
                     title: 'Navigation.Configuration',
                     type: 'collapsable',

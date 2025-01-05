@@ -24,7 +24,7 @@ import { ServiceService } from 'app/modules/service/service.service';
 import { MaterialModule } from 'app/modules/material.module';
 import { CalendarOptions, DateSelectArg, EventApi, EventClickArg } from '@fullcalendar/core';
 import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
-import { AppSettings, DurationTypes, ServiceTypes } from 'app/constants';
+import { AppSettings, DurationTypes, getBillingStatusColorClass, getCommissionStatusColorClass, getStatusColorClass, ServiceTypes } from 'app/constants';
 import { ServiceSidebarComponent } from 'app/modules/service/service-sidebar/service-sidebar.component';
 import { MatDrawer } from '@angular/material/sidenav';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
@@ -34,9 +34,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridWeekPlugin from '@fullcalendar/timegrid';
 import { DomSanitizer } from '@angular/platform-browser';
-import { RouterLink } from '@angular/router';
-import { UserService } from 'app/core/user/user.service';
-import { constant } from 'lodash';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
 
 declare let $: any;
@@ -94,6 +92,11 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
     @ViewChild(MatSort) private _sort: MatSort;
     @ViewChild('detailsDrawer') detailsDrawer: MatDrawer;
+    @ViewChild('fullCalendar') fullCalendar: FullCalendarComponent;
+
+    getStatusColorClass = getStatusColorClass;
+    getBillingStatusColorClass = getBillingStatusColorClass;
+    getCommissionStatusColorClass = getCommissionStatusColorClass;
 
     drawerFilterMode: 'over' | 'side' = 'side';
     drawerFilterOpened = true;
@@ -120,8 +123,6 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
     durationTypes = DurationTypes;
 
     calendarApi: any;
-
-    @ViewChild('fullCalendar') fullCalendar: FullCalendarComponent;
 
     calendarOptions: CalendarOptions = {
         headerToolbar: {
@@ -187,6 +188,8 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
         private _translocoService: TranslocoService,
         private _sanitizer: DomSanitizer,
         private _userSettingsService: UserSettingsService,
+        private _router: Router,
+        private _activatedRoute: ActivatedRoute,
     ) { }
 
     async ngOnInit(): Promise<void> {
@@ -475,8 +478,8 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
         console.log('handleEvents', events);
     }
 
-    create() {
-        console.log('create');
+    createService() {
+        this._router.navigate(['service', 'new'], { relativeTo: this._activatedRoute });
     }
 
     closeDrawer(): void {
@@ -515,6 +518,8 @@ function weekDayTemplate(event: ez): any {
                             <div class="event-info">Servizio: ${service.serviceType}</div>
                             <div class="event-info" [matTooltip]="Location">Location: ${service.location}</div>
                             <div class="event-info">People: ${service.people}</div>
+                            <div class="event-info">Client:</div>
+                            <div class="event-info">${service.client?.fullName}</div>
                             <div class="event-info">Collaborator:</div>
                             <div class="event-info">${service.collaborator?.fullName}</div>
                         </div>

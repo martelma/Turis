@@ -1,0 +1,126 @@
+<div class="relative flex flex-auto h-full w-full bg-card dark:bg-transparent">
+    <!-- Document list -->
+    <div class="relative flex flex-auto flex-col w-full min-w-0 lg:min-w-160 lg:max-w-96 border-r z-10">
+        <!-- Header -->
+        <div class="relative flex flex-0 items-center justify-between h-16 w-full px-4 border-b bg-gray-50 dark:bg-transparent">
+            <div class="flex flex-1 w-full items-center">
+                <!-- Sidebar toggle button -->
+                <button mat-icon-button
+                    (click)="documentComponent.toggleFilter()">
+                    <mat-icon [svgIcon]="
+                            documentComponent?.drawer?.opened ? 'heroicons_solid:funnel' : 'heroicons_outline:funnel'
+                        "></mat-icon>
+                </button>
+
+                <!-- Bookmarks filter -->
+                <button mat-icon-button
+                    (click)="toggleBookmarks()"
+                    [matTooltip]="
+                        (documentParameters?.onlyBookmarks ? 'General.ShowAll' : 'General.ShowOnlyBookmarked')
+                            | transloco
+                    ">
+                    <mat-icon [svgIcon]="
+                            documentParameters?.onlyBookmarks ? 'heroicons_solid:star' : 'heroicons_outline:star'
+                        "></mat-icon>
+                </button>
+
+                <!-- Filter -->
+                <app-search-input class="m-4 flex-1"
+                    [placeholder]="'Document.FilterByName'"
+                    (callbackFn)="filter($event)">
+                </app-search-input>
+            </div>
+
+            <!-- Loading bar -->
+            <mat-progress-bar class="absolute inset-x-0 bottom-0 h-0.5"
+                *ngIf="itemsLoading"
+                [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+
+        <!-- Document list -->
+        <ng-container *ngIf="results?.items?.length > 0; else noDocument">
+            <div class="overflow-y-auto"
+                #documentList>
+                <!-- Document loop -->
+                <ng-container *ngFor="let item of results?.items; let i = index; trackBy: trackByFn">
+                    <!-- Document -->
+                    <div class="group relative flex border-t first:border-0 hover:bg-hover cursor-pointer"
+                        [routerLink]="[item.id]"
+                        (click)="onItemSelected(item)"
+                        (dblclick)="edit(item)"
+                        tabindex="0"
+                        (keyup)="(null)">
+                        <!-- Document content -->
+                        <a class="flex flex-col items-start justify-start w-full py-6 pr-4 pl-5 border-l-4 border-transparent">
+                            <!-- Document Info -->
+                            <div class="flex items-center w-full justify-between space-x-2 mb-2">
+                                <div class="flex items-center space-x-2">
+                                    <!-- Add/Remove bookmark -->
+                                    <mat-icon (click)="handleBookmark(item)"
+                                        class="icon-size-2"
+                                        [ngClass]="item.bookmarkId ? 'text-yellow-500' : ''"
+                                        [svgIcon]="item.bookmarkId ? 'heroicons_solid:star' : 'heroicons_outline:star'"
+                                        [matTooltip]="
+                                            (item.bookmarkId ? 'General.RemoveBookmark' : 'General.MarkAsBookmark')
+                                                | transloco
+                                        "></mat-icon>
+
+                                    <!-- <span [ngClass]="getDocumentStatusColorClass(item)" class="color-box" [matTooltip]="item.status"></span> -->
+                                    <span [ngClass]="getDocumentStatusColorClass(item)"
+                                        class="badge min-w-10 text-center">{{item.type}}</span>
+
+                                    <div class="mr-2 font-extrabold text-wrap">
+                                        {{ item.sectional }} - {{ item.number }} - {{item.date | date: 'dd/MM/yyyy' }}
+                                    </div>
+                                </div>
+
+                                <div class="flex space-x-2 items-center">
+                                    <div class="ml-auto text-right whitespace-nowrap text-lg">
+                                        <strong>
+                                            {{ item.total | number: '2.2' }}
+                                        </strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-1 leading-normal line-clamp-2 text-secondary whitespace-pre-wrap">
+                                <mat-icon [svgIcon]="'heroicons_solid:user-circle'"
+                                    class="mr-2"
+                                    [matTooltip]="'Client'"></mat-icon>
+                                {{ item?.client?.fullName }}
+                            </div>
+                        </a>
+                    </div>
+                </ng-container>
+            </div>
+        </ng-container>
+
+        <!-- Paginator -->
+        <mat-paginator class="mt-auto border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+            [ngClass]="{ 'pointer-events-none': itemsLoading }"
+            [length]="results?.totalCount ?? 0"
+            [pageSize]="documentParameters?.pageSize ?? 10"
+            [pageIndex]="documentParameters?.pageIndex ?? 0"
+            [pageSizeOptions]="[5, 10, 25, 100]"
+            (page)="handlePageEvent($event)"
+            [showFirstLastButtons]="true"></mat-paginator>
+    </div>
+
+    <!-- No document template -->
+    <ng-template #noDocument>
+        <div class="z-100 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+            <mat-icon class="icon-size-24"
+                [svgIcon]="'heroicons_outline:circle-stack'"></mat-icon>
+            <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">There are no document</div>
+        </div>
+    </ng-template>
+
+    <!-- Document details -->
+    <div class="flex-auto"
+        [ngClass]="{
+            'z-20 absolute inset-0 lg:static lg:inset-auto flex': selectedItem && selectedItem.id,
+            'hidden lg:flex': !selectedItem || !selectedItem.id
+        }">
+        <router-outlet></router-outlet>
+    </div>
+</div>

@@ -9,6 +9,8 @@
         "Save": "Salva",
         "Edit": "Editare",
         "For": "per",
+        "Status": "Status",
+        "Languages": "Lingue",
         "Information": "Informazione",
         "New": "Nuovo/a",
         "Search": "Cerca",
@@ -19,6 +21,8 @@
         "Filters": "Filtri",
         "ClearFilters": "Clear Filters",
         "Notes": "Notes",
+        "Client": "Cliente",
+        "Collaborator": "Collaboratore",
         "Attachments": "Attachments",
         "Json": "Json"
     },
@@ -54,6 +58,7 @@
         "Code": "Code",
         "Name": "Name"
     },
+    "Document": {},
     "Navigation": {
         "Home": "Home",
         "Admin": "Admin",
@@ -70,6 +75,7 @@
         "Calendar": "Agenda",
         "Service": "Servizi",
         "Contact": "Contact",
+        "Document": "Document",
         "Back": "Indietro"
     },
     "Languages": {

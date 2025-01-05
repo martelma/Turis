@@ -11,7 +11,7 @@ public static class DocumentExtensions
 		{
 			Id = entity.Id,
 			DocumentRefId = entity.DocumentRefId,
-			DocumentRef = entity.DocumentRef.ToModel(),
+			DocumentRef = entity.DocumentRef?.ToModel(),
 			Type = entity.Type.ToString(),
 			Status = entity.Status.ToString(),
 			ClientId = entity.ClientId,
@@ -35,7 +35,7 @@ public static class DocumentExtensions
 			Saldato = entity.Saldato,
 			DataIncasso = entity.DataIncasso,
 			CollaboratorId = entity.CollaboratorId,
-			Collaborator = entity.Collaborator.ToModel(),
+			Collaborator = entity.Collaborator?.ToModel(),
 			SdiCodiceTipoPagamento = entity.SdiCodiceTipoPagamento,
 			SdiValoreTipoPagamento = entity.SdiValoreTipoPagamento,
 			SdiCodiceCondizionePagamento = entity.SdiCodiceCondizionePagamento,

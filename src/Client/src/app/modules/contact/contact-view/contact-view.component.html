@@ -321,7 +321,7 @@
                     {{ 'Service.ContactAccountStatement' | transloco }}
                 </ng-template>
                 <ng-template matTabContent>
-                    <app-account-statement [contactId]="item?.id" class="h-full w-full"></app-account-statement>
+                    <app-account-statement [contactId]="item?.id" [contactType]="item.contactType" class="h-full w-full"></app-account-statement>
                 </ng-template>
             </mat-tab>
             <mat-tab>

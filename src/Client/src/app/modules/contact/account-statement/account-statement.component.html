@@ -8,40 +8,59 @@
             <div class="grid overflow-hidden sm:overflow-y-auto">
                 <!-- Header -->
                 <div class="list-grid z-10 sticky top-0 grid gap-4 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
-                    <div class="hidden md:block"></div>
+                    <div class="hidden md:block">{{ 'General.Status' | transloco }}</div>
                     <div class="hidden md:block">{{ 'Service.Date' | transloco }}</div>
                     <div class="hidden sm:block">{{ 'Service.Title' | transloco }}</div>
                     <div class="hidden lg:block">{{ 'Service.ServiceType' | transloco }}</div>
                     <div class="hidden lg:block">{{ 'Service.DurationType' | transloco }}</div>
                     <div class="hidden lg:block">{{ 'Service.People' | transloco }}</div>
-                    <div class="hidden lg:block">{{ 'Service.PriceCalculated' | transloco }}</div>
-                    <div class="hidden lg:block">{{ 'Service.Price' | transloco }}</div>
-                    <div class="hidden lg:block">{{ 'Service.CommissionCalculated' | transloco }}</div>
+                    <div class="hidden lg:block">{{ 'General.Languages' | transloco }}</div>
+                    <div *ngIf="contactType==='Client'"
+                        class="hidden lg:block">{{ 'General.Collaborator' | transloco }}</div>
+                    <div *ngIf="contactType==='Collaborator'"
+                        class="hidden lg:block">{{ 'General.Client' | transloco }}</div>
+                    <!-- <div class="hidden lg:block"></div> -->
                 </div>
                 <!-- Rows -->
                 <ng-container *ngIf="list">
                     <ng-container *ngFor="let item of results?.items; trackBy: trackByFn">
                         <div class="list-grid grid items-center gap-4 py-3 px-6 md:px-8 border-b">
 
-                            <!-- <div class="sm:block whitespace-pre-wrap">
-                                {{ item?.date | date: 'dd/MM/yyyy' }}
-                            </div> -->
-
                             <div class="sm:block whitespace-pre-wrap">
-                                <span [ngClass]="getStatusColorClass(item)" class="color-box mr-3" [matTooltip]="item?.status"></span>
-                                <span [ngClass]="getBillingStatusColorClass(item)" class="color-box mr-3" [matTooltip]="item?.billingStatus"></span>
-                                <span [ngClass]="getCommissionStatusColorClass(item)" class="color-box mr-3" [matTooltip]="item?.commissionStatus"></span>
+                                <!-- <button class="min-w-10 min-h-7 h-7 px-2 mr-3"
+                                    mat-stroked-button
+                                    (click)="toggleDetails(item)">
+                                    <mat-icon class="icon-size-5"
+                                        [svgIcon]="
+                                        selectedItem?.id === item.id
+                                            ? 'heroicons_outline:chevron-up'
+                                            : 'heroicons_outline:chevron-down'
+                                    "></mat-icon>
+                                </button> -->
+
+                                <span [ngClass]="getStatusColorClass(item)"
+                                    class="color-box mr-3"
+                                    [matTooltip]="item?.status"></span>
+                                <span [ngClass]="getBillingStatusColorClass(item)"
+                                    class="color-box mr-3"
+                                    [matTooltip]="item?.billingStatus"></span>
+                                <span [ngClass]="getCommissionStatusColorClass(item)"
+                                    class="color-box"
+                                    [matTooltip]="item?.commissionStatus"></span>
                             </div>
 
                             <div class="sm:block whitespace-pre-wrap">
-                                {{ item?.date | date: 'dd/MM/yyyy' }}
+                                <a [routerLink]="['/service', item?.id]"
+                                    target="_blank">
+                                    {{ item?.date | date: 'dd/MM/yyyy' }}
+                                </a>
                             </div>
 
-                            <div class="truncate">
+                            <div class="sm:block whitespace-pre-wrap">
                                 {{ item.title }}
                             </div>
 
-                            <div class="truncate">
+                            <div class="sm:block whitespace-pre-wrap">
                                 {{ item?.serviceType }}
                             </div>
 
@@ -54,31 +73,30 @@
                             </div>
 
                             <div class="sm:block whitespace-pre-wrap">
-                                {{ item?.priceCalculated }}
+                                <div *ngFor="let lang of item.languages">
+                                    <span [matTooltip]="lang"
+                                        [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
+                                </div>
                             </div>
 
-                            <div class="sm:block whitespace-pre-wrap">
-                                {{ item?.price }}
+                            <div *ngIf="contactType==='Client'"
+                                class="sm:block whitespace-pre-wrap">
+                                <a [routerLink]="['/contact', item?.collaborator?.id]"
+                                    target="_blank">
+                                    {{ item?.collaborator?.fullName }}
+                                </a>
                             </div>
 
-                            <div class="sm:block whitespace-pre-wrap">
-                                {{ item?.commissionCalculated }}
+                            <div *ngIf="contactType==='Collaborator'"
+                                class="sm:block whitespace-pre-wrap">
+                                <a [routerLink]="['/contact', item?.client?.id]"
+                                    target="_blank">
+                                    {{ item?.client?.fullName }}
+                                </a>
                             </div>
 
                             <!-- Details button -->
-                            <!-- <div>
-                                <button
-                                    class="min-w-10 min-h-7 h-7 px-2 leading-6"
-                                    mat-stroked-button
-                                    (click)="toggleDetails(item.id)">
-                                    <mat-icon
-                                        class="icon-size-5"
-                                        [svgIcon]="
-                                            selectedItem?.id === item.id
-                                                ? 'heroicons_outline:chevron-up'
-                                                : 'heroicons_outline:chevron-down'
-                                        "></mat-icon>
-                                </button>
+                            <!-- <div class="sm:block whitespace-pre-wrap">
                             </div> -->
                         </div>
                         <!-- Selected Item -->
@@ -110,6 +128,31 @@
                 <mat-icon class="icon-size-24"
                     [svgIcon]="'heroicons_outline:circle-stack'"></mat-icon>
                 <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">There are no service</div>
+            </div>
+        </ng-template>
+
+        <ng-template #rowDetailsTemplate
+            let-service>
+            <div class="shadow-lg overflow-hidden">
+                <div class="flex border-b">
+                    <form class="flex flex-col w-full"
+                        [formGroup]="selectedItemForm">
+                        <div class="flex flex-col sm:flex-row p-8">
+                            <div class="flex flex-auto flex-wrap">
+                                <div class="flex flex-col w-full sm:p-8">
+                                    <div class="grid grid-cols-12 gap-2 w-full">
+                                        <!-- PriceCalculated -->
+                                        <mat-form-field class="col-span-2">
+                                            <mat-label>{{ 'Service.PriceCalculated' | transloco }}</mat-label>
+                                            <input matInput
+                                                [formControlName]="'priceCalculated'" />
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </ng-template>
     </div>

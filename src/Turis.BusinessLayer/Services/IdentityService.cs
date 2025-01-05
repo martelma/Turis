@@ -191,9 +191,9 @@ public class IdentityService(ApplicationDbContext dbContext,
 				return Result.Fail(FailureReasons.ClientError, Account.ErrorLoginUserPassword);
 		}
 
-#if DEBUG
-		return await LoginAsync(user);
-#endif
+//#if DEBUG
+//		return await LoginAsync(user);
+//#endif
         var signInResult = await signInManager.PasswordSignInAsync(user, request.Password, false, lockoutOnFailure: true);
         if (signInResult.Succeeded && user.PasswordExpiration.GetValueOrDefault(DateTime.MinValue) < DateTime.UtcNow)
         {

@@ -42,6 +42,7 @@ public class ServiceService(IDbContext dbContext,
 			.Include(x => x.PriceList)
 			.Include(x => x.Client)
 			.Include(x => x.Collaborator)
+			.AsNoTracking()
 			.AsQueryable();
 
 		if (parameters.OnlyBookmarks)

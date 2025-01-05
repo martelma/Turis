@@ -1,5 +1,4 @@
 import { BaseSearchParameters } from 'app/shared/types/shared.types';
-import { Language } from 'highlight.js';
 import { PriceList } from '../configuration/price-list/price-list.types';
 import { Contact } from '../contact/contact.types';
 

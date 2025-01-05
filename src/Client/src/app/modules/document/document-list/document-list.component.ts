@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
+import { CommonModule, CurrencyPipe, DatePipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
 import {
     AfterViewInit,
     ChangeDetectorRef,
@@ -21,28 +21,28 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { fuseAnimations } from '@fuse/animations';
-import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { trackByFn } from 'app/shared';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { SearchInputComponent } from 'app/shared/components/ui/search-input/search-input.component';
-import { Service, ServiceSearchParameters } from '../service.types';
-import { ServiceService } from '../service.service';
-import { ServiceComponent } from '../service.component';
+import { Document, DocumentSearchParameters } from '../document.types';
 import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
-import { DurationTypes, getStatusColorClass, getStatusText, ServiceTypes, StatusTypes } from 'app/constants';
-import { UserService } from 'app/core/user/user.service';
-import { ServiceViewComponent } from '../service-view/service-view.component';
+import { AppSettings, DurationTypes, getDocumentStatusColorClass, getStatusColorClass, getStatusText, ServiceTypes, StatusTypes } from 'app/constants';
+import { ServiceService } from 'app/modules/service/service.service';
+import { DocumentService } from '../document.service';
+import { MatDrawer } from '@angular/material/sidenav';
+import { UserSettingsService } from 'app/shared/services/user-setting.service';
+import { DocumentComponent } from '../document.component';
 
 @UntilDestroy()
 @Component({
-    selector: 'app-service-list',
-    templateUrl: './service-list.component.html',
-    styleUrls: ['./service-list.component.scss'],
+    selector: 'app-document-list',
+    templateUrl: './document-list.component.html',
+    styleUrls: ['./document-list.component.scss'],
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations,
     standalone: true,
@@ -54,6 +54,7 @@ import { ServiceViewComponent } from '../service-view/service-view.component';
         CurrencyPipe,
         DatePipe,
         JsonPipe,
+        CommonModule,
         FormsModule,
         ReactiveFormsModule,
         RouterOutlet,
@@ -75,12 +76,13 @@ import { ServiceViewComponent } from '../service-view/service-view.component';
         MatRippleModule,
         TranslocoModule,
         SearchInputComponent,
-        ServiceComponent,
-        ServiceViewComponent,
     ],
 })
-export class ServiceListComponent implements OnInit, AfterViewInit {
+export class DocumentListComponent implements OnInit, AfterViewInit {
     @ViewChild('serviceList') serviceList: ElementRef;
+
+    drawerFilterMode: 'over' | 'side' = 'side';
+    drawerFilterOpened = false;
 
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
     @ViewChild(MatSort) private _sort: MatSort;
@@ -88,14 +90,13 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
     statusTypes = StatusTypes;
     flashMessage: 'success' | 'error' | null = null;
 
-    results: PaginatedListResult<Service>;
-    list: Service[] = [];
+    results: PaginatedListResult<Document>;
+    list: Document[] = [];
     itemsLoading = false;
-    serviceParameters: ServiceSearchParameters;
+    documentParameters: DocumentSearchParameters;
 
     activeLang: string;
-    selectedItem: Service;
-    // selectedItemForm: UntypedFormGroup;
+    selectedItem: Document;
 
     serviceTypes = ServiceTypes;
     durationTypes = DurationTypes;
@@ -103,43 +104,42 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
     trackByFn = trackByFn;
     getStatusColorClass = getStatusColorClass;
     getStatusText = getStatusText;
+    getDocumentStatusColorClass = getDocumentStatusColorClass;
 
     constructor(
         private _router: Router,
         private _activatedRoute: ActivatedRoute,
         private _changeDetectorRef: ChangeDetectorRef,
         private _serviceService: ServiceService,
+        private _documentService: DocumentService,
         private _bookmarkService: BookmarkService,
         private _translocoService: TranslocoService,
+        private _userSettingsService: UserSettingsService,
 
-        public serviceComponent: ServiceComponent,
+        public documentComponent: DocumentComponent,
     ) { }
 
     ngOnInit(): void {
         this.activeLang = this._translocoService.getActiveLang();
 
-        // Services
-        this._serviceService.services$
+        // Document
+        this._documentService.documents$
             .pipe(untilDestroyed(this))
-            .subscribe((results: PaginatedListResult<Service>) => {
+            .subscribe((results: PaginatedListResult<Document>) => {
                 this.results = results;
                 this.list = results?.items;
-
-                this.list.forEach(item => {
-                    item.languages = item.languages.map(lang => lang.toLowerCase());
-                });
             });
 
-        // Services loading
-        this._serviceService.servicesLoading$.pipe(untilDestroyed(this)).subscribe((servicesLoading: boolean) => {
-            this.itemsLoading = servicesLoading;
+        // Document loading
+        this._documentService.documentsLoading$.pipe(untilDestroyed(this)).subscribe((documentsLoadin: boolean) => {
+            this.itemsLoading = documentsLoadin;
         });
 
         // Service parameters
-        this._serviceService.serviceParameters$
+        this._documentService.documentParameters$
             .pipe(untilDestroyed(this))
-            .subscribe((serviceParameters: ServiceSearchParameters) => {
-                this.serviceParameters = serviceParameters;
+            .subscribe((documentParameters: DocumentSearchParameters) => {
+                this.documentParameters = documentParameters;
             });
 
         // Subscribe to service changes
@@ -148,7 +148,7 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
             this.activeLang = activeLang;
         });
 
-        this._subscribeServiceParameters();
+        this._subscribeDocumentParameters();
     }
 
     ngAfterViewInit(): void {
@@ -175,42 +175,42 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
         this._list();
     }
 
-    private _subscribeServiceParameters(): void {
-        this._serviceService.serviceParameters$
+    private _subscribeDocumentParameters(): void {
+        this._documentService.documentParameters$
             .pipe(untilDestroyed(this))
-            .subscribe((serviceParameters: ServiceSearchParameters) => {
-                this.serviceParameters = serviceParameters;
+            .subscribe((documentParameters: DocumentSearchParameters) => {
+                this.documentParameters = documentParameters;
             });
     }
 
-    createService(): void {
-        console.log('createService');
+    createDocument(): void {
+        console.log('createDocument');
         this._router.navigate(['./', 'new'], { relativeTo: this._activatedRoute });
     }
 
     toggleBookmarks(): void {
         this._search({
-            onlyBookmarks: !this.serviceParameters.onlyBookmarks,
+            onlyBookmarks: !this.documentParameters.onlyBookmarks,
             pageIndex: 0,
             pageSize: this._paginator.pageSize,
         });
     }
 
-    private _search(serviceParameters: ServiceSearchParameters): void {
-        this._serviceService
-            .listEntities({ ...this.serviceParameters, ...serviceParameters })
+    private _search(documentParameters: DocumentSearchParameters): void {
+        this._documentService
+            .listEntities({ ...this.documentParameters, ...documentParameters })
             .pipe(untilDestroyed(this))
             .subscribe();
     }
 
-    handleBookmark(service: Service): void {
-        if (service.bookmarkId) {
+    handleBookmark(document: Document): void {
+        if (document.bookmarkId) {
             this._bookmarkService
-                .delete(service.bookmarkId)
+                .delete(document.bookmarkId)
                 .pipe(untilDestroyed(this))
                 .subscribe(() => {
                     // Refresh the selected service
-                    this._serviceService.getById(service.id).pipe(untilDestroyed(this)).subscribe();
+                    this._documentService.getById(document.id).pipe(untilDestroyed(this)).subscribe();
 
                     // Refresh the list
                     this._search({});
@@ -218,13 +218,13 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
         } else {
             this._bookmarkService
                 .create({
-                    entityName: 'Service',
-                    entityId: service.id,
+                    entityName: 'Document',
+                    entityId: document.id,
                 })
                 .pipe(untilDestroyed(this))
                 .subscribe(() => {
                     // Refresh the selected service
-                    this._serviceService.getById(service.id).pipe(untilDestroyed(this)).subscribe();
+                    this._documentService.getById(document.id).pipe(untilDestroyed(this)).subscribe();
 
                     // Refresh the list
                     this._search({});
@@ -232,35 +232,27 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
         }
     }
 
-    handleCheck(service: Service): void {
-        if (service.checked) {
-            this._serviceService.setCheck(service);
-        } else {
-            this._serviceService.setUnCheck(service);
-        }
-    }
-
-    onItemSelected(service: Service): void {
-        this.selectedItem = service;
+    onItemSelected(document: Document): void {
+        this.selectedItem = document;
 
         console.log('selectedItem', this.selectedItem);
     }
 
     handlePageEvent(event: PageEvent): void {
-        this.serviceParameters = { ...this.serviceParameters, pageIndex: event.pageIndex, pageSize: event.pageSize };
+        this.documentParameters = { ...this.documentParameters, pageIndex: event.pageIndex, pageSize: event.pageSize };
 
         this._list();
     }
 
     private _list(): void {
-        this._serviceService
-            .listEntities({ ...this.serviceParameters })
+        this._documentService
+            .listEntities({ ...this.documentParameters })
             .pipe(untilDestroyed(this))
             .subscribe();
     }
 
     filter(value: string): void {
-        this.serviceParameters = { pattern: value };
+        this.documentParameters = { pattern: value };
         this._list();
     }
 
