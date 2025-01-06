@@ -1,5 +1,6 @@
 import { Contact } from 'app/modules/contact/contact.types';
 import { BaseSearchParameters } from 'app/shared/types/shared.types';
+import { Service } from '../service/service.types';
 
 export class Document {
     id: string;
@@ -37,6 +38,8 @@ export class Document {
     cup: string;
 
     bookmarkId: string;
+
+    items: DocumentItem[] = [];
 }
 
 export class DocumentSearchParameters extends BaseSearchParameters {
@@ -48,4 +51,24 @@ export class DocumentSearchParameters extends BaseSearchParameters {
     sectional?: string;
     numberFrom?: number;
     numberTo?: number;
+}
+
+
+export class DocumentItem{
+    documentId : string;
+	document : Document;
+	serviceId : string;
+	service : Service;
+	row : number;
+	code : string;
+	description : string;
+	codiceNatura : string;
+	riferimentoNormativo : string;
+	quantity : number;
+	price : number;
+	discountPercentage : number;
+	rowAmount : number;
+	codiceEsigibilitaIVA :number;
+	vatRate :number;
+	vat :number;
 }

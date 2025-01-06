@@ -5,7 +5,7 @@ namespace Turis.Common.Models;
 public class DocumentItemModel : BaseModel
 {
 	public Guid? DocumentId { get; set; }
-	public DocumentModel Document { get; set; }
+	public DocumentInfoModel Document { get; set; }
 	public Guid? ServiceId { get; set; }
 	public ServiceInfoModel Service { get; set; }
 	public int Row { get; set; }

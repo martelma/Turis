@@ -12,7 +12,8 @@ public class DocumentConfiguration : BaseEntityConfiguration<Entities.Document>
 
 		builder.HasOne(x => x.DocumentRef)
 			.WithMany()
-			.HasForeignKey(x => x.DocumentRefId);
+			.HasForeignKey(x => x.DocumentRefId)
+			.IsRequired(false);
 
 		builder
 			.Property(x => x.Type)
@@ -59,5 +60,10 @@ public class DocumentConfiguration : BaseEntityConfiguration<Entities.Document>
 		builder.Property(e => e.DataScadenzaPagamento);
 		builder.Property(e => e.Cig).HasMaxLength(15);
 		builder.Property(e => e.Cup).HasMaxLength(15);
+
+		builder.HasMany(x => x.Items)
+			.WithOne(x => x.Document)
+			.HasForeignKey(x => x.DocumentId)
+			.IsRequired();
 	}
 }

@@ -1,6 +1,6 @@
 import { Document } from './../document.types';
 import { MatRippleModule } from '@angular/material/core';
-import { DatePipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle } from '@angular/common';
+import { CommonModule, DatePipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle } from '@angular/common';
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -35,6 +35,7 @@ import { DocumentService } from '../document.service';
         DatePipe,
         JsonPipe,
         RouterLink,
+        CommonModule,
         MatButtonModule,
         MatCheckboxModule,
         MatRippleModule,
@@ -78,6 +79,17 @@ export class DocumentDetailsComponent implements OnInit {
 
     ngOnInit(): void {
         this._subscribeRouteParams();
+        this._subscribeDocument();
+    }
+
+    private _subscribeDocument() {
+        this._documentService.document$.pipe(untilDestroyed(this)).subscribe((document: Document) => {
+            this.document = document;
+
+            console.log('_subscribeDocument - document', this.document)
+
+            this.editMode = document?.id === undefined;
+        });
     }
 
     private _subscribeRouteParams() {
@@ -92,16 +104,16 @@ export class DocumentDetailsComponent implements OnInit {
             .subscribe();
     }
 
-    save(): void {
-        this._documentService
-            .update(this.document)
-            .pipe(untilDestroyed(this))
-            .subscribe(() => {
-                this._refresh();
+    // save(): void {
+    //     this._documentService
+    //         .update(this.document)
+    //         .pipe(untilDestroyed(this))
+    //         .subscribe(() => {
+    //             this._refresh();
 
-                // this._documentService.editService(null);
-            });
-    }
+    //             // this._documentService.editService(null);
+    //         });
+    // }
 
     private _refresh(): void {
         this.snackBar.open(

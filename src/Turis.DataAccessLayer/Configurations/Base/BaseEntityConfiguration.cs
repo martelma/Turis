@@ -3,12 +3,12 @@ using Turis.DataAccessLayer.Entities.Base;
 
 namespace Turis.DataAccessLayer.Configurations.Base;
 
-	public class BaseEntityConfiguration<T> : IEntityTypeConfiguration<T>
-		where T : BaseEntity
+public class BaseEntityConfiguration<T> : IEntityTypeConfiguration<T>
+	where T : BaseEntity
+{
+	public virtual void Configure(EntityTypeBuilder<T> builder)
 	{
-		public virtual void Configure(EntityTypeBuilder<T> builder)
-		{
-			builder.Property(x => x.Id).ValueGeneratedNever();
-			builder.HasKey(x => x.Id);
-		}
+		builder.Property(x => x.Id).ValueGeneratedNever();
+		builder.HasKey(x => x.Id);
 	}
+}

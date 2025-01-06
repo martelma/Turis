@@ -7,13 +7,11 @@ public static class DocumentItemExtensions
 {
 	public static async Task<DocumentItemModel> ToModel(this DocumentItem entity)
 	{
-		return new DocumentItemModel
+		var model = new DocumentItemModel
 		{
 			Id = entity.Id,
 			DocumentId = entity.DocumentId,
-			Document = entity.Document.ToModel(),
 			ServiceId = entity.ServiceId,
-			Service = await entity.Service.ToModelInfoAsync(),
 			Code = entity.Code,
 			Description = entity.Description,
 			CodiceNatura = entity.CodiceNatura,
@@ -24,10 +22,22 @@ public static class DocumentItemExtensions
 			VatRate = entity.VatRate,
 			CodiceEsigibilitaIVA = entity.CodiceEsigibilitaIVA,
 		};
+
+		if (entity.Document != null)
+			model.Document = entity.Document.ToModelInfo();
+
+		if (entity.Service != null)
+			model.Service = await entity.Service.ToModelInfoAsync();
+
+		return model;
 	}
 
-	public static IEnumerable<DocumentModel> ToModel(this IEnumerable<Document> list)
+	public static async Task<List<DocumentItemModel>> ToModel(this IEnumerable<DocumentItem> list)
 	{
-		return list.Select(x => x.ToModel());
+		var model = new List<DocumentItemModel>();
+		foreach (var item in list)
+			model.Add(await item.ToModel());
+
+		return model;
 	}
 }

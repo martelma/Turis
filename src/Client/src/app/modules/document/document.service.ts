@@ -103,6 +103,7 @@ export class DocumentService extends BaseEntityService<Document> {
                     cig: undefined,
                     cup: undefined,
                     bookmarkId: undefined,
+                    items: [],
                 }).pipe(
                     map(newDocument => {
                         // Update the documents with the new document

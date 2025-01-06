@@ -74,32 +74,32 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 	var redisConfiguration = services.ConfigureAndGet<RedisConfiguration>(configuration, nameof(RedisConfiguration));
 
 	services.AddEndpointsApiExplorer();
-    services.AddHttpContextAccessor();
+	services.AddHttpContextAccessor();
 
-    services.ConfigureHttpJsonOptions(options =>
-    {
-	    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
-	    options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-	    options.SerializerOptions.Converters.Add(new StringEnumMemberConverter());
-	    options.SerializerOptions.Converters.Add(new UtcDateTimeConverter());
-    });
+	services.ConfigureHttpJsonOptions(options =>
+	{
+		options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+		options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+		options.SerializerOptions.Converters.Add(new StringEnumMemberConverter());
+		options.SerializerOptions.Converters.Add(new UtcDateTimeConverter());
+	});
 
-    services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>();
+	services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>();
 
-    services.AddDefaultProblemDetails();
-    services.AddDefaultExceptionHandler();
+	services.AddDefaultProblemDetails();
+	services.AddDefaultExceptionHandler();
 
-    services.AddOperationResult(options =>
-    {
-	    options.ErrorResponseFormat = ErrorResponseFormat.List;
+	services.AddOperationResult(options =>
+	{
+		options.ErrorResponseFormat = ErrorResponseFormat.List;
 
-	    options.StatusCodesMapping.Add(CustomFailureReasons.InvalidToken, StatusCodes.Status419AuthenticationTimeout);
-	    options.StatusCodesMapping.Add(CustomFailureReasons.LockedOut, StatusCodes.Status403Forbidden);
-	    options.StatusCodesMapping.Add(CustomFailureReasons.NotAllowded, StatusCodes.Status424FailedDependency);
-	    options.StatusCodesMapping.Add(CustomFailureReasons.PasswordExpired, StatusCodes.Status408RequestTimeout);
-    });
+		options.StatusCodesMapping.Add(CustomFailureReasons.InvalidToken, StatusCodes.Status419AuthenticationTimeout);
+		options.StatusCodesMapping.Add(CustomFailureReasons.LockedOut, StatusCodes.Status403Forbidden);
+		options.StatusCodesMapping.Add(CustomFailureReasons.NotAllowded, StatusCodes.Status424FailedDependency);
+		options.StatusCodesMapping.Add(CustomFailureReasons.PasswordExpired, StatusCodes.Status408RequestTimeout);
+	});
 
-    services.AddRequestLocalization("it", "en");
+	services.AddRequestLocalization("it", "en");
 
 	services.AddDbContext<IDbContext, ApplicationDbContext>(options =>
 	{
@@ -107,7 +107,8 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 		{
 			providerOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
 			providerOptions.EnableRetryOnFailure(3, TimeSpan.FromSeconds(1), null);
-		});
+		})
+		.LogTo(Console.WriteLine, LogLevel.Information);
 	});
 
 	services.AddSqlServer<ApplicationDbContext>(configuration.GetConnectionString("DefaultConnection"), options =>
@@ -132,7 +133,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 		.AddRoleValidator<ApplicationRoleValidator>()
 		.AddDefaultTokenProviders()
 		.AddErrorDescriber<LocalizedIdentityErrorDescriber>();
-	
+
 	services.AddSimpleAuthentication(configuration).AddMicrosoftIdentityWebApi(configuration, jwtBearerScheme: AzureAdSettings.AzureActiveDirectoryBearer);
 	services.Configure<JwtBearerOptions>(AzureAdSettings.AzureActiveDirectoryBearer, options =>
 	{

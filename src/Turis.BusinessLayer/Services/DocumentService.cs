@@ -24,6 +24,8 @@ public class DocumentService(ApplicationDbContext dbContext
 	private IIncludableQueryable<Document, Contact> Query()
 	{
 		return context
+			.Include(x => x.Items)
+			.ThenInclude(x => x.Service)
 			.Include(x => x.DocumentRef)
 			.Include(x => x.Client)
 			.Include(x => x.Collaborator);
@@ -37,7 +39,7 @@ public class DocumentService(ApplicationDbContext dbContext
 		if (record is null)
 			return Result.Fail(FailureReasons.ItemNotFound);
 
-		return record.ToModel();
+		return await record.ToModel();
 	}
 
 	public async Task<Result<DocumentModel>> GetAsync(string sectional, int number)
@@ -48,7 +50,7 @@ public class DocumentService(ApplicationDbContext dbContext
 		if (record is null)
 			return Result.Fail(FailureReasons.ItemNotFound);
 
-		return record.ToModel();
+		return await record.ToModel();
 	}
 
 	public async Task<Result<PaginatedList<DocumentModel>>> ListAsync(DocumentSearchParameters parameters)
@@ -87,15 +89,24 @@ public class DocumentService(ApplicationDbContext dbContext
 			query = query.OrderByDescending(x => x.Sectional)
 				.ThenByDescending(x => x.Number);
 
-		var list = await query
-			.Skip(paginator.PageIndex * paginator.PageSize)
-			.Take(paginator.PageSize)
-			.Select(x => x.ToModel())
-			.ToListAsync();
+		try
+		{
+			var page = query
+				.Skip(paginator.PageIndex * paginator.PageSize)
+				.Take(paginator.PageSize)
+				.ToList();
 
-		var result = new PaginatedList<DocumentModel>(list, totalCount, paginator.PageIndex, paginator.PageSize);
+			var list = await page.ToModel();
 
-		return await Task.FromResult(result);
+			var result = new PaginatedList<DocumentModel>(list, totalCount, paginator.PageIndex, paginator.PageSize);
+
+			return await Task.FromResult(result);
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex);
+			throw;
+		}
 	}
 
 	public async Task<Result> SaveAsync(DocumentRequest model)

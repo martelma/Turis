@@ -10,8 +10,13 @@ public class DocumentItemConfiguration : BaseEntityConfiguration<Entities.Docume
 		base.Configure(builder);
 
 		builder.HasOne(x => x.Document)
-			.WithMany()
+			.WithMany(x => x.Items)
 			.HasForeignKey(x => x.DocumentId);
+
+		builder.HasOne(x => x.Service)
+			.WithMany()
+			.HasForeignKey(x => x.ServiceId)
+			.IsRequired(false);
 
 		builder.Property(e => e.Row).IsRequired();
 		builder.Property(e => e.Code).HasMaxLength(50);
@@ -22,6 +27,6 @@ public class DocumentItemConfiguration : BaseEntityConfiguration<Entities.Docume
 		builder.Property(e => e.Price).IsRequired();
 		builder.Property(e => e.DiscountPercentage).IsRequired();
 		builder.Property(e => e.VatRate).IsRequired();
-		builder.Property(e => e.CodiceEsigibilitaIVA);
+		builder.Property(e => e.CodiceEsigibilitaIVA).IsRequired();
 	}
 }

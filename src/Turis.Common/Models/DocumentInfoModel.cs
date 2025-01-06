@@ -1,16 +1,15 @@
-﻿using Turis.Common.Enums;
-using Turis.DataAccessLayer.Entities.Base;
+﻿using Turis.Common.Models.Base;
 
-namespace Turis.DataAccessLayer.Entities;
+namespace Turis.Common.Models;
 
-public class Document : BaseEntity
+public class DocumentInfoModel : BaseModel
 {
 	public Guid? DocumentRefId { get; set; }
-	public Document DocumentRef { get; set; }
-	public DocumentType Type { get; set; }
-	public DocumentStatus Status { get; set; }
+	public DocumentInfoModel DocumentRef { get; set; }
+	public string Type { get; set; }
+	public string Status { get; set; }
 	public Guid? ClientId { get; set; }
-	public Contact Client { get; set; }
+	public ContactModel Client { get; set; }
 	public string IdSdi { get; set; }
 	public DateTimeOffset Date { get; set; }
 	public string Sectional { get; set; }
@@ -30,13 +29,12 @@ public class Document : BaseEntity
 	public bool Saldato { get; set; }
 	public DateTimeOffset? DataIncasso { get; set; }
 	public Guid? CollaboratorId { get; set; }
-	public Contact Collaborator { get; set; }
+	public ContactModel Collaborator { get; set; }
 	public string SdiCodiceTipoPagamento { get; set; }
 	public string SdiValoreTipoPagamento { get; set; }
 	public string SdiCodiceCondizionePagamento { get; set; }
 	public DateTimeOffset? DataScadenzaPagamento { get; set; }
 	public string Cig { get; set; }
 	public string Cup { get; set; }
-
-	public virtual ICollection<DocumentItem> Items { get; set; } = new List<DocumentItem>();
+	public string XmlFileName => $"{Sectional}-{Number.ToString().PadLeft(8, '0')}.xml";
 }

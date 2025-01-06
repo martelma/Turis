@@ -5,13 +5,12 @@ namespace Turis.BusinessLayer.Extensions;
 
 public static class DocumentExtensions
 {
-	public static DocumentModel ToModel(this Document entity)
+	public static async Task<DocumentModel> ToModel(this Document entity)
 	{
-		return new DocumentModel
+		var model = new DocumentModel
 		{
 			Id = entity.Id,
 			DocumentRefId = entity.DocumentRefId,
-			DocumentRef = entity.DocumentRef?.ToModel(),
 			Type = entity.Type.ToString(),
 			Status = entity.Status.ToString(),
 			ClientId = entity.ClientId,
@@ -43,10 +42,71 @@ public static class DocumentExtensions
 			Cig = entity.Cig,
 			Cup = entity.Cup,
 		};
+
+		if (entity.DocumentRef != null)
+			model.DocumentRef = await entity.DocumentRef.ToModel();
+
+		if (entity.Items != null)
+			model.Items = await entity.Items.ToModel();
+
+		return model;
 	}
 
-	public static IEnumerable<DocumentModel> ToModel(this IEnumerable<Document> list)
+	public static async Task<List<DocumentModel>> ToModel(this IEnumerable<Document> list)
 	{
-		return list.Select(x => ToModel(x));
+		var model = new List<DocumentModel>();
+		if (list != null)
+			foreach (var item in list)
+				model.Add(await item.ToModel());
+
+		return model;
+	}
+	public static DocumentInfoModel ToModelInfo(this Document entity)
+	{
+		var model = new DocumentInfoModel
+		{
+			Id = entity.Id,
+			DocumentRefId = entity.DocumentRefId,
+			Type = entity.Type.ToString(),
+			Status = entity.Status.ToString(),
+			ClientId = entity.ClientId,
+			Client = entity.Client.ToModel(),
+			IdSdi = entity.IdSdi,
+			Date = entity.Date,
+			Sectional = entity.Sectional,
+			Number = entity.Number,
+			DiscountPercentage = entity.DiscountPercentage,
+			Discount = entity.Discount,
+			Amount = entity.Amount,
+			VatRate = entity.VatRate,
+			Vat = entity.Vat,
+			AliquotaRitenutaDiAcconto = entity.AliquotaRitenutaDiAcconto,
+			RitenutaDiAcconto = entity.RitenutaDiAcconto,
+			TotalExemptExpenses = entity.TotalExemptExpenses,
+			TotalExpenses = entity.TotalExpenses,
+			Total = entity.Total,
+			ImportoBollo = entity.ImportoBollo,
+			DesTipoPagamento = entity.DesTipoPagamento,
+			Saldato = entity.Saldato,
+			DataIncasso = entity.DataIncasso,
+			CollaboratorId = entity.CollaboratorId,
+			Collaborator = entity.Collaborator?.ToModel(),
+			SdiCodiceTipoPagamento = entity.SdiCodiceTipoPagamento,
+			SdiValoreTipoPagamento = entity.SdiValoreTipoPagamento,
+			SdiCodiceCondizionePagamento = entity.SdiCodiceCondizionePagamento,
+			DataScadenzaPagamento = entity.DataScadenzaPagamento,
+			Cig = entity.Cig,
+			Cup = entity.Cup,
+		};
+
+		if (entity.DocumentRef != null)
+			model.DocumentRef = entity.DocumentRef.ToModelInfo();
+
+		return model;
+	}
+
+	public static List<DocumentInfoModel> ToModelInfo(this IEnumerable<Document> list)
+	{
+		return list.Select(x => x.ToModelInfo()).ToList();
 	}
 }
