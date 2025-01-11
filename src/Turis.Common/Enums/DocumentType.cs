@@ -3,9 +3,11 @@
 public enum DocumentType
 {
 	Undefined,
-	FIV,
+	N,
+	FEE,
+	F,
+	FEI2,
 	FEI,
 	FIVA,
 	RIT,
-	N,
 }

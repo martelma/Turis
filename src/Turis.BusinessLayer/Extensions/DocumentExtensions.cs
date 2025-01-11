@@ -1,12 +1,15 @@
-﻿using Turis.Common.Models;
+﻿using JeMa.Shared.Extensions;
+using Turis.Common.Models;
 using Turis.DataAccessLayer.Entities;
 
 namespace Turis.BusinessLayer.Extensions;
 
 public static class DocumentExtensions
 {
-	public static async Task<DocumentModel> ToModel(this Document entity)
+	public static async Task<DocumentModel> ToModel(this Document entity, IEnumerable<Bookmark> bookmarks)
 	{
+		var bookmarkId = bookmarks.FirstOrDefault(x => x.EntityId == entity.Id)?.Id;
+	
 		var model = new DocumentModel
 		{
 			Id = entity.Id,
@@ -39,12 +42,15 @@ public static class DocumentExtensions
 			SdiValoreTipoPagamento = entity.SdiValoreTipoPagamento,
 			SdiCodiceCondizionePagamento = entity.SdiCodiceCondizionePagamento,
 			DataScadenzaPagamento = entity.DataScadenzaPagamento,
+			IdDocumento = entity.IdDocumento,
 			Cig = entity.Cig,
 			Cup = entity.Cup,
+
+			BookmarkId = bookmarkId.HasValue() ? bookmarkId.ToString() : string.Empty,
 		};
 
 		if (entity.DocumentRef != null)
-			model.DocumentRef = await entity.DocumentRef.ToModel();
+			model.DocumentRef = await entity.DocumentRef.ToModel(bookmarks);
 
 		if (entity.Items != null)
 			model.Items = await entity.Items.ToModel();
@@ -52,15 +58,16 @@ public static class DocumentExtensions
 		return model;
 	}
 
-	public static async Task<List<DocumentModel>> ToModel(this IEnumerable<Document> list)
+	public static async Task<List<DocumentModel>> ToModel(this IEnumerable<Document> list, IEnumerable<Bookmark> bookmarks)
 	{
 		var model = new List<DocumentModel>();
 		if (list != null)
 			foreach (var item in list)
-				model.Add(await item.ToModel());
+				model.Add(await item.ToModel(bookmarks));
 
 		return model;
 	}
+
 	public static DocumentInfoModel ToModelInfo(this Document entity)
 	{
 		var model = new DocumentInfoModel
@@ -95,6 +102,7 @@ public static class DocumentExtensions
 			SdiValoreTipoPagamento = entity.SdiValoreTipoPagamento,
 			SdiCodiceCondizionePagamento = entity.SdiCodiceCondizionePagamento,
 			DataScadenzaPagamento = entity.DataScadenzaPagamento,
+			IdDocumento = entity.IdDocumento,
 			Cig = entity.Cig,
 			Cup = entity.Cup,
 		};

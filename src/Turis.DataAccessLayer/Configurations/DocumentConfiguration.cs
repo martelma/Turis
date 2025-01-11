@@ -58,6 +58,7 @@ public class DocumentConfiguration : BaseEntityConfiguration<Entities.Document>
 		builder.Property(e => e.SdiValoreTipoPagamento).HasMaxLength(100);
 		builder.Property(e => e.SdiCodiceCondizionePagamento).HasMaxLength(4);
 		builder.Property(e => e.DataScadenzaPagamento);
+		builder.Property(e => e.IdDocumento).HasMaxLength(20);
 		builder.Property(e => e.Cig).HasMaxLength(15);
 		builder.Property(e => e.Cup).HasMaxLength(15);
 

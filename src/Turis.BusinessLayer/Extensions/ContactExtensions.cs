@@ -22,6 +22,7 @@ public static class ContactExtensions
 			FiscalCode = entity.FiscalCode,
 			TaxCode = entity.TaxCode,
 			CompanyName = entity.CompanyName,
+			DisplayName = entity.DisplayName,
 			BirthDate = entity.BirthDate,
 			BirthDateText = entity.BirthDate.HasValue ? entity.BirthDate.Value.ToString("dd/MM/yyyy") : string.Empty,
 			BirthPlace = entity.BirthPlace,

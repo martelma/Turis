@@ -1,9 +1,12 @@
-<div class="relative flex flex-col flex-auto shrink-0 lg:shrink p-3 lg:overflow-y-auto bg-gray-100 dark:bg-transparent"
+<div
+    class="relative flex flex-col flex-auto shrink-0 lg:shrink p-3 lg:overflow-y-auto bg-gray-100 dark:bg-transparent"
     fuseScrollReset>
-    <form [formGroup]="form"
+    <form
+        [formGroup]="form"
         class="absolute inset-0 flex flex-col flex-0 shadow rounded-2xl overflow-hidden bg-card dark:bg-black dark:bg-opacity-10 m-4">
         <!-- Tabs -->
-        <mat-tab-group class="view-service-tab-group"
+        <mat-tab-group
+            class="view-service-tab-group"
             mat-stretch-tabs="false"
             [color]="form.valid ? 'primary' : 'warn'"
             [animationDuration]="'0'"
@@ -11,8 +14,7 @@
             <!-- Service Info -->
             <mat-tab>
                 <ng-template mat-tab-label>
-                    <mat-icon class="icon-size-5 mr-2"
-                        [svgIcon]="'heroicons_outline:information-circle'"></mat-icon>
+                    <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:information-circle'"></mat-icon>
                     {{ 'Service.ServiceInfo' | transloco }}
                 </ng-template>
                 <ng-template matTabContent>
@@ -24,7 +26,8 @@
                             <div class="grid grid-cols-12 gap-2 w-full">
                                 <mat-form-field class="col-span-2">
                                     <mat-label>Date</mat-label>
-                                    <input matInput
+                                    <input
+                                        matInput
                                         type="text"
                                         class="form-control font-bold"
                                         [readonly]="true"
@@ -33,19 +36,19 @@
                                 <mat-form-field class="col-span-2">
                                     <mat-label>Status</mat-label>
                                     <div class="status-container">
-                                        <span [ngClass]="getStatusColorClass(item)"
-                                            class="color-box"></span>
-                                        <input matInput
+                                        <span [ngClass]="getStatusColorClass(item)" class="color-box"></span>
+                                        <input
+                                            matInput
                                             type="text"
                                             class="form-control font-bold"
                                             [readonly]="true"
                                             [value]="item?.status ? item.status : ''" />
                                     </div>
-
                                 </mat-form-field>
                                 <mat-form-field class="col-span-2">
                                     <mat-label>Code</mat-label>
-                                    <input matInput
+                                    <input
+                                        matInput
                                         type="text"
                                         class="form-control font-bold"
                                         [readonly]="true"
@@ -53,7 +56,8 @@
                                 </mat-form-field>
                                 <mat-form-field class="col-span-6">
                                     <mat-label>Title</mat-label>
-                                    <input matInput
+                                    <input
+                                        matInput
                                         type="text"
                                         class="font-bold"
                                         [readonly]="true"
@@ -65,7 +69,8 @@
                             <div class="grid grid-cols-12 gap-2 w-full">
                                 <mat-form-field class="col-span-2">
                                     <mat-label>Type</mat-label>
-                                    <input matInput
+                                    <input
+                                        matInput
                                         type="text"
                                         class="font-bold"
                                         [readonly]="true"
@@ -73,7 +78,8 @@
                                 </mat-form-field>
                                 <mat-form-field class="col-span-2">
                                     <mat-label>Duration</mat-label>
-                                    <input matInput
+                                    <input
+                                        matInput
                                         type="text"
                                         class="font-bold"
                                         [readonly]="true"
@@ -81,7 +87,8 @@
                                 </mat-form-field>
                                 <mat-form-field class="col-span-2">
                                     <mat-label>People</mat-label>
-                                    <input matInput
+                                    <input
+                                        matInput
                                         type="text"
                                         class="font-bold"
                                         [readonly]="true"
@@ -89,7 +96,8 @@
                                 </mat-form-field>
                                 <mat-form-field class="col-span-6">
                                     <mat-label>Price List</mat-label>
-                                    <input matInput
+                                    <input
+                                        matInput
                                         type="text"
                                         class="font-bold"
                                         [readonly]="true"
@@ -101,7 +109,8 @@
                             <div class="grid grid-cols-12 gap-2 w-full">
                                 <mat-form-field class="col-span-6">
                                     <mat-label>Location</mat-label>
-                                    <input matInput
+                                    <input
+                                        matInput
                                         type="text"
                                         class="font-bold"
                                         [readonly]="true"
@@ -109,7 +118,8 @@
                                 </mat-form-field>
                                 <mat-form-field class="col-span-4">
                                     <mat-label>Language</mat-label>
-                                    <input matInput
+                                    <input
+                                        matInput
                                         type="text"
                                         class="font-bold"
                                         [readonly]="true"
@@ -117,7 +127,8 @@
                                 </mat-form-field>
                                 <mat-form-field class="col-span-2">
                                     <mat-label>Option Expiration</mat-label>
-                                    <input matInput
+                                    <input
+                                        matInput
                                         type="text"
                                         class="font-bold"
                                         [readonly]="true"
@@ -129,7 +140,8 @@
                             <div class="grid grid-cols-12 gap-2 w-full">
                                 <mat-form-field class="col-span-6">
                                     <mat-label>Meeting Place</mat-label>
-                                    <input matInput
+                                    <input
+                                        matInput
                                         type="text"
                                         class="font-bold"
                                         [readonly]="true"
@@ -137,7 +149,8 @@
                                 </mat-form-field>
                                 <mat-form-field class="col-span-4">
                                     <mat-label>Referent</mat-label>
-                                    <input matInput
+                                    <input
+                                        matInput
                                         type="text"
                                         class="font-bold"
                                         [readonly]="true"
@@ -145,7 +158,8 @@
                                 </mat-form-field>
                                 <mat-form-field class="col-span-2">
                                     <mat-label>Referent Phone</mat-label>
-                                    <input matInput
+                                    <input
+                                        matInput
                                         type="text"
                                         class="font-bold"
                                         [readonly]="true"
@@ -155,14 +169,14 @@
                         </div>
 
                         <mat-accordion class="flex flex-col">
-                            <mat-expansion-panel #card
-                                [expanded]="true">
+                            <mat-expansion-panel #card [expanded]="true">
                                 <mat-expansion-panel-header class="bg-primary py-4 px-8 rounded-none">
                                     <mat-panel-title>
                                         <div class="flex flex-1 justify-between items-center gap-2 text-white text-lg">
                                             <!-- <mat-icon [svgIcon]="'heroicons_solid:user-circle'"></mat-icon> -->
                                             <span>Client</span>
-                                            <button mat-button
+                                            <button
+                                                mat-button
                                                 class="flex flex-1 justify-end"
                                                 (click)="openContact(item?.client); $event.stopPropagation()">
                                                 View
@@ -175,7 +189,8 @@
                                     <div class="grid grid-cols-12 gap-2 w-full">
                                         <mat-form-field class="col-span-2">
                                             <mat-label>Code</mat-label>
-                                            <input matInput
+                                            <input
+                                                matInput
                                                 type="text"
                                                 class="font-bold"
                                                 [readonly]="true"
@@ -183,7 +198,8 @@
                                         </mat-form-field>
                                         <mat-form-field class="col-span-10">
                                             <mat-label>Company Name</mat-label>
-                                            <input matInput
+                                            <input
+                                                matInput
                                                 type="text"
                                                 class="font-bold"
                                                 [readonly]="true"
@@ -193,7 +209,8 @@
                                     <div class="grid grid-cols-12 gap-2 w-full">
                                         <mat-form-field class="col-span-2">
                                             <mat-label>Price Calculated</mat-label>
-                                            <input matInput
+                                            <input
+                                                matInput
                                                 type="text"
                                                 class="font-bold"
                                                 [readonly]="true"
@@ -201,7 +218,8 @@
                                         </mat-form-field>
                                         <mat-form-field class="col-span-2">
                                             <mat-label>Price</mat-label>
-                                            <input matInput
+                                            <input
+                                                matInput
                                                 type="text"
                                                 class="font-bold"
                                                 [readonly]="true"
@@ -213,14 +231,14 @@
                         </mat-accordion>
 
                         <mat-accordion class="flex flex-col mt-1">
-                            <mat-expansion-panel #card
-                                [expanded]="true">
+                            <mat-expansion-panel #card [expanded]="true">
                                 <mat-expansion-panel-header class="bg-primary py-4 px-8 rounded-none">
                                     <mat-panel-title>
                                         <div class="flex flex-1 justify-between items-center gap-2 text-white text-lg">
                                             <!-- <mat-icon [svgIcon]="'heroicons_solid:user-circle'"></mat-icon> -->
                                             <span>Collaborator</span>
-                                            <button mat-button
+                                            <button
+                                                mat-button
                                                 class="flex flex-1 justify-end"
                                                 (click)="openContact(item?.collaborator); $event.stopPropagation()">
                                                 View
@@ -233,7 +251,8 @@
                                     <div class="grid grid-cols-12 gap-2 w-full">
                                         <mat-form-field class="col-span-2">
                                             <mat-label>Code</mat-label>
-                                            <input matInput
+                                            <input
+                                                matInput
                                                 type="text"
                                                 class="font-bold"
                                                 [readonly]="true"
@@ -241,7 +260,8 @@
                                         </mat-form-field>
                                         <mat-form-field class="col-span-10">
                                             <mat-label>Name</mat-label>
-                                            <input matInput
+                                            <input
+                                                matInput
                                                 type="text"
                                                 class="font-bold"
                                                 [readonly]="true"
@@ -253,7 +273,8 @@
                                     <div class="grid grid-cols-12 gap-2 w-full">
                                         <mat-form-field class="col-span-2">
                                             <mat-label>Commission %</mat-label>
-                                            <input matInput
+                                            <input
+                                                matInput
                                                 type="number"
                                                 min="0"
                                                 max="100"
@@ -266,7 +287,8 @@
                                         </mat-form-field>
                                         <mat-form-field class="col-span-2">
                                             <mat-label>Commission Calculated</mat-label>
-                                            <input matInput
+                                            <input
+                                                matInput
                                                 type="text"
                                                 class="font-bold"
                                                 [readonly]="true"
@@ -274,7 +296,8 @@
                                         </mat-form-field>
                                         <mat-form-field class="col-span-2">
                                             <mat-label>Commission</mat-label>
-                                            <input matInput
+                                            <input
+                                                matInput
                                                 type="text"
                                                 class="font-bold"
                                                 [readonly]="true"
@@ -284,7 +307,8 @@
                                     <div class="grid grid-cols-12 gap-2 w-full">
                                         <mat-form-field class="col-span-12">
                                             <mat-label>Commission Note</mat-label>
-                                            <input matInput
+                                            <input
+                                                matInput
                                                 type="text"
                                                 class="font-bold"
                                                 [readonly]="true"
@@ -299,8 +323,7 @@
             </mat-tab>
             <mat-tab>
                 <ng-template mat-tab-label>
-                    <mat-icon class="icon-size-5 mr-2"
-                        [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
+                    <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
                     {{ 'General.Notes' | transloco }}
                 </ng-template>
                 <ng-template matTabContent>
@@ -313,18 +336,22 @@
             </mat-tab>
             <mat-tab>
                 <ng-template mat-tab-label>
-                    <mat-icon class="icon-size-5 mr-2"
-                        [svgIcon]="'heroicons_outline:paper-clip'"></mat-icon>
+                    <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:paper-clip'"></mat-icon>
                     {{ 'General.Attachments' | transloco }}
                 </ng-template>
                 <ng-template matTabContent>
-                    <div class="flex flex-col flex-1 overflow-y-auto">..todo..</div>
+                    <div class="flex flex-col flex-1 overflow-y-auto">
+                        <app-attachments
+                            [entityName]="'Service'"
+                            [entityKey]="item?.id"
+                            [attachments]="attachments"
+                            (onListChanged)="loadAttachments()"></app-attachments>
+                    </div>
                 </ng-template>
             </mat-tab>
             <mat-tab>
                 <ng-template mat-tab-label>
-                    <mat-icon class="icon-size-5 mr-2"
-                        [svgIcon]="'heroicons_outline:code-bracket'"></mat-icon>
+                    <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:code-bracket'"></mat-icon>
                     {{ 'General.Json' | transloco }}
                 </ng-template>
                 <ng-template matTabContent>

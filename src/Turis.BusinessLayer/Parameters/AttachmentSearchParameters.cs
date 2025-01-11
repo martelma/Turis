@@ -7,4 +7,12 @@ public class AttachmentSearchParameters: BaseSearchParameters
 {
 	[FromQuery]
 	public string Pattern { get; set; }
+	[FromQuery]
+	public string EntityName { get; set; }
+	[FromQuery]
+	public string EntityKey { get; set; }
+	[FromQuery]
+	public string Folder{ get; set; }
+	[FromQuery]
+	public string Type{ get; set; }
 }

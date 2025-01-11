@@ -37,6 +37,7 @@ public class ContactModel : BaseModel
 	public decimal PercentageGuida { get; set; }
 	public decimal PercentageAccompagnamento { get; set; }
 	public string Avatar { get; set; }
+	public string DisplayName { get; set; }
 
 	public string FullName
 	{

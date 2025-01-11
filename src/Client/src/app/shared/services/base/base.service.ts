@@ -1,6 +1,5 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { XApplicationIdHeader } from 'app/modules/admin/admin.types';
 import { environment } from 'environments/environment';
 import { replace } from 'lodash';
 import { Observable } from 'rxjs';

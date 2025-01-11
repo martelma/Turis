@@ -13,6 +13,7 @@ export class Contact {
     firstName: string;
     lastName: string;
     fullName: string;
+    displayName: string;
     fiscalCode: string;
     taxCode: string;
     companyName: string;

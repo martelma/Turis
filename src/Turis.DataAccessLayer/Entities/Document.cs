@@ -35,6 +35,7 @@ public class Document : BaseEntity
 	public string SdiValoreTipoPagamento { get; set; }
 	public string SdiCodiceCondizionePagamento { get; set; }
 	public DateTimeOffset? DataScadenzaPagamento { get; set; }
+	public string IdDocumento { get; set; }
 	public string Cig { get; set; }
 	public string Cup { get; set; }
 

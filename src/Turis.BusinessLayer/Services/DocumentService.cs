@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
 using OperationResults;
+using System.Globalization;
 using TinyHelpers.Extensions;
 using Turis.BusinessLayer.Extensions;
 using Turis.BusinessLayer.Parameters;
@@ -17,9 +18,16 @@ namespace Turis.BusinessLayer.Services;
 
 public class DocumentService(ApplicationDbContext dbContext
 	, IUserService userService
+	, IBookmarkService bookmarkService
 	, ILogger<DocumentService> logger) : IDocumentService
 {
 	private readonly DbSet<Document> context = dbContext.Documents;
+
+	private async Task<List<Bookmark>> GetMyBookmarks()
+	{
+		var bookmarks = await bookmarkService.ListAsync(userService.GetUserId(), nameof(Document));
+		return bookmarks;
+	}
 
 	private IIncludableQueryable<Document, Contact> Query()
 	{
@@ -33,31 +41,74 @@ public class DocumentService(ApplicationDbContext dbContext
 
 	public async Task<Result<DocumentModel>> GetAsync(Guid id)
 	{
+		var bookmarks = await bookmarkService.ListAsync(userService.GetUserId(), nameof(Document));
+	
 		var record = await Query()
 			.FirstOrDefaultAsync(x => x.Id == id);
 
 		if (record is null)
 			return Result.Fail(FailureReasons.ItemNotFound);
 
-		return await record.ToModel();
+		return await record.ToModel(bookmarks);
 	}
 
 	public async Task<Result<DocumentModel>> GetAsync(string sectional, int number)
 	{
+		var bookmarks = await bookmarkService.ListAsync(userService.GetUserId(), nameof(Document));
+	
 		var record = await Query()
 			.FirstOrDefaultAsync(x => x.Sectional == sectional && x.Number == number);
 
 		if (record is null)
 			return Result.Fail(FailureReasons.ItemNotFound);
 
-		return await record.ToModel();
+		return await record.ToModel(bookmarks);
 	}
 
 	public async Task<Result<PaginatedList<DocumentModel>>> ListAsync(DocumentSearchParameters parameters)
 	{
+		var bookmarks = await GetMyBookmarks();
+
 		var paginator = new Paginator(parameters);
 
 		var query = Query().AsNoTracking();
+
+		if (parameters.OnlyBookmarks)
+		{
+			var bookmarkIds = bookmarks.Select(x => x.EntityId).ToList();
+			query = query.WhereIf(parameters.OnlyBookmarks, x => bookmarkIds.Contains(x.Id));
+		}
+
+		if (parameters.DocumentType.HasValue())
+		{
+			var documentType = (DocumentType)Enum.Parse(typeof(DocumentType), parameters.DocumentType);
+			query = query.Where(x => x.Type == documentType);
+		}
+
+		if (parameters.Sectional.HasValue())
+		{
+			query = query.Where(x => x.Sectional == parameters.Sectional);
+		}
+
+		if (parameters.NumberFrom > 0)
+		{
+			query = query.Where(x => x.Number >= parameters.NumberFrom);
+		}
+		if (parameters.NumberTo > 0)
+		{
+			query = query.Where(x => x.Number <= parameters.NumberTo);
+		}
+
+		if (parameters.DateFrom.HasValue())
+		{
+			var dateFrom = DateTime.ParseExact(parameters.DateFrom, "yyyyMMdd", CultureInfo.InvariantCulture);
+			query = query.Where(x => x.Date >= dateFrom);
+		}
+		if (parameters.DateTo.HasValue())
+		{
+			var dateTo = DateTime.ParseExact(parameters.DateTo, "yyyyMMdd", CultureInfo.InvariantCulture);
+			query = query.Where(x => x.Date <= dateTo);
+		}
 
 		// Filter by search pattern
 		if (parameters.Pattern.HasValue())
@@ -96,7 +147,7 @@ public class DocumentService(ApplicationDbContext dbContext
 				.Take(paginator.PageSize)
 				.ToList();
 
-			var list = await page.ToModel();
+			var list = await page.ToModel(bookmarks);
 
 			var result = new PaginatedList<DocumentModel>(list, totalCount, paginator.PageIndex, paginator.PageSize);
 
@@ -148,6 +199,7 @@ public class DocumentService(ApplicationDbContext dbContext
 		record.SdiValoreTipoPagamento = model.SdiValoreTipoPagamento;
 		record.SdiCodiceCondizionePagamento = model.SdiCodiceCondizionePagamento;
 		record.DataScadenzaPagamento = model.DataScadenzaPagamento;
+		record.IdDocumento = model.IdDocumento;
 		record.Cig = model.Cig;
 		record.Cup = model.Cup;
 

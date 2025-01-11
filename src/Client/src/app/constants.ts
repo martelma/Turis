@@ -1,6 +1,7 @@
 import { Service } from 'app/modules/service/service.types';
 import { Document } from 'app/modules/document/document.types';
 import { MatDateFormats, MAT_DATE_FORMATS } from '@angular/material/core';
+import { DateFormats } from './shared/services/shared.types';
 
 export const ServiceTypes = [
     { value: '', text: '' },
@@ -53,8 +54,11 @@ export const ContactTypes = [
 
 export const DocumentTypes = [
     { value: '', text: '' },
-    { value: 'FIV', text: 'FIV' },
+    { value: 'N', text: 'N' },
+    { value: 'FEE', text: 'FEE' },
+    { value: 'F', text: 'F' },
     { value: 'FEI', text: 'FEI' },
+    { value: 'FEI2', text: 'FEI2' },
     { value: 'FIVA', text: 'FIVA' },
     { value: 'RIT', text: 'RIT' },
 ];
@@ -81,6 +85,14 @@ export const MY_DATE_FORMATS: MatDateFormats = {
         dateA11yLabel: 'DD/MM/YYYY',
         monthYearA11yLabel: 'MMMM YYYY',
     },
+};
+
+export const UserDateFormats: DateFormats = {
+    date: 'dd/MM/yyyy',
+    dateTime: 'dd/MM/yyyy HH:mm',
+    dateTimeWithSeconds: 'dd/MM/yyyy HH:mm:ss',
+    time: 'HH:mm',
+    timeWithSeconds: 'HH:mm:ss',
 };
 
 export function getStatusColorClass(item: Service) {

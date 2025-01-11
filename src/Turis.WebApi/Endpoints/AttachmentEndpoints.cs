@@ -1,4 +1,6 @@
-﻿using Turis.BusinessLayer.Services.Interfaces;
+﻿using Microsoft.AspNetCore.Mvc;
+using Turis.BusinessLayer.Parameters;
+using Turis.BusinessLayer.Services.Interfaces;
 using Turis.Common.Models;
 
 namespace Turis.WebApi.Endpoints;
@@ -9,17 +11,17 @@ public class AttachmentEndpoints : IEndpointRouteHandlerBuilder
 	{
 		var templateApiGroup = endpoints.MapGroup("/api/attachment");
 
-		templateApiGroup.MapGet("list/{entityName}/{entityKey:guid}", List)
+		templateApiGroup.MapGet("list", List)
 			.Produces<IEnumerable<AttachmentModel>>(StatusCodes.Status200OK)
 			.Produces(StatusCodes.Status404NotFound)
 			.WithOpenApi();
 
-		//templateApiGroup.MapPost("upload", Upload)
-		//	.Produces(StatusCodes.Status200OK)
-		//	.Produces(StatusCodes.Status404NotFound)
-		//	.DisableAntiforgery()
-		//	.Accepts<IFormFile>("multipart/form-data")
-		//	.WithOpenApi();
+		templateApiGroup.MapPost("upload", Upload)
+			.Produces(StatusCodes.Status200OK)
+			.Produces(StatusCodes.Status404NotFound)
+			.DisableAntiforgery()
+			.Accepts<IFormFile>("multipart/form-data")
+			.WithOpenApi();
 
 		templateApiGroup.MapDelete("{id:guid}", Delete)
 			.Produces(StatusCodes.Status404NotFound)
@@ -30,15 +32,15 @@ public class AttachmentEndpoints : IEndpointRouteHandlerBuilder
 			.Produces(StatusCodes.Status204NoContent);
 	}
 
-	private static async Task<IResult> List(string entityName, Guid entityKey, HttpContext httpContext, IAttachmentService service)
-		=> (await service.ListAsync(entityName, entityKey)).ToResponse(httpContext);
+	private static async Task<IResult> List(HttpContext httpContext, IAttachmentService service, [AsParameters] AttachmentSearchParameters parameters)
+		=> (await service.ListAsync(parameters)).ToResponse(httpContext);
 
-	//private static async Task<IResult> Upload(HttpContext httpContext, IAttachmentService service
-	//	, IFormFileCollection files
-	//	, [FromForm(Name = "batchId")] string batchId
-	//	, [FromForm(Name = "entityName")] string entityName
-	//	, [FromForm(Name = "entityKey")] string entityKey)
-	//	=> (await service.Upload(files, batchId.ToGuid())).ToResponse(httpContext);
+	private static async Task<IResult> Upload(HttpContext httpContext, IAttachmentService service
+		, IFormFileCollection files
+		, [FromForm(Name = "entityName")] string entityName
+		, [FromForm(Name = "entityKey")] string entityKey
+		, [FromForm(Name = "folder")] string folder)
+		=> (await service.Upload(files, entityName, entityKey, folder)).ToResponse(httpContext);
 
 	private static async Task<IResult> Delete(HttpContext httpContext, IAttachmentService service, Guid id)
 		=> (await service.DeleteAsync(id)).ToResponse(httpContext);

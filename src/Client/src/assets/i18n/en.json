@@ -24,6 +24,8 @@
         "Client": "Client",
         "Collaborator": "Collaborator",
         "Attachments": "Attachments",
+        "ShowOnlyBookmarked": "Show Only Bookmarked",
+        "ShowAll": "Show All",
         "Json": "Json"
     },
     "Dashboard": {

@@ -1,7 +1,7 @@
 import { Document } from './../document.types';
 import { MatRippleModule } from '@angular/material/core';
 import { CommonModule, DatePipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle } from '@angular/common';
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -19,6 +19,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
 import { DocumentComponent } from '../document.component';
 import { DocumentService } from '../document.service';
+import { trackByFn } from 'app/shared';
 
 @UntilDestroy()
 @Component({
@@ -66,6 +67,8 @@ export class DocumentDetailsComponent implements OnInit {
     userCanDownloadData = true;
     userCanViewDocumentStatistics = true;
 
+    trackByFn = trackByFn;
+
     constructor(
         private _activatedRoute: ActivatedRoute,
         private _router: Router,
@@ -86,7 +89,7 @@ export class DocumentDetailsComponent implements OnInit {
         this._documentService.document$.pipe(untilDestroyed(this)).subscribe((document: Document) => {
             this.document = document;
 
-            console.log('_subscribeDocument - document', this.document)
+            console.log('_subscribeDocument - document', this.document);
 
             this.editMode = document?.id === undefined;
         });

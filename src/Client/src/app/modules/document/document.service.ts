@@ -100,6 +100,7 @@ export class DocumentService extends BaseEntityService<Document> {
                     sdiValoreTipoPagamento: undefined,
                     sdiCodiceCondizionePagamento: undefined,
                     dataScadenzaPagamento: undefined,
+                    idDocumento: undefined,
                     cig: undefined,
                     cup: undefined,
                     bookmarkId: undefined,
@@ -171,6 +172,13 @@ export class DocumentService extends BaseEntityService<Document> {
         httpParams = httpParams.append('pageSize', params?.pageSize ?? 10);
         httpParams = httpParams.append('orderBy', params?.orderBy?.toString() ?? '');
         httpParams = httpParams.append('pattern', params?.pattern ?? '');
+        httpParams = httpParams.append('onlyBookmarks', params?.onlyBookmarks ? 'true' : 'false');
+        httpParams = httpParams.append('documentType', params?.documentType ?? '');
+        httpParams = httpParams.append('sectional', params?.sectional ?? '');
+        httpParams = httpParams.append('numberFrom', params?.numberFrom ?? 0);
+        httpParams = httpParams.append('numberTo', params?.numberTo ?? 0);
+        httpParams = httpParams.append('dateFrom', params?.dateFrom ?? '');
+        httpParams = httpParams.append('dateTo', params?.dateTo ?? '');
         const queryString = httpParams.toString();
 
         const url = `?${queryString}`;

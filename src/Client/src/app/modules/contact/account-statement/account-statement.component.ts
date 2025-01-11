@@ -1,7 +1,17 @@
 import { AccountStatementParameters, Service } from 'app/modules/service/service.types';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { DatePipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewEncapsulation } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectorRef,
+    Component,
+    Input,
+    OnChanges,
+    OnDestroy,
+    OnInit,
+    SimpleChanges,
+    ViewEncapsulation,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -31,7 +41,12 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
-import { getBillingStatusColorClass, getCommissionStatusColorClass, getStatusColorClass, ContactTypes } from 'app/constants';
+import {
+    getBillingStatusColorClass,
+    getCommissionStatusColorClass,
+    getStatusColorClass,
+    ContactTypes,
+} from 'app/constants';
 import { UntypedFormGroup } from '@angular/forms';
 
 @UntilDestroy()
@@ -82,7 +97,6 @@ import { UntypedFormGroup } from '@angular/forms';
     ],
 })
 export class AccountStatementComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
-
     _contactId: string;
 
     @Input()
@@ -97,7 +111,7 @@ export class AccountStatementComponent implements OnInit, AfterViewInit, OnChang
         return this._contactId;
     }
 
-    @Input() contactType : string
+    @Input() contactType: string;
 
     results: PaginatedListResult<Service>;
     list: Service[] = [];
@@ -122,7 +136,7 @@ export class AccountStatementComponent implements OnInit, AfterViewInit, OnChang
         private _matDialog: MatDialog,
         private _changeDetectorRef: ChangeDetectorRef,
         public snackBar: MatSnackBar,
-    ) { }
+    ) {}
 
     ngOnInit(): void {
         this._serviceService.services$.pipe(untilDestroyed(this)).subscribe((results: PaginatedListResult<Service>) => {
@@ -140,15 +154,13 @@ export class AccountStatementComponent implements OnInit, AfterViewInit, OnChang
         });
     }
 
-    ngAfterViewInit(): void {
-    }
+    ngAfterViewInit(): void {}
 
     ngOnChanges(changes: SimpleChanges): void {
         this.contactId = changes.currentValue.currentValue;
     }
 
-    ngOnDestroy(): void {
-    }
+    ngOnDestroy(): void {}
 
     loadAccountStatement() {
         this._serviceService
@@ -158,7 +170,11 @@ export class AccountStatementComponent implements OnInit, AfterViewInit, OnChang
     }
 
     handlePageEvent(event: PageEvent): void {
-        this.accountStatementParameters = { ...this.accountStatementParameters, pageIndex: event.pageIndex, pageSize: event.pageSize };
+        this.accountStatementParameters = {
+            ...this.accountStatementParameters,
+            pageIndex: event.pageIndex,
+            pageSize: event.pageSize,
+        };
 
         this.loadAccountStatement();
     }
@@ -188,4 +204,3 @@ export class AccountStatementComponent implements OnInit, AfterViewInit, OnChang
         this.selectedItemForm.reset();
     }
 }
-

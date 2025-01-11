@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using TinyHelpers.Extensions;
 using Turis.Common.Enums;
 using Turis.DataAccessLayer.Entities.Base;
 
@@ -41,4 +42,16 @@ public class Contact : BaseEntity
 	public string AvatarUrl { get; set; }
 
 	[NotMapped] public string FullName => $"{FirstName} {LastName}";
+
+	[NotMapped]
+	public string DisplayName
+	{
+		get
+		{
+			if (Sex.EqualsIgnoreCase("M") || Sex.EqualsIgnoreCase("F"))
+				return $"{FirstName} {LastName}";
+		
+			return CompanyName;
+		}
+	}
 }

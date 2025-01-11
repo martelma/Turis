@@ -34,6 +34,7 @@ export class Document {
     sdiValoreTipoPagamento: string;
     sdiCodiceCondizionePagamento: string;
     dataScadenzaPagamento: Date;
+    idDocumento: string;
     cig: string;
     cup: string;
 
@@ -45,30 +46,29 @@ export class Document {
 export class DocumentSearchParameters extends BaseSearchParameters {
     pattern?: string;
     onlyBookmarks?: boolean;
-    dateFrom?: string;
-    dateTo?: string;
     documentType?: string;
     sectional?: string;
     numberFrom?: number;
     numberTo?: number;
+    dateFrom?: string;
+    dateTo?: string;
 }
 
-
-export class DocumentItem{
-    documentId : string;
-	document : Document;
-	serviceId : string;
-	service : Service;
-	row : number;
-	code : string;
-	description : string;
-	codiceNatura : string;
-	riferimentoNormativo : string;
-	quantity : number;
-	price : number;
-	discountPercentage : number;
-	rowAmount : number;
-	codiceEsigibilitaIVA :number;
-	vatRate :number;
-	vat :number;
+export class DocumentItem {
+    documentId: string;
+    document: Document;
+    serviceId: string;
+    service: Service;
+    row: number;
+    code: string;
+    description: string;
+    codiceNatura: string;
+    riferimentoNormativo: string;
+    quantity: number;
+    price: number;
+    discountPercentage: number;
+    rowAmount: number;
+    codiceEsigibilitaIVA: number;
+    vatRate: number;
+    vat: number;
 }

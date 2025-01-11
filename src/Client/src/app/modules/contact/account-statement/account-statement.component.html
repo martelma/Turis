@@ -1,13 +1,15 @@
 <!-- Main -->
 <div class="flex flex-auto h-full">
-    <div class="flex flex-col flex-auto h-full overflow-hidden sm:overflow-y-auto"
+    <div
+        class="flex flex-col flex-auto h-full overflow-hidden sm:overflow-y-auto"
         [ngClass]="{
             'sm:mb-18': results?.items?.length > 0
         }">
         <ng-container *ngIf="results?.items?.length > 0; else noService">
             <div class="grid overflow-hidden sm:overflow-y-auto">
                 <!-- Header -->
-                <div class="list-grid z-10 sticky top-0 grid gap-4 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                <div
+                    class="list-grid z-10 sticky top-0 grid gap-4 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
                     <div class="hidden md:block">{{ 'General.Status' | transloco }}</div>
                     <div class="hidden md:block">{{ 'Service.Date' | transloco }}</div>
                     <div class="hidden sm:block">{{ 'Service.Title' | transloco }}</div>
@@ -15,43 +17,35 @@
                     <div class="hidden lg:block">{{ 'Service.DurationType' | transloco }}</div>
                     <div class="hidden lg:block">{{ 'Service.People' | transloco }}</div>
                     <div class="hidden lg:block">{{ 'General.Languages' | transloco }}</div>
-                    <div *ngIf="contactType==='Client'"
-                        class="hidden lg:block">{{ 'General.Collaborator' | transloco }}</div>
-                    <div *ngIf="contactType==='Collaborator'"
-                        class="hidden lg:block">{{ 'General.Client' | transloco }}</div>
+                    <div *ngIf="contactType === 'Client'" class="hidden lg:block">
+                        {{ 'General.Collaborator' | transloco }}
+                    </div>
+                    <div *ngIf="contactType === 'Collaborator'" class="hidden lg:block">
+                        {{ 'General.Client' | transloco }}
+                    </div>
                     <!-- <div class="hidden lg:block"></div> -->
                 </div>
                 <!-- Rows -->
                 <ng-container *ngIf="list">
                     <ng-container *ngFor="let item of results?.items; trackBy: trackByFn">
                         <div class="list-grid grid items-center gap-4 py-3 px-6 md:px-8 border-b">
-
                             <div class="sm:block whitespace-pre-wrap">
-                                <!-- <button class="min-w-10 min-h-7 h-7 px-2 mr-3"
-                                    mat-stroked-button
-                                    (click)="toggleDetails(item)">
-                                    <mat-icon class="icon-size-5"
-                                        [svgIcon]="
-                                        selectedItem?.id === item.id
-                                            ? 'heroicons_outline:chevron-up'
-                                            : 'heroicons_outline:chevron-down'
-                                    "></mat-icon>
-                                </button> -->
-
-                                <span [ngClass]="getStatusColorClass(item)"
+                                <span
+                                    [ngClass]="getStatusColorClass(item)"
                                     class="color-box mr-3"
                                     [matTooltip]="item?.status"></span>
-                                <span [ngClass]="getBillingStatusColorClass(item)"
+                                <span
+                                    [ngClass]="getBillingStatusColorClass(item)"
                                     class="color-box mr-3"
                                     [matTooltip]="item?.billingStatus"></span>
-                                <span [ngClass]="getCommissionStatusColorClass(item)"
+                                <span
+                                    [ngClass]="getCommissionStatusColorClass(item)"
                                     class="color-box"
                                     [matTooltip]="item?.commissionStatus"></span>
                             </div>
 
                             <div class="sm:block whitespace-pre-wrap">
-                                <a [routerLink]="['/service', item?.id]"
-                                    target="_blank">
+                                <a [routerLink]="['/service', item?.id]" target="_blank">
                                     {{ item?.date | date: 'dd/MM/yyyy' }}
                                 </a>
                             </div>
@@ -74,38 +68,29 @@
 
                             <div class="sm:block whitespace-pre-wrap">
                                 <div *ngFor="let lang of item.languages">
-                                    <span [matTooltip]="lang"
+                                    <span
+                                        [matTooltip]="lang"
                                         [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
                                 </div>
                             </div>
 
-                            <div *ngIf="contactType==='Client'"
-                                class="sm:block whitespace-pre-wrap">
-                                <a [routerLink]="['/contact', item?.collaborator?.id]"
-                                    target="_blank">
+                            <div *ngIf="contactType === 'Client'" class="sm:block whitespace-pre-wrap">
+                                <a [routerLink]="['/contact', item?.collaborator?.id]" target="_blank">
                                     {{ item?.collaborator?.fullName }}
                                 </a>
                             </div>
 
-                            <div *ngIf="contactType==='Collaborator'"
-                                class="sm:block whitespace-pre-wrap">
-                                <a [routerLink]="['/contact', item?.client?.id]"
-                                    target="_blank">
+                            <div *ngIf="contactType === 'Collaborator'" class="sm:block whitespace-pre-wrap">
+                                <a [routerLink]="['/contact', item?.client?.id]" target="_blank">
                                     {{ item?.client?.fullName }}
                                 </a>
                             </div>
-
-                            <!-- Details button -->
-                            <!-- <div class="sm:block whitespace-pre-wrap">
-                            </div> -->
                         </div>
                         <!-- Selected Item -->
                         <div class="grid">
                             <ng-container *ngIf="selectedItem?.id === item.id">
-                                <ng-container *ngTemplateOutlet="
-                                        rowDetailsTemplate;
-                                        context: { $implicit: item }
-                                    "></ng-container>
+                                <ng-container
+                                    *ngTemplateOutlet="rowDetailsTemplate; context: { $implicit: item }"></ng-container>
                             </ng-container>
                         </div>
                     </ng-container>
@@ -114,7 +99,8 @@
         </ng-container>
 
         <!-- Paginator -->
-        <mat-paginator class="mt-auto border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+        <mat-paginator
+            class="mt-auto border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
             [ngClass]="{ 'pointer-events-none': itemsLoading }"
             [length]="results?.totalCount ?? 0"
             [pageSize]="accountStatementParameters?.pageSize ?? 10"
@@ -125,18 +111,15 @@
 
         <ng-template #noService>
             <div class="z-100 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
-                <mat-icon class="icon-size-24"
-                    [svgIcon]="'heroicons_outline:circle-stack'"></mat-icon>
+                <mat-icon class="icon-size-24" [svgIcon]="'heroicons_outline:circle-stack'"></mat-icon>
                 <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">There are no service</div>
             </div>
         </ng-template>
 
-        <ng-template #rowDetailsTemplate
-            let-service>
+        <ng-template #rowDetailsTemplate let-service>
             <div class="shadow-lg overflow-hidden">
                 <div class="flex border-b">
-                    <form class="flex flex-col w-full"
-                        [formGroup]="selectedItemForm">
+                    <form class="flex flex-col w-full" [formGroup]="selectedItemForm">
                         <div class="flex flex-col sm:flex-row p-8">
                             <div class="flex flex-auto flex-wrap">
                                 <div class="flex flex-col w-full sm:p-8">
@@ -144,8 +127,7 @@
                                         <!-- PriceCalculated -->
                                         <mat-form-field class="col-span-2">
                                             <mat-label>{{ 'Service.PriceCalculated' | transloco }}</mat-label>
-                                            <input matInput
-                                                [formControlName]="'priceCalculated'" />
+                                            <input matInput [formControlName]="'priceCalculated'" />
                                         </mat-form-field>
                                     </div>
                                 </div>

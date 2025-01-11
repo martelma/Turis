@@ -312,7 +312,13 @@
                     {{ 'General.Attachments' | transloco }}
                 </ng-template>
                 <ng-template matTabContent>
-                    <div class="flex flex-col flex-1 overflow-y-auto">..todo..</div>
+                    <div class="flex flex-col flex-1 overflow-y-auto">
+                        <app-attachments
+                            [entityName]="'Contact'"
+                            [entityKey]="item?.id"
+                            [attachments]="attachments"
+                            (onListChanged)="loadAttachments()"></app-attachments>
+                    </div>
                 </ng-template>
             </mat-tab>
             <mat-tab>
@@ -321,7 +327,10 @@
                     {{ 'Service.ContactAccountStatement' | transloco }}
                 </ng-template>
                 <ng-template matTabContent>
-                    <app-account-statement [contactId]="item?.id" [contactType]="item.contactType" class="h-full w-full"></app-account-statement>
+                    <app-account-statement
+                        [contactId]="item?.id"
+                        [contactType]="item.contactType"
+                        class="h-full w-full"></app-account-statement>
                 </ng-template>
             </mat-tab>
             <mat-tab>

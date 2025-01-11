@@ -70,17 +70,4 @@ public class ServiceModel : BaseModel
 			return "ToBePaid";
 		}
 	}
-
-	/*
-	export const BillingStatusTypes = [
-	   { value: 'CashedIn', text: 'Cashed In', colorClass: 'bg-green-500' },
-	   { value: 'ToBeCashed', text: 'To Be Cashed', colorClass: 'bg-yellow-500' },
-	   { value: 'ToBeInvoiced', text: 'To Be Invoiced', colorClass: 'bg-red-500' },
-	];
-
-	export const CommissionStatusTypes = [
-	   { value: 'Paid', text: 'Paid', colorClass: 'bg-green-500' },
-	   { value: 'ToBePaid', text: 'To Be Paid', colorClass: 'bg-yellow-500' },
-	];
-	*/
 }
