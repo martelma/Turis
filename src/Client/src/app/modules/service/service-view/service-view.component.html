@@ -341,11 +341,7 @@
                 </ng-template>
                 <ng-template matTabContent>
                     <div class="flex flex-col flex-1 overflow-y-auto">
-                        <app-attachments
-                            [entityName]="'Service'"
-                            [entityKey]="item?.id"
-                            [attachments]="attachments"
-                            (onListChanged)="loadAttachments()"></app-attachments>
+                        <app-attachments [entityName]="'Service'" [entityKey]="item?.id"></app-attachments>
                     </div>
                 </ng-template>
             </mat-tab>

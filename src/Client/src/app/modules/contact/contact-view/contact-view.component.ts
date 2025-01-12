@@ -8,15 +8,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { DatePipe, JsonPipe, NgFor, NgIf } from '@angular/common';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { ContactService } from '../contact.service';
 import { Contact } from '../contact.types';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { AccountStatementComponent } from '../account-statement/account-statement.component';
 import { AttachmentsComponent } from 'app/shared/components/attachments/attachments.component';
-import { Attachment, AttachmentSearchParameters } from 'app/shared/components/attachments/attachment.types';
 import { AttachmentService } from 'app/shared/components/attachments/attachment.service';
-import { PaginatedList } from 'app/shared/types/shared.types';
 
 @UntilDestroy()
 @Component({
@@ -50,8 +48,6 @@ export class ContactViewComponent implements OnInit {
     @Input()
     set contact(value: Contact) {
         this.item = value;
-
-        this.loadAttachments();
     }
 
     get contact(): Contact {
@@ -60,8 +56,6 @@ export class ContactViewComponent implements OnInit {
 
     @ViewChild(MatTabGroup) matTabGroup: MatTabGroup;
 
-    attachmentSearchParameters: AttachmentSearchParameters = new AttachmentSearchParameters();
-    attachments: Attachment[] = [];
     form: UntypedFormGroup;
 
     constructor(
@@ -77,34 +71,4 @@ export class ContactViewComponent implements OnInit {
     }
 
     onSelectedTabChange(): void {}
-
-    loadAttachments() {
-        this._changeDetectorRef.reattach();
-        this.loading = true;
-        this._changeDetectorRef.detectChanges();
-
-        this.attachmentSearchParameters.pageIndex = 0;
-        this.attachmentSearchParameters.pageSize = 100;
-        this.attachmentSearchParameters.entityName = 'Contact';
-        this.attachmentSearchParameters.entityKey = this.contact.id;
-
-        this._attachmentService
-            .listEntities(this.attachmentSearchParameters)
-            .pipe(untilDestroyed(this))
-            .subscribe({
-                next: (items: PaginatedList<Attachment>) => {
-                    this.attachments = items.items;
-                    console.log('attachments', this.attachments);
-                },
-                error: error => {
-                    this.loading = false;
-                    console.error(error);
-                    // this._toastr.error(error.detail, 'Error!');
-                },
-            })
-            .add(() => {
-                this.loading = false;
-                this._changeDetectorRef.detectChanges();
-            });
-    }
 }

@@ -145,8 +145,8 @@ export class AttachmentService extends BaseEntityService<Attachment> {
         httpParams = httpParams.append('orderBy', params?.orderBy?.toString() ?? '');
         httpParams = httpParams.append('pattern', params?.pattern ?? '');
         httpParams = httpParams.append('onlyBookmarks', params?.onlyBookmarks ? 'true' : 'false');
-        httpParams = httpParams.append('attachmentName', params?.entityName ?? '');
-        httpParams = httpParams.append('attachmentKey', params?.entityKey ?? '');
+        httpParams = httpParams.append('entityName', params?.entityName ?? '');
+        httpParams = httpParams.append('entityKey', params?.entityKey ?? '');
         httpParams = httpParams.append('folder', params?.folder ?? '');
         httpParams = httpParams.append('type', params?.type ?? '');
         const queryString = httpParams.toString();

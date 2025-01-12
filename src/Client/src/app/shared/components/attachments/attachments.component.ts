@@ -1,4 +1,15 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import {
+    ChangeDetectorRef,
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    OnDestroy,
+    OnInit,
+    Output,
+    SimpleChanges,
+    ViewChild,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
@@ -6,7 +17,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { NgIf, NgClass, NgFor, DecimalPipe, DatePipe, CommonModule } from '@angular/common';
+import { NgIf, NgClass, NgFor, DecimalPipe, DatePipe, CommonModule, NgStyle } from '@angular/common';
 import { UploadFilesComponent } from '../upload-files/upload-files.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,9 +25,11 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { detailExpand } from 'app/shared/animations/detail-expand';
 import { UserDateFormats } from 'app/constants';
-import { Attachment } from './attachment.types';
+import { Attachment, AttachmentSearchParameters } from './attachment.types';
 import { AttachmentService } from './attachment.service';
 import { ConfirmationDialogService } from 'app/shared/services/confirmation-dialog.service';
+import { PaginatedList } from 'app/shared/types/shared.types';
+import { TranslocoModule } from '@ngneat/transloco';
 
 @UntilDestroy()
 @Component({
@@ -26,6 +39,8 @@ import { ConfirmationDialogService } from 'app/shared/services/confirmation-dial
     standalone: true,
     imports: [
         NgIf,
+        NgFor,
+        NgStyle,
         CommonModule,
         NgClass,
         MatIconModule,
@@ -38,15 +53,18 @@ import { ConfirmationDialogService } from 'app/shared/services/confirmation-dial
         MatPaginatorModule,
         MatDividerModule,
         MatSortModule,
-        NgFor,
         MatTooltipModule,
         DecimalPipe,
         DatePipe,
         UploadFilesComponent,
+        TranslocoModule,
     ],
 })
-export class AttachmentsComponent implements OnInit, OnDestroy {
+export class AttachmentsComponent implements OnInit, OnChanges, OnDestroy {
+    @ViewChild('matPaginator') paginator!: MatPaginator;
+    @ViewChild('matSort') sort!: MatSort;
     @ViewChild('appUploadFile') appUploadFile: UploadFilesComponent;
+
     loading = false;
     waiting = false;
     uploadMode = false;
@@ -54,27 +72,26 @@ export class AttachmentsComponent implements OnInit, OnDestroy {
     selectedAttachment: any;
     displayedColumns: string[] = ['row', 'originalFileName', 'user', 'timeStamp', 'tools'];
     dataSource: MatTableDataSource<Attachment>;
-    @ViewChild('matPaginator') matPaginator!: MatPaginator;
-    @ViewChild('matSort') matSort!: MatSort;
 
-    _attachments: Attachment[] = [];
+    attachmentSearchParameters: AttachmentSearchParameters = new AttachmentSearchParameters();
+    attachments: Attachment[] = [];
 
     @Input() entityName: string;
     @Input() entityKey: string;
     @Input() folder: string;
 
-    @Input()
-    set attachments(items: any) {
-        this._attachments = items;
+    // @Input()
+    // set attachments(items: any) {
+    //     this._attachments = items;
 
-        this.dataSource = new MatTableDataSource(this._attachments ?? []);
+    //     this.dataSource = new MatTableDataSource(this._attachments ?? []);
 
-        setTimeout(() => (this.dataSource.paginator = items));
-        setTimeout(() => (this.dataSource.sort = items));
-    }
-    get attachments(): Attachment[] {
-        return this._attachments;
-    }
+    //     setTimeout(() => (this.dataSource.paginator = items));
+    //     setTimeout(() => (this.dataSource.sort = items));
+    // }
+    // get attachments(): Attachment[] {
+    //     return this._attachments;
+    // }
 
     @Output() onListChanged = new EventEmitter<void>();
 
@@ -86,14 +103,59 @@ export class AttachmentsComponent implements OnInit, OnDestroy {
 
     constructor(
         private _attachmentService: AttachmentService,
+        private _changeDetectorRef: ChangeDetectorRef,
         private _confirmationDialogService: ConfirmationDialogService,
     ) {}
 
     ngOnInit(): void {}
 
+    ngOnChanges(changes: SimpleChanges): void {
+        this.loadAttachments();
+    }
+
     ngOnDestroy(): void {}
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    loadAttachments() {
+        this._changeDetectorRef.reattach();
+        this.loading = true;
+        this.setAttachments([]);
+        this._changeDetectorRef.detectChanges();
+
+        this.attachmentSearchParameters.pageIndex = 0;
+        this.attachmentSearchParameters.pageSize = 100;
+        this.attachmentSearchParameters.entityName = this.entityName;
+        this.attachmentSearchParameters.entityKey = this.entityKey;
+
+        this._attachmentService
+            .listEntities(this.attachmentSearchParameters)
+            .pipe(untilDestroyed(this))
+            .subscribe({
+                next: (items: PaginatedList<Attachment>) => {
+                    this.setAttachments(items.items);
+                },
+                error: error => {
+                    this.loading = false;
+                    console.error(error);
+                    // this._toastr.error(error.detail, 'Error!');
+                },
+            })
+            .add(() => {
+                this.loading = false;
+                this._changeDetectorRef.detectChanges();
+            });
+    }
+
+    setAttachments(attachments: Attachment[]) {
+        this.attachments = attachments;
+
+        this.dataSource = new MatTableDataSource(this.attachments ?? []);
+
+        setTimeout(() => (this.dataSource.paginator = this.paginator));
+        setTimeout(() => (this.dataSource.sort = this.sort));
+
+        console.log('attachments', this.attachments);
+    }
+
     uploadFiles(files: any[]): void {
         this.uploadMode = false;
         this.waiting = true;

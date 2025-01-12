@@ -113,6 +113,9 @@
         "Checked": "Checked",
         "ToBeCheck": "To Be Check"
     },
+    "Attachment": {
+        "Empty": "Nessun allegato disponibile"
+    },
     "PriceList": {
         "Code": "Code",
         "Name": "Name"
