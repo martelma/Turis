@@ -35,8 +35,7 @@ public class AttachmentEndpoints : IEndpointRouteHandlerBuilder
 	private static async Task<IResult> List(HttpContext httpContext, IAttachmentService service, [AsParameters] AttachmentSearchParameters parameters)
 		=> (await service.ListAsync(parameters)).ToResponse(httpContext);
 
-	private static async Task<IResult> Upload(HttpContext httpContext, IAttachmentService service
-		, IFormFileCollection files
+	private static async Task<IResult> Upload(HttpContext httpContext, IAttachmentService service, IFormFileCollection files
 		, [FromForm(Name = "entityName")] string entityName
 		, [FromForm(Name = "entityKey")] string entityKey
 		, [FromForm(Name = "folder")] string folder)

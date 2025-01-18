@@ -91,16 +91,36 @@ public class AttachmentService(ApplicationDbContext dbContext
 		{
 			switch (parameters.OrderBy)
 			{
-				//case $"{nameof(Attachment.Name)}Asc":
-				//	{
-				//		query = query.OrderBy(x => x.Name);
-				//		break;
-				//	}
-				//case $"{nameof(Attachment.Name)}Desc":
-				//	{
-				//		query = query.OrderByDescending(x => x.Name);
-				//		break;
-				//	}
+				case $"{nameof(Attachment.TimeStamp)}Asc":
+					{
+						query = query.OrderBy(x => x.TimeStamp);
+						break;
+					}
+				case $"{nameof(Attachment.TimeStamp)}Desc":
+					{
+						query = query.OrderByDescending(x => x.TimeStamp);
+						break;
+					}
+				case $"{nameof(Attachment.OriginalFileName)}Asc":
+					{
+						query = query.OrderBy(x => x.OriginalFileName);
+						break;
+					}
+				case $"{nameof(Attachment.OriginalFileName)}Desc":
+					{
+						query = query.OrderByDescending(x => x.OriginalFileName);
+						break;
+					}
+				case $"{nameof(Attachment.Type)}Asc":
+					{
+						query = query.OrderBy(x => x.Type);
+						break;
+					}
+				case $"{nameof(Attachment.Type)}Desc":
+					{
+						query = query.OrderByDescending(x => x.Type);
+						break;
+					}
 			}
 		}
 		else

@@ -1,5 +1,5 @@
 <div class="flex flex-col flex-auto overflow-y-auto lg:overflow-hidden bg-card dark:bg-default">
-    <ng-container *ngIf="service; else selectServiceToView">
+    <ng-container *ngIf="journalEntry; else selectJournalEntryToView">
         <!-- Header -->
         <div class="z-10 relative flex flex-col flex-0 w-full border-b">
             <!-- Toolbar -->
@@ -13,8 +13,8 @@
                 <ng-container *ngIf="!editMode">
                     <div class="flex flex-1 justify-between items-center">
                         <div class="flex space-x-2">
-                            <!-- Edit Service -->
-                            <button *ngIf="userCanUpdateService" mat-flat-button color="primary" (click)="edit()">
+                            <!-- Edit JournalEntry -->
+                            <button *ngIf="userCanUpdateJournalEntry" mat-flat-button color="primary" (click)="edit()">
                                 <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
                                 <span>{{ 'General.Edit' | transloco }}</span>
                             </button>
@@ -33,11 +33,11 @@
                             <mat-icon [svgIcon]="'heroicons_outline:ellipsis-vertical'"></mat-icon>
                         </button>
                         <mat-menu #mailMenu="matMenu">
-                            <button mat-menu-item (click)="menuItem1(service)">
+                            <button mat-menu-item (click)="menuItem1(journalEntry)">
                                 <mat-icon [svgIcon]="'heroicons_outline:envelope-open'"></mat-icon>
                                 <span>Menu Item 1</span>
                             </button>
-                            <button mat-menu-item (click)="menuItem1(service)">
+                            <button mat-menu-item (click)="menuItem1(journalEntry)">
                                 <mat-icon [svgIcon]="'heroicons_outline:envelope'"></mat-icon>
                                 <span>Menu Item 2</span>
                             </button>
@@ -47,69 +47,57 @@
 
                 <!-- Edit Mode -->
                 <ng-container *ngIf="editMode">
-                    <!-- Cancel Edit Service -->
+                    <!-- Cancel Edit JournalEntry -->
                     <button mat-stroked-button (click)="cancel()">
                         <span>{{ 'General.Cancel' | transloco }}</span>
                     </button>
 
-                    <!-- Save Service -->
+                    <!-- Save JournalEntry -->
                     <button
-                        *ngIf="userCanUpdateService"
+                        *ngIf="userCanUpdateJournalEntry"
                         mat-flat-button
                         color="primary"
                         (click)="save()"
-                        [disabled]="!editService?.changed">
+                        [disabled]="!editJournalEntry?.changed">
                         <span>{{ 'General.Save' | transloco }}</span>
                     </button>
                 </ng-container>
             </div>
 
             <ng-container *ngIf="!editMode">
-                <!-- Service Info -->
+                <!-- JournalEntry Info -->
                 <div class="flex flex-wrap items-center py-4 px-6">
                     <div class="relative flex flex-auto flex-col text-2xl">
                         <div class="flex justify-between mb-4">
                             <div class="flex flex-1 items-center space-x-2 z-10">
                                 <mat-icon
-                                    (click)="handleBookmark(service)"
+                                    (click)="handleBookmark(journalEntry)"
                                     class="icon-size-2"
-                                    [ngClass]="service.bookmarkId ? 'text-yellow-500' : ''"
-                                    [svgIcon]="service.bookmarkId ? 'heroicons_solid:star' : 'heroicons_outline:star'"
+                                    [ngClass]="journalEntry.bookmarkId ? 'text-yellow-500' : ''"
+                                    [svgIcon]="
+                                        journalEntry.bookmarkId ? 'heroicons_solid:star' : 'heroicons_outline:star'
+                                    "
                                     [matTooltip]="
-                                        (service.bookmarkId ? 'General.RemoveBookmark' : 'General.MarkAsBookmark')
+                                        (journalEntry.bookmarkId ? 'General.RemoveBookmark' : 'General.MarkAsBookmark')
                                             | transloco
                                     "></mat-icon>
 
                                 <mat-icon
-                                    (click)="handleCheck(service)"
+                                    (click)="handleCheck(journalEntry)"
                                     class="icon-size-2"
-                                    [ngClass]="service.checked ? 'text-green-500' : ''"
+                                    [ngClass]="journalEntry.checked ? 'text-green-500' : ''"
                                     [svgIcon]="
-                                        service.checked
+                                        journalEntry.checked
                                             ? 'heroicons_solid:check-circle'
                                             : 'heroicons_outline:check-circle'
                                     "
                                     [matTooltip]="
-                                        (service.checked ? 'Service.Checked' : 'Service.ToBeCheck') | transloco
+                                        (journalEntry.checked ? 'JournalEntry.Checked' : 'JournalEntry.ToBeCheck')
+                                            | transloco
                                     "></mat-icon>
 
-                                <span class="">[{{ service.code }}] - {{ service.title }}</span>
+                                <span class="">[{{ journalEntry.code }}] - {{ journalEntry.title }}</span>
                             </div>
-                            <!-- <div class="flex flex-1 w-full space-x-2 z-10" style="justify-content: end">
-                                <mat-icon
-                                    (click)="handleCheck(service)"
-                                    class="icon-size-2"
-                                    [ngClass]="service.checked ? 'text-green-500' : ''"
-                                    [svgIcon]="
-                                        service.checked
-                                            ? 'heroicons_solid:check-circle'
-                                            : 'heroicons_outline:check-circle'
-                                    "
-                                    [matTooltip]="
-                                        (service.checked ? 'Service.Checked' : 'Service.ToBeCheck')
-                                            | transloco
-                                    "></mat-icon>
-                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -119,21 +107,27 @@
         <!-- View Mode -->
         <ng-container *ngIf="!editMode">
             <!-- not edit mode -->
-            <app-service-view #viewService class="flex flex-1" [service]="service"></app-service-view>
+            <app-journalEntry-view
+                #viewJournalEntry
+                class="flex flex-1"
+                [journalEntry]="journalEntry"></app-journalEntry-view>
         </ng-container>
 
         <!-- Edit Mode -->
         <ng-container *ngIf="editMode">
             <!-- edit mode -->
-            <app-service-edit #editService class="flex flex-1" [service]="service"></app-service-edit>
+            <app-journalEntry-edit
+                #editJournalEntry
+                class="flex flex-1"
+                [journalEntry]="journalEntry"></app-journalEntry-edit>
         </ng-container>
     </ng-container>
 
-    <!-- Select service to view template -->
-    <ng-template #selectServiceToView>
+    <!-- Select journalEntry to view template -->
+    <ng-template #selectJournalEntryToView>
         <div class="flex flex-col flex-auto items-center justify-center bg-gray-100 dark:bg-transparent">
             <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">
-                {{ 'Service.SelectAService' | transloco }}
+                {{ 'JournalEntry.SelectAJournalEntry' | transloco }}
             </div>
         </div>
     </ng-template>

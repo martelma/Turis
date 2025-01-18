@@ -86,6 +86,7 @@ export const appRoutes: Route[] = [
             { path: 'service', loadChildren: () => import('app/modules/service/service.routes') },
             { path: 'contact', loadChildren: () => import('app/modules/contact/contact.routes') },
             { path: 'document', loadChildren: () => import('app/modules/document/document.routes') },
+            { path: 'journal-entry', loadChildren: () => import('app/modules/journal-entry/journal-entry.routes') },
             {
                 path: 'profile',
                 loadChildren: () => import('app/modules/admin/users/profile/profile.routes'),

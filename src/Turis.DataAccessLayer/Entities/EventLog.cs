@@ -7,7 +7,7 @@ public class EventLog : BaseEntity
 {
     public Guid UserId { get; set; }
     public ApplicationUser User { get; set; }
-    public DateTime TimeStampe { get; set; }
+    public DateTimeOffset TimeStampe { get; set; }
     public Guid EntityId { get; set; }
     public string EntityName { get; set; }
     public string EventName { get; set; }

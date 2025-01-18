@@ -18,6 +18,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 	public DbSet<Document> Documents { get; set; }
 	public DbSet<DocumentItem> DocumentItems { get; set; }
 	public DbSet<Attachment> Attachments { get; set; }
+	public DbSet<JournalEntry> JournalEntries { get; set; }
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{

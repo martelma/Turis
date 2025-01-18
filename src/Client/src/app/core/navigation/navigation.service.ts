@@ -96,6 +96,13 @@ export class NavigationService {
                     link: '/document',
                 },
                 {
+                    id: 'journal-entry',
+                    title: 'Navigation.JournalEntry',
+                    type: 'basic',
+                    icon: 'heroicons_outline:currency-euro',
+                    link: '/journal-entry',
+                },
+                {
                     id: 'configuration',
                     title: 'Navigation.Configuration',
                     type: 'collapsable',

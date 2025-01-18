@@ -1,4 +1,3 @@
-import { Document } from './../document.types';
 import { MatRippleModule } from '@angular/material/core';
 import { CommonModule, DatePipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle } from '@angular/common';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
@@ -17,15 +16,16 @@ import { tap } from 'rxjs';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
-import { DocumentComponent } from '../document.component';
-import { DocumentService } from '../document.service';
+import { JournalEntryComponent } from '../journal-entry.component';
 import { trackByFn } from 'app/shared';
-import { DocumentViewComponent } from '../document-view/document-view.component';
+import { JournalEntry } from '../journal-entry.types';
+import { JournalEntryViewComponent } from '../journal-entry-view/journal-entry-view.component';
+import { JournalEntryService } from '../journal-entry.service';
 
 @UntilDestroy()
 @Component({
-    selector: 'app-document-details',
-    templateUrl: './document-details.component.html',
+    selector: 'app-journal-entry-details',
+    templateUrl: './journal-entry-details.component.html',
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations,
     standalone: true,
@@ -49,10 +49,10 @@ import { DocumentViewComponent } from '../document-view/document-view.component'
         FuseScrollResetDirective,
         TranslocoModule,
         SpinnerButtonComponent,
-        DocumentViewComponent,
+        JournalEntryViewComponent,
     ],
 })
-export class DocumentDetailsComponent implements OnInit {
+export class JournalEntryDetailsComponent implements OnInit {
     editMode = false;
     isCreate = false;
     isCopy = false;
@@ -60,14 +60,14 @@ export class DocumentDetailsComponent implements OnInit {
     downloadingData = false;
     validating = false;
 
-    document: Document;
+    journalEntry: JournalEntry;
 
     //queste devono diventare scope
-    userCanDeleteDocument = true;
-    userCanUpdateDocument = true;
-    userCanValidateDocument = true;
+    userCanDeleteJournalEntry = true;
+    userCanUpdateJournalEntry = true;
+    userCanValidateJournalEntry = true;
     userCanDownloadData = true;
-    userCanViewDocumentStatistics = true;
+    userCanViewJournalEntriestatistics = true;
 
     trackByFn = trackByFn;
 
@@ -76,41 +76,43 @@ export class DocumentDetailsComponent implements OnInit {
         private _router: Router,
         private _translocoService: TranslocoService,
         private _bookmarkService: BookmarkService,
-        private _documentService: DocumentService,
+        private _journalEntryService: JournalEntryService,
         public snackBar: MatSnackBar,
 
-        public documentComponent: DocumentComponent,
+        public journalEntriesComponent: JournalEntryComponent,
     ) {}
 
     ngOnInit(): void {
         this._subscribeRouteParams();
-        this._subscribeDocument();
-        this._subscribeDocumentEdited();
+        this._subscribeJournalEntry();
+        this._subscribeJournalEntryEdited();
     }
 
-    private _subscribeDocument() {
-        this._documentService.document$.pipe(untilDestroyed(this)).subscribe((document: Document) => {
-            this.document = document;
+    private _subscribeJournalEntry() {
+        this._journalEntryService.journalEntry$.pipe(untilDestroyed(this)).subscribe((journalEntry: JournalEntry) => {
+            this.journalEntry = journalEntry;
 
-            console.log('_subscribeDocument - document', this.document);
+            console.log('_subscribeJournalEntry - journalEntries', this.journalEntry);
 
-            this.editMode = document?.id === undefined;
+            this.editMode = journalEntry?.id === undefined;
         });
     }
 
-    private _subscribeDocumentEdited(): void {
-        this._documentService.documentEdited$.pipe(untilDestroyed(this)).subscribe((documentId: string) => {
-            if (documentId != null) {
-                this._documentService
-                    .getById(documentId)
-                    .pipe(untilDestroyed(this))
-                    .subscribe(() => {
-                        this.editMode = true;
-                    });
-            } else {
-                this.editMode = this.document.id === undefined;
-            }
-        });
+    private _subscribeJournalEntryEdited(): void {
+        this._journalEntryService.journalEntryEdited$
+            .pipe(untilDestroyed(this))
+            .subscribe((journalEntriesId: string) => {
+                if (journalEntriesId != null) {
+                    this._journalEntryService
+                        .getById(journalEntriesId)
+                        .pipe(untilDestroyed(this))
+                        .subscribe(() => {
+                            this.editMode = true;
+                        });
+                } else {
+                    this.editMode = this.journalEntry.id === undefined;
+                }
+            });
     }
 
     private _subscribeRouteParams() {
@@ -126,13 +128,13 @@ export class DocumentDetailsComponent implements OnInit {
     }
 
     // save(): void {
-    //     this._documentService
-    //         .update(this.document)
+    //     this._journalEntriesService
+    //         .update(this.journalEntries)
     //         .pipe(untilDestroyed(this))
     //         .subscribe(() => {
     //             this._refresh();
 
-    //             // this._documentService.editService(null);
+    //             // this._journalEntriesService.editService(null);
     //         });
     // }
 
@@ -146,12 +148,12 @@ export class DocumentDetailsComponent implements OnInit {
         );
 
         // Refresh the service information
-        if (this.document?.id) {
-            this._documentService.getById(this.document?.id).pipe(untilDestroyed(this)).subscribe();
+        if (this.journalEntry?.id) {
+            this._journalEntryService.getById(this.journalEntry?.id).pipe(untilDestroyed(this)).subscribe();
         }
 
         // Refresh the list of service
-        this._documentService
+        this._journalEntryService
             .listEntities()
             .pipe(untilDestroyed(this))
             .subscribe(() => {
@@ -161,37 +163,37 @@ export class DocumentDetailsComponent implements OnInit {
             });
     }
 
-    handleBookmark(document: Document): void {
-        if (document.bookmarkId) {
+    handleBookmark(journalEntries: JournalEntry): void {
+        if (journalEntries.bookmarkId) {
             this._bookmarkService
-                .delete(document.bookmarkId)
+                .delete(journalEntries.bookmarkId)
                 .pipe(untilDestroyed(this))
                 .subscribe(() => {
                     // Refresh the selected service
-                    this._documentService.getById(document.id).pipe(untilDestroyed(this)).subscribe();
+                    this._journalEntryService.getById(journalEntries.id).pipe(untilDestroyed(this)).subscribe();
                 });
         } else {
             this._bookmarkService
                 .create({
-                    entityName: 'Document',
-                    entityId: document.id,
+                    entityName: 'JournalEntry',
+                    entityId: journalEntries.id,
                 })
                 .pipe(untilDestroyed(this))
                 .subscribe(() => {
                     // Refresh the selected service
-                    this._documentService.getById(document.id).pipe(untilDestroyed(this)).subscribe();
+                    this._journalEntryService.getById(journalEntries.id).pipe(untilDestroyed(this)).subscribe();
                 });
         }
     }
 
     edit(): void {
-        this._documentService.editDocument(this.document.id);
+        this._journalEntryService.editJournalEntry(this.journalEntry.id);
     }
 
     cancel(): void {
-        this._documentService.editDocument(null);
+        this._journalEntryService.editJournalEntry(null);
 
-        if (this.document?.id === undefined) {
+        if (this.journalEntry?.id === undefined) {
             this._router.navigate(['../'], { relativeTo: this._activatedRoute });
         }
     }

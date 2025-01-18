@@ -115,7 +115,7 @@ public class DocumentService(ApplicationDbContext dbContext
 			foreach (var itemPattern in parameters.Pattern.Split(' '))
 			{
 				query = query.Where(x =>
-					(x.Sectional != null && x.Sectional.Equals(itemPattern)));
+					(x.Sectional != null && x.Sectional.Contains(itemPattern)));
 			}
 
 		var totalCount = await query.CountAsync();

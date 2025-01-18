@@ -1,3 +1,4 @@
+import { JournalEntry, JournalEntrySearchParameters } from './../journal-entry.types';
 import {
     CommonModule,
     CurrencyPipe,
@@ -36,29 +37,19 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { trackByFn } from 'app/shared';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { SearchInputComponent } from 'app/shared/components/ui/search-input/search-input.component';
-import { Document, DocumentSearchParameters } from '../document.types';
 import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
-import {
-    DurationTypes,
-    getDocumentStatusColorClass,
-    getStatusColorClass,
-    getStatusText,
-    ServiceTypes,
-    StatusTypes,
-} from 'app/constants';
-import { ServiceService } from 'app/modules/service/service.service';
-import { DocumentService } from '../document.service';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
-import { DocumentComponent } from '../document.component';
+import { JournalEntryComponent } from '../journal-entry.component';
+import { JournalEntryService } from '../journal-entry.service';
 
 @UntilDestroy()
 @Component({
-    selector: 'app-document-list',
-    templateUrl: './document-list.component.html',
-    styleUrls: ['./document-list.component.scss'],
+    selector: 'app-journal-entry-list',
+    templateUrl: './journal-entry-list.component.html',
+    styleUrls: ['./journal-entry-list.component.scss'],
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations,
     standalone: true,
@@ -94,7 +85,7 @@ import { DocumentComponent } from '../document.component';
         SearchInputComponent,
     ],
 })
-export class DocumentListComponent implements OnInit, AfterViewInit {
+export class JournalEntryListComponent implements OnInit, AfterViewInit {
     @ViewChild('serviceList') serviceList: ElementRef;
 
     drawerFilterMode: 'over' | 'side' = 'side';
@@ -103,59 +94,53 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
     @ViewChild(MatSort) private _sort: MatSort;
 
-    statusTypes = StatusTypes;
     flashMessage: 'success' | 'error' | null = null;
 
-    results: PaginatedListResult<Document>;
-    list: Document[] = [];
+    results: PaginatedListResult<JournalEntry>;
+    list: JournalEntry[] = [];
     itemsLoading = false;
-    documentParameters: DocumentSearchParameters;
+    journalEntryParameters: JournalEntrySearchParameters;
 
     activeLang: string;
-    selectedItem: Document;
-
-    serviceTypes = ServiceTypes;
-    durationTypes = DurationTypes;
+    selectedItem: JournalEntry;
 
     trackByFn = trackByFn;
-    getStatusColorClass = getStatusColorClass;
-    getStatusText = getStatusText;
-    getDocumentStatusColorClass = getDocumentStatusColorClass;
 
     constructor(
         private _router: Router,
         private _activatedRoute: ActivatedRoute,
         private _changeDetectorRef: ChangeDetectorRef,
-        private _serviceService: ServiceService,
-        private _documentService: DocumentService,
+        private _journalEntryService: JournalEntryService,
         private _bookmarkService: BookmarkService,
         private _translocoService: TranslocoService,
         private _userSettingsService: UserSettingsService,
 
-        public documentComponent: DocumentComponent,
+        public journalEntryComponent: JournalEntryComponent,
     ) {}
 
     ngOnInit(): void {
         this.activeLang = this._translocoService.getActiveLang();
 
-        // Document
-        this._documentService.documents$
+        // JournalEntry
+        this._journalEntryService.journalEntries$
             .pipe(untilDestroyed(this))
-            .subscribe((results: PaginatedListResult<Document>) => {
+            .subscribe((results: PaginatedListResult<JournalEntry>) => {
                 this.results = results;
                 this.list = results?.items;
             });
 
-        // Document loading
-        this._documentService.documentsLoading$.pipe(untilDestroyed(this)).subscribe((documentsLoadin: boolean) => {
-            this.itemsLoading = documentsLoadin;
-        });
+        // JournalEntry loading
+        this._journalEntryService.journalEntriesLoading$
+            .pipe(untilDestroyed(this))
+            .subscribe((journalEntriesLoading: boolean) => {
+                this.itemsLoading = journalEntriesLoading;
+            });
 
         // Service parameters
-        this._documentService.documentParameters$
+        this._journalEntryService.journalEntryParameters$
             .pipe(untilDestroyed(this))
-            .subscribe((documentParameters: DocumentSearchParameters) => {
-                this.documentParameters = documentParameters;
+            .subscribe((journalEntryParameters: JournalEntrySearchParameters) => {
+                this.journalEntryParameters = journalEntryParameters;
             });
 
         // Subscribe to service changes
@@ -164,7 +149,7 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
             this.activeLang = activeLang;
         });
 
-        this._subscribeDocumentParameters();
+        this._subscribeJournalEntryParameters();
     }
 
     ngAfterViewInit(): void {
@@ -191,42 +176,42 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
         this._list();
     }
 
-    private _subscribeDocumentParameters(): void {
-        this._documentService.documentParameters$
+    private _subscribeJournalEntryParameters(): void {
+        this._journalEntryService.journalEntryParameters$
             .pipe(untilDestroyed(this))
-            .subscribe((documentParameters: DocumentSearchParameters) => {
-                this.documentParameters = documentParameters;
+            .subscribe((journalEntryParameters: JournalEntrySearchParameters) => {
+                this.journalEntryParameters = journalEntryParameters;
             });
     }
 
-    createDocument(): void {
-        console.log('createDocument');
+    createJournalEntry(): void {
+        console.log('createJournalEntry');
         this._router.navigate(['./', 'new'], { relativeTo: this._activatedRoute });
     }
 
     toggleBookmarks(): void {
         this._search({
-            onlyBookmarks: !this.documentParameters.onlyBookmarks,
+            onlyBookmarks: !this.journalEntryParameters.onlyBookmarks,
             pageIndex: 0,
             pageSize: this._paginator.pageSize,
         });
     }
 
-    private _search(documentParameters: DocumentSearchParameters): void {
-        this._documentService
-            .listEntities({ ...this.documentParameters, ...documentParameters })
+    private _search(journalEntryParameters: JournalEntrySearchParameters): void {
+        this._journalEntryService
+            .listEntities({ ...this.journalEntryParameters, ...journalEntryParameters })
             .pipe(untilDestroyed(this))
             .subscribe();
     }
 
-    handleBookmark(document: Document): void {
-        if (document.bookmarkId) {
+    handleBookmark(journalEntries: JournalEntry): void {
+        if (journalEntries.bookmarkId) {
             this._bookmarkService
-                .delete(document.bookmarkId)
+                .delete(journalEntries.bookmarkId)
                 .pipe(untilDestroyed(this))
                 .subscribe(() => {
                     // Refresh the selected service
-                    this._documentService.getById(document.id).pipe(untilDestroyed(this)).subscribe();
+                    this._journalEntryService.getById(journalEntries.id).pipe(untilDestroyed(this)).subscribe();
 
                     // Refresh the list
                     this._search({});
@@ -234,13 +219,13 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
         } else {
             this._bookmarkService
                 .create({
-                    entityName: 'Document',
-                    entityId: document.id,
+                    entityName: 'JournalEntry',
+                    entityId: journalEntries.id,
                 })
                 .pipe(untilDestroyed(this))
                 .subscribe(() => {
                     // Refresh the selected service
-                    this._documentService.getById(document.id).pipe(untilDestroyed(this)).subscribe();
+                    this._journalEntryService.getById(journalEntries.id).pipe(untilDestroyed(this)).subscribe();
 
                     // Refresh the list
                     this._search({});
@@ -248,27 +233,31 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
         }
     }
 
-    onItemSelected(document: Document): void {
-        this.selectedItem = document;
+    onItemSelected(journalEntries: JournalEntry): void {
+        this.selectedItem = journalEntries;
 
         console.log('selectedItem', this.selectedItem);
     }
 
     handlePageEvent(event: PageEvent): void {
-        this.documentParameters = { ...this.documentParameters, pageIndex: event.pageIndex, pageSize: event.pageSize };
+        this.journalEntryParameters = {
+            ...this.journalEntryParameters,
+            pageIndex: event.pageIndex,
+            pageSize: event.pageSize,
+        };
 
         this._list();
     }
 
     private _list(): void {
-        this._documentService
-            .listEntities({ ...this.documentParameters })
+        this._journalEntryService
+            .listEntities({ ...this.journalEntryParameters })
             .pipe(untilDestroyed(this))
             .subscribe();
     }
 
     filter(value: string): void {
-        this.documentParameters = { pattern: value };
+        this.journalEntryParameters = { pattern: value };
         this._list();
     }
 

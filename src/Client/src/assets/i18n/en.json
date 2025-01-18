@@ -1,4 +1,24 @@
 {
+    "Navigation": {
+        "Home": "Home",
+        "Admin": "Admin",
+        "Elmah": "Elmah",
+        "Swagger": "Swagger",
+        "Hangfire": "Hangfire",
+        "Users": "Users",
+        "Console": "Console",
+        "Configuration": "Configuration",
+        "TipiPagamenti": "Tipi Pagamenti",
+        "Languages": "Lingue",
+        "AliquoteIva": "Aliquote Iva",
+        "PriceList": "Price List",
+        "Calendar": "Calendar",
+        "Service": "Service",
+        "Contact": "Contact",
+        "Document": "Document",
+        "JournalEntry": "Journal Entry",
+        "Back": "Back"
+    },
     "General": {
         "RemoveBookmark": "Remove Bookmark",
         "MarkAsBookmark": "Mark As Bookmark",
@@ -60,25 +80,8 @@
         "Code": "Code",
         "Name": "Name"
     },
-    "Document": {},
-    "Navigation": {
-        "Home": "Home",
-        "Admin": "Admin",
-        "Elmah": "Elmah",
-        "Swagger": "Swagger",
-        "Hangfire": "Hangfire",
-        "Users": "Users",
-        "Console": "Console",
-        "Configuration": "Configuration",
-        "TipiPagamenti": "Tipi Pagamenti",
-        "Languages": "Lingue",
-        "AliquoteIva": "Aliquote Iva",
-        "PriceList": "Price List",
-        "Calendar": "Calendar",
-        "Service": "Service",
-        "Contact": "Contact",
-        "Document": "Document",
-        "Back": "Back"
+    "Document": {
+        "SelectADocument": "Select a document"
     },
     "Languages": {
         "Code": "Code",

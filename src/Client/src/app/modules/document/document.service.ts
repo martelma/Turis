@@ -9,6 +9,7 @@ import { emptyGuid, PaginatedListResult } from 'app/shared/services/shared.types
 export class DocumentService extends BaseEntityService<Document> {
     private _documents: BehaviorSubject<PaginatedListResult<Document>> = new BehaviorSubject(null);
     private _document: BehaviorSubject<Document> = new BehaviorSubject(null);
+    private _documentEdited: BehaviorSubject<string> = new BehaviorSubject(null);
     private _documentsLoading: BehaviorSubject<boolean> = new BehaviorSubject(false);
     private _queryParameters: BehaviorSubject<DocumentSearchParameters> = new BehaviorSubject({
         length: 0,
@@ -39,6 +40,13 @@ export class DocumentService extends BaseEntityService<Document> {
      */
     get documentsLoading$(): Observable<boolean> {
         return this._documentsLoading.asObservable();
+    }
+
+    /**
+     * Getter for document edited
+     */
+    get documentEdited$(): Observable<string> {
+        return this._documentEdited.asObservable();
     }
 
     /**
@@ -228,5 +236,9 @@ export class DocumentService extends BaseEntityService<Document> {
                 return of(document);
             }),
         );
+    }
+
+    editDocument(documentId: string): void {
+        this._documentEdited.next(documentId);
     }
 }

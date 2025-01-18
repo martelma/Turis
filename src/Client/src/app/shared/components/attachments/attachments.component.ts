@@ -65,6 +65,12 @@ export class AttachmentsComponent implements OnInit, OnChanges, OnDestroy {
     @ViewChild('matSort') sort!: MatSort;
     @ViewChild('appUploadFile') appUploadFile: UploadFilesComponent;
 
+    @Input() entityName: string;
+    @Input() entityKey: string;
+    @Input() folder: string;
+
+    @Output() onListChanged = new EventEmitter<void>();
+
     loading = false;
     waiting = false;
     uploadMode = false;
@@ -75,25 +81,6 @@ export class AttachmentsComponent implements OnInit, OnChanges, OnDestroy {
 
     attachmentSearchParameters: AttachmentSearchParameters = new AttachmentSearchParameters();
     attachments: Attachment[] = [];
-
-    @Input() entityName: string;
-    @Input() entityKey: string;
-    @Input() folder: string;
-
-    // @Input()
-    // set attachments(items: any) {
-    //     this._attachments = items;
-
-    //     this.dataSource = new MatTableDataSource(this._attachments ?? []);
-
-    //     setTimeout(() => (this.dataSource.paginator = items));
-    //     setTimeout(() => (this.dataSource.sort = items));
-    // }
-    // get attachments(): Attachment[] {
-    //     return this._attachments;
-    // }
-
-    @Output() onListChanged = new EventEmitter<void>();
 
     pageIndex = 0;
     pageSize = 10;
@@ -114,6 +101,37 @@ export class AttachmentsComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     ngOnDestroy(): void {}
+
+    uploadFiles(files: any[]): void {
+        this.uploadMode = false;
+        this.waiting = true;
+
+        const formData: FormData = new FormData();
+        formData.append('entityName', this.entityName);
+        formData.append('entityKey', this.entityKey);
+        if (this.folder) {
+            formData.append('folder', this.folder);
+        }
+        for (const file of files) {
+            formData.append('files', file);
+        }
+
+        this._attachmentService
+            .upload(formData)
+            .pipe(untilDestroyed(this))
+            .subscribe({
+                next: (data: any) => {
+                    this.appUploadFile.resetFile();
+                },
+                error: error => {
+                    console.error(error);
+                    // this._toastr.error('Upload Template', 'Error!');
+                },
+            })
+            .add(() => {
+                this.waiting = false;
+            });
+    }
 
     loadAttachments() {
         this._changeDetectorRef.reattach();
@@ -154,37 +172,6 @@ export class AttachmentsComponent implements OnInit, OnChanges, OnDestroy {
         setTimeout(() => (this.dataSource.sort = this.sort));
 
         console.log('attachments', this.attachments);
-    }
-
-    uploadFiles(files: any[]): void {
-        this.uploadMode = false;
-        this.waiting = true;
-
-        const formData: FormData = new FormData();
-        formData.append('entityName', this.entityName);
-        formData.append('entityKey', this.entityKey);
-        if (this.folder) {
-            formData.append('folder', this.folder);
-        }
-        for (const file of files) {
-            formData.append('files', file);
-        }
-
-        this._attachmentService
-            .upload(formData)
-            .pipe(untilDestroyed(this))
-            .subscribe({
-                next: (data: any) => {
-                    this.appUploadFile.resetFile();
-                },
-                error: error => {
-                    console.error(error);
-                    // this._toastr.error('Upload Template', 'Error!');
-                },
-            })
-            .add(() => {
-                this.waiting = false;
-            });
     }
 
     delete(attachment: Attachment) {

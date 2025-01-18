@@ -224,7 +224,9 @@ public class ServiceService(IDbContext dbContext,
 		{
 			dbService = new Service
 			{
-				Id = Guid.NewGuid()
+				Id = Guid.NewGuid(),
+				UserId = userService.GetUserId(),
+				CreationDate = DateTimeOffset.Now
 			};
 			dbContext.Insert(dbService);
 		}

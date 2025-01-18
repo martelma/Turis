@@ -73,6 +73,7 @@ export const AppSettings = {
     Contact: 'Contact',
     Service: 'Service',
     Document: 'Document',
+    JournalEntry: 'JournalEntry',
 };
 
 export const MY_DATE_FORMATS: MatDateFormats = {
