@@ -17,17 +17,10 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { trackByFn } from 'app/shared';
-import { RolesService } from '../../../../shared/modules/roles/roles.service';
-import { PaginatedListResult } from '../../../../shared/shared.types';
-import { Role, RoleSearchParameters } from 'app/shared/modules/roles/roles.types';
-import { TranslationsComponent } from 'app/shared/modules/translations/translations.component';
-import { parseTranslations } from 'app/shared/modules/translations/translations.types';
 import { SearchInputComponent } from 'app/shared/components/ui/search-input/search-input.component';
-import { getTranslation } from '../../../../shared/modules/translations/translations.types';
-import { M3User } from 'app/core/user/user.types';
-import { Scopes } from 'app/shared/modules/roles/roles.scopes';
-import { userHasScope } from 'app/layout/common/user/user.utils';
-import { UserService } from 'app/core/user/user.service';
+import { PaginatedListResult } from 'app/shared/services/shared.types';
+import { ApplicationRole, RoleSearchParameters } from '../role.types';
+import { RoleService } from '../role.service';
 
 @UntilDestroy()
 @Component({
@@ -37,7 +30,7 @@ import { UserService } from 'app/core/user/user.service';
         /* language=SCSS */
         `
             .role-grid {
-                grid-template-columns: 1fr 1fr 2fr 50px;
+                grid-template-columns: auto auto auto 1fr;
             }
         `,
     ],
@@ -67,7 +60,6 @@ import { UserService } from 'app/core/user/user.service';
         MatCheckboxModule,
         MatRippleModule,
         TranslocoModule,
-        TranslationsComponent,
         SearchInputComponent,
     ],
 })
@@ -77,22 +69,20 @@ export class RoleListComponent implements OnInit, AfterViewInit {
 
     flashMessage: 'success' | 'error' | null = null;
 
-    results: PaginatedListResult<Role>;
-    roles: Role[] = [];
+    results: PaginatedListResult<ApplicationRole>;
+    roles: ApplicationRole[] = [];
     itemsLoading = false;
     queryParameters: RoleSearchParameters;
 
     activeLang: string;
-    selectedItem: Role | null = null;
+    selectedItem: ApplicationRole | null = null;
     selectedItemForm: UntypedFormGroup;
 
     rolesColumns = ['code', 'name', 'description', 'details'];
 
     trackByFn = trackByFn;
-    getTranslation = getTranslation;
 
     // User
-    user: M3User;
     userCanDeleteRoles = false;
     userCanUpdateRoles = false;
 
@@ -100,9 +90,8 @@ export class RoleListComponent implements OnInit, AfterViewInit {
         private _changeDetectorRef: ChangeDetectorRef,
         private _fuseConfirmationService: FuseConfirmationService,
         private _formBuilder: UntypedFormBuilder,
-        private _rolesService: RolesService,
+        private _roleService: RoleService,
         private _translocoService: TranslocoService,
-        private _userService: UserService,
     ) {}
 
     ngOnInit(): void {
@@ -118,19 +107,21 @@ export class RoleListComponent implements OnInit, AfterViewInit {
         this._subscribeUser();
 
         // Roles
-        this._rolesService.roles$.pipe(untilDestroyed(this)).subscribe((results: PaginatedListResult<Role>) => {
-            this.results = results;
+        this._roleService.roles$
+            .pipe(untilDestroyed(this))
+            .subscribe((results: PaginatedListResult<ApplicationRole>) => {
+                this.results = results;
 
-            this.roles = results?.items;
-        });
+                this.roles = results?.items;
+            });
 
         // Roles loading
-        this._rolesService.rolesLoading$.pipe(untilDestroyed(this)).subscribe((rolesLoading: boolean) => {
+        this._roleService.rolesLoading$.pipe(untilDestroyed(this)).subscribe((rolesLoading: boolean) => {
             this.itemsLoading = rolesLoading;
         });
 
         // Query parameters
-        this._rolesService.queryParameters$
+        this._roleService.queryParameters$
             .pipe(untilDestroyed(this))
             .subscribe((queryParameters: RoleSearchParameters) => {
                 this.queryParameters = queryParameters;
@@ -166,40 +157,10 @@ export class RoleListComponent implements OnInit, AfterViewInit {
         }
     }
 
-    private _subscribeUser(): void {
-        this._userService.user$.pipe(untilDestroyed(this)).subscribe((user: M3User) => {
-            this.user = user;
-
-            this.userCanDeleteRoles = userHasScope(user, Scopes.ROLES_DELETE);
-            this.userCanUpdateRoles = userHasScope(user, Scopes.ROLES_UPDATE);
-        });
-    }
+    private _subscribeUser(): void {}
 
     refreshRoles(): void {
         // TODO: To get the list of available roles from M3 and parse them into valid M3-Console objects
-    }
-
-    updateSelectedRole(): void {
-        // Get the role object
-        const role = {
-            ...this.selectedItemForm.getRawValue(),
-            descriptions: parseTranslations(this.selectedItemForm.get('descriptions')?.value),
-        };
-
-        // Remove the currentImageIndex field
-        delete role.currentImageIndex;
-
-        // Update the role on the server
-        this._rolesService
-            .updateRole(role.id, role)
-            .pipe(untilDestroyed(this))
-            .subscribe(() => {
-                // Show a success message
-                this.showFlashMessage('success');
-
-                // Refreshes the list
-                this._getRoles();
-            });
     }
 
     deleteSelectedRole(): void {
@@ -228,8 +189,8 @@ export class RoleListComponent implements OnInit, AfterViewInit {
                     const role = this.selectedItemForm.getRawValue();
 
                     // Delete the role on the server
-                    this._rolesService
-                        .deleteRole(role.id)
+                    this._roleService
+                        .deleteEntity(role.id)
                         .pipe(untilDestroyed(this))
                         .subscribe(() => {
                             // Close the details
@@ -264,8 +225,8 @@ export class RoleListComponent implements OnInit, AfterViewInit {
         }
 
         // Get the role by id
-        this._rolesService
-            .getRoleById(roleId)
+        this._roleService
+            .getById(roleId)
             .pipe(untilDestroyed(this))
             .subscribe(role => {
                 // Set the selected role
@@ -276,13 +237,6 @@ export class RoleListComponent implements OnInit, AfterViewInit {
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
-
-                this.selectedItemForm.get('descriptions')?.patchValue({
-                    en: this.selectedItem.descriptions?.find(x => x.languageCode.toLowerCase() === 'en')?.content ?? '',
-                    es: this.selectedItem.descriptions?.find(x => x.languageCode.toLowerCase() === 'es')?.content ?? '',
-                    fr: this.selectedItem.descriptions?.find(x => x.languageCode.toLowerCase() === 'fr')?.content ?? '',
-                    it: this.selectedItem.descriptions?.find(x => x.languageCode.toLowerCase() === 'it')?.content ?? '',
-                });
 
                 this._changeDetectorRef.detectChanges();
             });
@@ -301,8 +255,8 @@ export class RoleListComponent implements OnInit, AfterViewInit {
     }
 
     private _getRoles(): void {
-        this._rolesService
-            .getRoles({ ...this.queryParameters })
+        this._roleService
+            .listEntities({ ...this.queryParameters })
             .pipe(untilDestroyed(this))
             .subscribe();
     }

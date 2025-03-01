@@ -1,0 +1,185 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+    <!-- Header -->
+    <div
+        class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+        <!-- Loader -->
+        <div class="absolute inset-x-0 bottom-0" *ngIf="itemsLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+        <!-- Title -->
+        <div class="text-4xl font-extrabold tracking-tight">
+            {{ 'Navigation.Tags' | transloco }}
+        </div>
+        <!-- Actions -->
+        <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+            <!-- Search -->
+            <app-search-input class="min-w-90" [placeholder]="'Tags.FilterTags'" (callbackFn)="filter($event)">
+            </app-search-input>
+
+            <!-- Add tag button -->
+            <button class="ml-4" mat-flat-button [color]="'primary'" (click)="create()">
+                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                <span class="ml-2 mr-1">{{ 'General.Add' | transloco }}</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+        <!-- Tags list -->
+        <div
+            class="flex flex-col flex-auto overflow-hidden sm:overflow-y-auto"
+            [ngClass]="{
+                'sm:mb-18': results?.items?.length > 0
+            }">
+            <ng-container *ngIf="results?.items?.length > 0; else noTags">
+                <div class="grid">
+                    <!-- Header -->
+                    <div
+                        class="list-grid z-10 sticky top-0 grid gap-4 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                        <div class="hidden sm:block">{{ 'Tags.Name' | transloco }}</div>
+                        <div class="hidden lg:block">{{ 'Tags.Color' | transloco }}</div>
+                    </div>
+                    <!-- Rows -->
+                    <ng-container *ngIf="list">
+                        <ng-container *ngFor="let tag of results?.items; trackBy: trackByFn">
+                            <div class="list-grid grid items-center gap-4 py-3 px-6 md:px-8 border-b">
+                                <!-- Details button -->
+                                <div>
+                                    <button
+                                        class="min-w-10 min-h-7 h-7 px-2 leading-6"
+                                        mat-stroked-button
+                                        (click)="toggleDetails(tag.id)">
+                                        <mat-icon
+                                            *ngIf="selectedItem?.id !== tag.id"
+                                            class="icon-size-5 mr-2"
+                                            [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
+
+                                        <mat-icon
+                                            *ngIf="selectedItem?.id === tag.id"
+                                            class="icon-size-5 mr-2"
+                                            [svgIcon]="'heroicons_outline:arrow-uturn-left'"></mat-icon>
+                                    </button>
+                                </div>
+
+                                <!-- Color -->
+                                <div class="sm:block whitespace-pre-wrap">
+                                    <!-- {{ tag?.color }} -->
+                                    <input
+                                        type="color"
+                                        disabled
+                                        class="float-right"
+                                        id="color"
+                                        name="color"
+                                        #name="ngModel"
+                                        [(ngModel)]="tag.color" />
+                                </div>
+
+                                <!-- Name -->
+                                <div class="truncate">
+                                    {{ tag.name }}
+                                </div>
+                            </div>
+                            <!-- Selected Item -->
+                            <div class="grid">
+                                <ng-container *ngIf="selectedItem?.id === tag.id">
+                                    <ng-container
+                                        *ngTemplateOutlet="
+                                            rowDetailsTemplate;
+                                            context: { $implicit: tag }
+                                        "></ng-container>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                </div>
+
+                <!-- Paginator -->
+                <mat-paginator
+                    class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                    [ngClass]="{ 'pointer-events-none': tagsLoading }"
+                    [length]="results?.totalCount ?? 0"
+                    [pageIndex]="queryParameters?.pageIndex ?? 0"
+                    [pageSize]="queryParameters?.pageSize ?? 10"
+                    [pageSizeOptions]="[5, 10, 25, 100]"
+                    (page)="handlePageEvent($event)"
+                    [showFirstLastButtons]="true"></mat-paginator>
+            </ng-container>
+
+            <ng-template #rowDetailsTemplate let-tag>
+                <div class="shadow-lg overflow-hidden">
+                    <div class="flex border-b">
+                        <form class="flex flex-col w-full" [formGroup]="selectedItemForm">
+                            <div class="flex flex-col sm:flex-row p-8">
+                                <div class="flex flex-auto flex-wrap">
+                                    <div class="flex flex-col w-full sm:p-8">
+                                        <div class="grid grid-cols-12 gap-2 w-full">
+                                            <!-- Name -->
+                                            <mat-form-field class="col-span-10">
+                                                <mat-label>{{ 'Tags.Name' | transloco }}</mat-label>
+                                                <input matInput [formControlName]="'name'" />
+                                            </mat-form-field>
+
+                                            <!-- Color -->
+                                            <mat-form-field class="col-span-2">
+                                                <mat-label>{{ 'Tags.Color' | transloco }}</mat-label>
+                                                <input type="color" matInput [formControlName]="'color'" />
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="grid grid-cols-12 gap-2 w-full">
+                                            <!-- Description -->
+                                            <mat-form-field class="col-span-12">
+                                                <mat-label>{{ 'Tags.Description' | transloco }}</mat-label>
+                                                <input matInput [formControlName]="'description'" />
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between w-full border-t px-8 py-4">
+                                <!-- Delete Button -->
+                                <button class="-ml-4" mat-flat-button [color]="'warn'" (click)="deleteSelectedItem()">
+                                    {{ 'General.Delete' | transloco }}
+                                </button>
+
+                                <!-- Flash messages -->
+                                <div class="flex items-center">
+                                    <div class="flex items-center mr-4" *ngIf="flashMessage">
+                                        <ng-container *ngIf="flashMessage === 'success'">
+                                            <mat-icon
+                                                class="text-green-500"
+                                                [svgIcon]="'heroicons_outline:check'"></mat-icon>
+                                            <span class="ml-2">Tag updated</span>
+                                        </ng-container>
+                                        <ng-container *ngIf="flashMessage === 'error'">
+                                            <mat-icon
+                                                class="text-red-500"
+                                                [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                                            <span class="ml-2">An error occurred, try again!</span>
+                                        </ng-container>
+                                    </div>
+
+                                    <!-- Update Button -->
+                                    <button mat-flat-button [color]="'primary'" (click)="updateSelectedItem()">
+                                        {{ 'General.Update' | transloco }}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </ng-template>
+
+            <!-- No tags -->
+            <ng-template #noTags>
+                <div class="z-100 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+                    <mat-icon class="icon-size-24" [svgIcon]="'heroicons_outline:tag'"></mat-icon>
+                    <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">
+                        {{ 'Tags.NoTags' | transloco }}
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>

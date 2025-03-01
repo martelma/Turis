@@ -248,10 +248,19 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
         }
     }
 
+    navigateToItem(item: Document): void {
+        item.selected = true;
+        this._router.navigate(item.id ? ['.', item.id] : ['.', 'new'], { relativeTo: this._activatedRoute });
+    }
+
     onItemSelected(document: Document): void {
         this.selectedItem = document;
 
-        console.log('selectedItem', this.selectedItem);
+        this.list.forEach(item => {
+            item.selected = false;
+        });
+
+        this.selectedItem.selected = true;
     }
 
     handlePageEvent(event: PageEvent): void {
@@ -264,7 +273,11 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
         this._documentService
             .listEntities({ ...this.documentParameters })
             .pipe(untilDestroyed(this))
-            .subscribe();
+            .subscribe(items => {
+                if (items?.items?.length > 0) {
+                    this.navigateToItem(items.items[0]);
+                }
+            });
     }
 
     filter(value: string): void {

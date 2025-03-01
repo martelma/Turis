@@ -40,6 +40,8 @@ export class Document {
 
     bookmarkId: string;
 
+    selected: boolean;
+
     items: DocumentItem[] = [];
 }
 

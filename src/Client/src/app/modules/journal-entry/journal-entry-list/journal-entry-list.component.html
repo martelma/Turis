@@ -1,5 +1,5 @@
 <div class="relative flex flex-auto h-full w-full bg-card dark:bg-transparent">
-    <!-- Document list -->
+    <!-- list -->
     <div class="relative flex flex-auto flex-col w-full min-w-0 lg:min-w-160 lg:max-w-96 border-r z-10">
         <!-- Header -->
         <div
@@ -44,7 +44,7 @@
                 [mode]="'indeterminate'"></mat-progress-bar>
         </div>
 
-        <!-- Document list -->
+        <!-- list -->
         <ng-container *ngIf="results?.items?.length > 0; else noDocument">
             <div class="overflow-y-auto" #documentList>
                 <!-- Document loop -->
@@ -52,6 +52,7 @@
                     <!-- Document -->
                     <div
                         class="group relative flex border-t first:border-0 hover:bg-hover cursor-pointer"
+                        [ngClass]="item.selected ? 'background-selected' : ''"
                         [routerLink]="[item.id]"
                         (click)="onItemSelected(item)"
                         (dblclick)="edit(item)"
@@ -60,7 +61,6 @@
                         <!-- Document content -->
                         <a
                             class="flex flex-col items-start justify-start w-full py-6 pr-4 pl-5 border-l-4 border-transparent">
-                            <!-- Document Info -->
                             <div class="flex items-center w-full justify-between space-x-2 mb-2">
                                 <div class="flex items-center space-x-2">
                                     <!-- Add/Remove bookmark -->
@@ -91,8 +91,21 @@
                                 </div>
                             </div>
 
-                            <div class="mt-1 leading-normal line-clamp-2 text-secondary whitespace-pre-wrap">
-                                {{ item?.description }}
+                            <div class="flex items-center w-full justify-between space-x-2 mb-2">
+                                <!-- <div class="mt-1 leading-normal line-clamp-2 text-secondary whitespace-pre-wrap"> -->
+                                <div class="flex items-center space-x-2">
+                                    {{ item?.description }}
+                                </div>
+                                <div class="flex space-x-2 items-center">
+                                    <div
+                                        class="ml-auto text-right whitespace-nowrap"
+                                        [ngClass]="{
+                                            'text-green-500': item.balance > 0,
+                                            'text-red-500': item.balance < 0
+                                        }">
+                                        <strong> {{ item.balance | number: '2.2' }}</strong>
+                                    </div>
+                                </div>
                             </div>
                         </a>
                     </div>
@@ -112,7 +125,7 @@
             [showFirstLastButtons]="true"></mat-paginator>
     </div>
 
-    <!-- No document template -->
+    <!-- No template -->
     <ng-template #noDocument>
         <div class="z-100 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
             <mat-icon class="icon-size-24" [svgIcon]="'heroicons_outline:circle-stack'"></mat-icon>
@@ -120,7 +133,7 @@
         </div>
     </ng-template>
 
-    <!-- Document details -->
+    <!-- details -->
     <div
         class="flex-auto"
         [ngClass]="{

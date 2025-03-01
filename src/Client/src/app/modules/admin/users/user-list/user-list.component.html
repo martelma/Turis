@@ -1,0 +1,141 @@
+<ng-container *ngIf="users && users && users?.length > 0; else noUsers">
+    <!-- Table -->
+    <ng-container *ngIf="viewMode === 'list'">
+        <div class="flex-1 relative overflow-auto">
+            <ng-container *ngFor="let user of users; let i = index; trackBy: trackByFn">
+                <!-- Group -->
+                <ng-container *ngIf="i === 0 || user.firstName[0] !== users[i - 1].firstName[0]">
+                    <div
+                        class="z-10 sticky top-0 -mt-px px-6 py-1 md:px-8 border-t border-b font-medium uppercase text-secondary bg-gray-50 dark:bg-gray-900">
+                        {{ user.firstName[0] }}
+                    </div>
+                </ng-container>
+                <!-- User -->
+                <a
+                    class="z-20 flex items-center px-6 py-4 md:px-8 cursor-pointer border-b"
+                    [ngClass]="{
+                        'hover:bg-gray-100 dark:hover:bg-hover': !userId || userId !== user.id,
+                        'bg-primary-50 dark:bg-hover': userId && userId === user.id
+                    }"
+                    [routerLink]="['./', user.id.toString()]"
+                    (click)="onUserClicked(user)">
+                    <div class="flex flex-0 items-center justify-center w-10 h-10 rounded-full overflow-hidden">
+                        <ng-container *ngIf="user.avatarUrl">
+                            <img class="object-cover w-full h-full" [src]="user.avatarUrl" alt="User icon" />
+                        </ng-container>
+                        <ng-container *ngIf="!user.avatarUrl">
+                            <div
+                                class="flex items-center justify-center w-full h-full rounded-full text-lg uppercase bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                                {{ user.firstName[0] }}
+                            </div>
+                        </ng-container>
+                    </div>
+                    <div class="min-w-0 ml-4">
+                        <div class="font-medium leading-5 truncate">
+                            {{ user.fullName }}
+                        </div>
+                        <div class="leading-5 truncate text-secondary">
+                            {{ user.userName }}
+                        </div>
+                    </div>
+                </a>
+            </ng-container>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="viewMode === 'table'">
+        <div class="relative flex flex-col flex-auto divide-y overflow-y-auto bg-card px-8">
+            <table mat-table [dataSource]="users" matSort class="table-fixed">
+                <!-- Index -->
+                <ng-container matColumnDef="index">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <span class="strong">Index</span>
+                    </th>
+                    <td mat-cell *matCellDef="let i = index" class="hover:cursor-pointer">
+                        {{
+                            !queryParameters?.pageIndex
+                                ? i + 1
+                                : 1 + i + queryParameters?.pageIndex * queryParameters?.pageSize
+                        }}
+                    </td>
+                </ng-container>
+
+                <!-- Avatar -->
+                <ng-container matColumnDef="avatar">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Avatar</th>
+                    <td mat-cell *matCellDef="let element">
+                        <div class="flex flex-0 items-center justify-center w-10 h-10 rounded-full overflow-hidden">
+                            <ng-container *ngIf="element.avatarUrl">
+                                <img class="object-cover w-full h-full" [src]="element.avatarUrl" alt="User avatar" />
+                            </ng-container>
+                            <ng-container *ngIf="!element.avatarUrl">
+                                <div
+                                    class="flex items-center justify-center w-full h-full rounded-full text-lg uppercase bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                                    {{ element.firstName[0] }}
+                                </div>
+                            </ng-container>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- User Name -->
+                <ng-container matColumnDef="fullName">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Full Name</th>
+                    <td mat-cell *matCellDef="let element">
+                        {{ element.fullName }}
+                    </td>
+                </ng-container>
+
+                <!-- Description -->
+                <ng-container matColumnDef="email">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+                    <td mat-cell *matCellDef="let element">
+                        {{ element.email }}
+                    </td>
+                </ng-container>
+
+                <!-- User Name -->
+                <ng-container matColumnDef="userName">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>User Name</th>
+                    <td mat-cell *matCellDef="let element">
+                        {{ element.userName }}
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="columns"></tr>
+                <tr
+                    mat-row
+                    *matRowDef="let element; columns: columns"
+                    class="hover:cursor-pointer"
+                    [ngClass]="{
+                        'hover:bg-gray-100 dark:hover:bg-hover': !userId || userId !== element.id,
+                        'bg-primary-50 dark:bg-hover': userId && userId === element.id
+                    }"
+                    [routerLink]="['./', element.id.toString()]"
+                    (click)="onUserClicked(element)"></tr>
+            </table>
+        </div>
+    </ng-container>
+
+    <!-- Grid -->
+    <ng-container *ngIf="viewMode === 'card'">
+        <div class="flex-1 relative overflow-auto">
+            <div cdkscrollable="" class="flex flex-1 p-8 max-w-screen-xl mx-auto">
+                <app-user-grid
+                    class="flex-1"
+                    [items]="users"
+                    [userId]="userId"
+                    (itemClicked)="onUserClicked($event)"></app-user-grid>
+            </div>
+        </div>
+    </ng-container>
+</ng-container>
+
+<ng-template #noUsers>
+    <div class="flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+        <mat-icon class="icon-size-24" [svgIcon]="'heroicons_outline:building-office-2'"></mat-icon>
+        <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">
+            {{ 'Contact.ThereAreNoUsersMessage' | transloco }}
+        </div>
+    </div>
+</ng-template>

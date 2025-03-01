@@ -13,9 +13,7 @@ using Turis.DataAccessLayer.Entities;
 
 namespace Turis.BusinessLayer.Services;
 
-public class LanguageService(ApplicationDbContext dbContext
-	, IUserService userService
-	, ILogger<LanguageService> logger) : ILanguageService
+public class LanguageService(ApplicationDbContext dbContext, ILogger<LanguageService> logger) : ILanguageService
 {
 	private readonly DbSet<Language> context = dbContext.Languages;
 

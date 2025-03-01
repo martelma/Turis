@@ -1,16 +1,18 @@
 ﻿using OperationResults;
 using Turis.BusinessLayer.Services.Base;
 using Turis.Common.Models;
+using Turis.Common.Models.Requests;
 
 namespace Turis.BusinessLayer.Services.Interfaces;
 
 public interface IScopeGroupService : IService
 {
-    Task<Result<PaginatedList<ApplicationScopeGroupModel>>> ListAsync(Guid applicationId, bool includeScopes, int pageIndex, int itemsPerPage, string orderBy);
+    Task<Result<PaginatedList<ApplicationScopeGroupModel>>> ListAsync(bool includeScopes, int pageIndex,
+	    int itemsPerPage, string orderBy);
 
-    Task<Result<ApplicationScopeGroupModel>> GetAsync(Guid applicationId, Guid scopeGroupId, bool includeScopes);
+    Task<Result<ApplicationScopeGroupModel>> GetAsync(Guid scopeGroupId, bool includeScopes);
 
-    Task<Result<ApplicationScopeGroupModel>> SaveAsync(Guid applicationId, ApplicationScopeGroupModel scopeGroup);
+    Task<Result> SaveAsync(ApplicationScopeGroupRequest scopeGroup);
 
-    Task<Result> DeleteAsync(Guid applicationId, Guid scopeGroupId);
+    Task<Result> DeleteAsync(Guid scopeGroupId);
 }

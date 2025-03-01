@@ -5,121 +5,110 @@ using Microsoft.Extensions.Logging;
 using OperationResults;
 using TinyHelpers.Extensions;
 using Turis.Authentication.Entities;
-using Turis.BusinessLayer.Services.Interfaces;
-using Turis.Common.Models;
-using Turis.DataAccessLayer;
 using Turis.BusinessLayer.Resources;
+using Turis.BusinessLayer.Services.Interfaces;
+using Turis.Common;
+using Turis.Common.Models;
+using Turis.Common.Models.Requests;
+using Turis.DataAccessLayer;
 
 namespace Turis.BusinessLayer.Services;
 
-public class ScopeGroupService(IDbContext dbContext, ILogger<ScopeGroupService> logger) : IScopeGroupService
+public class ScopeGroupService(ApplicationDbContext dbContext, ILogger<ScopeGroupService> logger) : IScopeGroupService
 {
-    public async Task<Result<PaginatedList<ApplicationScopeGroupModel>>> ListAsync(Guid applicationId, bool includeScopes, int pageIndex, int itemsPerPage, string orderBy)
-    {
-        var query = dbContext.GetData<ApplicationScopeGroup>().Where(r => r.ApplicationId == applicationId);
+	private readonly DbSet<ApplicationScopeGroup> context = dbContext.ApplicationScopeGroups;
 
-        var totalCount = await query.CountAsync();
+	public async Task<Result<PaginatedList<ApplicationScopeGroupModel>>> ListAsync(bool includeScopes, int pageIndex,
+		int itemsPerPage, string orderBy)
+	{
+		var query = dbContext.GetData<ApplicationScopeGroup>();
 
-        if (orderBy.HasValue())
-        {
-            try
-            {
-                query = query.OrderBy(orderBy);
-            }
-            catch (ParseException ex)
-            {
-                logger.LogError(ex, Errors.OrderByLoggerError, orderBy);
-                return Result.Fail(FailureReasons.ClientError, string.Format(Errors.OrderByError, orderBy));
-            }
-        }
+		var totalCount = await query.CountAsync();
 
-        var data = await query
-            .Skip(pageIndex * itemsPerPage).Take(itemsPerPage + 1)      // Prova a prendere un elemento in più di quelli richiesti per controllare se ci sono pagine successive.
-            .Select(s => new ApplicationScopeGroupModel
-            {
-                Id = s.Id,
-                Name = s.Name,
-                Description = s.Description,
-                Scopes = includeScopes ? s.Scopes.Select(r => new ApplicationScopeModel
-				{
-                    Id = r.Id,
-                    Name = r.Name,
-                    Description = r.Description,
-                    RoleIds = r.Roles.Select(rs => rs.RoleId).ToList(),
-                    ApplicationId = r.ApplicationId
-                }) : null,
-            }).ToListAsync();
-
-        var result = new PaginatedList<ApplicationScopeGroupModel>(data.Take(itemsPerPage), totalCount, data.Count > itemsPerPage);
-        return result;
-    }
-
-    public async Task<Result<ApplicationScopeGroupModel>> GetAsync(Guid applicationId, Guid scopeGroupId, bool includeScopes)
-    {
-        var scopeGroup = await dbContext.GetData<ApplicationScopeGroup>()
-            .Where(s => s.ApplicationId == applicationId && s.Id == scopeGroupId)
-            .Select(s => new ApplicationScopeGroupModel
+		if (orderBy.HasValue())
+		{
+			try
 			{
-                Id = s.Id,
-                Name = s.Name,
-                Description = s.Description,
-                Scopes = includeScopes ? s.Scopes.Select(r => new ApplicationScopeModel
+				query = query.OrderBy(orderBy);
+			}
+			catch (ParseException ex)
+			{
+				logger.LogError(ex, Errors.OrderByLoggerError, orderBy);
+				return Result.Fail(FailureReasons.ClientError, string.Format(Errors.OrderByError, orderBy));
+			}
+		}
+
+		var data = await query
+			.Skip(pageIndex * itemsPerPage).Take(itemsPerPage + 1)      // Prova a prendere un elemento in più di quelli richiesti per controllare se ci sono pagine successive.
+			.Select(s => new ApplicationScopeGroupModel
+			{
+				Id = s.Id,
+				Name = s.Name,
+				Description = s.Description,
+				Scopes = includeScopes ? s.Scopes.Select(r => new ApplicationScopeModel
 				{
-                    Id = r.Id,
-                    Name = r.Name,
-                    Description = r.Description,
-                    RoleIds = r.Roles.Select(rs => rs.RoleId).ToList(),
-                    ApplicationId = r.ApplicationId
-                }) : null
-            }).FirstOrDefaultAsync();
+					Id = r.Id,
+					Name = r.Name,
+					Description = r.Description,
+					RoleIds = r.Roles.Select(rs => rs.RoleId).ToList(),
+					ApplicationId = r.ApplicationId
+				}) : null,
+			}).ToListAsync();
 
-        if (scopeGroup is null)
-        {
-            return Result.Fail(FailureReasons.ItemNotFound);
-        }
+		var result = new PaginatedList<ApplicationScopeGroupModel>(data.Take(itemsPerPage), totalCount, data.Count > itemsPerPage);
+		return result;
+	}
 
-        return scopeGroup;
-    }
+	public async Task<Result<ApplicationScopeGroupModel>> GetAsync(Guid scopeGroupId, bool includeScopes)
+	{
+		var scopeGroup = await dbContext.GetData<ApplicationScopeGroup>()
+			.Where(x => x.Id == scopeGroupId)
+			.Select(s => new ApplicationScopeGroupModel
+			{
+				Id = s.Id,
+				Name = s.Name,
+				Description = s.Description,
+				Scopes = includeScopes ? s.Scopes.Select(r => new ApplicationScopeModel
+				{
+					Id = r.Id,
+					Name = r.Name,
+					Description = r.Description,
+					RoleIds = r.Roles.Select(rs => rs.RoleId).ToList(),
+					ApplicationId = r.ApplicationId
+				}) : null
+			}).FirstOrDefaultAsync();
 
-    public async Task<Result<ApplicationScopeGroupModel>> SaveAsync(Guid applicationId, ApplicationScopeGroupModel scopeGroup)
-    {
-        var dbScopeGroup = await dbContext.GetAsync<ApplicationScopeGroup>(scopeGroup.Id);
+		if (scopeGroup is null)
+		{
+			return Result.Fail(FailureReasons.ItemNotFound);
+		}
 
-        if (dbScopeGroup is null)
-        {
-            dbScopeGroup = new ApplicationScopeGroup();
-            dbContext.Insert(dbScopeGroup);
-        }
+		return scopeGroup;
+	}
 
-        dbScopeGroup.Id = scopeGroup.Id;
-        dbScopeGroup.ApplicationId = applicationId;
-        dbScopeGroup.Name = scopeGroup.Name;
-        dbScopeGroup.Description = scopeGroup.Description;
+	public async Task<Result> SaveAsync(ApplicationScopeGroupRequest model)
+	{
+		var record = model.Id != Guid.Empty ? await context.FindAsync(model.Id) : null;
+		if (record == null)
+		{
+			record = new ApplicationScopeGroup
+			{
+				Id = Guid.NewGuid()
+			};
+			await context.AddAsync(record);
+		}
 
-        await dbContext.SaveAsync();
+		record.ApplicationId = Constants.ApplicationId;
+		record.Name = model.Name;
+		record.Description = model.Description;
 
-        scopeGroup.Id = dbScopeGroup.Id;
-        return scopeGroup;
-    }
+		await dbContext.SaveChangesAsync();
+		return Result.Ok();
+	}
 
-    public async Task<Result> DeleteAsync(Guid applicationId, Guid scopeGroupId)
-    {
-        // Controlla se lo ScopeGroup contiene almeno uno scope.
-        var scopeGroupInUse = await dbContext.GetData<ApplicationScope>().AnyAsync(s => s.ScopeGroupId == scopeGroupId);
-
-        if (scopeGroupInUse)
-        {
-            return Result.Fail(FailureReasons.ClientError, Errors.UnableToDelete, Errors.ScopeGroupInUse);
-        }
-
-        var deleteRows = await dbContext.GetData<ApplicationScopeGroup>()
-            .Where(r => r.ApplicationId == applicationId && r.Id == scopeGroupId).ExecuteDeleteAsync();
-
-        if (deleteRows == 0)
-        {
-            return Result.Fail(FailureReasons.ItemNotFound);
-        }
-
-        return Result.Ok();
-    }
+	public async Task<Result> DeleteAsync(Guid id)
+	{
+		await context.Where(x => x.Id == id).ExecuteDeleteAsync();
+		return Result.Ok();
+	}
 }

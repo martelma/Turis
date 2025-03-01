@@ -1,49 +1,39 @@
 import { UserService } from './../../../../core/user/user.service';
 import { Guid } from 'guid-typescript';
-import { AsyncPipe, I18nPluralPipe, NgClass, NgFor, NgIf } from '@angular/common';
+import { I18nPluralPipe, NgClass, NgIf } from '@angular/common';
 import { Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import {
-    FormBuilder,
-    FormGroup,
-    FormsModule,
-    ReactiveFormsModule,
-    UntypedFormControl,
-    Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, UntypedFormControl, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
-import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
-import { debounceTime, map, tap } from 'rxjs';
-import { AvatarUsersService } from '../avatar-users.service';
+import { debounceTime, map } from 'rxjs';
+import { UsersService } from '../users.service';
 import { TranslocoModule } from '@ngneat/transloco';
-import { SearchPipe } from 'app/pipes';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { User } from 'app/core/user/user.types';
 import { BackButtonComponent } from 'app/shared/components/back-button/back-button.component';
 import { trackByFn } from '../../../../shared/utils';
 import { BaseSearchParameters, PaginatedList, defaultPaginatedList } from '../../../../shared/types/shared.types';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { ViewModeSelectorComponent } from 'app/shared/components/view-mode-selector/view-mode-selector.component';
+import { ViewMode } from 'app/shared/components/view-mode-selector/view-mode-selector.types';
+import { UserListComponent } from '../user-list/user-list.component';
 
 @UntilDestroy()
 @Component({
-    selector: 'users-list',
+    selector: 'app-users-list',
     templateUrl: './list.component.html',
     encapsulation: ViewEncapsulation.None,
     standalone: true,
     imports: [
-        RouterOutlet,
-        RouterLink,
         NgIf,
-        NgFor,
         NgClass,
-        FormsModule,
         ReactiveFormsModule,
-        AsyncPipe,
-        SearchPipe,
+        RouterOutlet,
         I18nPluralPipe,
         MatSidenavModule,
         MatFormFieldModule,
@@ -53,6 +43,8 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
         MatPaginatorModule,
         TranslocoModule,
         BackButtonComponent,
+        ViewModeSelectorComponent,
+        UserListComponent,
     ],
 })
 export class UsersListComponent implements OnInit {
@@ -60,11 +52,13 @@ export class UsersListComponent implements OnInit {
     @Input() minLength = 2;
 
     @ViewChild('matDrawer', { static: true }) matDrawer: MatDrawer;
-
-    users: PaginatedList<User> = defaultPaginatedList;
-
-    usersTableColumns: string[] = ['name', 'email', 'role'];
     drawerMode: 'side' | 'over';
+    detailsWidth = 'w-1/2';
+
+    viewMode: ViewMode = 'table';
+
+    results: PaginatedList<User> = defaultPaginatedList;
+    usersTableColumns: string[] = ['name', 'email', 'role'];
     searchInputControl: UntypedFormControl = new UntypedFormControl();
     orderBy = 'userName';
 
@@ -75,30 +69,27 @@ export class UsersListComponent implements OnInit {
 
     trackByFn = trackByFn;
 
+    get users(): User[] {
+        return this.results?.items ?? [];
+    }
+
     get queryParameters(): BaseSearchParameters {
         return {
             pattern: this.searchInputControl.value,
-            pageIndex: this.users.pageIndex,
-            pageSize: this.users.pageSize,
+            pageIndex: this.results.pageIndex,
+            pageSize: this.results.pageSize,
             orderBy: this.orderBy,
         };
     }
 
     constructor(
         private _activatedRoute: ActivatedRoute,
-        private _usersService: AvatarUsersService,
+        private _usersService: UsersService,
         private _router: Router,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _formBuilder: FormBuilder,
         protected userService: UserService,
-    ) {
-        const snapshot = this._activatedRoute.snapshot;
-        const params = { ...snapshot.queryParams };
-        if ('otp' in params) {
-            delete params.otp;
-            this._router.navigate([], { queryParams: params });
-        }
-    }
+    ) {}
 
     ngOnInit(): void {
         this._subscribeUser();
@@ -113,30 +104,22 @@ export class UsersListComponent implements OnInit {
     }
 
     private _subscribeUser(): void {
-        this._usersService.user$
-            .pipe(
-                tap((user: User) => {
-                    this.selectedUser = user;
-                }),
-                untilDestroyed(this),
-            )
-            .subscribe();
+        this._usersService.user$.pipe(untilDestroyed(this)).subscribe();
     }
 
     private _subscribeUsers(): void {
-        this._usersService.users$
-            .pipe(
-                tap((list: PaginatedList<User>) => {
-                    this.users = list;
-                }),
-                untilDestroyed(this),
-            )
-            .subscribe();
+        this._usersService.users$.pipe(untilDestroyed(this)).subscribe((results: PaginatedList<User>) => {
+            console.log(results);
+            this.results = results;
+        });
     }
 
     private _subscribeMediaChange(): void {
         // Subscribe to media changes
         this._fuseMediaWatcherService.onMediaChange$.pipe(untilDestroyed(this)).subscribe(({ matchingAliases }) => {
+            // Check if the screen is small
+            this.detailsWidth = !matchingAliases.includes('md') ? 'w-full' : 'w-1-2';
+
             // Set the drawerMode if the given breakpoint is active
             if (matchingAliases.includes('lg')) {
                 this.drawerMode = 'side';
@@ -172,7 +155,7 @@ export class UsersListComponent implements OnInit {
             });
     }
 
-    createNewContactForm(): void {
+    createUser(): void {
         this.isCreatingUser = true;
 
         this.creatingUserForm = this._formBuilder.group({
@@ -182,16 +165,12 @@ export class UsersListComponent implements OnInit {
             email: ['', Validators.required],
         });
 
-        this.createUser();
+        this._router.navigate(['./', 'new'], { relativeTo: this._activatedRoute });
     }
 
     onBackdropClicked(): void {
         // Go back to the list
         this._router.navigate(['./'], { relativeTo: this._activatedRoute });
-    }
-
-    createUser(): void {
-        this._router.navigate(['./', 'new'], { relativeTo: this._activatedRoute });
     }
 
     onUserSelected(user: User): void {

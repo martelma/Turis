@@ -30,6 +30,7 @@ import { AttachmentService } from './attachment.service';
 import { ConfirmationDialogService } from 'app/shared/services/confirmation-dialog.service';
 import { PaginatedList } from 'app/shared/types/shared.types';
 import { TranslocoModule } from '@ngneat/transloco';
+import { finalize } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -69,7 +70,8 @@ export class AttachmentsComponent implements OnInit, OnChanges, OnDestroy {
     @Input() entityKey: string;
     @Input() folder: string;
 
-    @Output() onListChanged = new EventEmitter<void>();
+    @Output() onListChanged = new EventEmitter<Attachment[]>();
+    // @Output() onAttachmentsCountChange = new EventEmitter<number>();
 
     loading = false;
     waiting = false;
@@ -172,6 +174,10 @@ export class AttachmentsComponent implements OnInit, OnChanges, OnDestroy {
         setTimeout(() => (this.dataSource.sort = this.sort));
 
         console.log('attachments', this.attachments);
+        this.onListChanged.emit(this.attachments);
+
+        // console.log('onAttachmentsCountChange', this.attachments.length);
+        // this.onAttachmentsCountChange.emit(this.attachments.length);
     }
 
     delete(attachment: Attachment) {
@@ -190,8 +196,6 @@ export class AttachmentsComponent implements OnInit, OnChanges, OnDestroy {
                         next: () => {
                             // this._toastr.success('Attachment successfully deleted');
                             this.attachments = this.attachments.filter(item => item.id !== attachment.id);
-
-                            this.onListChanged.emit();
                         },
                         error: error => {
                             this.loading = false;
@@ -222,11 +226,43 @@ export class AttachmentsComponent implements OnInit, OnChanges, OnDestroy {
                             next: () => {
                                 // this._toastr.success('Attachments successfully deleted');
                                 this.attachments = [];
-
-                                this.onListChanged.emit();
                             },
                             error: error => {
                                 this.loading = false;
+                                console.error(error);
+                                // this._toastr.error(error.detail, 'Error!');
+                            },
+                        });
+                }
+            });
+    }
+
+    downloadAll(): void {
+        this._confirmationDialogService
+            .showWarningMessage({
+                title: 'Are you sure?',
+                text: 'Confermi il download di tutti gli Attachment di questa cartella?',
+                showCancelButton: true,
+                confirmButtonText: 'Confirm',
+            })
+            .then(result => {
+                const item = this.attachments[0];
+
+                if (result.value) {
+                    this.loading = true;
+                    this._attachmentService
+                        .downloadAll(item.entityName, item.entityKey, item.folder)
+                        .pipe(
+                            finalize(() => {
+                                this.loading = false;
+                            }),
+                            untilDestroyed(this),
+                        )
+                        .subscribe({
+                            next: (data: any) => {
+                                this._attachmentService.saveBlob(data, `${this.entityName}-${item.folder}.zip`);
+                            },
+                            error: error => {
                                 console.error(error);
                                 // this._toastr.error(error.detail, 'Error!');
                             },
@@ -243,8 +279,8 @@ export class AttachmentsComponent implements OnInit, OnChanges, OnDestroy {
         console.log('openPdf');
     }
 
-    openCix(attachment: Attachment) {
-        console.log('openCix');
+    openTxt(attachment: Attachment) {
+        console.log('openTxt');
     }
 
     openXml(attachment: Attachment) {

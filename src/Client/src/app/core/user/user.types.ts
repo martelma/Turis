@@ -1,5 +1,5 @@
 import { SafeUrl } from '@angular/platform-browser';
-import { Application } from 'app/modules/admin/applications/applications.types';
+import { Application } from 'app/shared/services/shared.types';
 
 export interface User {
     id: string;
@@ -11,6 +11,7 @@ export interface User {
     avatar?: string;
     avatarUrl?: SafeUrl;
     isActive?: boolean;
+    twoFactorEnabled?: boolean;
     language?: string;
 
     accountType?: AccountType;

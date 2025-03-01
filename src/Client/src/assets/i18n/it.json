@@ -5,7 +5,12 @@
         "Elmah": "Elmah",
         "Swagger": "Swagger",
         "Hangfire": "Hangfire",
+        "Tags": "Tags",
         "Users": "Utenti",
+        "UserManagement": "User Management",
+        "Roles": "Roles",
+        "ScopeGroups": "Scope Groups",
+        "Scopes": "Scopes",
         "Console": "Console",
         "Configuration": "Configurazioni",
         "TipiPagamenti": "Tipi Pagamenti",
@@ -23,7 +28,7 @@
         "RemoveBookmark": "Remove Bookmark",
         "MarkAsBookmark": "Mark As Bookmark",
         "Add": "Aggiungere",
-        "Delete": "Cancella",
+        "Delete": "Elimina",
         "Cancel": "Chiudi",
         "Update": "Aggiorna",
         "Save": "Salva",
@@ -50,6 +55,11 @@
     },
     "Dashboard": {
         "WelcomeBack": "Bentornato"
+    },
+    "Tags": {
+        "Name": "Name",
+        "Description": "Description",
+        "Color": "Color"
     },
     "SignIn": {
         "WelcomeTo": "Benvenuto in",

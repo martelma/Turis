@@ -7,9 +7,9 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ServiceListComponent } from './service-list/service-list.component';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { AppSettings } from 'app/constants';
+import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summary.component';
 
 @UntilDestroy()
 @Component({
@@ -25,6 +25,7 @@ import { AppSettings } from 'app/constants';
         ServiceSidebarComponent,
         RouterOutlet,
         TranslocoModule,
+        TagSummaryComponent,
     ],
 })
 export class ServiceComponent implements OnInit, AfterViewInit {
@@ -46,8 +47,7 @@ export class ServiceComponent implements OnInit, AfterViewInit {
         }
     }
 
-    async ngOnInit(): Promise<void> {
-    }
+    async ngOnInit(): Promise<void> {}
 
     async ngAfterViewInit(): Promise<void> {
         const toggleFilterValue = await this._userSettingsService.getValue(`${AppSettings.Service}:toggleFilter`);

@@ -17,11 +17,9 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { trackByFn } from 'app/shared';
-import { UserService } from 'app/core/user/user.service';
 import { AliquotaIva, AliquotaIvaSearchParameters } from '../aliquota-iva.types';
 import { AliquotaIvaService } from '../aliquote-iva.service';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
-import { getSuccessModal } from 'app/shared/types/confirm-modal.types';
 import { SearchInputComponent } from 'app/shared/components/ui/search-input/search-input.component';
 
 @UntilDestroy()
@@ -31,7 +29,7 @@ import { SearchInputComponent } from 'app/shared/components/ui/search-input/sear
     styles: [
         `
             .list-grid {
-                grid-template-columns: 1fr 1fr 2fr 1fr 1fr 1fr;
+                grid-template-columns: auto 1fr 1fr 1fr 1fr 1fr;
             }
         `,
     ],

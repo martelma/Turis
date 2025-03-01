@@ -1,0 +1,40 @@
+<div class="relative flex flex-auto bg-card dark:bg-transparent w-full">
+    <!-- <pre>
+        {{ selectedTags | json }}
+    </pre> -->
+    <div class="tag-filters-container w-full">
+        <mat-form-field class="tag-chips-field w-full" (click)="openAutocomplete()">
+            <mat-label>Tags</mat-label>
+            <mat-chip-grid #chipGrid aria-label="Tag selection">
+                <mat-chip-row
+                    *ngFor="let tag of selectedTags"
+                    [style.background-color]="tag.color"
+                    [removable]="true"
+                    (removed)="remove(tag)"
+                    [matTooltip]="tag.description">
+                    {{ tag.name }}
+                    <button matChipRemove>
+                        <mat-icon>cancel</mat-icon>
+                    </button>
+                </mat-chip-row>
+                <input
+                    #tagInput
+                    placeholder="New tag..."
+                    [formControl]="tagCtrl"
+                    [matAutocomplete]="auto"
+                    [matChipInputFor]="chipGrid"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    (matChipInputTokenEnd)="add($event)"
+                    (click)="onInputClick($event)" />
+            </mat-chip-grid>
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+                <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+                    <div class="tag-option">
+                        <span class="tag-color-indicator" [style.background-color]="tag.color"></span>
+                        <span>{{ tag.name }}</span>
+                    </div>
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+    </div>
+</div>

@@ -1,4 +1,6 @@
 import { User } from 'app/core/user/user.types';
+import { ApplicationRole } from 'app/modules/admin/roles/role.types';
+import { ApplicationScopeGroup } from 'app/modules/admin/scope-groups/scope-group.types';
 
 export interface BaseSearchParameters {
     pageIndex?: number;
@@ -61,39 +63,4 @@ export interface Application {
     scopeGroups?: ApplicationScopeGroup[];
     url?: string;
     users?: User[];
-}
-
-export interface ApplicationRole {
-    description?: string;
-    id?: string;
-    name?: string;
-    scopes?: ApplicationScope[];
-}
-
-export interface ApplicationScope {
-    applicationId?: string;
-    id?: string;
-    name?: string;
-    description?: string;
-    roleId?: string;
-    scopeGroupId?: string;
-    scopeGroupName?: string;
-}
-
-export interface ApplicationScopeGroup {
-    id?: string;
-    name?: string;
-    description?: string;
-    scopes?: ApplicationScope[];
-}
-
-export const toPascalCase = (s: string) =>
-    s.replace(/(\w)(\w*)/g, function (g0, g1, g2) {
-        return g1.toUpperCase() + g2.toLowerCase();
-    });
-
-export interface GenericResponse {
-    correlationId: string;
-    message: string;
-    body: any;
 }

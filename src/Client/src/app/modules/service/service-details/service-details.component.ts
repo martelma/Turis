@@ -10,7 +10,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { fuseAnimations } from '@fuse/animations';
 import { SpinnerButtonComponent } from 'app/shared/components/ui/spinner-button/spinner-button.component';
 import { Service } from '../service.types';
@@ -22,6 +21,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ServiceViewComponent } from '../service-view/service-view.component';
 import { ServiceComponent } from '../service.component';
 import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
+import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summary.component';
 
 @UntilDestroy()
 @Component({
@@ -51,10 +51,10 @@ import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
         ServiceViewComponent,
         ServiceEditComponent,
         SpinnerButtonComponent,
+        TagSummaryComponent,
     ],
 })
 export class ServiceDetailsComponent implements OnInit {
-    // @ViewChild(ParametersComponent) parameters: ParametersComponent;
     @ViewChild(ServiceViewComponent) viewService: ServiceViewComponent;
     @ViewChild(ServiceEditComponent) editService: ServiceEditComponent;
 
@@ -78,7 +78,6 @@ export class ServiceDetailsComponent implements OnInit {
         private _activatedRoute: ActivatedRoute,
         private _router: Router,
         private _serviceService: ServiceService,
-        private _fuseConfirmationService: FuseConfirmationService,
         private _translocoService: TranslocoService,
         private _bookmarkService: BookmarkService,
         public snackBar: MatSnackBar,
@@ -89,47 +88,8 @@ export class ServiceDetailsComponent implements OnInit {
     ngOnInit(): void {
         this._subscribeRouteParams();
 
-        this._subscribeSignalR();
-
         this._subscribeService();
         this._subscribeServiceEdited();
-    }
-
-    _subscribeSignalR(): void {
-        // this._signalRService.connect();
-        // this._signalRService.taskCompleted$
-        //     .pipe(
-        //         filter((obj: TaskCompletedMessage) => !!obj),
-        //         filter((obj: TaskCompletedMessage) => obj.adminMessage === false),
-        //         filter((obj: TaskCompletedMessage) => obj.correlationKey === 'DownloadData'),
-        //         untilDestroyed(this),
-        //     )
-        //     .subscribe((obj: TaskCompletedMessage) => {
-        //         // Opens the notification panel with the most recent completed jobs
-        //         BaseCommands.instance.openNotificationsPanel({ selectedJobStatus: 'Completed' });
-        //         this.downloadingData = false;
-        //         if (obj.status === 'OK') {
-        //             // IMPORTANT: SignalR sends two messages
-        //             // Avoids multiple file downloads when jobs are completed
-        //             if (!this.isDownloading) {
-        //                 this.isDownloading = true;
-        //                 const fileName = obj.data.data;
-        //                 this._downloadService
-        //                     .download(obj.data.jobId, fileName)
-        //                     .pipe(untilDestroyed(this))
-        //                     .subscribe((response: HttpResponse<Blob>) => {
-        //                         this._downloadService.saveResponseBlob(response, obj.data.data ?? fileName);
-        //                     })
-        //                     .add(() => {
-        //                         this.isDownloading = false;
-        //                     });
-        //             }
-        //         } else if (obj.status === 'KO') {
-        //             this.snackBar.open(obj.message, this._translocoService.translate('General.Dismiss'), {
-        //                 panelClass: ['error'],
-        //             });
-        //         }
-        //     });
     }
 
     private _subscribeRouteParams() {
@@ -148,6 +108,8 @@ export class ServiceDetailsComponent implements OnInit {
     private _subscribeService() {
         this._serviceService.service$.pipe(untilDestroyed(this)).subscribe((service: Service) => {
             this.service = service;
+
+            console.log('service', service);
 
             this.editMode = service?.id === undefined;
         });

@@ -64,7 +64,6 @@ import { TextFieldModule } from '@angular/cdk/text-field';
     ],
 })
 export class ContactDetailsComponent implements OnInit {
-    // @ViewChild(ParametersComponent) parameters: ParametersComponent;
     @ViewChild(ContactViewComponent) viewContact: ContactViewComponent;
     @ViewChild(ContactEditComponent) editContact: ContactEditComponent;
 
@@ -103,47 +102,8 @@ export class ContactDetailsComponent implements OnInit {
     ngOnInit(): void {
         this._subscribeRouteParams();
 
-        this._subscribeSignalR();
-
         this._subscribeContact();
         this._subscribeContactEdited();
-    }
-
-    _subscribeSignalR(): void {
-        // this._signalRContact.connect();
-        // this._signalRContact.taskCompleted$
-        //     .pipe(
-        //         filter((obj: TaskCompletedMessage) => !!obj),
-        //         filter((obj: TaskCompletedMessage) => obj.adminMessage === false),
-        //         filter((obj: TaskCompletedMessage) => obj.correlationKey === 'DownloadData'),
-        //         untilDestroyed(this),
-        //     )
-        //     .subscribe((obj: TaskCompletedMessage) => {
-        //         // Opens the notification panel with the most recent completed jobs
-        //         BaseCommands.instance.openNotificationsPanel({ selectedJobStatus: 'Completed' });
-        //         this.downloadingData = false;
-        //         if (obj.status === 'OK') {
-        //             // IMPORTANT: SignalR sends two messages
-        //             // Avoids multiple file downloads when jobs are completed
-        //             if (!this.isDownloading) {
-        //                 this.isDownloading = true;
-        //                 const fileName = obj.data.data;
-        //                 this._downloadContact
-        //                     .download(obj.data.jobId, fileName)
-        //                     .pipe(untilDestroyed(this))
-        //                     .subscribe((response: HttpResponse<Blob>) => {
-        //                         this._downloadContact.saveResponseBlob(response, obj.data.data ?? fileName);
-        //                     })
-        //                     .add(() => {
-        //                         this.isDownloading = false;
-        //                     });
-        //             }
-        //         } else if (obj.status === 'KO') {
-        //             this.snackBar.open(obj.message, this._translocoService.translate('General.Dismiss'), {
-        //                 panelClass: ['error'],
-        //             });
-        //         }
-        //     });
     }
 
     private _subscribeRouteParams() {
@@ -175,7 +135,6 @@ export class ContactDetailsComponent implements OnInit {
     }
 
     private setContact(contact: Contact): void {
-        // Get the contact
         this.contact = contact;
 
         // Sets the avatar
@@ -197,10 +156,6 @@ export class ContactDetailsComponent implements OnInit {
         });
     }
 
-    isDownloadDataButtonDisabled(): boolean {
-        return false;
-    }
-
     edit(): void {
         this._contactService.editContact(this.contact.id);
     }
@@ -213,14 +168,6 @@ export class ContactDetailsComponent implements OnInit {
         }
     }
 
-    menuItem1(contact: Contact) {
-        console.log('menuItem1', contact);
-    }
-
-    menuItem2(contact: Contact) {
-        console.log('menuItem2', contact);
-    }
-
     save(): void {
         // if (this.isCopy) {
         //     newValue.id = emptyGuid;
@@ -231,9 +178,6 @@ export class ContactDetailsComponent implements OnInit {
             .pipe(untilDestroyed(this))
             .subscribe(() => {
                 this._refresh();
-
-                // this._contactService.editContact(null);
-                // this._contactService.copyContact(null);
             });
     }
 
@@ -353,5 +297,17 @@ export class ContactDetailsComponent implements OnInit {
 
                 // this._userService.me().pipe(untilDestroyed(this)).subscribe();
             });
+    }
+
+    isDownloadDataButtonDisabled(): boolean {
+        return false;
+    }
+
+    menuItem1(contact: Contact) {
+        console.log('menuItem1', contact);
+    }
+
+    menuItem2(contact: Contact) {
+        console.log('menuItem2', contact);
     }
 }

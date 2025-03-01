@@ -8,11 +8,12 @@ namespace Turis.BusinessLayer.Extensions;
 
 public static class ServiceExtensions
 {
-	public static async Task<ServiceModel> ToModelAsync(this Service entity, IEnumerable<Bookmark> bookmarks, IAvatarContactService avatarContactService)
+	public static async Task<ServiceModel> ToModelAsync(this Service entity, IEnumerable<Bookmark> bookmarks,
+		List<Attachment> attachments, List<EntityTag> tags, IAvatarContactService avatarContactService)
 	{
 		var bookmarkId = bookmarks.FirstOrDefault(x => x.EntityId == entity.Id)?.Id;
 
-		var model =  new ServiceModel
+		var model = new ServiceModel
 		{
 			Id = entity.Id,
 			Code = entity.Code,
@@ -56,6 +57,7 @@ public static class ServiceExtensions
 			CommissionPaymentDate = entity.CashedDate ?? DateTimeOffset.MinValue,
 
 			BookmarkId = bookmarkId.HasValue() ? bookmarkId.ToString() : string.Empty,
+			AttachmentsCount = attachments.Count(x => x.EntityKey == entity.Id)
 		};
 		if (model.Collaborator != null)
 		{
@@ -64,17 +66,21 @@ public static class ServiceExtensions
 				: null;
 		}
 
+		model.Tags = tags?.Select(x => x.Tag)?.ToModel()?.ToList();
+
 		return model;
 	}
 
-	public static Task<IEnumerable<ServiceModel>> ToModel(this IQueryable<Service> query, IEnumerable<Bookmark> bookmarks, IAvatarContactService avatarContactService)
+	public static Task<IEnumerable<ServiceModel>> ToModel(this IEnumerable<Service> list,
+		IEnumerable<Bookmark> bookmarks, 
+		List<Attachment> attachments, 
+		List<EntityTag> tags, 
+		IAvatarContactService avatarContactService)
 	{
-		return query.AsEnumerable().ToModel(bookmarks, avatarContactService);
-	}
-
-	public static Task<IEnumerable<ServiceModel>> ToModel(this IEnumerable<Service> list, IEnumerable<Bookmark> bookmarks, IAvatarContactService avatarContactService)
-	{
-		return list.SelectAsync(x => x.ToModelAsync(bookmarks, avatarContactService));
+		return list.SelectAsync(x => x.ToModelAsync(bookmarks, 
+			attachments.Where(y=>y.EntityKey == x.Id).ToList(), 
+			tags.Where(y=>y.EntityKey == x.Id).ToList(), 
+			avatarContactService));
 	}
 
 	public static async Task<ServiceInfoModel> ToModelInfoAsync(this Service entity)

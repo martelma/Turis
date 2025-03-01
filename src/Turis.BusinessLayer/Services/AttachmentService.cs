@@ -5,10 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OperationResults;
+using System.IO.Compression;
 using TinyHelpers.Extensions;
 using Turis.BusinessLayer.Extensions;
 using Turis.BusinessLayer.Parameters;
 using Turis.BusinessLayer.Parameters.Base;
+using Turis.BusinessLayer.Services.Base;
 using Turis.BusinessLayer.Services.Interfaces;
 using Turis.BusinessLayer.Settings;
 using Turis.Common.Models;
@@ -22,7 +24,7 @@ public class AttachmentService(ApplicationDbContext dbContext
 	, IOptions<CdnSettings> cdnOptions
 	, IUserService userService
 	, IAuthService authService
-	, ILogger<AttachmentService> logger) : IAttachmentService
+	, ILogger<AttachmentService> logger) : BaseService, IAttachmentService
 {
 	private readonly DbSet<Attachment> context = dbContext.Attachments;
 	private readonly CdnSettings cdnSettings = cdnOptions.Value;
@@ -52,6 +54,28 @@ public class AttachmentService(ApplicationDbContext dbContext
 			return Result.Fail(FailureReasons.ItemNotFound);
 
 		return record.ToModel(authService);
+	}
+
+	public async Task<List<Attachment>> ListAsync(string entityName, Guid entityKey, string folder = null)
+	{
+		var list = Query()
+			.Where(x => x.EntityName == entityName)
+			.Where(x => x.EntityKey == entityKey)
+			.WhereIf(folder.HasValue(), x => x.Folder == folder)
+			?.ToList();
+
+		return await Task.FromResult(list);
+	}
+
+	public async Task<List<Attachment>> ListAsync(string entityName, List<Guid> entityKeys, string folder = null)
+	{
+		var list = Query()
+			.Where(x => x.EntityName == entityName)
+			.Where(x => entityKeys.Contains(x.EntityKey))
+			.WhereIf(folder.HasValue(), x => x.Folder == folder)
+			?.ToList();
+
+		return await Task.FromResult(list);
 	}
 
 	public async Task<Result<PaginatedList<AttachmentModel>>> ListAsync(AttachmentSearchParameters parameters)
@@ -200,5 +224,60 @@ public class AttachmentService(ApplicationDbContext dbContext
 			await file.CopyToAsync(fileStream);
 		}
 		return Result.Ok();
+	}
+
+	public async Task<Result<StreamFileContent>> DownloadAllAsync(string entityName, Guid entityKey, string folder)
+	{
+		var records = await ListAsync(entityName, entityKey, folder);
+		if (records == null)
+			return Result.Fail(FailureReasons.ItemNotFound);
+
+		byte[] bytes = null;
+		using (var zipStream = new MemoryStream())
+		{
+			using (var zip = new ZipArchive(zipStream, ZipArchiveMode.Create, leaveOpen: true))
+			{
+				foreach (var item in records)
+				{
+					var fullPath = await GetFullPathAsync(item);
+					await using var fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
+					var entry = zip.CreateEntry($"{folder}/{item.OriginalFileName}", CompressionLevel.Fastest);
+					await using var entryStream = entry.Open();
+					await fileStream.CopyToAsync(entryStream);
+				}
+			}
+
+			zipStream.Position = 0;
+			bytes = zipStream.ToArray();
+		}
+
+		var zipFile = new MemoryStream(bytes);
+
+		return await PrepareStreamFileContent(zipFile, $"{folder}.zip");
+	}
+
+	public async Task<string> GetFullPathAsync(Attachment attachment)
+	{
+		//if (attachment.EntityName.EqualsIgnoreCase(nameof(Batch)))
+		//{
+		//	var batch = await GetBatch(record.EntityKey);
+
+		//	var batchRootPath = BatchRootPath(batch, attachment.Folder);
+		//	var fullFileName = Path.Combine(batchRootPath, attachment.OriginalFileName);
+
+		//	return fullFileName;
+		//}
+		//else
+		//{
+			var path = Path.Combine(cdnSettings.Root, cdnSettings.AttachmentFolder, attachment.EntityName, attachment.EntityKey.ToString());
+			if (attachment.Folder.HasValue())
+				path = Path.Combine(path, attachment.Folder);
+
+			var fullFileName = Path.Combine(path, $"{attachment.Id}-{attachment.OriginalFileName}");
+
+			return fullFileName;
+		//}
+
+		//return string.Empty;
 	}
 }

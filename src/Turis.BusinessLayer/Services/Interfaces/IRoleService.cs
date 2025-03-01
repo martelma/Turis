@@ -7,6 +7,7 @@ namespace Turis.BusinessLayer.Services.Interfaces;
 public interface IRoleService : IService
 {
     Task<Result<PaginatedList<ApplicationRoleModel>>> ListAsync(Guid userId, Guid applicationId, int pageIndex, int itemsPerPage, string orderBy);
+    Task<Result<PaginatedList<ApplicationRoleModel>>> UserRolesAsync(Guid userId, int pageIndex, int itemsPerPage, string orderBy);
     Task<Result<ApplicationRoleModel>> GetAsync(Guid applicationId, Guid roleId);
 	Task<Result<ApplicationRoleModel>> GetAsync(Guid applicationId, string roleName);
     Task<Result<ApplicationRoleModel>> SaveAsync(Guid applicationId, ApplicationRoleModel role);

@@ -1,8 +1,8 @@
-import { Component, Input, OnChanges, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabGroup, MatTabsModule } from '@angular/material/tabs';
 import { TranslocoModule } from '@ngneat/transloco';
-import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FuseScrollResetDirective } from '@fuse/directives/scroll-reset';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -10,7 +10,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { Collaborator, Service } from '../service.types';
 import { AsyncPipe, JsonPipe, NgFor, NgIf, NgClass } from '@angular/common';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ServiceService } from '../service.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSelectModule } from '@angular/material/select';
@@ -21,7 +20,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { DurationTypes, getStatusColorClass, getStatusText, MY_DATE_FORMATS, ServiceTypes, StatusTypes } from 'app/constants';
+import {
+    DurationTypes,
+    getStatusColorClass,
+    getStatusText,
+    MY_DATE_FORMATS,
+    ServiceTypes,
+    StatusTypes,
+} from 'app/constants';
 import { PriceList } from 'app/modules/configuration/price-list/price-list.types';
 import { PriceListService } from 'app/modules/configuration/price-list/price-list.service';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -36,9 +42,11 @@ import {
 } from '@angular/material/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Contact } from 'app/modules/contact/contact.types';
-import { debounceTime, distinctUntilChanged, Observable, startWith, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, switchMap } from 'rxjs';
 import { ContactService } from 'app/modules/contact/contact.service';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
+import { Tag } from 'app/modules/configuration/tags/tag.types';
+import { TagFiltersComponent } from 'app/modules/configuration/tags/filters/tag-filters.component';
 
 @UntilDestroy()
 @Component({
@@ -81,15 +89,16 @@ import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/mat
         MatExpansionModule,
         FuseScrollResetDirective,
         TranslocoModule,
+        TagFiltersComponent,
     ],
 })
-export class ServiceEditComponent implements OnInit, OnChanges {
+export class ServiceEditComponent implements OnInit {
+    @ViewChild(MatTabGroup) matTabGroup: MatTabGroup;
+
     item: Service;
     @Input()
     set service(value: Service) {
         this.item = value;
-
-        console.log('item', this.item);
 
         this.clientControl.setValue(this.item.client?.companyName);
         this.collaboratorControl.setValue(this.item.collaborator?.fullName);
@@ -122,8 +131,6 @@ export class ServiceEditComponent implements OnInit, OnChanges {
     priceLists: PriceList[] = [];
     languages: Language[] = [];
 
-    @ViewChild(MatTabGroup) matTabGroup: MatTabGroup;
-
     clientControl = new FormControl();
     collaboratorControl = new FormControl();
 
@@ -131,10 +138,7 @@ export class ServiceEditComponent implements OnInit, OnChanges {
     getStatusColorClass = getStatusColorClass;
     getStatusText = getStatusText;
 
-
     constructor(
-        private _formBuilder: UntypedFormBuilder,
-        private _serviceService: ServiceService,
         private _priceListService: PriceListService,
         private _languageService: LanguageService,
         private _contactService: ContactService,
@@ -142,8 +146,6 @@ export class ServiceEditComponent implements OnInit, OnChanges {
         this.serviceTypes = ServiceTypes;
         this.durationTypes = DurationTypes;
     }
-
-    ngOnChanges(): void {}
 
     ngOnInit(): void {
         this.loadPriceLists();
@@ -210,7 +212,6 @@ export class ServiceEditComponent implements OnInit, OnChanges {
     }
 
     onChanged() {
-        console.log('onChanged');
         this.checkChanged();
     }
 
@@ -234,8 +235,7 @@ export class ServiceEditComponent implements OnInit, OnChanges {
         this.rebuild();
     }
 
-    statusTypeChanged(): void {
-    }
+    statusTypeChanged(): void {}
 
     peopleChanged(): void {
         this.filterPriceList();
@@ -294,6 +294,11 @@ export class ServiceEditComponent implements OnInit, OnChanges {
             this.service.commissionCalculated = 0;
         }
 
+        this.checkChanged();
+    }
+
+    onTagsSelectionChange(tags: Tag[]): void {
+        this.service.tags = tags;
         this.checkChanged();
     }
 }

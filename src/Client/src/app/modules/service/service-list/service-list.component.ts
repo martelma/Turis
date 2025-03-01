@@ -1,3 +1,5 @@
+import { TagSummaryComponent } from './../../../shared/components/tag-summary/tag-summary.component';
+import { Tag } from './../../configuration/tags/tag.types';
 import { CurrencyPipe, DatePipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
 import {
     AfterViewInit,
@@ -21,7 +23,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { fuseAnimations } from '@fuse/animations';
-import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { trackByFn } from 'app/shared';
@@ -35,7 +36,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
 import { DurationTypes, getStatusColorClass, getStatusText, ServiceTypes, StatusTypes } from 'app/constants';
-import { UserService } from 'app/core/user/user.service';
 import { ServiceViewComponent } from '../service-view/service-view.component';
 
 @UntilDestroy()
@@ -77,6 +77,7 @@ import { ServiceViewComponent } from '../service-view/service-view.component';
         SearchInputComponent,
         ServiceComponent,
         ServiceViewComponent,
+        TagSummaryComponent,
     ],
 })
 export class ServiceListComponent implements OnInit, AfterViewInit {
@@ -113,22 +114,20 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
         private _translocoService: TranslocoService,
 
         public serviceComponent: ServiceComponent,
-    ) { }
+    ) {}
 
     ngOnInit(): void {
         this.activeLang = this._translocoService.getActiveLang();
 
         // Services
-        this._serviceService.services$
-            .pipe(untilDestroyed(this))
-            .subscribe((results: PaginatedListResult<Service>) => {
-                this.results = results;
-                this.list = results?.items;
+        this._serviceService.services$.pipe(untilDestroyed(this)).subscribe((results: PaginatedListResult<Service>) => {
+            this.results = results;
+            this.list = results?.items;
 
-                this.list.forEach(item => {
-                    item.languages = item.languages.map(lang => lang.toLowerCase());
-                });
+            this.list.forEach(item => {
+                item.languages = item.languages.map(lang => lang.toLowerCase());
             });
+        });
 
         // Services loading
         this._serviceService.servicesLoading$.pipe(untilDestroyed(this)).subscribe((servicesLoading: boolean) => {
@@ -240,10 +239,19 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
         }
     }
 
+    navigateToItem(item: Service): void {
+        item.selected = true;
+        this._router.navigate(item.id ? ['.', item.id] : ['.', 'new'], { relativeTo: this._activatedRoute });
+    }
+
     onItemSelected(service: Service): void {
         this.selectedItem = service;
 
-        console.log('selectedItem', this.selectedItem);
+        this.list.forEach(item => {
+            item.selected = false;
+        });
+
+        this.selectedItem.selected = true;
     }
 
     handlePageEvent(event: PageEvent): void {
@@ -256,7 +264,11 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
         this._serviceService
             .listEntities({ ...this.serviceParameters })
             .pipe(untilDestroyed(this))
-            .subscribe();
+            .subscribe(items => {
+                if (items?.items?.length > 0) {
+                    this.navigateToItem(items.items[0]);
+                }
+            });
     }
 
     filter(value: string): void {
@@ -264,7 +276,7 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
         this._list();
     }
 
-    onServiceTypeChange() { }
+    onServiceTypeChange() {}
 
-    onDurationTypeChange() { }
+    onDurationTypeChange() {}
 }

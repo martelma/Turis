@@ -43,6 +43,8 @@ export class Contact {
     avatarUrl2?: SafeUrl;
 
     bookmarkId: string;
+
+    selected: boolean;
 }
 
 export class ContactSearchParameters extends BaseSearchParameters {

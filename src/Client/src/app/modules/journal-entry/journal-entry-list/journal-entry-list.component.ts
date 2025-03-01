@@ -19,7 +19,7 @@ import {
     ViewChild,
     ViewEncapsulation,
 } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, UntypedFormGroup } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
@@ -41,9 +41,9 @@ import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/route
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
-import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { JournalEntryComponent } from '../journal-entry.component';
 import { JournalEntryService } from '../journal-entry.service';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
 
 @UntilDestroy()
 @Component({
@@ -103,6 +103,7 @@ export class JournalEntryListComponent implements OnInit, AfterViewInit {
 
     activeLang: string;
     selectedItem: JournalEntry;
+    selectedItemForm: UntypedFormGroup;
 
     trackByFn = trackByFn;
 
@@ -110,10 +111,10 @@ export class JournalEntryListComponent implements OnInit, AfterViewInit {
         private _router: Router,
         private _activatedRoute: ActivatedRoute,
         private _changeDetectorRef: ChangeDetectorRef,
+        private _fuseConfirmationService: FuseConfirmationService,
         private _journalEntryService: JournalEntryService,
         private _bookmarkService: BookmarkService,
         private _translocoService: TranslocoService,
-        private _userSettingsService: UserSettingsService,
 
         public journalEntryComponent: JournalEntryComponent,
     ) {}
@@ -184,11 +185,6 @@ export class JournalEntryListComponent implements OnInit, AfterViewInit {
             });
     }
 
-    createJournalEntry(): void {
-        console.log('createJournalEntry');
-        this._router.navigate(['./', 'new'], { relativeTo: this._activatedRoute });
-    }
-
     toggleBookmarks(): void {
         this._search({
             onlyBookmarks: !this.journalEntryParameters.onlyBookmarks,
@@ -233,10 +229,19 @@ export class JournalEntryListComponent implements OnInit, AfterViewInit {
         }
     }
 
+    navigateToItem(item: JournalEntry): void {
+        item.selected = true;
+        this._router.navigate(item.id ? ['.', item.id] : ['.', 'new'], { relativeTo: this._activatedRoute });
+    }
+
     onItemSelected(journalEntries: JournalEntry): void {
         this.selectedItem = journalEntries;
 
-        console.log('selectedItem', this.selectedItem);
+        this.list.forEach(item => {
+            item.selected = false;
+        });
+
+        this.selectedItem.selected = true;
     }
 
     handlePageEvent(event: PageEvent): void {
@@ -253,7 +258,11 @@ export class JournalEntryListComponent implements OnInit, AfterViewInit {
         this._journalEntryService
             .listEntities({ ...this.journalEntryParameters })
             .pipe(untilDestroyed(this))
-            .subscribe();
+            .subscribe(items => {
+                if (items?.items?.length > 0) {
+                    this.navigateToItem(items.items[0]);
+                }
+            });
     }
 
     filter(value: string): void {
@@ -261,7 +270,135 @@ export class JournalEntryListComponent implements OnInit, AfterViewInit {
         this._list();
     }
 
-    onServiceTypeChange() {}
+    createJournalEntry(): void {
+        console.log('createJournalEntry');
+        this._router.navigate(['./', 'new'], { relativeTo: this._activatedRoute });
+    }
 
-    onDurationTypeChange() {}
+    create(): void {
+        // Create the contact
+        this._journalEntryService
+            .createEntity()
+            .pipe(untilDestroyed(this))
+            .subscribe(item => {
+                this._updateSelectedItem(item);
+            });
+    }
+
+    private _updateSelectedItem(item: JournalEntry): void {
+        // Go to new tag
+        this.selectedItem = item;
+
+        // Fill the form
+        this.selectedItemForm.patchValue(item);
+
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
+    }
+
+    updateSelectedItem(): void {
+        // Get the contact object
+        const contact = {
+            ...this.selectedItemForm.getRawValue(),
+        };
+
+        // Update the service on the server
+        this._journalEntryService
+            .updateEntity(contact.id, contact)
+            .pipe(untilDestroyed(this))
+            .subscribe(() => {
+                // this._fuseConfirmationService.open(getSuccessModal());
+
+                setTimeout(() => {
+                    this.closeDetails();
+                    this._list();
+                    // this._serviceService.list().pipe(untilDestroyed(this)).subscribe();
+                }, 2000);
+            });
+    }
+
+    deleteSelectedItem(): void {
+        // Open the confirmation dialog
+        const confirmation = this._fuseConfirmationService.open({
+            title: this._translocoService.translate('JournalEntry.DeleteJournalEntry'),
+            message: this._translocoService.translate('Questions.AreYouSure'),
+            actions: {
+                cancel: {
+                    label: this._translocoService.translate('General.Cancel'),
+                },
+                confirm: {
+                    label: this._translocoService.translate('General.Delete'),
+                },
+            },
+        });
+
+        // Subscribe to the confirmation dialog closed action
+        confirmation
+            .afterClosed()
+            .pipe(untilDestroyed(this))
+            .subscribe(result => {
+                // If the confirm button pressed...
+                if (result === 'confirmed') {
+                    // Get the service object
+                    const service = this.selectedItemForm.getRawValue();
+
+                    // Delete the service on the server
+                    this._journalEntryService
+                        .deleteEntity(service.id)
+                        .pipe(untilDestroyed(this))
+                        .subscribe(() => {
+                            // Close the details
+                            this.closeDetails();
+                        });
+                }
+            });
+    }
+
+    showFlashMessage(type: 'success' | 'error'): void {
+        // Show the message
+        this.flashMessage = type;
+
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
+
+        // Hide it after 3 seconds
+        setTimeout(() => {
+            this.flashMessage = null;
+
+            // Mark for check
+            this._changeDetectorRef.markForCheck();
+        }, 3000);
+    }
+
+    toggleDetails(contactId: string): void {
+        // If the service is already selected...
+        if (this.selectedItem && this.selectedItem.id === contactId) {
+            // Close the details
+            this.closeDetails();
+            return;
+        }
+
+        // Get the service by id
+        this._journalEntryService
+            .getById(contactId)
+            .pipe(untilDestroyed(this))
+            .subscribe(item => {
+                // Set the selected role
+                this.selectedItem = item;
+
+                // Fill the form
+                this.selectedItemForm.patchValue(item);
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+
+                this._changeDetectorRef.detectChanges();
+            });
+    }
+
+    closeDetails(): void {
+        this.selectedItem = null;
+
+        this.selectedItemForm.reset();
+    }
 }

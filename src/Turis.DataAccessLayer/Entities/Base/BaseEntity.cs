@@ -3,13 +3,13 @@ using JeMa.Shared.Interfaces;
 
 namespace Turis.DataAccessLayer.Entities.Base;
 
-public class BaseEntity: INotificationEntity
+public class BaseEntity : IApplicationEntity, INotificationEntity
 {
 	public Guid Id { get; set; }
 
-    [NotMapped]
-    public string EntityId => Id.ToString();
+	[NotMapped]
+	public string EntityId => Id.ToString();
 
-    [NotMapped]
-    public virtual string EntityInfo => string.Empty;
+	[NotMapped]
+	public virtual string EntityInfo => string.Empty;
 }

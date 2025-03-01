@@ -1,0 +1,180 @@
+<div class="flex flex-col w-full h-full min-w-0 sm:absolute sm:inset-0 sm:overflow-hidden">
+    <mat-drawer-container class="flex-auto sm:h-full">
+        <!-- Drawer -->
+        <mat-drawer
+            class="application-scopes sm:w-96 dark:bg-gray-900"
+            [autoFocus]="false"
+            [mode]="drawerMode"
+            [opened]="drawerOpened"
+            #drawer>
+            <div class="relative flex flex-auto w-full h-full bg-card dark:bg-transparent">
+                <!-- Scopes list -->
+                <div class="relative flex flex-auto flex-col w-full min-w-0 border-r z-10">
+                    <!-- Header -->
+                    <div class="relative flex flex-0 w-full border-b bg-gray-50 dark:bg-transparent">
+                        <div class="flex flex-col m-8 mr-6 sm:my-10 w-full">
+                            <div class="flex flex-col">
+                                <div class="flex items-center justify-between">
+                                    <!-- Back button -->
+                                    <app-back-button></app-back-button>
+
+                                    <!-- Close button -->
+                                    <div class="lg:hidden">
+                                        <button mat-icon-button (click)="drawer.close()">
+                                            <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="flex gap-2 mb-4">
+                                    <!-- Users button -->
+                                    <button mat-stroked-button (click)="goToUsers()">
+                                        {{ 'Navigation.Users' | transloco }}
+                                    </button>
+
+                                    <!-- Roles button -->
+                                    <button mat-stroked-button (click)="goToRoles()">
+                                        {{ 'Navigation.Roles' | transloco }}
+                                    </button>
+
+                                    <!-- Scope Groups button -->
+                                    <button mat-stroked-button (click)="goToScopeGroups()">
+                                        {{ 'Navigation.ScopeGroups' | transloco }}
+                                    </button>
+                                </div>
+
+                                <!-- Title -->
+                                <div class="text-4xl font-extrabold tracking-tight leading-none">
+                                    {{ 'Navigation.Scopes' | transloco }} {{ 'General.For' | transloco }}
+                                    {{ application?.name }}
+                                </div>
+                            </div>
+
+                            <div class="flex flex-1 mt-4 space-x-2">
+                                <!-- Search -->
+                                <div class="flex-auto">
+                                    <mat-form-field class="fuse-mat-dense w-full min-w-50" subscriptSizing="dynamic">
+                                        <mat-icon
+                                            class="icon-size-5"
+                                            matPrefix
+                                            [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+
+                                        <input
+                                            matInput
+                                            [formControl]="searchScopesInputControl"
+                                            [autocomplete]="'off'"
+                                            [placeholder]="'Search scope'" />
+
+                                        <button
+                                            type="button"
+                                            *ngIf="searchScopesInputControl.value"
+                                            matSuffix
+                                            mat-icon-button
+                                            aria-label="Clear"
+                                            (click)="searchScopesInputControl.setValue('')">
+                                            <mat-icon [svgIcon]="'heroicons_solid:x-mark'"></mat-icon>
+                                        </button>
+                                    </mat-form-field>
+                                </div>
+
+                                <!-- Add button -->
+                                <button mat-icon-button (click)="createScope()">
+                                    <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scope list -->
+                    <ng-container *ngIf="scopes?.items?.length > 0; else noScopes">
+                        <div class="overflow-y-auto" #queryList>
+                            <!-- Scope loop -->
+                            <ng-container *ngFor="let scope of scopes?.items; trackBy: trackByFn">
+                                <div
+                                    class="flex px-8 py-5 cursor-pointer border-b last:border-b-0"
+                                    [ngClass]="{
+                                        'hover:bg-gray-100 dark:hover:bg-hover':
+                                            !selectedScope || selectedScope?.id !== scope.id,
+                                        'bg-primary-50 dark:bg-hover': selectedScope && selectedScope.id === scope.id
+                                    }"
+                                    (click)="showScope(scope)"
+                                    tabindex="0"
+                                    (keypress)="$event.preventDefault()">
+                                    <div class="ml-3">
+                                        <div
+                                            class="font-medium leading-6"
+                                            [ngClass]="{
+                                                'text-primary dark:text-primary-500':
+                                                    selectedScope && selectedScope.id === scope.id
+                                            }">
+                                            {{ scope.name }}
+                                        </div>
+                                        <div class="mt-0.5 text-secondary">
+                                            {{ scope.description }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </ng-container>
+
+                    <!-- Paginator -->
+                    <mat-paginator
+                        class="mt-auto border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                        [length]="scopes.totalCount ?? 0"
+                        [pageIndex]="scopes.pageIndex ?? 0"
+                        [pageSize]="scopes.pageSize ?? 10"
+                        [pageSizeOptions]="[5, 10, 25, 100]"
+                        (page)="handleScopesPageEvent($event)"
+                        [showFirstLastButtons]="true"></mat-paginator>
+                </div>
+
+                <!-- No scopes template -->
+                <ng-template #noScopes>
+                    <div
+                        class="z-100 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+                        <mat-icon class="icon-size-24" [svgIcon]="'heroicons_outline:circle-stack'"></mat-icon>
+                        <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">
+                            {{ 'Applications.Scopes.NoScopes' | transloco }}
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
+        </mat-drawer>
+
+        <!-- Drawer content -->
+        <mat-drawer-content class="relative flex flex-col">
+            <ng-container *ngIf="selectedScope; else noSelectedScope">
+                <!-- Header -->
+                <div
+                    class="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between p-6 sm:py-12 md:px-8 border-b bg-card dark:bg-transparent">
+                    <!-- Drawer toggle -->
+                    <button class="lg:hidden -ml-2" mat-icon-button (click)="drawer.toggle()">
+                        <mat-icon [svgIcon]="'heroicons_outline:bars-3'"></mat-icon>
+                    </button>
+
+                    <!-- Title -->
+                    <div>
+                        <div class="text-4xl font-extrabold tracking-tight leading-none">
+                            {{ selectedScope?.name }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main -->
+                <div class="flex-auto z-20 absolute inset-0 lg:static lg:inset-auto flex">
+                    <router-outlet></router-outlet>
+                </div>
+            </ng-container>
+
+            <!-- No selected scope -->
+            <ng-template #noSelectedScope>
+                <div class="z-100 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+                    <div class="p-8 sm:p-16 text-4xl font-semibold tracking-tight text-center">
+                        {{ 'Applications.Scopes.NoSelectedScope' | transloco }}
+                    </div>
+                </div>
+            </ng-template>
+        </mat-drawer-content>
+    </mat-drawer-container>
+</div>

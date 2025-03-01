@@ -57,6 +57,8 @@ export class ServiceViewComponent implements OnInit, OnChanges {
         return this.item;
     }
 
+    attachmentsCount = 0;
+
     @ViewChild(MatTabGroup) matTabGroup: MatTabGroup;
 
     form: UntypedFormGroup;

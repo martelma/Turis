@@ -1,13 +1,5 @@
 import { CurrencyPipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
-import {
-    AfterViewInit,
-    ChangeDetectorRef,
-    Component,
-    NgModule,
-    OnInit,
-    ViewChild,
-    ViewEncapsulation,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -38,7 +30,7 @@ import { DurationTypes, ServiceTypes } from 'app/constants';
     styles: [
         `
             .list-grid {
-                grid-template-columns: 1fr 2fr 2fr 2fr 1fr 1fr 1fr 1fr;
+                grid-template-columns: auto 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
             }
         `,
     ],

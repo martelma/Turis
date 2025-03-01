@@ -29,7 +29,7 @@
                         </a>
 
                         <!-- Other actions button & menu -->
-                        <button class="ml-2" mat-icon-button [matMenuTriggerFor]="mailMenu">
+                        <!-- <button class="ml-2" mat-icon-button [matMenuTriggerFor]="mailMenu">
                             <mat-icon [svgIcon]="'heroicons_outline:ellipsis-vertical'"></mat-icon>
                         </button>
                         <mat-menu #mailMenu="matMenu">
@@ -41,7 +41,7 @@
                                 <mat-icon [svgIcon]="'heroicons_outline:envelope'"></mat-icon>
                                 <span>Menu Item 2</span>
                             </button>
-                        </mat-menu>
+                        </mat-menu> -->
                     </div>
                 </ng-container>
 
@@ -82,21 +82,14 @@
                                             | transloco
                                     "></mat-icon>
 
-                                <mat-icon
-                                    (click)="handleCheck(journalEntry)"
-                                    class="icon-size-2"
-                                    [ngClass]="journalEntry.checked ? 'text-green-500' : ''"
-                                    [svgIcon]="
-                                        journalEntry.checked
-                                            ? 'heroicons_solid:check-circle'
-                                            : 'heroicons_outline:check-circle'
-                                    "
-                                    [matTooltip]="
-                                        (journalEntry.checked ? 'JournalEntry.Checked' : 'JournalEntry.ToBeCheck')
-                                            | transloco
-                                    "></mat-icon>
-
-                                <span class="">[{{ journalEntry.code }}] - {{ journalEntry.title }}</span>
+                                <div class="px-5 py-4">
+                                    <div class="font-semibold">[{{ journalEntry.date | date: 'dd/MM/yyyy' }}]</div>
+                                    <div class="text-sm text-secondary">
+                                        {{ journalEntry.userFullName }} [{{
+                                            journalEntry.timeStamp | date: 'dd/MM/yyyy HH:mm'
+                                        }}]
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -107,19 +100,19 @@
         <!-- View Mode -->
         <ng-container *ngIf="!editMode">
             <!-- not edit mode -->
-            <app-journalEntry-view
+            <app-journal-entry-view
                 #viewJournalEntry
                 class="flex flex-1"
-                [journalEntry]="journalEntry"></app-journalEntry-view>
+                [journalEntry]="journalEntry"></app-journal-entry-view>
         </ng-container>
 
         <!-- Edit Mode -->
         <ng-container *ngIf="editMode">
             <!-- edit mode -->
-            <app-journalEntry-edit
+            <app-journal-entry-edit
                 #editJournalEntry
                 class="flex flex-1"
-                [journalEntry]="journalEntry"></app-journalEntry-edit>
+                [journalEntry]="journalEntry"></app-journal-entry-edit>
         </ng-container>
     </ng-container>
 

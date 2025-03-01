@@ -1,0 +1,33 @@
+<div class="flex items-center w-full">
+    <!-- Mini mode -->
+    <span class="leading-4 truncate" *ngIf="viewMode === 'mini'">
+        <badge *ngFor="let tag of tags | sort: 'asc' : 'name'; trackBy: trackByFn" class="mr-2" [matTooltip]="tag.name">
+            <mat-icon
+                class="icon-size-8"
+                [ngStyle]="{
+                    'background-color': tag.color,
+                    padding: '8px',
+                    'border-radius': '6px',
+                    color: getContrastYIQ(tag.color)
+                }"
+                [svgIcon]="'heroicons_outline:tag'"></mat-icon>
+        </badge>
+    </span>
+
+    <!-- Full mode -->
+    <span class="flex flex-1 space-x-4" *ngIf="viewMode === 'full'">
+        <badge
+            *ngFor="let tag of tags | sort: 'asc' : 'name'; trackBy: trackByFn"
+            class="flex badge p-2 rounded-md items-center"
+            [ngStyle]="{ 'background-color': tag.color, color: getContrastYIQ(tag.color) }"
+            [matTooltip]="tag?.description">
+            <mat-icon
+                class="icon-size-5"
+                [ngStyle]="{
+                    color: getContrastYIQ(tag.color)
+                }"
+                [svgIcon]="'heroicons_outline:tag'"></mat-icon>
+            <span class="ml-1">{{ tag.name }}</span>
+        </badge>
+    </span>
+</div>

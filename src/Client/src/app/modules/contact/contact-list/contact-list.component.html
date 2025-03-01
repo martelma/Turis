@@ -50,6 +50,7 @@
                     <!-- Contact -->
                     <div
                         class="group relative flex border-t first:border-0 hover:bg-hover cursor-pointer"
+                        [ngClass]="item.selected ? 'background-selected' : ''"
                         [routerLink]="[item.id]"
                         (click)="onItemSelected(item)"
                         (dblclick)="edit(item)"

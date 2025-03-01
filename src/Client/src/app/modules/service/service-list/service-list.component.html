@@ -50,6 +50,7 @@
                     <!-- Service -->
                     <div
                         class="group relative flex border-t first:border-0 hover:bg-hover cursor-pointer"
+                        [ngClass]="item.selected ? 'background-selected' : ''"
                         [routerLink]="[item.id]"
                         (click)="onItemSelected(item)"
                         (dblclick)="edit(item)"
@@ -82,11 +83,13 @@
                                                 : 'heroicons_outline:check-circle'
                                         "
                                         [matTooltip]="
-                                            (item.checked ? 'Service.Checked' : 'Service.ToBeCheck')
-                                                | transloco
+                                            (item.checked ? 'Service.Checked' : 'Service.ToBeCheck') | transloco
                                         "></mat-icon>
 
-                                    <span [ngClass]="getStatusColorClass(item)" class="color-box" [matTooltip]="item.status"></span>
+                                    <span
+                                        [ngClass]="getStatusColorClass(item)"
+                                        class="color-box"
+                                        [matTooltip]="item.status"></span>
 
                                     <!-- Code & Title -->
                                     <div class="mr-2 font-extrabold text-wrap">
@@ -156,16 +159,37 @@
                                 {{ item?.client?.fullName }}
                             </div>
 
-                            <div class="mt-1 leading-normal line-clamp-2 text-secondary whitespace-pre-wrap">
+                            <!-- <div class="mt-1 leading-normal line-clamp-2 text-secondary whitespace-pre-wrap">
                                 <mat-icon
                                     [svgIcon]="'heroicons_solid:user'"
                                     class="mr-2"
                                     [matTooltip]="'Collaborator'"></mat-icon>
                                 {{ item?.collaborator?.fullName }}
+                            </div> -->
+
+                            <div class="flex items-center w-full justify-between space-x-2 mb-2">
+                                <div class="flex items-center space-x-2">
+                                    <mat-icon
+                                        [svgIcon]="'heroicons_solid:user'"
+                                        class="mr-2"
+                                        [matTooltip]="'Collaborator'"></mat-icon>
+                                    {{ item?.collaborator?.fullName }}
+                                </div>
+
+                                <div class="flex items-center space-x-2">
+                                    <mat-icon
+                                        class="icon-size-5 mr-2"
+                                        [svgIcon]="'heroicons_outline:pencil-square'"
+                                        [ngClass]="{ 'red-icon': item?.note?.length > 0 }"></mat-icon>
+                                    <mat-icon
+                                        class="icon-size-5 mr-2"
+                                        [svgIcon]="'heroicons_outline:paper-clip'"
+                                        [ngClass]="{ 'red-icon': item?.attachmentsCount > 0 }"></mat-icon>
+                                </div>
                             </div>
 
-                            <!-- Service Tags -->
-                            <!-- <tag-list [tags]="item?.tags"></tag-list> -->
+                            <!--  Tags -->
+                            <tag-summary [tags]="item?.tags" [viewMode]="'mini'"></tag-summary>
                         </a>
                     </div>
                 </ng-container>

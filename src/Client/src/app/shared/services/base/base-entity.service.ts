@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { BaseService } from './base.service';
 import { Observable } from 'rxjs';
 import { PaginatedList } from '../../types/shared.types';
@@ -73,5 +73,27 @@ export class BaseEntityService<T> extends BaseService {
               },
     ): Observable<T> {
         return this.apiDelete<T>(id, apiController, httpHeaders);
+    }
+
+    saveBlob(blob: Blob, filename: string): void {
+        const binaryData = [];
+        binaryData.push(blob);
+        const downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, { type: 'blob' }));
+        downloadLink.setAttribute('download', filename);
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+    }
+
+    openBlob(response: HttpResponse<Blob>, applicationType: string, newTab = false): void {
+        const binaryData = [];
+        binaryData.push(response.body);
+        const fileURL = window.URL.createObjectURL(new Blob(binaryData, { type: applicationType }));
+
+        if (newTab) {
+            window.open(fileURL, '_blank');
+        } else {
+            window.open(fileURL);
+        }
     }
 }

@@ -1,6 +1,7 @@
 import { BaseSearchParameters } from 'app/shared/types/shared.types';
 import { PriceList } from '../configuration/price-list/price-list.types';
 import { Contact } from '../contact/contact.types';
+import { Tag } from '../configuration/tags/tag.types';
 
 export class Service {
     id: string;
@@ -49,9 +50,14 @@ export class Service {
     commissionPaymentDate: Date;
 
     bookmarkId: string;
+    attachmentsCount: number;
 
     billingStatus: string;
     commissionStatus: string;
+
+    tags: Tag[] = [];
+
+    selected: boolean;
 }
 
 export type Collaborator = Contact;

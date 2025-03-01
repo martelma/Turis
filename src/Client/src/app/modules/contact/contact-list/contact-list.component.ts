@@ -4,7 +4,6 @@ import {
     ChangeDetectorRef,
     Component,
     ElementRef,
-    NgModule,
     OnInit,
     ViewChild,
     ViewEncapsulation,
@@ -178,6 +177,14 @@ export class ContactListComponent implements OnInit, AfterViewInit {
             });
     }
 
+    toggleBookmarks(): void {
+        this._search({
+            onlyBookmarks: !this.contactParameters.onlyBookmarks,
+            pageIndex: 0,
+            pageSize: this._paginator.pageSize,
+        });
+    }
+
     private _search(contactParameters: ContactSearchParameters): void {
         this._contactService
             .listEntities({ ...this.contactParameters, ...contactParameters })
@@ -212,6 +219,51 @@ export class ContactListComponent implements OnInit, AfterViewInit {
                     this._search({});
                 });
         }
+    }
+
+    navigateToItem(item: Contact): void {
+        item.selected = true;
+        this._router.navigate(item.id ? ['.', item.id] : ['.', 'new'], { relativeTo: this._activatedRoute });
+    }
+
+    onItemSelected(contact: Contact): void {
+        this.selectedItem = contact;
+
+        this.list.forEach(item => {
+            item.selected = false;
+        });
+
+        this.selectedItem.selected = true;
+    }
+
+    handlePageEvent(event: PageEvent): void {
+        this.contactParameters = {
+            ...this.contactParameters,
+            pageIndex: event.pageIndex,
+            pageSize: event.pageSize,
+        };
+
+        this._list();
+    }
+
+    private _list(): void {
+        this._contactService
+            .listEntities({ ...this.contactParameters })
+            .pipe(untilDestroyed(this))
+            .subscribe(items => {
+                if (items?.items?.length > 0) {
+                    this.navigateToItem(items.items[0]);
+                }
+            });
+    }
+
+    filter(value: string): void {
+        this.contactParameters = { pattern: value };
+        this._list();
+    }
+
+    createContact(): void {
+        this._router.navigate(['./', 'new'], { relativeTo: this._activatedRoute });
     }
 
     create(): void {
@@ -339,41 +391,5 @@ export class ContactListComponent implements OnInit, AfterViewInit {
         this.selectedItem = null;
 
         this.selectedItemForm.reset();
-    }
-
-    onItemSelected(contact: Contact): void {
-        this.selectedItem = contact;
-
-        console.log('selectedItem', this.selectedItem);
-    }
-
-    handlePageEvent(event: PageEvent): void {
-        this.contactParameters = { ...this.contactParameters, pageIndex: event.pageIndex, pageSize: event.pageSize };
-
-        this._list();
-    }
-
-    createContact(): void {
-        this._router.navigate(['./', 'new'], { relativeTo: this._activatedRoute });
-    }
-
-    toggleBookmarks(): void {
-        this._search({
-            onlyBookmarks: !this.contactParameters.onlyBookmarks,
-            pageIndex: 0,
-            pageSize: this._paginator.pageSize,
-        });
-    }
-
-    private _list(): void {
-        this._contactService
-            .listEntities({ ...this.contactParameters })
-            .pipe(untilDestroyed(this))
-            .subscribe();
-    }
-
-    filter(value: string): void {
-        this.contactParameters = { pattern: value };
-        this._list();
     }
 }

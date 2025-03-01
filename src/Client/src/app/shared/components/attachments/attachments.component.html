@@ -63,11 +63,11 @@
                     Open
                 </button>
                 <button
-                    *ngIf="(element.type | lowercase) === '.cix'"
+                    *ngIf="(element.type | lowercase) === '.txt'"
                     mat-flat-button
                     class="ml-4"
                     [color]="'primary'"
-                    (click)="openCix(element)">
+                    (click)="openTxt(element)">
                     <mat-icon>code</mat-icon>
                     Open
                 </button>
@@ -91,6 +91,10 @@
     <button *ngIf="attachments?.length > 0" mat-flat-button class="ml-4" [color]="'warn'" (click)="deleteAll()">
         <mat-icon>delete</mat-icon>
         Delete All
+    </button>
+    <button *ngIf="attachments?.length > 0" mat-flat-button class="ml-4" [color]="'primary'" (click)="downloadAll()">
+        <mat-icon>download</mat-icon>
+        Download All
     </button>
 </ng-container>
 <ng-template #emptyAttachments>

@@ -1,10 +1,14 @@
-﻿namespace Turis.Common;
+﻿using JeMa.Shared.Extensions;
+
+namespace Turis.Common;
 
 public class Constants
 {
 	public const string ApplicationName = "Turis";
+	public static readonly Guid ApplicationId = "70B35A7C-BB04-41FE-AB76-AA99B20D30B0".ToGuid();
+
 	public const string RoleAdmin = "Admin";
-	public const string DefaultPassword = "Abc.123";
+	public const string DefaultPassword = "Abc4.1234";
 	public static TimeZoneInfo DefaultTimeZoneInfo => TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
 
 	//costanti utilizzate per la gestione di Redis

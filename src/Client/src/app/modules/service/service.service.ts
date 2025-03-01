@@ -123,9 +123,13 @@ export class ServiceService extends BaseEntityService<Service> {
             commissionPaymentDate: undefined,
 
             bookmarkId: undefined,
+            attachmentsCount: 0,
 
             billingStatus: undefined,
             commissionStatus: undefined,
+            tags: [],
+
+            selected: false,
         };
 
         this._service.next(service);
@@ -202,7 +206,6 @@ export class ServiceService extends BaseEntityService<Service> {
 
         return this.apiGet<PaginatedListResult<Service>>(url).pipe(
             map((data: PaginatedListResult<Service>) => {
-                // console.log('list', data.items);
                 this._services.next(data);
 
                 this._serviceParameters.next({

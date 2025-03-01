@@ -48,7 +48,7 @@
         <PackageReference Include="Novell.Directory.Ldap.NETStandard" Version="3.6.0" />
         <PackageReference Include="OperationResultTools" Version="1.0.26" />
         <PackageReference Include="SimpleAuthenticationTools.Abstractions" Version="2.1.4" />
-        <PackageReference Include="System.Linq.Dynamic.Core" Version="1.5.1" />
+        <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.0.2" />
         <PackageReference Include="System.ServiceModel.Duplex" Version="6.0.*" />
         <PackageReference Include="System.ServiceModel.Federation" Version="6.0.*" />
         <PackageReference Include="System.ServiceModel.Http" Version="6.0.*" />

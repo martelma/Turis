@@ -1,0 +1,15 @@
+<mat-button-toggle-group
+    class="justify-end"
+    [(ngModel)]="viewMode"
+    (ngModelChange)="onChanged()"
+    aria-label="Job View Mode">
+    <mat-button-toggle value="table">
+        <mat-icon [svgIcon]="'heroicons_outline:table-cells'"></mat-icon>
+    </mat-button-toggle>
+    <mat-button-toggle value="list">
+        <mat-icon [svgIcon]="'heroicons_outline:queue-list'"></mat-icon>
+    </mat-button-toggle>
+    <mat-button-toggle value="card">
+        <mat-icon [svgIcon]="'heroicons_outline:squares-2x2'"></mat-icon>
+    </mat-button-toggle>
+</mat-button-toggle-group>

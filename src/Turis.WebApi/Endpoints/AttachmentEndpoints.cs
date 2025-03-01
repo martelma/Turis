@@ -30,6 +30,10 @@ public class AttachmentEndpoints : IEndpointRouteHandlerBuilder
 		templateApiGroup.MapDelete("delete-all/{entityName}/{entityKey:guid}/{folder}", DeleteAll)
 			.Produces(StatusCodes.Status404NotFound)
 			.Produces(StatusCodes.Status204NoContent);
+
+		templateApiGroup.MapGet("download-all/{entityName}/{entityKey:guid}/{folder}", DownloadAllAsync)
+			.Produces<FileStreamResult>(StatusCodes.Status200OK)
+			.WithOpenApi();
 	}
 
 	private static async Task<IResult> List(HttpContext httpContext, IAttachmentService service, [AsParameters] AttachmentSearchParameters parameters)
@@ -46,4 +50,7 @@ public class AttachmentEndpoints : IEndpointRouteHandlerBuilder
 
 	private static async Task<IResult> DeleteAll(HttpContext httpContext, IAttachmentService service, string entityName, Guid entityKey, string folder)
 		=> (await service.DeleteAllAsync(entityName, entityKey, folder)).ToResponse(httpContext);
+
+	private static async Task<IResult> DownloadAllAsync(HttpContext httpContext, IAttachmentService service, string entityName, Guid entityKey, string folder)
+		=> (await service.DownloadAllAsync(entityName, entityKey, folder)).ToResponse(httpContext);
 }

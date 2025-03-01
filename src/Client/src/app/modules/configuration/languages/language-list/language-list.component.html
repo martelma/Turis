@@ -48,6 +48,24 @@
                     <ng-container *ngIf="list">
                         <ng-container *ngFor="let language of results?.items; trackBy: trackByFn">
                             <div class="list-grid grid items-center gap-4 py-3 px-6 md:px-8 border-b">
+                                <!-- Details button -->
+                                <div>
+                                    <button
+                                        class="min-w-10 min-h-7 h-7 px-2 leading-6"
+                                        mat-stroked-button
+                                        (click)="toggleDetails(language.id)">
+                                        <mat-icon
+                                            *ngIf="selectedItem?.id !== language.id"
+                                            class="icon-size-5 mr-2"
+                                            [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
+
+                                        <mat-icon
+                                            *ngIf="selectedItem?.id === language.id"
+                                            class="icon-size-5 mr-2"
+                                            [svgIcon]="'heroicons_outline:arrow-uturn-left'"></mat-icon>
+                                    </button>
+                                </div>
+
                                 <!-- Code -->
                                 <div class="sm:block whitespace-pre-wrap">
                                     {{ language?.code }}
@@ -61,22 +79,6 @@
                                 <!-- Name -->
                                 <div class="truncate">
                                     {{ language.name }}
-                                </div>
-
-                                <!-- Details button -->
-                                <div>
-                                    <button
-                                        class="min-w-10 min-h-7 h-7 px-2 leading-6"
-                                        mat-stroked-button
-                                        (click)="toggleDetails(language.id)">
-                                        <mat-icon
-                                            class="icon-size-5"
-                                            [svgIcon]="
-                                                selectedItem?.id === language.id
-                                                    ? 'heroicons_outline:chevron-up'
-                                                    : 'heroicons_outline:chevron-down'
-                                            "></mat-icon>
-                                    </button>
                                 </div>
                             </div>
                             <!-- Selected Item -->
@@ -137,7 +139,7 @@
 
                             <div class="flex items-center justify-between w-full border-t px-8 py-4">
                                 <!-- Delete Button -->
-                                <button class="-ml-4" mat-button [color]="'warn'" (click)="deleteSelectedItem()">
+                                <button class="-ml-4" mat-flat-button [color]="'warn'" (click)="deleteSelectedItem()">
                                     {{ 'General.Delete' | transloco }}
                                 </button>
 

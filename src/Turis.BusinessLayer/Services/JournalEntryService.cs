@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
 using OperationResults;
 using TinyHelpers.Extensions;
@@ -8,7 +7,6 @@ using Turis.BusinessLayer.Extensions;
 using Turis.BusinessLayer.Parameters;
 using Turis.BusinessLayer.Parameters.Base;
 using Turis.BusinessLayer.Services.Interfaces;
-using Turis.Common.Enums;
 using Turis.Common.Models;
 using Turis.Common.Models.Requests;
 using Turis.DataAccessLayer;
@@ -31,13 +29,13 @@ public class JournalEntryService(ApplicationDbContext dbContext
 
 	private IQueryable<JournalEntry> Query()
 	{
-		return context;
+		return context.Include(x => x.User);
 	}
 
 	public async Task<Result<JournalEntryModel>> GetAsync(Guid id)
 	{
 		var bookmarks = await bookmarkService.ListAsync(userService.GetUserId(), nameof(JournalEntry));
-	
+
 		var record = await Query()
 			.FirstOrDefaultAsync(x => x.Id == id);
 
@@ -77,7 +75,8 @@ public class JournalEntryService(ApplicationDbContext dbContext
 			foreach (var itemPattern in parameters.Pattern.Split(' '))
 			{
 				query = query.Where(x =>
-					(x.Description != null && x.Description.Contains(itemPattern)));
+					(x.Description != null && x.Description.Contains(itemPattern))
+					|| (x.Note != null && x.Note.Contains(itemPattern)));
 			}
 
 		var totalCount = await query.CountAsync();
@@ -166,8 +165,9 @@ public class JournalEntryService(ApplicationDbContext dbContext
 		record.UserId = userService.GetUserId();
 		record.TimeStamp = DateTimeOffset.Now;
 		record.Date = model.Date;
-		record.Amount = model.Income;
+		record.Amount = model.Amount;
 		record.Description = model.Description;
+		record.Note = model.Note;
 
 		await dbContext.SaveChangesAsync();
 		return Result.Ok();

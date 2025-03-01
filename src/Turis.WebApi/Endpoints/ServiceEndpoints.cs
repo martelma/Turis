@@ -4,7 +4,6 @@ using Turis.BusinessLayer.Erorrs;
 using Turis.BusinessLayer.Parameters;
 using Turis.BusinessLayer.Services.Interfaces;
 using Turis.Common.Models;
-using Turis.DataAccessLayer.Entities;
 using Turis.WebApi.Filters;
 
 namespace Turis.WebApi.Endpoints;

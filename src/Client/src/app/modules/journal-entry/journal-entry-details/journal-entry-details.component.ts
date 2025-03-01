@@ -1,6 +1,6 @@
 import { MatRippleModule } from '@angular/material/core';
 import { CommonModule, DatePipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle } from '@angular/common';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -21,6 +21,7 @@ import { trackByFn } from 'app/shared';
 import { JournalEntry } from '../journal-entry.types';
 import { JournalEntryViewComponent } from '../journal-entry-view/journal-entry-view.component';
 import { JournalEntryService } from '../journal-entry.service';
+import { JournalEntryEditComponent } from '../journal-entry-edit/journal-entry-edit.component';
 
 @UntilDestroy()
 @Component({
@@ -50,9 +51,13 @@ import { JournalEntryService } from '../journal-entry.service';
         TranslocoModule,
         SpinnerButtonComponent,
         JournalEntryViewComponent,
+        JournalEntryEditComponent,
     ],
 })
 export class JournalEntryDetailsComponent implements OnInit {
+    @ViewChild(JournalEntryViewComponent) viewJournalEntry: JournalEntryViewComponent;
+    @ViewChild(JournalEntryEditComponent) editJournalEntry: JournalEntryEditComponent;
+
     editMode = false;
     isCreate = false;
     isCopy = false;
@@ -84,18 +89,40 @@ export class JournalEntryDetailsComponent implements OnInit {
 
     ngOnInit(): void {
         this._subscribeRouteParams();
+
         this._subscribeJournalEntry();
         this._subscribeJournalEntryEdited();
     }
 
+    private _subscribeRouteParams() {
+        this._activatedRoute.params
+            .pipe(
+                tap(params => {
+                    // Activates the create user mode
+                    this.isCreate = params.id === 'new';
+                }),
+                untilDestroyed(this),
+            )
+            .subscribe();
+    }
+
     private _subscribeJournalEntry() {
-        this._journalEntryService.journalEntry$.pipe(untilDestroyed(this)).subscribe((journalEntry: JournalEntry) => {
-            this.journalEntry = journalEntry;
+        this._journalEntryService.journalEntry$
+            .pipe(
+                tap((journalEntry: JournalEntry) => {
+                    this.setJournalEntry(journalEntry);
+                }),
+                untilDestroyed(this),
+            )
+            .subscribe((journalEntry: JournalEntry) => {
+                this.journalEntry = journalEntry;
 
-            console.log('_subscribeJournalEntry - journalEntries', this.journalEntry);
+                this.editMode = journalEntry?.id === undefined;
+            });
+    }
 
-            this.editMode = journalEntry?.id === undefined;
-        });
+    private setJournalEntry(journalEntry: JournalEntry): void {
+        this.journalEntry = journalEntry;
     }
 
     private _subscribeJournalEntryEdited(): void {
@@ -115,28 +142,26 @@ export class JournalEntryDetailsComponent implements OnInit {
             });
     }
 
-    private _subscribeRouteParams() {
-        this._activatedRoute.params
-            .pipe(
-                tap(params => {
-                    // Activates the create user mode
-                    this.isCreate = params.id === 'new';
-                }),
-                untilDestroyed(this),
-            )
-            .subscribe();
+    edit(): void {
+        this._journalEntryService.editJournalEntry(this.journalEntry.id);
     }
 
-    // save(): void {
-    //     this._journalEntriesService
-    //         .update(this.journalEntries)
-    //         .pipe(untilDestroyed(this))
-    //         .subscribe(() => {
-    //             this._refresh();
+    cancel(): void {
+        this._journalEntryService.editJournalEntry(null);
 
-    //             // this._journalEntriesService.editService(null);
-    //         });
-    // }
+        if (this.journalEntry?.id === undefined) {
+            this._router.navigate(['../'], { relativeTo: this._activatedRoute });
+        }
+    }
+
+    save(): void {
+        this._journalEntryService
+            .update(this.journalEntry)
+            .pipe(untilDestroyed(this))
+            .subscribe(() => {
+                this._refresh();
+            });
+    }
 
     private _refresh(): void {
         this.snackBar.open(
@@ -183,18 +208,6 @@ export class JournalEntryDetailsComponent implements OnInit {
                     // Refresh the selected service
                     this._journalEntryService.getById(journalEntries.id).pipe(untilDestroyed(this)).subscribe();
                 });
-        }
-    }
-
-    edit(): void {
-        this._journalEntryService.editJournalEntry(this.journalEntry.id);
-    }
-
-    cancel(): void {
-        this._journalEntryService.editJournalEntry(null);
-
-        if (this.journalEntry?.id === undefined) {
-            this._router.navigate(['../'], { relativeTo: this._activatedRoute });
         }
     }
 }

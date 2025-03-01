@@ -1,4 +1,5 @@
 ﻿using Turis.Common.Models.Base;
+using Turis.Common.Models.Requests;
 
 namespace Turis.Common.Models;
 
@@ -45,4 +46,5 @@ public class ServiceRequest : BaseRequest
 	public bool CommissionPaid { get; set; }
 	public DateTimeOffset? CommissionPaymentDate { get; set; }
 	public string BookmarkId { get; set; }
+	public List<TagRequest> Tags { get; set; } = [];
 }

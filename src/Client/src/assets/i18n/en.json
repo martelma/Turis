@@ -5,7 +5,12 @@
         "Elmah": "Elmah",
         "Swagger": "Swagger",
         "Hangfire": "Hangfire",
+        "Tags": "Tags",
         "Users": "Users",
+        "UserManagement": "User Management",
+        "Roles": "Roles",
+        "ScopeGroups": "Scope Groups",
+        "Scopes": "Scopes",
         "Console": "Console",
         "Configuration": "Configuration",
         "TipiPagamenti": "Tipi Pagamenti",
@@ -50,6 +55,11 @@
     },
     "Dashboard": {
         "WelcomeBack": "Welcome back"
+    },
+    "Tags": {
+        "Name": "Name",
+        "Description": "Description",
+        "Color": "Color"
     },
     "SignIn": {
         "WelcomeTo": "Welcome to",

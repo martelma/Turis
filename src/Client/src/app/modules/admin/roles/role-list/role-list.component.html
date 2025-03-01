@@ -49,6 +49,24 @@
                     <ng-container *ngIf="roles">
                         <ng-container *ngFor="let role of results?.items; trackBy: trackByFn">
                             <div class="role-grid grid items-center gap-4 py-3 px-6 md:px-8 border-b">
+                                <!-- Details button -->
+                                <div>
+                                    <button
+                                        class="min-w-10 min-h-7 h-7 px-2 leading-6"
+                                        mat-stroked-button
+                                        (click)="toggleDetails(role.id)">
+                                        <mat-icon
+                                            *ngIf="selectedItem?.id !== role.id"
+                                            class="icon-size-5 mr-2"
+                                            [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
+
+                                        <mat-icon
+                                            *ngIf="selectedItem?.id === role.id"
+                                            class="icon-size-5 mr-2"
+                                            [svgIcon]="'heroicons_outline:arrow-uturn-left'"></mat-icon>
+                                    </button>
+                                </div>
+
                                 <!-- Code -->
                                 <div class="truncate">
                                     {{ role.code }}
@@ -62,22 +80,6 @@
                                 <!-- Description -->
                                 <div class="whitespace-pre-wrap">
                                     {{ getTranslation(role?.descriptions, activeLang) | transloco }}
-                                </div>
-
-                                <!-- Details button -->
-                                <div>
-                                    <button
-                                        class="min-w-10 min-h-7 h-7 px-2 leading-6"
-                                        mat-stroked-button
-                                        (click)="toggleDetails(role.id)">
-                                        <mat-icon
-                                            class="icon-size-5"
-                                            [svgIcon]="
-                                                selectedItem?.id === role.id
-                                                    ? 'heroicons_outline:chevron-up'
-                                                    : 'heroicons_outline:chevron-down'
-                                            "></mat-icon>
-                                    </button>
                                 </div>
                             </div>
                             <div class="grid">

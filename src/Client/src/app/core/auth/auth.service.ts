@@ -267,4 +267,10 @@ export class AuthService {
                 }),
             );
     }
+
+    unlockUser(userName: string): Observable<void> {
+        return this._httpClient.post<void>(`${environment.baseUrl}/api/auth/unlock`, {
+            userName,
+        });
+    }
 }

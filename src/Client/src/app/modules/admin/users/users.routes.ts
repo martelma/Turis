@@ -1,10 +1,10 @@
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, Routes } from '@angular/router';
 import { UsersDetailsComponent } from './details/details.component';
-import { UsersListComponent } from './list/list.component';
 import { UsersComponent } from './users.component';
-import { AvatarUsersService } from './avatar-users.service';
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
+import { UsersListComponent } from './list/list.component';
+import { UsersService } from './users.service';
 
 /**
  * User resolver
@@ -13,7 +13,7 @@ import { catchError, throwError } from 'rxjs';
  * @param state
  */
 const userResolver = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
-    const usersService = inject(AvatarUsersService);
+    const usersService = inject(UsersService);
     const router = inject(Router);
 
     return usersService.getUserById(route.paramMap.get('id')).pipe(
@@ -81,7 +81,7 @@ export default [
                 path: '',
                 component: UsersListComponent,
                 resolve: {
-                    users: () => inject(AvatarUsersService).getUsers(),
+                    users: () => inject(UsersService).getUsers(),
                 },
                 children: [
                     {

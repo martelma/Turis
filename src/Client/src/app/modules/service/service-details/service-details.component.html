@@ -95,22 +95,8 @@
 
                                 <span class="">[{{ service.code }}] - {{ service.title }}</span>
                             </div>
-                            <!-- <div class="flex flex-1 w-full space-x-2 z-10" style="justify-content: end">
-                                <mat-icon
-                                    (click)="handleCheck(service)"
-                                    class="icon-size-2"
-                                    [ngClass]="service.checked ? 'text-green-500' : ''"
-                                    [svgIcon]="
-                                        service.checked
-                                            ? 'heroicons_solid:check-circle'
-                                            : 'heroicons_outline:check-circle'
-                                    "
-                                    [matTooltip]="
-                                        (service.checked ? 'Service.Checked' : 'Service.ToBeCheck')
-                                            | transloco
-                                    "></mat-icon>
-                            </div> -->
                         </div>
+                        <tag-summary [tags]="service?.tags" [viewMode]="'full'"></tag-summary>
                     </div>
                 </div>
             </ng-container>

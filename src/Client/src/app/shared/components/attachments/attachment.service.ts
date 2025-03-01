@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { BaseEntityService } from 'app/shared/services';
 import { BehaviorSubject, filter, finalize, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
 import { emptyGuid, PaginatedListResult } from 'app/shared/services/shared.types';
@@ -224,6 +224,15 @@ export class AttachmentService extends BaseEntityService<Attachment> {
                 return of(attachment);
             }),
         );
+    }
+
+    downloadAll(entityName: string, entityKey: string, folder: string) {
+        const url = `download-all/${entityName}/${entityKey}/${folder}`;
+        const headers = new HttpHeaders({ 'Content-Type': 'application/JSON' });
+        return this.http.get(this.prepareUrl(url), {
+            headers: headers,
+            responseType: 'blob',
+        });
     }
 
     upload(data: any): Observable<string> {

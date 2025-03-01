@@ -46,7 +46,7 @@ import { JournalEntryService } from '../journal-entry.service';
         AttachmentsComponent,
     ],
 })
-export class JournalEntryViewComponent implements OnInit, OnChanges {
+export class JournalEntryViewComponent implements OnInit {
     loading = false;
     item: JournalEntry;
     @Input()
@@ -73,8 +73,6 @@ export class JournalEntryViewComponent implements OnInit, OnChanges {
         private router: Router,
         private _changeDetectorRef: ChangeDetectorRef,
     ) {}
-
-    ngOnChanges(): void {}
 
     ngOnInit(): void {
         // Create the form

@@ -79,11 +79,15 @@ export class JournalEntryService extends BaseEntityService<JournalEntry> {
                 of({
                     id: emptyGuid,
                     userId: undefined,
+                    userFullName: undefined,
                     timeStamp: undefined,
                     date: undefined,
                     amount: undefined,
                     description: undefined,
+                    note: undefined,
                     bookmarkId: undefined,
+                    balance: undefined,
+                    selected: false,
                 }).pipe(
                     map(newJournalEntry => {
                         // Update the journalEntrys with the new journalEntry

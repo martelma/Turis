@@ -14,10 +14,13 @@ public static class JournalEntryExtensions
 		{
 			Id = entity.Id,
 			UserId = entity.UserId,
+			UserFullName = entity.User?.FullName,
 			TimeStamp = entity.TimeStamp,
 			Date = entity.Date,
 			Amount = entity.Amount,
 			Description = entity.Description,
+			Note = entity.Note,
+			Balance = entity.Balance,
 
 			BookmarkId = bookmarkId.HasValue() ? bookmarkId.ToString() : string.Empty,
 		};

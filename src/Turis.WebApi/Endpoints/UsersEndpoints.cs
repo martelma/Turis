@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿////using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 using Microsoft.AspNetCore.Mvc;
 using MinimalHelpers.OpenApi;
 using OperationResults;
@@ -8,7 +8,6 @@ using Turis.BusinessLayer.Parameters;
 using Turis.BusinessLayer.Services.Interfaces;
 using Turis.Common.Models;
 using Turis.Common.Models.Requests;
-using Turis.WebApi.Filters;
 
 namespace Turis.WebApi.Endpoints;
 
@@ -30,7 +29,7 @@ public class UsersEndpoints : IEndpointRouteHandlerBuilder
             });
 
         usersApiGroup.MapGet("{id:guid}", GetAsync)
-            .RequireAuthorization(new AuthorizeAttribute { AuthenticationSchemes = $"{JwtBearerDefaults.AuthenticationScheme},WorkspaceApiKey" })
+            //.RequireAuthorization(new AuthorizeAttribute { AuthenticationSchemes = $"{JwtBearerDefaults.AuthenticationScheme},WorkspaceApiKey" })
             .Produces<UserModel>(StatusCodes.Status200OK)
             .Produces<ServiceError>(StatusCodes.Status404NotFound)
             .WithOpenApi(operation =>
@@ -44,7 +43,7 @@ public class UsersEndpoints : IEndpointRouteHandlerBuilder
             });
 
         usersApiGroup.MapGet("external/{id:guid}/me", GetExternalMeAsync)
-            .RequireAuthorization(new AuthorizeAttribute { AuthenticationSchemes = $"{JwtBearerDefaults.AuthenticationScheme},WorkspaceApiKey" })
+            //.RequireAuthorization(new AuthorizeAttribute { AuthenticationSchemes = $"{JwtBearerDefaults.AuthenticationScheme},WorkspaceApiKey" })
             .Produces<UserModel>(StatusCodes.Status200OK)
             .Produces<ServiceError>(StatusCodes.Status404NotFound)
             .WithOpenApi(operation =>
@@ -72,7 +71,7 @@ public class UsersEndpoints : IEndpointRouteHandlerBuilder
             });*/
 
         usersApiGroup.MapGet("external/{id:guid}", GetExternalAsync)
-            .RequireAuthorization(new AuthorizeAttribute { AuthenticationSchemes = $"{JwtBearerDefaults.AuthenticationScheme},WorkspaceApiKey" })
+            //.RequireAuthorization(new AuthorizeAttribute { AuthenticationSchemes = $"{JwtBearerDefaults.AuthenticationScheme},WorkspaceApiKey" })
             .Produces<UserModel>(StatusCodes.Status200OK)
             .Produces<ServiceError>(StatusCodes.Status404NotFound)
             .WithOpenApi(operation =>
@@ -86,7 +85,7 @@ public class UsersEndpoints : IEndpointRouteHandlerBuilder
             });
 
         usersApiGroup.MapGet("external", GetExternalListAsync)
-            .RequireAuthorization(new AuthorizeAttribute { AuthenticationSchemes = $"{JwtBearerDefaults.AuthenticationScheme},WorkspaceApiKey" })
+            //.RequireAuthorization(new AuthorizeAttribute { AuthenticationSchemes = $"{JwtBearerDefaults.AuthenticationScheme},WorkspaceApiKey" })
             .Produces<PaginatedList<UserModel>>(StatusCodes.Status200OK)
             .WithOpenApi(operation =>
             {
@@ -98,7 +97,7 @@ public class UsersEndpoints : IEndpointRouteHandlerBuilder
             });
 
         usersApiGroup.MapPut(string.Empty, UpdateAsync)
-            .WithValidation<UpdateUserRequest>()
+            //.WithValidation<UpdateUserRequest>()
             .Produces(StatusCodes.Status204NoContent)
             .Produces<ServiceError>(StatusCodes.Status404NotFound)
             .ProducesValidationProblem()
@@ -127,7 +126,7 @@ public class UsersEndpoints : IEndpointRouteHandlerBuilder
             });
 
         usersApiGroup.MapGet("external/application/{applicationId:guid}", GetExternalApplicationListAsync)
-            .RequireAuthorization(new AuthorizeAttribute { AuthenticationSchemes = $"{JwtBearerDefaults.AuthenticationScheme},WorkspaceApiKey" })
+            //.RequireAuthorization(new AuthorizeAttribute { AuthenticationSchemes = $"{JwtBearerDefaults.AuthenticationScheme},WorkspaceApiKey" })
             .Produces<UserModel>(StatusCodes.Status200OK)
             .WithOpenApi(operation =>
             {

@@ -2,267 +2,120 @@
     <!-- Header -->
     <div class="relative w-full px-8">
         <!-- Close button -->
-        <div class="flex items-center justify-end w-full mx-auto pt-6">
+        <div class="flex items-center justify-end w-full mx-auto pt-4">
             <a mat-icon-button [matTooltip]="'Close'" [routerLink]="['../']" (click)="closeEditDrawer()">
                 <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
             </a>
         </div>
     </div>
 
-    <!-- User form -->
-    <form [formGroup]="form" class="flex-1 p-6 md:p-8">
-        <!-- Avatar -->
-        <div class="flex flex-auto items-end -mt-16">
-            <div
-                class="relative flex items-center justify-center w-32 h-32 rounded-full overflow-hidden ring-4 ring-bg-card">
-                <!-- Image/Letter -->
-                <img *ngIf="avatarUrl" class="object-cover w-full h-full" [src]="avatarUrl" alt="User avatar" />
-                <div
-                    *ngIf="!avatarUrl"
-                    class="flex items-center justify-center w-full h-full rounded overflow-hidden uppercase text-8xl font-bold leading-none bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                    {{ user?.firstName[0] }}
-                </div>
-            </div>
-        </div>
-
-        <!-- Alert -->
-        <fuse-alert
-            class="mt-8 -mb-4"
-            *ngIf="showAlert"
-            [appearance]="'outline'"
-            [showIcon]="false"
-            [type]="alert.type"
-            [@shake]="alert.type === 'error'">
-            {{ alert.message }}
-        </fuse-alert>
-
-        <div class="mt-8 flex space-x-2 justify-end">
-            <!-- Reset Password -->
-            <button mat-stroked-button color="primary" [disabled]="resettingPassword" (click)="onResetPassword()">
-                <mat-icon *ngIf="!resettingPassword" [svgIcon]="'heroicons_outline:archive-box-x-mark'"></mat-icon>
-
-                <mat-progress-spinner
-                    *ngIf="resettingPassword"
-                    [diameter]="24"
-                    [mode]="'indeterminate'"></mat-progress-spinner>
-
-                <span *ngIf="!resettingPassword">{{ 'Users.ResetPassword' | transloco }}</span>
-            </button>
-
-            <!-- Reset Default Password -->
-            <button
-                mat-stroked-button
-                color="warn"
-                [disabled]="resettingDefaultPassword"
-                (click)="onResetDefaultPassword()">
-                <mat-icon
-                    *ngIf="!resettingDefaultPassword"
-                    [svgIcon]="'heroicons_outline:archive-box-x-mark'"></mat-icon>
-
-                <mat-progress-spinner
-                    *ngIf="resettingDefaultPassword"
-                    [diameter]="24"
-                    [mode]="'indeterminate'"></mat-progress-spinner>
-
-                <span *ngIf="!resettingDefaultPassword">{{ 'Users.ResetDefaultPassword' | transloco }}</span>
-            </button>
-        </div>
-
-        <!-- User Name -->
-        <div class="mt-8">
-            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                <mat-label>User Name</mat-label>
-                <mat-icon
-                    matPrefix
-                    class="hidden sm:flex icon-size-5"
-                    [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
-                <input matInput [formControlName]="'userName'" [placeholder]="'UserName'" />
-            </mat-form-field>
-        </div>
-
-        <!-- Name -->
-        <div class="mt-8">
-            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                <mat-label>Name</mat-label>
-                <mat-icon
-                    matPrefix
-                    class="hidden sm:flex icon-size-5"
-                    [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
-                <input matInput [formControlName]="'firstName'" [placeholder]="'Name'" [spellcheck]="false" />
-            </mat-form-field>
-        </div>
-
-        <!-- LastName -->
-        <div class="mt-8">
-            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                <mat-label>Last Name</mat-label>
-                <mat-icon
-                    matPrefix
-                    class="hidden sm:flex icon-size-5"
-                    [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
-                <input matInput [formControlName]="'lastName'" [placeholder]="'Last Name'" />
-            </mat-form-field>
-        </div>
-
-        <!-- Email -->
-        <div class="mt-8">
-            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                <mat-label>Email</mat-label>
-                <mat-icon
-                    matPrefix
-                    class="hidden sm:flex icon-size-5"
-                    [svgIcon]="'heroicons_solid:envelope'"></mat-icon>
-                <input matInput [formControlName]="'email'" [placeholder]="'Email'" />
-            </mat-form-field>
-        </div>
-    </form>
-
-    <!-- Actions -->
-    <div class="flex items-center pl-1 border-t bg-gray-50 dark:bg-transparent p-3 md:p-4">
-        <!-- Delete -->
-        <button *ngIf="!isCreateUser" mat-button [color]="'warn'" [matTooltip]="'Delete'" (click)="deleteUser()">
-            {{ 'General.Delete' | transloco }}
-        </button>
-
-        <!-- Cancel -->
-        <button class="ml-auto" mat-button [matTooltip]="'Cancel'" (click)="closeEditDrawer()">
-            {{ 'General.Cancel' | transloco }}
-        </button>
-
-        <!-- Save -->
-        <button
-            class="ml-2"
-            mat-flat-button
-            [color]="'primary'"
-            [disabled]="form.invalid"
-            [matTooltip]="'Save'"
-            (click)="updateOrCreateUser()">
-            {{ 'General.Save' | transloco }}
-        </button>
-    </div>
+    <app-users-form class="mt-4" [isCreate]="isCreateUser" (cancel)="closeEditDrawer()"></app-users-form>
 
     <!-- Tabs -->
-    <mat-tab-group class="flex flex-1 mt-4" mat-stretch-tabs="false" [animationDuration]="'0'" *ngIf="!isCreateUser">
+    <mat-tab-group
+        class="user-details-tab-group flex flex-1 mt-4"
+        mat-stretch-tabs="false"
+        [animationDuration]="'0'"
+        *ngIf="!isCreateUser">
         <!-- Applications -->
         <mat-tab>
             <ng-template mat-tab-label>
                 <span class="inline-flex items-center space-x-2">
-                    <span class="">{{ 'Navigation.Applications' | transloco }}</span>
+                    <span class="">{{ 'Navigation.Roles' | transloco }}</span>
                     <span class="px-2 py-1 text-sm rounded-full bg-red-600 text-white">
-                        {{ user?.applications?.length ?? 0 }}
+                        {{ userRoles?.totalCount ?? 0 }}
                     </span>
                 </span>
             </ng-template>
 
             <div class="relative flex flex-col flex-auto overflow-hidden">
-                <div class="flex justify-between">
+                <!-- <div class="flex justify-between">
                     <div class="flex flex-1 space-x-2 justify-between mb-4">
-                        <!-- Filter -->
-                        <mat-form-field class="flex-1 fuse-mat-dense w-full" [subscriptSizing]="'dynamic'">
-                            <mat-icon
-                                class="icon-size-5"
-                                matPrefix
-                                [svgIcon]="'heroicons_outline:magnifying-glass'"></mat-icon>
+                <mat-form-field class="flex-1 fuse-mat-dense w-full"
+                    [subscriptSizing]="'dynamic'">
+                    <mat-icon class="icon-size-5"
+                        matPrefix
+                        [svgIcon]="'heroicons_outline:magnifying-glass'"></mat-icon>
 
-                            <input
-                                matInput
-                                [formControl]="userApplicationsSearchInputControl"
-                                [autocomplete]="'off'"
-                                (keyup.enter)="filterUserApplications()"
-                                [placeholder]="'General.Search' | transloco" />
+                    <input matInput
+                        [formControl]="userApplicationsSearchInputControl"
+                        [autocomplete]="'off'"
+                        [placeholder]="'General.Search' | transloco" />
 
-                            <button
-                                type="button"
-                                *ngIf="userApplicationsSearchInputControl.value"
-                                matSuffix
-                                mat-icon-button
-                                aria-label="Clear"
-                                (click)="userApplicationsSearchInputControl.setValue('')">
-                                <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
-                            </button>
-                        </mat-form-field>
-                        <div class="ml-auto">
-                            <!-- Edit button -->
-                            <button mat-stroked-button [routerLink]="['applications']">
-                                <mat-icon [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
-                                Edit Permissions
-                            </button>
-                        </div>
-                    </div>
+                    <button type="button"
+                        *ngIf="userApplicationsSearchInputControl.value"
+                        matSuffix
+                        mat-icon-button
+                        aria-label="Clear"
+                        (click)="userApplicationsSearchInputControl.setValue('')">
+                        <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                    </button>
+                </mat-form-field>
+                <div class="ml-auto">
+                    <button mat-stroked-button
+                        [routerLink]="['applications']">
+                        <mat-icon [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
+                        {{ 'Users.EditPermissions' | transloco }}
+                    </button>
                 </div>
+            </div>
+</div> -->
 
-                <!-- Applications -->
+                <!-- Roles -->
                 <div class="flex flex-1 flex-col h-full">
                     <div class="overflow-y-auto h-[600px]">
-                        <ng-container *ngIf="userApplications?.length; else noApplications">
-                            <ng-container *ngFor="let application of userApplications; trackBy: trackByFn">
-                                <div class="group bg-white p-3 border-b last:border-b-0 flex flex-col justify-between">
-                                    <div class="flex flex-row">
-                                        <div class="flex flex-1 flex-col mb-2">
-                                            <div class="text-2xl font-semibold leading-tight">
-                                                {{ application.name }}
-                                            </div>
-                                            <div class="text-md text-secondary">
-                                                {{ application.description }}
-                                            </div>
-                                        </div>
+                        <div class="group bg-white p-3 border-b last:border-b-0 flex flex-col justify-between">
+                            <div class="flex flex-row">
+                                <!-- <div class="flex flex-1 flex-col mb-2">
+                                    <div class="text-2xl font-semibold leading-tight">
+                                        {{ application.name }}
+                                    </div>
+                                    <div class="text-md text-secondary">
+                                        {{ application.description }}
+                                    </div>
+                                </div> -->
 
-                                        <!-- Actions Menu -->
-                                        <button
-                                            mat-icon-button
-                                            [matMenuTriggerFor]="roleMenu"
-                                            (click)="$event.stopPropagation()">
+                                <!-- Actions Menu -->
+                                <button
+                                    mat-icon-button
+                                    [matMenuTriggerFor]="roleMenu"
+                                    (click)="$event.stopPropagation()">
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="'heroicons_mini:ellipsis-vertical'"></mat-icon>
+                                </button>
+
+                                <mat-menu #roleMenu="matMenu">
+                                    <!-- Edit -->
+                                    <button mat-menu-item [routerLink]="['applications', application?.id]">
+                                        <span class="flex items-center">
                                             <mat-icon
-                                                class="icon-size-5"
-                                                [svgIcon]="'heroicons_mini:ellipsis-vertical'"></mat-icon>
-                                        </button>
+                                                class="icon-size-5 mr-3"
+                                                [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
+                                            <span>{{ 'General.Edit' | transloco }}</span>
+                                        </span>
+                                    </button>
+                                </mat-menu>
+                            </div>
 
-                                        <mat-menu #roleMenu="matMenu">
-                                            <!-- Edit -->
-                                            <button mat-menu-item [routerLink]="['applications', application?.id]">
-                                                <span class="flex items-center">
-                                                    <mat-icon
-                                                        class="icon-size-5 mr-3"
-                                                        [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
-                                                    <span>{{ 'General.Edit' | transloco }}</span>
-                                                </span>
-                                            </button>
-                                        </mat-menu>
-                                    </div>
-
-                                    <div class="flex flex-1 flex-wrap space-x-4">
-                                        <div
-                                            *ngFor="let role of application?.roles; trackBy: trackByFn"
-                                            class="fuse-vertical-navigation-item-badge-content px-2.5 py-1 bg-teal-400 text-black rounded-full">
-                                            {{ role.name }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </ng-container>
-                        </ng-container>
-
-                        <!-- No Applications template -->
-                        <ng-template #noApplications>
-                            <div
-                                class="flex flex-1 flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
-                                <mat-icon
-                                    class="icon-size-24"
-                                    [svgIcon]="'heroicons_outline:building-office-2'"></mat-icon>
-                                <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">
-                                    {{ 'Applications.NoApplications' | transloco }}
+                            <div class="flex flex-1 flex-wrap space-x-4">
+                                <div
+                                    *ngFor="let role of userRoles.items; trackBy: trackByFn"
+                                    class="fuse-vertical-navigation-item-badge-content px-2.5 py-1 bg-teal-400 text-black rounded-full">
+                                    {{ role.name }}
                                 </div>
                             </div>
-                        </ng-template>
+                        </div>
                     </div>
                 </div>
 
                 <mat-paginator
                     class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
-                    [length]="user?.applications?.length ?? 0"
-                    [pageIndex]="userApplicationsPageIndex"
-                    [pageSize]="userApplicationsPageSize"
+                    [length]="userRoles?.totalCount ?? 0"
+                    [pageIndex]="userRoles?.pageIndex ?? 0"
+                    [pageSize]="userRoles?.pageSize ?? 10"
                     [pageSizeOptions]="[5, 10, 25, 100]"
-                    (page)="handleUserApplicationsPageEvent($event)"
+                    (page)="handle($event)"
                     [showFirstLastButtons]="true"></mat-paginator>
             </div>
         </mat-tab>

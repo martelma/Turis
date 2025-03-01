@@ -323,7 +323,10 @@
             </mat-tab>
             <mat-tab>
                 <ng-template mat-tab-label>
-                    <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
+                    <mat-icon
+                        class="icon-size-5 mr-2"
+                        [svgIcon]="'heroicons_outline:pencil-square'"
+                        [ngClass]="{ 'red-icon': item?.note?.length > 0 }"></mat-icon>
                     {{ 'General.Notes' | transloco }}
                 </ng-template>
                 <ng-template matTabContent>
@@ -336,7 +339,10 @@
             </mat-tab>
             <mat-tab>
                 <ng-template mat-tab-label>
-                    <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:paper-clip'"></mat-icon>
+                    <mat-icon
+                        class="icon-size-5 mr-2"
+                        [svgIcon]="'heroicons_outline:paper-clip'"
+                        [ngClass]="{ 'red-icon': item?.attachmentsCount > 0 }"></mat-icon>
                     {{ 'General.Attachments' | transloco }}
                 </ng-template>
                 <ng-template matTabContent>

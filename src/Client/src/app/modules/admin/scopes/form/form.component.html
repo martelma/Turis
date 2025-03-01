@@ -1,0 +1,52 @@
+<div class="flex flex-1 flex-col overflow-hidden p-8">
+    <form cdkTrapFocus [cdkTrapFocusAutoCapture]="true" [formGroup]="form">
+        <!-- Name -->
+        <div class="mt-8">
+            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                <mat-label>Name</mat-label>
+                <input matInput cdkFocusInitial [formControlName]="'name'" [placeholder]="'name'" />
+                <button
+                    type="button"
+                    *ngIf="form.get('name').value"
+                    matSuffix
+                    mat-icon-button
+                    aria-label="Clear"
+                    (click)="form.get('name').setValue('')">
+                    <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                </button>
+            </mat-form-field>
+        </div>
+
+        <!-- Description -->
+        <div class="mt-8">
+            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                <mat-label>Description</mat-label>
+                <input matInput [formControlName]="'description'" [placeholder]="'description'" />
+                <button
+                    type="button"
+                    *ngIf="form.get('description').value"
+                    matSuffix
+                    mat-icon-button
+                    aria-label="Clear"
+                    (click)="form.get('description').setValue('')">
+                    <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                </button>
+            </mat-form-field>
+        </div>
+
+        <!-- Input for scope group -->
+        <div class="flex gap-4 items-center mt-8">
+            <mat-form-field appearance="fill" class="w-full">
+                <mat-label>Scope group</mat-label>
+                <mat-select matInput formControlName="scopeGroupId">
+                    <mat-option *ngFor="let scopeGroup of scopeGroups; trackBy: trackByFn" [value]="scopeGroup.id">
+                        {{ scopeGroup.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button matSuffix mat-icon-button="button" (click)="form.get('scopeGroupId').setValue(emptyGuid)">
+                <mat-icon class="text-red-500" [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+            </button>
+        </div>
+    </form>
+</div>

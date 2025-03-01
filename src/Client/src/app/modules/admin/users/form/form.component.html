@@ -1,0 +1,180 @@
+<!-- User form -->
+<form [formGroup]="form" class="flex-1 px-8">
+    <!-- Actions -->
+    <div class="flex items-center">
+        <!-- Delete -->
+        <button *ngIf="!isCreate" mat-flat-button [color]="'warn'" [matTooltip]="'Delete'" (click)="deleteUser()">
+            <mat-icon class="text-red-500 icon-size-5 mr-3" [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+            {{ 'General.Delete' | transloco }}
+        </button>
+
+        <!-- Cancel -->
+        <button class="ml-auto" mat-stroked-button [matTooltip]="'Cancel'" (click)="cancelEdit()">
+            {{ 'General.Cancel' | transloco }}
+        </button>
+
+        <!-- Save -->
+        <button
+            class="ml-2"
+            mat-flat-button
+            [color]="'primary'"
+            [disabled]="form.invalid"
+            [matTooltip]="'Save'"
+            (click)="updateOrCreateUser()">
+            {{ 'General.Save' | transloco }}
+        </button>
+    </div>
+
+    <div *ngIf="!isCreate" class="flex flex-auto items-center mt-8">
+        <!-- Avatar -->
+        <div
+            class="relative flex items-center justify-center w-32 h-32 rounded-full overflow-hidden ring-4 ring-bg-card">
+            <!-- Image/Letter -->
+            <img *ngIf="avatarUrl" class="object-cover w-full h-full" [src]="avatarUrl" alt="User avatar" />
+            <div
+                *ngIf="!avatarUrl"
+                class="flex items-center justify-center w-full h-full rounded overflow-hidden uppercase text-8xl font-bold leading-none bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                {{ user?.firstName[0] }}
+            </div>
+        </div>
+
+        <!-- Password tools -->
+        <div *ngIf="user?.accountType === 'Local'" class="flex flex-1 space-x-2 justify-end">
+            <!-- Unlock user -->
+            <button
+                *ngIf="!user?.isActive"
+                mat-flat-button
+                color="primary"
+                class="flex items-center gap-2"
+                [disabled]="unlockingUser"
+                (click)="unlockUser()">
+                <mat-icon *ngIf="!unlockingUser" [svgIcon]="'heroicons_outline:lock-open'"></mat-icon>
+
+                <mat-progress-spinner
+                    *ngIf="unlockingUser"
+                    [diameter]="24"
+                    [mode]="'indeterminate'"></mat-progress-spinner>
+
+                <span *ngIf="!unlockingUser">{{ 'Users.UnlockUser' | transloco }}</span>
+            </button>
+
+            <!-- Reset Password -->
+            <button
+                mat-stroked-button
+                color="primary"
+                class="flex items-center gap-2"
+                [disabled]="resettingPassword"
+                (click)="onResetPassword()">
+                <mat-icon *ngIf="!resettingPassword" [svgIcon]="'heroicons_outline:archive-box-x-mark'"></mat-icon>
+
+                <mat-progress-spinner
+                    *ngIf="resettingPassword"
+                    [diameter]="24"
+                    [mode]="'indeterminate'"></mat-progress-spinner>
+
+                <span *ngIf="!resettingPassword">{{ 'Users.ResetPassword' | transloco }}</span>
+            </button>
+
+            <!-- Reset Default Password -->
+            <button
+                mat-stroked-button
+                class="flex items-center gap-2"
+                color="warn"
+                [disabled]="resettingDefaultPassword"
+                (click)="onResetDefaultPassword()">
+                <mat-icon
+                    *ngIf="!resettingDefaultPassword"
+                    [svgIcon]="'heroicons_outline:archive-box-x-mark'"></mat-icon>
+
+                <mat-progress-spinner
+                    *ngIf="resettingDefaultPassword"
+                    [diameter]="24"
+                    [mode]="'indeterminate'"></mat-progress-spinner>
+
+                <span *ngIf="!resettingDefaultPassword">{{ 'Users.ResetDefaultPassword' | transloco }}</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Alert -->
+    <fuse-alert
+        class="mt-8 -mb-4"
+        *ngIf="showAlert"
+        [appearance]="'outline'"
+        [showIcon]="false"
+        [type]="alert.type"
+        [@shake]="alert.type === 'error'">
+        {{ alert.message }}
+    </fuse-alert>
+
+    <!-- {{ form.value | json }} -->
+
+    <div class="flex flex-col sm:flex-row gap-4 mt-8">
+        <!-- User Name -->
+        <div class="flex-1">
+            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                <mat-label>{{ 'UserProfile.UserName' | transloco }}</mat-label>
+                <mat-icon
+                    matPrefix
+                    class="hidden sm:flex icon-size-5"
+                    [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
+                <input matInput [formControlName]="'userName'" [placeholder]="'UserProfile.UserName' | transloco" />
+            </mat-form-field>
+        </div>
+
+        <!-- Email -->
+        <div class="flex-1">
+            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                <mat-label>{{ 'UserProfile.EMail' | transloco }}</mat-label>
+                <mat-icon
+                    matPrefix
+                    class="hidden sm:flex icon-size-5"
+                    [svgIcon]="'heroicons_solid:envelope'"></mat-icon>
+                <input matInput [formControlName]="'email'" [placeholder]="'UserProfile.EMail' | transloco" />
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-4 mt-8">
+        <!-- Name -->
+        <div class="flex-1">
+            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                <mat-label>{{ 'UserProfile.FirstName' | transloco }}</mat-label>
+                <mat-icon
+                    matPrefix
+                    class="hidden sm:flex icon-size-5"
+                    [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
+                <input
+                    matInput
+                    [formControlName]="'firstName'"
+                    [placeholder]="'UserProfile.FirstName' | transloco"
+                    [spellcheck]="false" />
+            </mat-form-field>
+        </div>
+
+        <!-- LastName -->
+        <div class="flex-1">
+            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                <mat-label>{{ 'UserProfile.LastName' | transloco }}</mat-label>
+                <mat-icon
+                    matPrefix
+                    class="hidden sm:flex icon-size-5"
+                    [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
+                <input matInput [formControlName]="'lastName'" [placeholder]="'UserProfile.LastName' | transloco" />
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-4 mt-8">
+        <!-- Two Factor Enabled -->
+        <div class="mt-4">
+            <mat-checkbox
+                class="w-full"
+                [formControlName]="'twoFactorEnabled'"
+                [color]="'primary'"
+                [disableRipple]="true">
+                {{ 'UserProfile.TwoFactorEnabled' | transloco }}
+            </mat-checkbox>
+        </div>
+    </div>
+</form>

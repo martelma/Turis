@@ -112,6 +112,7 @@ export class DocumentService extends BaseEntityService<Document> {
                     cig: undefined,
                     cup: undefined,
                     bookmarkId: undefined,
+                    selected: false,
                     items: [],
                 }).pipe(
                     map(newDocument => {
