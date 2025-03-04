@@ -35,6 +35,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Contact } from 'app/modules/contact/contact.types';
 import { ContactService } from 'app/modules/contact/contact.service';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
+import { Tag } from 'app/modules/configuration/tags/tag.types';
+import { TagFiltersComponent } from 'app/modules/configuration/tags/filters/tag-filters.component';
 
 @UntilDestroy()
 @Component({
@@ -76,6 +78,7 @@ import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/mat
         MatExpansionModule,
         FuseScrollResetDirective,
         TranslocoModule,
+        TagFiltersComponent,
     ],
 })
 export class ContactEditComponent implements OnInit {
@@ -144,5 +147,10 @@ export class ContactEditComponent implements OnInit {
 
     onSelectedTabChange(): void {
         // Do nothing
+    }
+
+    onTagsSelectionChange(tags: Tag[]): void {
+        this.contact.tags = tags;
+        this.checkChanged();
     }
 }

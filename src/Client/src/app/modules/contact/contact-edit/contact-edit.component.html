@@ -17,7 +17,10 @@
                 <ng-template matTabContent>
                     <div class="flex flex-col flex-1 overflow-y-auto">
                         <!-- Tags -->
-                        <!-- <tag-list [tags]="contact?.tags" [viewMode]="'full'"></tag-list> -->
+                        <app-tag-filters
+                            class="flex flex-1 w-full"
+                            [selectedTags]="item?.tags"
+                            (selectionChange)="onTagsSelectionChange($event)"></app-tag-filters>
 
                         <div class="flex flex-col">
                             <div class="grid grid-cols-12 gap-2 w-full">

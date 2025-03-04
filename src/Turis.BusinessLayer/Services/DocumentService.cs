@@ -19,15 +19,16 @@ namespace Turis.BusinessLayer.Services;
 public class DocumentService(ApplicationDbContext dbContext
 	, IUserService userService
 	, IBookmarkService bookmarkService
+	, IAttachmentService attachmentService
+	, IEntityTagService entityTagService
 	, ILogger<DocumentService> logger) : IDocumentService
 {
+	private const string EntryName = nameof(Document);
+
 	private readonly DbSet<Document> context = dbContext.Documents;
 
-	private async Task<List<Bookmark>> GetMyBookmarks()
-	{
-		var bookmarks = await bookmarkService.ListAsync(userService.GetUserId(), nameof(Document));
-		return bookmarks;
-	}
+	private async Task<List<Bookmark>> GetMyBookmarks() 
+		=> await bookmarkService.ListAsync(userService.GetUserId(), EntryName);
 
 	private IIncludableQueryable<Document, Contact> Query()
 	{
@@ -41,7 +42,7 @@ public class DocumentService(ApplicationDbContext dbContext
 
 	public async Task<Result<DocumentModel>> GetAsync(Guid id)
 	{
-		var bookmarks = await bookmarkService.ListAsync(userService.GetUserId(), nameof(Document));
+		var bookmarks = await bookmarkService.ListAsync(userService.GetUserId(), EntryName);
 	
 		var record = await Query()
 			.FirstOrDefaultAsync(x => x.Id == id);
@@ -54,7 +55,7 @@ public class DocumentService(ApplicationDbContext dbContext
 
 	public async Task<Result<DocumentModel>> GetAsync(string sectional, int number)
 	{
-		var bookmarks = await bookmarkService.ListAsync(userService.GetUserId(), nameof(Document));
+		var bookmarks = await bookmarkService.ListAsync(userService.GetUserId(), EntryName);
 	
 		var record = await Query()
 			.FirstOrDefaultAsync(x => x.Sectional == sectional && x.Number == number);
@@ -203,7 +204,10 @@ public class DocumentService(ApplicationDbContext dbContext
 		record.Cig = model.Cig;
 		record.Cup = model.Cup;
 
+		await entityTagService.UpdateTagsAsync(nameof(Service), record.Id, model.Tags);
+
 		await dbContext.SaveChangesAsync();
+
 		return Result.Ok();
 	}
 

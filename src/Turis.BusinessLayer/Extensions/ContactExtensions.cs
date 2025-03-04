@@ -6,8 +6,13 @@ namespace Turis.BusinessLayer.Extensions;
 
 public static class ContactExtensions
 {
-	public static ContactModel ToModel(this Contact entity)
+	public static ContactModel ToModel(this Contact entity,
+		List<Bookmark> bookmarks = null,
+		List<Attachment> attachments = null,
+		List<EntityTag> tags = null)
 	{
+		var bookmarkId = bookmarks?.FirstOrDefault(x => x.EntityId == entity.Id)?.Id;
+
 		return new ContactModel
 		{
 			Id = entity.Id,
@@ -44,16 +49,25 @@ public static class ContactExtensions
 			ContactType = entity.ContactType.ToString(),
 			PercentageGuida = entity.PercentageGuida,
 			PercentageAccompagnamento = entity.PercentageAccompagnamento,
+			BookmarkId = bookmarkId.HasValue() ? bookmarkId.ToString() : string.Empty,
+			AttachmentsCount = attachments?.Where(x => x.EntityKey == entity.Id).Count() ?? 0,
+			Tags = tags?.Where(x => x.EntityKey == entity.Id).Select(x => x.Tag).ToModel()?.ToList()
 		};
 	}
 
-	public static IEnumerable<ContactModel> ToModel(this IQueryable<Contact> query)
+	public static IEnumerable<ContactModel> ToModel(this IQueryable<Contact> query,
+		List<Bookmark> bookmarks = null,
+		List<Attachment> attachments = null,
+		List<EntityTag> tags = null)
 	{
-		return ToModel(query.AsEnumerable());
+		return ToModel(query.AsEnumerable(), bookmarks, attachments, tags);
 	}
 
-	public static IEnumerable<ContactModel> ToModel(this IEnumerable<Contact> list)
+	public static IEnumerable<ContactModel> ToModel(this IEnumerable<Contact> list,
+		List<Bookmark> bookmarks = null,
+		List<Attachment> attachments = null,
+		List<EntityTag> tags = null)
 	{
-		return list.Select(ToModel);
+		return list.Select(x => x.ToModel(bookmarks, attachments, tags));
 	}
 }

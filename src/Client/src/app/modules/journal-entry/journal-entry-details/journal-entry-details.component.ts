@@ -22,6 +22,8 @@ import { JournalEntry } from '../journal-entry.types';
 import { JournalEntryViewComponent } from '../journal-entry-view/journal-entry-view.component';
 import { JournalEntryService } from '../journal-entry.service';
 import { JournalEntryEditComponent } from '../journal-entry-edit/journal-entry-edit.component';
+import { TagListComponent } from 'app/modules/configuration/tags/tag-list/tag-list.component';
+import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summary.component';
 
 @UntilDestroy()
 @Component({
@@ -52,6 +54,7 @@ import { JournalEntryEditComponent } from '../journal-entry-edit/journal-entry-e
         SpinnerButtonComponent,
         JournalEntryViewComponent,
         JournalEntryEditComponent,
+        TagSummaryComponent,
     ],
 })
 export class JournalEntryDetailsComponent implements OnInit {

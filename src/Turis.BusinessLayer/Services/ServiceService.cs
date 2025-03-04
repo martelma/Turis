@@ -18,20 +18,40 @@ using Turis.DataAccessLayer.Entities;
 
 namespace Turis.BusinessLayer.Services;
 
-public class ServiceService(IDbContext dbContext,
-	ILogger<ServiceService> logger,
-	IBookmarkService bookmarkService,
-	IAttachmentService attachmentService,
-	IEntityTagService entityTagService,
-	IContactService contactService,
-	IUserService userService,
-	IAvatarContactService avatarContactService
+public class ServiceService(IDbContext dbContext
+	, ILogger<ServiceService> logger
+	, IUserService userService
+	, IBookmarkService bookmarkService
+	, IAttachmentService attachmentService
+	, IEntityTagService entityTagService
+	, IContactService contactService
+	, IAvatarContactService avatarContactService
 	) : IServiceService
 {
-	private async Task<List<Bookmark>> GetMyBookmarks()
+	private const string EntryName = nameof(Service);
+
+	private async Task<List<Bookmark>> GetMyBookmarks() 
+		=> await bookmarkService.ListAsync(userService.GetUserId(), EntryName);
+
+	public async Task<Result<ServiceModel>> GetAsync(Guid serviceId)
 	{
-		var bookmarks = await bookmarkService.ListAsync(userService.GetUserId(), nameof(Service));
-		return bookmarks;
+		var bookmarks = await GetMyBookmarks();
+		var attachments = await attachmentService.ListAsync(EntryName, serviceId);
+		var tags = await entityTagService.ListAsync(EntryName, serviceId);
+
+		var query = dbContext
+			.GetData<Service>()
+			.Include(x => x.PriceList)
+			.Include(x => x.Client)
+			.Include(x => x.Collaborator)
+			.FirstOrDefault(x => x.Id == serviceId);
+
+		var service = await query.ToModelAsync(avatarContactService, bookmarks, attachments, tags);
+
+		if (service is null)
+			return Result.Fail(FailureReasons.ItemNotFound);
+
+		return service;
 	}
 
 	public async Task<Result<PaginatedList<ServiceModel>>> ListAsync(ServiceSearchParameters parameters)
@@ -110,34 +130,13 @@ public class ServiceService(IDbContext dbContext,
 			.Skip(paginator.PageIndex * paginator.PageSize).Take(paginator.PageSize + 1)
 			.ToList();
 
-		var attachments = await attachmentService.ListAsync(nameof(Service), data.Select(x => x.Id).ToList());
-		var tags = await entityTagService.ListAsync(nameof(Service), data.Select(x => x.Id).ToList());
+		var attachments = await attachmentService.ListAsync(EntryName, data.Select(x => x.Id).ToList());
+		var tags = await entityTagService.ListAsync(EntryName, data.Select(x => x.Id).ToList());
 
-		var model = await data.ToModel(bookmarks, attachments, tags, avatarContactService);
+		var model = await data.ToModel(avatarContactService, bookmarks, attachments, tags);
 
 		var result = new PaginatedList<ServiceModel>(model, totalCount, data.Count > parameters.PageSize);
 		return result;
-	}
-
-	public async Task<Result<ServiceModel>> GetAsync(Guid serviceId)
-	{
-		var bookmarks = await bookmarkService.ListAsync(userService.GetUserId(), nameof(Service));
-		var attachments = await attachmentService.ListAsync(nameof(Service), serviceId);
-		var tags = await entityTagService.ListAsync(nameof(Service), serviceId);
-
-		var query = dbContext
-			.GetData<Service>()
-			.Include(x => x.PriceList)
-			.Include(x => x.Client)
-			.Include(x => x.Collaborator)
-			.FirstOrDefault(x => x.Id == serviceId);
-
-		var service = await query.ToModelAsync(bookmarks, attachments, tags, avatarContactService);
-
-		if (service is null)
-			return Result.Fail(FailureReasons.ItemNotFound);
-
-		return service;
 	}
 
 	public async Task<Result<PaginatedList<ServiceModel>>> AccountStatement(AccountStatementParameters parameters)
@@ -207,9 +206,9 @@ public class ServiceService(IDbContext dbContext,
 			.Skip(paginator.PageIndex * paginator.PageSize).Take(paginator.PageSize + 1)
 			.ToList();
 
-		var attachments = await attachmentService.ListAsync(nameof(Service), data.Select(x => x.Id).ToList());
-		var tags = await entityTagService.ListAsync(nameof(Service), data.Select(x => x.Id).ToList());
-		var model = await data.ToModel(bookmarks, attachments, tags, avatarContactService);
+		var attachments = await attachmentService.ListAsync(EntryName, data.Select(x => x.Id).ToList());
+		var tags = await entityTagService.ListAsync(EntryName, data.Select(x => x.Id).ToList());
+		var model = await data.ToModel(avatarContactService, bookmarks, attachments, tags);
 
 		var result = new PaginatedList<ServiceModel>(model, totalCount, data.Count > parameters.PageSize);
 		return result;
@@ -242,7 +241,7 @@ public class ServiceService(IDbContext dbContext,
 		dbService.PriceListId = service.PriceListId;
 
 		dbService.Location = service.Location;
-		dbService.Languages = service.Languages.ToCSV();
+		dbService.Languages = service.Languages?.ToCSV();
 		dbService.OptionExpiration = service.OptionExpiration;
 
 		dbService.MeetingPlace = service.MeetingPlace;
@@ -282,16 +281,16 @@ public class ServiceService(IDbContext dbContext,
 		dbService.CIGCode = service.CIGCode;
 		dbService.CUPCode = service.CUPCode;
 
-		await entityTagService.UpdateTagsAsync(nameof(Service), dbService.Id, service.Tags);
+		await entityTagService.UpdateTagsAsync(EntryName, dbService.Id, service.Tags);
 		
 		await dbContext.SaveAsync();
 
 		service.Id = dbService.Id;
 
-		var bookmarks = await bookmarkService.ListAsync(userService.GetUserId(), nameof(Service));
-		var attachments = await attachmentService.ListAsync(nameof(Service), service.Id);
-		var tags = await entityTagService.ListAsync(nameof(Service), service.Id);
-		return await dbService.ToModelAsync(bookmarks, attachments, tags, avatarContactService);
+		var bookmarks = await bookmarkService.ListAsync(userService.GetUserId(), EntryName);
+		var attachments = await attachmentService.ListAsync(EntryName, service.Id);
+		var tags = await entityTagService.ListAsync(EntryName, service.Id);
+		return await dbService.ToModelAsync(avatarContactService, bookmarks, attachments, tags);
 	}
 
 	public async Task<Result> DeleteAsync(Guid serviceId)

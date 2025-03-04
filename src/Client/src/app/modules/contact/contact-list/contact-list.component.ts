@@ -34,6 +34,7 @@ import { Contact, ContactSearchParameters } from '../contact.types';
 import { ContactService } from '../contact.service';
 import { ContactComponent } from '../contact.component';
 import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
+import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summary.component';
 
 @UntilDestroy()
 @Component({
@@ -47,8 +48,10 @@ import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
         NgFor,
         NgClass,
         NgStyle,
+        NgTemplateOutlet,
         CurrencyPipe,
         DatePipe,
+        JsonPipe,
         FormsModule,
         ReactiveFormsModule,
         RouterOutlet,
@@ -61,7 +64,6 @@ import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
         MatMenuModule,
         MatSortModule,
         MatTooltipModule,
-        NgTemplateOutlet,
         MatPaginatorModule,
         MatSlideToggleModule,
         MatSelectModule,
@@ -70,8 +72,8 @@ import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
         MatRippleModule,
         TranslocoModule,
         SearchInputComponent,
-        JsonPipe,
         SearchInputComponent,
+        TagSummaryComponent,
     ],
 })
 export class ContactListComponent implements OnInit, AfterViewInit {

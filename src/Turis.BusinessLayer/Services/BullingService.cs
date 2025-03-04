@@ -16,6 +16,7 @@ namespace Turis.BusinessLayer.Services;
 public class BullingService(ApplicationDbContext dbContext
 	, IOptions<AppSettings> appSettings
 	, IAliquotaIvaService aliquotaIvaService
+	, ITrackingService trackingService
 	, IContactService contactService) : IBullingService
 {
 	private readonly AppSettings appSettings = appSettings.Value;

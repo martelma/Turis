@@ -47,7 +47,6 @@ public class ServiceModel : BaseModel
 	public DateTimeOffset? CommissionPaymentDate { get; set; }
 	public string BookmarkId { get; set; }
 	public int AttachmentsCount { get; set; }
-
 	public List<TagModel> Tags { get; set; } = [];
 
 	public string BillingStatus

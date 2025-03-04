@@ -44,6 +44,8 @@ import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
 import { JournalEntryComponent } from '../journal-entry.component';
 import { JournalEntryService } from '../journal-entry.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { TagListComponent } from 'app/modules/configuration/tags/tag-list/tag-list.component';
+import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summary.component';
 
 @UntilDestroy()
 @Component({
@@ -83,6 +85,7 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
         MatRippleModule,
         TranslocoModule,
         SearchInputComponent,
+        TagSummaryComponent,
     ],
 })
 export class JournalEntryListComponent implements OnInit, AfterViewInit {

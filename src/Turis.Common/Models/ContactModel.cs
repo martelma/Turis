@@ -38,6 +38,9 @@ public class ContactModel : BaseModel
 	public decimal PercentageAccompagnamento { get; set; }
 	public string Avatar { get; set; }
 	public string DisplayName { get; set; }
+	public string BookmarkId { get; set; }
+	public int AttachmentsCount { get; set; }
+	public List<TagModel> Tags { get; set; } = [];
 
 	public string FullName
 	{

@@ -58,7 +58,7 @@
                         (keyup)="(null)">
                         <!-- Contact content -->
                         <a
-                            class="flex flex-col items-start justify-start w-full py-6 pr-4 pl-5 border-l-4 border-transparent">
+                            class="flex flex-col items-start justify-start w-full py-4 pr-4 pl-4 border-l-4 border-transparent">
                             <!-- Contact Info -->
                             <div class="flex items-center w-full justify-between space-x-2 mb-2">
                                 <div class="flex items-center space-x-2">
@@ -99,6 +99,23 @@
                                     class="mr-2"
                                     [matTooltip]="'Email'"></mat-icon>
                                 {{ item?.eMail }}
+                            </div>
+
+                            <div class="flex items-center w-full justify-between space-x-2 mt-2">
+                                <div class="flex items-center space-x-2">
+                                    <!--  Tags -->
+                                    <tag-summary [tags]="item?.tags" [viewMode]="'mini'"></tag-summary>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <mat-icon
+                                        class="icon-size-5 mr-2"
+                                        [svgIcon]="'heroicons_outline:pencil-square'"
+                                        [ngClass]="{ 'red-icon': item?.note?.length > 0 }"></mat-icon>
+                                    <mat-icon
+                                        class="icon-size-5 mr-2"
+                                        [svgIcon]="'heroicons_outline:paper-clip'"
+                                        [ngClass]="{ 'red-icon': item?.attachmentsCount > 0 }"></mat-icon>
+                                </div>
                             </div>
                         </a>
                     </div>

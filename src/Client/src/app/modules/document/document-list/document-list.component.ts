@@ -53,6 +53,7 @@ import { ServiceService } from 'app/modules/service/service.service';
 import { DocumentService } from '../document.service';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { DocumentComponent } from '../document.component';
+import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summary.component';
 
 @UntilDestroy()
 @Component({
@@ -92,6 +93,7 @@ import { DocumentComponent } from '../document.component';
         MatRippleModule,
         TranslocoModule,
         SearchInputComponent,
+        TagSummaryComponent,
     ],
 })
 export class DocumentListComponent implements OnInit, AfterViewInit {

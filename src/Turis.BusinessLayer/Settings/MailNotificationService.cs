@@ -32,7 +32,7 @@ public class MailNotificationService
 		var sendResponse = await _fluentEmail.To(toMail, toName).Subject(subject).Body(body).SendAsync();
 		if (!sendResponse.Successful)
 		{
-			_logger.LogWarning("E' stato impossibile inviare la mail a: {toMail}; per le seguenti cause: {ErrorMessages}", toMail, sendResponse.ErrorMessages.ToCSV());
+			_logger.LogWarning("E' stato impossibile inviare la mail a: {toMail}; per le seguenti cause: {ErrorMessages}", toMail, sendResponse.ErrorMessages?.ToCSV());
 		}
 	}
 
@@ -69,7 +69,7 @@ public class MailNotificationService
 
 		if (!sendResponse.Successful)
 		{
-			_logger.LogWarning("E' stato impossibile inviare la mail a: {toMail}; per le seguenti cause: {ErrorMessages}", toMail, sendResponse.ErrorMessages.ToCSV());
+			_logger.LogWarning("E' stato impossibile inviare la mail a: {toMail}; per le seguenti cause: {ErrorMessages}", toMail, sendResponse.ErrorMessages?.ToCSV());
 		}
 	}
 

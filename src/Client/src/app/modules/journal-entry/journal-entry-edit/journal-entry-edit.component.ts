@@ -33,6 +33,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DocumentTypes, MY_DATE_FORMATS, Sexs } from 'app/constants';
 import { JournalEntry } from '../journal-entry.types';
+import { TagFiltersComponent } from 'app/modules/configuration/tags/filters/tag-filters.component';
+import { Tag } from 'app/modules/configuration/tags/tag.types';
 
 @UntilDestroy()
 @Component({
@@ -74,6 +76,7 @@ import { JournalEntry } from '../journal-entry.types';
         MatExpansionModule,
         FuseScrollResetDirective,
         TranslocoModule,
+        TagFiltersComponent,
     ],
 })
 export class JournalEntryEditComponent implements OnInit {
@@ -131,5 +134,14 @@ export class JournalEntryEditComponent implements OnInit {
         if (this.journalEntry && this.originalItem) {
             this.changed = JSON.stringify(this.journalEntry) !== JSON.stringify(this.originalItem);
         }
+    }
+
+    onSelectedTabChange(): void {
+        // Do nothing
+    }
+
+    onTagsSelectionChange(tags: Tag[]): void {
+        this.journalEntry.tags = tags;
+        this.checkChanged();
     }
 }

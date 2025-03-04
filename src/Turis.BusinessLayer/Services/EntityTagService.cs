@@ -1,8 +1,4 @@
-﻿using System.IO.Compression;
-using JeMa.Shared.AspNetCore.Extensions;
-using JeMa.Shared.Extensions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OperationResults;

@@ -1,78 +1,108 @@
 <div
     class="relative flex flex-col flex-auto shrink-0 lg:shrink p-3 lg:overflow-y-auto bg-gray-100 dark:bg-transparent"
     fuseScrollReset>
-    <!-- Main -->
     <div
         class="absolute inset-0 flex flex-col flex-0 shadow rounded-2xl overflow-hidden bg-card dark:bg-black dark:bg-opacity-10 m-4">
-        <div class="flex flex-col flex-1 overflow-y-auto">
-            <!-- Tags -->
-            <!-- <tag-list [tags]="item?.tags" [viewMode]="'full'"></tag-list> -->
+        <mat-tab-group
+            class="edit-service-tab-group"
+            mat-stretch-tabs="false"
+            [animationDuration]="'0'"
+            (selectedTabChange)="onSelectedTabChange()">
+            <!-- Service Info -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:information-circle'"></mat-icon>
+                    {{ 'Service.ServiceInfo' | transloco }}
+                </ng-template>
+                <ng-template matTabContent>
+                    <div class="flex flex-col flex-1 overflow-y-auto">
+                        <!-- Tags -->
+                        <app-tag-filters
+                            class="flex flex-1 w-full"
+                            [selectedTags]="service?.tags"
+                            (selectionChange)="onTagsSelectionChange($event)"></app-tag-filters>
 
-            <div class="flex flex-col p-4">
-                <div class="grid grid-cols-12 gap-2 w-full">
-                    <mat-form-field class="col-span-2">
-                        <mat-label for="date">Date</mat-label>
-                        <input
-                            matInput
-                            [matDatepicker]="picker"
-                            class="form-control font-bold"
-                            id="date"
-                            name="date"
-                            #name="ngModel"
-                            required
-                            [min]="minDate"
-                            [max]="maxDate"
-                            [(ngModel)]="item.date"
-                            (ngModelChange)="checkChanged()" />
-                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                        <mat-datepicker #picker></mat-datepicker>
-                    </mat-form-field>
-                    <mat-form-field class="col-span-2">
-                        <mat-label>Amount</mat-label>
-                        <input
-                            matInput
-                            type="number"
-                            class="form-control font-bold"
-                            id="amount"
-                            name="amount"
-                            #name="ngModel"
-                            [(ngModel)]="item.amount"
-                            (ngModelChange)="checkChanged()" />
-                    </mat-form-field>
-                </div>
-                <div class="grid grid-cols-12 gap-2 w-full">
-                    <mat-form-field class="col-span-12">
-                        <mat-label>Description</mat-label>
-                        <textarea
-                            matInput
-                            type="text"
-                            class="form-control font-bold w-full"
-                            [rows]="5"
-                            id="description"
-                            name="description"
-                            #name="ngModel"
-                            [(ngModel)]="item.description"
-                            (ngModelChange)="checkChanged()">
-                        </textarea>
-                    </mat-form-field>
-                </div>
-                <div class="grid grid-cols-12 gap-2 w-full">
-                    <mat-form-field class="col-span-12">
-                        <mat-label>Note</mat-label>
-                        <textarea
-                            matInput
-                            type="text"
-                            class="form-control font-bold w-full h-full"
-                            [rows]="5"
-                            id="note"
-                            name="note"
-                            #name="ngModel"
-                            [(ngModel)]="item.note"
-                            (ngModelChange)="checkChanged()">
-                        </textarea>
-                    </mat-form-field>
-                </div>
-            </div>
-        </div>
+                        <div class="flex flex-col p-4">
+                            <div class="grid grid-cols-12 gap-2 w-full">
+                                <mat-form-field class="col-span-2">
+                                    <mat-label for="date">Date</mat-label>
+                                    <input
+                                        matInput
+                                        [matDatepicker]="picker"
+                                        class="form-control font-bold"
+                                        id="date"
+                                        name="date"
+                                        #name="ngModel"
+                                        required
+                                        [min]="minDate"
+                                        [max]="maxDate"
+                                        [(ngModel)]="item.date"
+                                        (ngModelChange)="checkChanged()" />
+                                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker></mat-datepicker>
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label>Amount</mat-label>
+                                    <input
+                                        matInput
+                                        type="number"
+                                        class="form-control font-bold"
+                                        id="amount"
+                                        name="amount"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.amount"
+                                        (ngModelChange)="checkChanged()" />
+                                </mat-form-field>
+                            </div>
+                            <div class="grid grid-cols-12 gap-2 w-full">
+                                <mat-form-field class="col-span-12">
+                                    <mat-label>Description</mat-label>
+                                    <textarea
+                                        matInput
+                                        type="text"
+                                        class="form-control font-bold w-full"
+                                        [rows]="5"
+                                        id="description"
+                                        name="description"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.description"
+                                        (ngModelChange)="checkChanged()">
+                                    </textarea>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </mat-tab>
+
+            <!-- Note -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
+                    {{ 'Service.Note' | transloco }}
+                </ng-template>
+                <ng-template matTabContent>
+                    <div class="flex flex-col flex-1 overflow-y-auto">
+                        <div class="flex flex-col">
+                            <div class="grid grid-cols-12 gap-2 h-full w-full">
+                                <mat-form-field class="col-span-12">
+                                    <!-- <mat-label>Note</mat-label> -->
+                                    <textarea
+                                        matInput
+                                        cdkTextareaAutosize
+                                        cdkAutosizeMinRows="5"
+                                        class="form-control font-bold h-full"
+                                        id="note"
+                                        name="note"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.note"
+                                        (ngModelChange)="checkChanged()"></textarea>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </mat-tab>
+        </mat-tab-group>
     </div>
 </div>

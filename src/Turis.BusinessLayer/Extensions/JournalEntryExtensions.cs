@@ -6,9 +6,12 @@ namespace Turis.BusinessLayer.Extensions;
 
 public static class JournalEntryExtensions
 {
-	public static async Task<JournalEntryModel> ToModel(this JournalEntry entity, IEnumerable<Bookmark> bookmarks)
+	public static async Task<JournalEntryModel> ToModel(this JournalEntry entity,
+		List<Bookmark> bookmarks = null,
+		List<Attachment> attachments = null,
+		List<EntityTag> tags = null)
 	{
-		var bookmarkId = bookmarks.FirstOrDefault(x => x.EntityId == entity.Id)?.Id;
+		var bookmarkId = bookmarks?.FirstOrDefault(x => x.EntityId == entity.Id)?.Id;
 
 		var model = new JournalEntryModel
 		{
@@ -23,17 +26,22 @@ public static class JournalEntryExtensions
 			Balance = entity.Balance,
 
 			BookmarkId = bookmarkId.HasValue() ? bookmarkId.ToString() : string.Empty,
+			AttachmentsCount = attachments?.Where(x => x.EntityKey == entity.Id).Count() ?? 0,
+			Tags = tags?.Where(x => x.EntityKey == entity.Id).Select(x => x.Tag).ToModel()?.ToList()
 		};
 
 		return model;
 	}
 
-	public static async Task<List<JournalEntryModel>> ToModel(this IEnumerable<JournalEntry> list, IEnumerable<Bookmark> bookmarks)
+	public static async Task<List<JournalEntryModel>> ToModel(this IEnumerable<JournalEntry> list,
+		List<Bookmark> bookmarks = null,
+		List<Attachment> attachments = null,
+		List<EntityTag> tags = null)
 	{
 		var model = new List<JournalEntryModel>();
 		if (list != null)
 			foreach (var item in list)
-				model.Add(await ToModel(item, bookmarks));
+				model.Add(await ToModel(item, bookmarks, attachments, tags));
 
 		return model;
 	}

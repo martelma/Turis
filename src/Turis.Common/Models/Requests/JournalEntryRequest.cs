@@ -8,4 +8,5 @@ public class JournalEntryRequest : BaseRequest
 	public string Description { get; set; }
 	public string Note { get; set; }
 	public decimal Amount { get; set; }
+	public List<TagRequest> Tags { get; set; } = [];
 }

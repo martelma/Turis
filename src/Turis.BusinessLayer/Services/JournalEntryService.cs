@@ -17,15 +17,16 @@ namespace Turis.BusinessLayer.Services;
 public class JournalEntryService(ApplicationDbContext dbContext
 	, IUserService userService
 	, IBookmarkService bookmarkService
+	, IAttachmentService attachmentService
+	, IEntityTagService entityTagService
 	, ILogger<JournalEntryService> logger) : IJournalEntryService
 {
+	private const string EntryName = nameof(JournalEntry);
+	
 	private readonly DbSet<JournalEntry> context = dbContext.JournalEntries;
 
-	private async Task<List<Bookmark>> GetMyBookmarks()
-	{
-		var bookmarks = await bookmarkService.ListAsync(userService.GetUserId(), nameof(JournalEntry));
-		return bookmarks;
-	}
+	private async Task<List<Bookmark>> GetMyBookmarks() 
+		=> await bookmarkService.ListAsync(userService.GetUserId(), EntryName);
 
 	private IQueryable<JournalEntry> Query()
 	{
@@ -34,7 +35,9 @@ public class JournalEntryService(ApplicationDbContext dbContext
 
 	public async Task<Result<JournalEntryModel>> GetAsync(Guid id)
 	{
-		var bookmarks = await bookmarkService.ListAsync(userService.GetUserId(), nameof(JournalEntry));
+		var bookmarks = await bookmarkService.ListAsync(userService.GetUserId(), EntryName);
+		var attachments = await attachmentService.ListAsync(EntryName, id);
+		var tags = await entityTagService.ListAsync(EntryName, id);
 
 		var record = await Query()
 			.FirstOrDefaultAsync(x => x.Id == id);
@@ -42,7 +45,7 @@ public class JournalEntryService(ApplicationDbContext dbContext
 		if (record is null)
 			return Result.Fail(FailureReasons.ItemNotFound);
 
-		return await record.ToModel(bookmarks);
+		return await record.ToModel(bookmarks, attachments, tags);
 	}
 
 	public async Task<Result<PaginatedList<JournalEntryModel>>> ListAsync(JournalEntrySearchParameters parameters)
@@ -132,12 +135,15 @@ public class JournalEntryService(ApplicationDbContext dbContext
 
 		try
 		{
-			var page = query
+			var data = query
 				.Skip(paginator.PageIndex * paginator.PageSize)
 				.Take(paginator.PageSize)
 				.ToList();
 
-			var list = await page.ToModel(bookmarks);
+			var attachments = await attachmentService.ListAsync(EntryName, data.Select(x => x.Id).ToList());
+			var tags = await entityTagService.ListAsync(EntryName, data.Select(x => x.Id).ToList());
+
+			var list = await data.ToModel(bookmarks, attachments, tags);
 
 			var result = new PaginatedList<JournalEntryModel>(list, totalCount, paginator.PageIndex, paginator.PageSize);
 
@@ -169,7 +175,10 @@ public class JournalEntryService(ApplicationDbContext dbContext
 		record.Description = model.Description;
 		record.Note = model.Note;
 
+		await entityTagService.UpdateTagsAsync(EntryName, record.Id, model.Tags);
+
 		await dbContext.SaveChangesAsync();
+
 		return Result.Ok();
 	}
 

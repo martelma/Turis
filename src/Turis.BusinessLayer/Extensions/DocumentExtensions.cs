@@ -8,7 +8,7 @@ public static class DocumentExtensions
 {
 	public static async Task<DocumentModel> ToModel(this Document entity, IEnumerable<Bookmark> bookmarks)
 	{
-		var bookmarkId = bookmarks.FirstOrDefault(x => x.EntityId == entity.Id)?.Id;
+		var bookmarkId = bookmarks?.FirstOrDefault(x => x.EntityId == entity.Id)?.Id;
 	
 		var model = new DocumentModel
 		{

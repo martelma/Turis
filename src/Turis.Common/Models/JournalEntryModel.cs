@@ -11,6 +11,8 @@ public class JournalEntryModel : BaseModel
 	public string Description { get; set; }
 	public string Note { get; set; }
 	public decimal Amount { get; set; }
-	public string BookmarkId { get; set; }
 	public decimal Balance { get; set; }
+	public string BookmarkId { get; set; }
+	public int AttachmentsCount { get; set; }
+	public List<TagModel> Tags { get; set; } = [];
 }

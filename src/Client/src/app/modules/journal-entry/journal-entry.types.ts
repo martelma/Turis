@@ -1,4 +1,5 @@
 import { BaseSearchParameters } from 'app/shared/types/shared.types';
+import { Tag } from '../configuration/tags/tag.types';
 
 export class JournalEntry {
     id: string;
@@ -10,6 +11,8 @@ export class JournalEntry {
     note: string;
     amount: number;
     balance: number;
+
+    tags: Tag[] = [];
 
     bookmarkId: string;
 

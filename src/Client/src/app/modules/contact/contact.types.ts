@@ -1,6 +1,6 @@
 import { BaseSearchParameters } from 'app/shared/types/shared.types';
-import { Language } from '../configuration/languages/language.types';
 import { SafeUrl } from '@angular/platform-browser';
+import { Tag } from '../configuration/tags/tag.types';
 
 export class Contact {
     id: string;
@@ -41,6 +41,8 @@ export class Contact {
     avatar?: string;
     avatarUrl?: SafeUrl;
     avatarUrl2?: SafeUrl;
+
+    tags: Tag[] = [];
 
     bookmarkId: string;
 

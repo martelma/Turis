@@ -29,6 +29,7 @@ import { dataURItoBlob } from 'app/shared';
 import { getSuccessModal } from 'app/shared/types/confirm-modal.types';
 import { FuseCardComponent } from '@fuse/components/card';
 import { TextFieldModule } from '@angular/cdk/text-field';
+import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summary.component';
 
 @UntilDestroy()
 @Component({
@@ -61,6 +62,7 @@ import { TextFieldModule } from '@angular/cdk/text-field';
         SpinnerButtonComponent,
         FuseCardComponent,
         TextFieldModule,
+        TagSummaryComponent,
     ],
 })
 export class ContactDetailsComponent implements OnInit {

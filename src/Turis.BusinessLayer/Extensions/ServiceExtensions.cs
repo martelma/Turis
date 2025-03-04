@@ -8,10 +8,13 @@ namespace Turis.BusinessLayer.Extensions;
 
 public static class ServiceExtensions
 {
-	public static async Task<ServiceModel> ToModelAsync(this Service entity, IEnumerable<Bookmark> bookmarks,
-		List<Attachment> attachments, List<EntityTag> tags, IAvatarContactService avatarContactService)
+	public static async Task<ServiceModel> ToModelAsync(this Service entity,
+		IAvatarContactService avatarContactService,
+		List<Bookmark> bookmarks = null,
+		List<Attachment> attachments = null,
+		List<EntityTag> tags = null)
 	{
-		var bookmarkId = bookmarks.FirstOrDefault(x => x.EntityId == entity.Id)?.Id;
+		var bookmarkId = bookmarks?.FirstOrDefault(x => x.EntityId == entity.Id)?.Id;
 
 		var model = new ServiceModel
 		{
@@ -57,8 +60,10 @@ public static class ServiceExtensions
 			CommissionPaymentDate = entity.CashedDate ?? DateTimeOffset.MinValue,
 
 			BookmarkId = bookmarkId.HasValue() ? bookmarkId.ToString() : string.Empty,
-			AttachmentsCount = attachments.Count(x => x.EntityKey == entity.Id)
+			AttachmentsCount = attachments?.Where(x => x.EntityKey == entity.Id).Count() ?? 0,
+			Tags = tags?.Where(x => x.EntityKey == entity.Id).Select(x => x.Tag).ToModel()?.ToList()
 		};
+
 		if (model.Collaborator != null)
 		{
 			model.Collaborator.Avatar = (await avatarContactService.GetAsync(model.Collaborator.Id))?.Content != null
@@ -66,21 +71,16 @@ public static class ServiceExtensions
 				: null;
 		}
 
-		model.Tags = tags?.Select(x => x.Tag)?.ToModel()?.ToList();
-
 		return model;
 	}
 
 	public static Task<IEnumerable<ServiceModel>> ToModel(this IEnumerable<Service> list,
-		IEnumerable<Bookmark> bookmarks, 
-		List<Attachment> attachments, 
-		List<EntityTag> tags, 
-		IAvatarContactService avatarContactService)
+		IAvatarContactService avatarContactService,
+		List<Bookmark> bookmarks = null,
+		List<Attachment> attachments = null,
+		List<EntityTag> tags = null)
 	{
-		return list.SelectAsync(x => x.ToModelAsync(bookmarks, 
-			attachments.Where(y=>y.EntityKey == x.Id).ToList(), 
-			tags.Where(y=>y.EntityKey == x.Id).ToList(), 
-			avatarContactService));
+		return list.SelectAsync(x => x.ToModelAsync(avatarContactService, bookmarks, attachments, tags));
 	}
 
 	public static async Task<ServiceInfoModel> ToModelInfoAsync(this Service entity)

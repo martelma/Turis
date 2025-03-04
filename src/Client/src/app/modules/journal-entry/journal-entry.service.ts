@@ -88,6 +88,7 @@ export class JournalEntryService extends BaseEntityService<JournalEntry> {
                     bookmarkId: undefined,
                     balance: undefined,
                     selected: false,
+                    tags: [],
                 }).pipe(
                     map(newJournalEntry => {
                         // Update the journalEntrys with the new journalEntry

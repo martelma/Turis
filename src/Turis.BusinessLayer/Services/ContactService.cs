@@ -18,23 +18,35 @@ using Turis.DataAccessLayer.Entities;
 
 namespace Turis.BusinessLayer.Services;
 
-public class ContactService(IDbContext dbContext,
-	ILogger<ContactService> logger,
-	IAvatarContactService avatarContactService
+public class ContactService(IDbContext dbContext
+	, ILogger<ContactService> logger
+	, IUserService userService
+	, IBookmarkService bookmarkService
+	, IAttachmentService attachmentService
+	, IEntityTagService entityTagService
+	, ITrackingService trackingService
+	, IAvatarContactService avatarContactService
 	) : IContactService
 {
+	private const string EntryName = nameof(Contact);
+
+	private async Task<List<Bookmark>> GetMyBookmarks() 
+		=> await bookmarkService.ListAsync(userService.GetUserId(), EntryName);
+
 	public async Task<Result<PaginatedList<ContactModel>>> ListAsync(ContactSearchParameters parameters)
 	{
+		var bookmarks = await GetMyBookmarks();
+	
 		var paginator = new Paginator(parameters);
 
 		var query = dbContext.GetData<Contact>()
 			.AsQueryable();
 
-		//if (parameters.OnlyBookmarks)
-		//{
-		//	var bookmarkIds = bookmarks.Select(x => x.EntityId).ToList();
-		//	query = query.WhereIf(parameters.OnlyBookmarks, x => bookmarkIds.Contains(x.Id));
-		//}
+		if (parameters.OnlyBookmarks)
+		{
+			var bookmarkIds = bookmarks.Select(x => x.EntityId).ToList();
+			query = query.WhereIf(parameters.OnlyBookmarks, x => bookmarkIds.Contains(x.Id));
+		}
 
 		if (parameters.Code.HasValue())
 			query = query.Where(x => x.Code.Contains(parameters.Code));
@@ -79,7 +91,10 @@ public class ContactService(IDbContext dbContext,
 			//.ToModel()
 			.ToList();
 
-		var model = data.ToModel();
+		var attachments = await attachmentService.ListAsync(EntryName, data.Select(x => x.Id).ToList());
+		var tags = await entityTagService.ListAsync(EntryName, data.Select(x => x.Id).ToList());
+
+		var model = data.ToModel(bookmarks, attachments, tags);
 		foreach (var item in model)
 		{
 			item.Avatar = (await avatarContactService.GetAsync(item.Id))?.Content != null
@@ -93,19 +108,23 @@ public class ContactService(IDbContext dbContext,
 
 	public async Task<Result<ContactModel>> GetAsync(Guid contactId)
 	{
-		var contact = dbContext.GetData<Contact>()
-			.Where(x => x.Id == contactId)
-			.ToModel()
-			.FirstOrDefault();
+		var bookmarks = await GetMyBookmarks();
+		var attachments = await attachmentService.ListAsync(EntryName, contactId);
+		var tags = await entityTagService.ListAsync(EntryName, contactId);
 
-		if (contact is null)
+		var model = dbContext
+				.GetData<Contact>()
+				.FirstOrDefault(x => x.Id == contactId)
+				.ToModel(bookmarks, attachments, tags);
+
+		if (model is null)
 			return Result.Fail(FailureReasons.ItemNotFound);
 
-		var avatar = (await avatarContactService.GetAsync(contact.Id))?.Content;
+		var avatar = (await avatarContactService.GetAsync(model.Id))?.Content;
 		if (avatar != null)
-			contact.Avatar = avatar.Content.ConvertToBase64String();
+			model.Avatar = avatar.Content.ConvertToBase64String();
 
-		return contact;
+		return model;
 	}
 
 	public async Task<Result<ContactModel>> SaveAsync(ContactRequest contact)
@@ -124,7 +143,7 @@ public class ContactService(IDbContext dbContext,
 		dbContact.ExternalCode = contact.ExternalCode;
 		dbContact.Title = contact.Title;
 		dbContact.Sex = contact.Sex;
-		dbContact.Languages = contact.Languages.ToCSV();
+		dbContact.Languages = contact.Languages?.ToCSV();
 		//dbContact.LanguageId = contact.LanguageId;
 		dbContact.FirstName = contact.FirstName;
 		dbContact.LastName = contact.LastName;
@@ -161,7 +180,11 @@ public class ContactService(IDbContext dbContext,
 		dbContact.PercentageGuida = contact.PercentageGuida;
 		dbContact.PercentageAccompagnamento = contact.PercentageAccompagnamento;
 
+		await entityTagService.UpdateTagsAsync(EntryName, dbContact.Id, contact.Tags);
+
 		await dbContext.SaveAsync();
+		
+		await trackingService.AddOrUpdate(EntryName, dbContact.Id);
 
 		return dbContact.ToModel();
 	}
