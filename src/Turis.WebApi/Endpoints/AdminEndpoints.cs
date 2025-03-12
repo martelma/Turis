@@ -11,6 +11,7 @@ public class AdminEndpoints : IEndpointRouteHandlerBuilder
 		templateApiGroup.MapGet("backend-configuration", BackendConfiguration);
 
 		templateApiGroup.MapPost("truncate-elmah", TruncateElmah);
+		templateApiGroup.MapPost("mail-proposal", MailProposal);
 		templateApiGroup.MapPost("rebuild-all-projections", RebuildAllProjections);
 		templateApiGroup.MapPost("reset-admin-password", ResetAdminPassword).AllowAnonymous();
     }
@@ -20,6 +21,9 @@ public class AdminEndpoints : IEndpointRouteHandlerBuilder
 
 	private static async Task<IResult> TruncateElmah(HttpContext httpContext, IAdminService service)
 		=> (await service.TruncateElmah()).ToResponse(httpContext);
+
+	private static async Task<IResult> MailProposal(HttpContext httpContext, IAdminService service)
+		=> (await service.MailProposal()).ToResponse(httpContext);
 
 	private static async Task<IResult> RebuildAllProjections(HttpContext httpContext, IProjectionService service)
         => (await service.RebuildAllProjectionsAsync()).ToResponse(httpContext);

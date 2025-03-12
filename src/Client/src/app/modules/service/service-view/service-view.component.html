@@ -25,6 +25,28 @@
                         <div class="flex flex-col">
                             <div class="grid grid-cols-12 gap-2 w-full">
                                 <mat-form-field class="col-span-2">
+                                    <mat-label>Code</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="form-control font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.code ? item.code : ''" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-10">
+                                    <mat-label>Title</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.title ? item.title : ''" />
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="grid grid-cols-12 gap-2 w-full">
+                                <mat-form-field class="col-span-2">
                                     <mat-label>Date</mat-label>
                                     <input
                                         matInput
@@ -45,28 +67,6 @@
                                             [value]="item?.status ? item.status : ''" />
                                     </div>
                                 </mat-form-field>
-                                <mat-form-field class="col-span-2">
-                                    <mat-label>Code</mat-label>
-                                    <input
-                                        matInput
-                                        type="text"
-                                        class="form-control font-bold"
-                                        [readonly]="true"
-                                        [value]="item?.code ? item.code : ''" />
-                                </mat-form-field>
-                                <mat-form-field class="col-span-6">
-                                    <mat-label>Title</mat-label>
-                                    <input
-                                        matInput
-                                        type="text"
-                                        class="font-bold"
-                                        [readonly]="true"
-                                        [value]="item?.title ? item.title : ''" />
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <div class="flex flex-col">
-                            <div class="grid grid-cols-12 gap-2 w-full">
                                 <mat-form-field class="col-span-2">
                                     <mat-label>Type</mat-label>
                                     <input
@@ -94,14 +94,14 @@
                                         [readonly]="true"
                                         [value]="item?.people ? item.people : ''" />
                                 </mat-form-field>
-                                <mat-form-field class="col-span-6">
-                                    <mat-label>Price List</mat-label>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label>Language</mat-label>
                                     <input
                                         matInput
                                         type="text"
                                         class="font-bold"
                                         [readonly]="true"
-                                        [value]="item?.priceList?.name ? item.priceList?.name : ''" />
+                                        [value]="item?.languages ? item.languages : ''" />
                                 </mat-form-field>
                             </div>
                         </div>
@@ -117,13 +117,13 @@
                                         [value]="item?.location ? item.location : ''" />
                                 </mat-form-field>
                                 <mat-form-field class="col-span-4">
-                                    <mat-label>Language</mat-label>
+                                    <mat-label>Price List</mat-label>
                                     <input
                                         matInput
                                         type="text"
                                         class="font-bold"
                                         [readonly]="true"
-                                        [value]="item?.languages ? item.languages : ''" />
+                                        [value]="item?.priceList?.name ? item.priceList?.name : ''" />
                                 </mat-form-field>
                                 <mat-form-field class="col-span-2">
                                     <mat-label>Option Expiration</mat-label>

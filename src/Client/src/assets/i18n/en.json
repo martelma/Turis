@@ -154,10 +154,12 @@
             "Title": "Admin Console",
             "TruncateElmah": "Truncate Elmah",
             "TruncateJobs": "Truncate Jobs",
-            "Utilities": "Utilities",
             "BackendConfiguration": "Backend Configuration",
             "Configuration": "Configuration",
             "ClientConfiguration": "Client Configuration",
+            "Utilities": "Utilities",
+            "MailNotification": "Mail Notification",
+            "MailProposal": "Mail Proposal",
             "Value": "Value",
             "Key": "Key"
         }

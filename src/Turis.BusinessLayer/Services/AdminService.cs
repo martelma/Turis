@@ -7,33 +7,38 @@ using OperationResults;
 using Turis.Authentication.Entities;
 using Turis.BusinessLayer.Services.Base;
 using Turis.BusinessLayer.Services.Interfaces;
+using Turis.BusinessLayer.Settings;
 using Turis.Common;
 
 namespace Turis.BusinessLayer.Services;
 
-public class AdminService(IConfiguration configuration, UserManager<ApplicationUser> userManager) : BaseService, IAdminService
+public class AdminService(IConfiguration configuration
+	, UserManager<ApplicationUser> userManager
+	, IServiceService serviceService
+	, MailNotificationService mailNotificationService
+	) : BaseService, IAdminService
 {
-	public async Task<Result<IEnumerable<KeyValue>>> GetBackendConfiguration()
-    {
-        var list = new List<KeyValue>();
+	public Task<Result<IEnumerable<KeyValue>>> GetBackendConfiguration()
+	{
+		var list = new List<KeyValue>();
 
 #if DEBUG
-        list.Add(new KeyValue("Environment", configuration["Environment"]));
+		list.Add(new KeyValue("Environment", configuration["Environment"]));
 #endif
 
-        list.Add(new KeyValue("WorkspaceUrl", configuration["WorkspaceApiSettings:Url"]));
-        list.Add(new KeyValue("WorkspaceApiKey", configuration["WorkspaceApiSettings:ApiKey"]));
+		list.Add(new KeyValue("WorkspaceUrl", configuration["WorkspaceApiSettings:Url"]));
+		list.Add(new KeyValue("WorkspaceApiKey", configuration["WorkspaceApiSettings:ApiKey"]));
 
-        using var defaultConnection = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
-        list.Add(new KeyValue("DefaultConnection", $"{defaultConnection.DataSource} - {defaultConnection.Database}"));
+		using var defaultConnection = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
+		list.Add(new KeyValue("DefaultConnection", $"{defaultConnection.DataSource} - {defaultConnection.Database}"));
 
-        using var hangfireConnection = new SqlConnection(configuration.GetConnectionString("HangfireConnection"));
-        list.Add(new KeyValue("HangfireConnection", $"{hangfireConnection.DataSource} - {hangfireConnection.Database}"));
+		using var hangfireConnection = new SqlConnection(configuration.GetConnectionString("HangfireConnection"));
+		list.Add(new KeyValue("HangfireConnection", $"{hangfireConnection.DataSource} - {hangfireConnection.Database}"));
 
-        return list;
-    }
+		return Task.FromResult<Result<IEnumerable<KeyValue>>>(list);
+	}
 
-    public Task<Result> TruncateElmah()
+	public Task<Result> TruncateElmah()
 	{
 		var connectionString = configuration["ConnectionStrings:DefaultConnection"];
 		var sqlHelper = new SqlHelper(connectionString);
@@ -42,7 +47,20 @@ public class AdminService(IConfiguration configuration, UserManager<ApplicationU
 		return Task.FromResult(Result.Ok());
 	}
 
-    public async Task<Result> ResetAdminPassword()
+	public async Task<Result> MailProposal()
+	{
+		var service = serviceService.GetRandom();
+
+		var user = userManager.Users
+			.OrderBy(s => Guid.NewGuid()) // Ordina casualmente usando un nuovo GUID
+			.FirstOrDefault();
+
+		await mailNotificationService.SendMailProposal(service, user);
+
+		return Result.Ok();
+	}
+
+	public async Task<Result> ResetAdminPassword()
 	{
 		var user = await userManager.FindByNameAsync("mario");
 		if (user is null)

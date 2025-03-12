@@ -23,6 +23,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 	public DbSet<Attachment> Attachments { get; set; }
 	public DbSet<EntityTag> EntityTags { get; set; }
 	public DbSet<JournalEntry> JournalEntries { get; set; }
+	public DbSet<Proposal> Proposals { get; set; }
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{

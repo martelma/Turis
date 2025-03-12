@@ -19,4 +19,8 @@ export class AdminService extends BaseService {
     backendConfiguration(): Observable<KeyValue[]> {
         return this.apiGet<KeyValue[]>('backend-configuration');
     }
+
+    mailProposal(): Observable<string> {
+        return this.apiPost<string>('mail-proposal', null);
+    }
 }

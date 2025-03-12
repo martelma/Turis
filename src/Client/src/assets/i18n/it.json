@@ -155,10 +155,12 @@
             "Title": "Admin Console",
             "TruncateElmah": "Svuota Elmah",
             "TruncateJobs": "Cancella HangFire Jobs",
-            "Utilities": "Utilità",
             "BackendConfiguration": "Configurazione del back-end",
             "Configuration": "Configurazione",
             "ClientConfiguration": "Configurazione cliente",
+            "Utilities": "Utilità",
+            "MailNotification": "Mail Notification",
+            "MailProposal": "Mail Proposal",
             "Value": "Valore",
             "Key": "Chiave"
         }

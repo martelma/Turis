@@ -12,7 +12,7 @@
         [disabled]="disabled || loading"
         (click)="onClick()">
         <mat-icon *ngIf="!loading && svgIcon" [svgIcon]="svgIcon" class="mr-2"></mat-icon>
-        <span *ngIf="!loading">{{ label | transloco }}</span>
+        <span *ngIf="!loading" class="ml-3">{{ label | transloco }}</span>
     </button>
 
     <!-- Stroked -->
@@ -24,7 +24,7 @@
         [disabled]="disabled || loading"
         (click)="onClick()">
         <mat-icon *ngIf="!loading && svgIcon" [svgIcon]="svgIcon" class="mr-2"></mat-icon>
-        <span *ngIf="!loading">{{ label | transloco }}</span>
+        <span *ngIf="!loading" class="ml-3">{{ label | transloco }}</span>
     </button>
 
     <!-- Flat -->
@@ -36,6 +36,6 @@
         [disabled]="disabled || loading"
         (click)="onClick()">
         <mat-icon *ngIf="!loading && svgIcon" [svgIcon]="svgIcon" class="mr-2"></mat-icon>
-        <span *ngIf="!loading">{{ label | transloco }}</span>
+        <span *ngIf="!loading" class="ml-3">{{ label | transloco }}</span>
     </button>
 </div>

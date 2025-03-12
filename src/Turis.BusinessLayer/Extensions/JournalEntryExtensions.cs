@@ -6,7 +6,7 @@ namespace Turis.BusinessLayer.Extensions;
 
 public static class JournalEntryExtensions
 {
-	public static async Task<JournalEntryModel> ToModel(this JournalEntry entity,
+	public static Task<JournalEntryModel> ToModel(this JournalEntry entity,
 		List<Bookmark> bookmarks = null,
 		List<Attachment> attachments = null,
 		List<EntityTag> tags = null)
@@ -30,7 +30,7 @@ public static class JournalEntryExtensions
 			Tags = tags?.Where(x => x.EntityKey == entity.Id).Select(x => x.Tag).ToModel()?.ToList()
 		};
 
-		return model;
+		return Task.FromResult(model);
 	}
 
 	public static async Task<List<JournalEntryModel>> ToModel(this IEnumerable<JournalEntry> list,

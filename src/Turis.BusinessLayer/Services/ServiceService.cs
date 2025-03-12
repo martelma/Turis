@@ -3,6 +3,7 @@ using System.Linq.Dynamic.Core;
 using System.Linq.Dynamic.Core.Exceptions;
 using JeMa.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using OperationResults;
 using TinyHelpers.Extensions;
@@ -30,7 +31,7 @@ public class ServiceService(IDbContext dbContext
 {
 	private const string EntryName = nameof(Service);
 
-	private async Task<List<Bookmark>> GetMyBookmarks() 
+	private async Task<List<Bookmark>> GetMyBookmarks()
 		=> await bookmarkService.ListAsync(userService.GetUserId(), EntryName);
 
 	public async Task<Result<ServiceModel>> GetAsync(Guid serviceId)
@@ -52,6 +53,54 @@ public class ServiceService(IDbContext dbContext
 			return Result.Fail(FailureReasons.ItemNotFound);
 
 		return service;
+	}
+
+	public Task<Result<ServiceSummaryModel>> SummaryAsync()
+	{
+		var query = dbContext
+			.GetData<Service>()
+			.Include(x => x.Collaborator)
+			.Where(x => x.Date.Year == DateTime.Now.Year);
+
+		var startOfWeek = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek);
+		var endOfWeek = startOfWeek.AddDays(7).AddTicks(-1);
+
+		var model = new ServiceSummaryModel
+		{
+			Proposals = query
+				.Count(x => !x.Checked),
+
+			WeekProposals = query
+				.Where(x => x.Date >= startOfWeek && x.Date <= endOfWeek)
+				.Count(x => !x.Checked),
+
+			Checked = query
+				.Count(x => x.Checked),
+
+			CheckedToAssign = query
+				.Where(x => x.CollaboratorId == null)
+				.Count(x => x.Checked),
+
+			ToDo = query
+				.Where(x => x.Checked)
+				.Count(x => x.Status == ServiceStatus.Closed),
+
+			WeekToDo = query
+				.Where(x => x.Checked)
+				.Where(x => x.Date >= startOfWeek && x.Date <= endOfWeek)
+				.Count(x => x.Status == ServiceStatus.Closed),
+
+			Done = query
+				.Where(x => x.Checked)
+				.Count(x => x.Status == ServiceStatus.Closed),
+
+			WeekDone = query
+				.Where(x => x.Checked)
+				.Where(x => x.Date >= startOfWeek && x.Date <= endOfWeek)
+				.Count(x => x.Status == ServiceStatus.Closed),
+		};
+
+		return Task.FromResult<Result<ServiceSummaryModel>>(model);
 	}
 
 	public async Task<Result<PaginatedList<ServiceModel>>> ListAsync(ServiceSearchParameters parameters)
@@ -214,6 +263,16 @@ public class ServiceService(IDbContext dbContext
 		return result;
 	}
 
+	public Service GetRandom()
+	{
+		var randomService = dbContext
+			.GetData<Service>()
+			.Include(x => x.Client)
+			.OrderBy(s => Guid.NewGuid()) // Ordina casualmente usando un nuovo GUID
+			.FirstOrDefault();
+		return randomService;
+	}
+
 	public async Task<Result<ServiceModel>> SaveAsync(ServiceRequest service)
 	{
 		var dbService = await dbContext.GetData<Service>(true)
@@ -282,7 +341,7 @@ public class ServiceService(IDbContext dbContext
 		dbService.CUPCode = service.CUPCode;
 
 		await entityTagService.UpdateTagsAsync(EntryName, dbService.Id, service.Tags);
-		
+
 		await dbContext.SaveAsync();
 
 		service.Id = dbService.Id;

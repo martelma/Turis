@@ -5,6 +5,7 @@ import { BehaviorSubject, Observable, filter, finalize, map, of, switchMap, take
 import { BaseEntityService } from 'app/shared/services';
 import { emptyGuid, PaginatedListResult } from 'app/shared/services/shared.types';
 import { AccountStatementParameters, Service, ServiceSearchParameters } from './service.types';
+import { ServiceSummary } from '../admin/dashboard/dashboard.types';
 
 @Injectable({ providedIn: 'root' })
 export class ServiceService extends BaseEntityService<Service> {
@@ -12,6 +13,7 @@ export class ServiceService extends BaseEntityService<Service> {
     private _serviceEdited: BehaviorSubject<string> = new BehaviorSubject(null);
     private _serviceCopied: BehaviorSubject<string> = new BehaviorSubject(null);
 
+    private _serviceSummary: BehaviorSubject<ServiceSummary> = new BehaviorSubject(null);
     private _services: BehaviorSubject<PaginatedListResult<Service>> = new BehaviorSubject(null);
     private _service: BehaviorSubject<Service> = new BehaviorSubject(null);
     private _servicesLoading: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -25,9 +27,10 @@ export class ServiceService extends BaseEntityService<Service> {
         this.defaultApiController = 'service';
     }
 
-    /**
-     * Getter for services
-     */
+    get serviceSummary$(): Observable<ServiceSummary> {
+        return this._serviceSummary.asObservable();
+    }
+
     get services$(): Observable<PaginatedListResult<Service>> {
         return this._services.asObservable();
     }
@@ -251,6 +254,23 @@ export class ServiceService extends BaseEntityService<Service> {
                     pageIndex: data.pageIndex,
                     pageSize: data.pageSize,
                 });
+
+                return data;
+            }),
+            finalize(() => {
+                this._servicesLoading.next(false);
+            }),
+        );
+    }
+
+    summary(): Observable<ServiceSummary> {
+        this._servicesLoading.next(true);
+
+        const url = `summary`;
+
+        return this.apiGet<ServiceSummary>(url).pipe(
+            map((data: ServiceSummary) => {
+                this._serviceSummary.next(data);
 
                 return data;
             }),

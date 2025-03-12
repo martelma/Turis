@@ -232,8 +232,8 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 		SocketOptions = smtpSettings.SocketOptions,
 	};
 	services.AddFluentEmail(notificationSettings.SenderEmail, notificationSettings.SenderName)
-	  .AddRazorRenderer()
-	  .AddMailKitSender(smtpClientOptions);
+		.AddRazorRenderer()
+		.AddMailKitSender(smtpClientOptions);
 	services.AddScoped<MailNotificationService>();
 
 	services.ConfigureHttpJsonOptions(options =>

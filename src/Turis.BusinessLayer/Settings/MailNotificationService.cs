@@ -2,96 +2,128 @@
 using FluentEmail.Core;
 using FluentEmail.Core.Models;
 using JeMa.Shared.Extensions;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using OperationResults;
+using TinyHelpers.Extensions;
+using Turis.Authentication.Entities;
+using Turis.BusinessLayer.Resources;
+using Turis.BusinessLayer.Services.Interfaces;
+using Turis.Common.Mailing;
+using Turis.DataAccessLayer.Entities;
 
 namespace Turis.BusinessLayer.Settings;
 
-public class MailNotificationService
+public class MailNotificationService(IFluentEmailFactory fluentEmailFactory
+	, ILogger<MailNotificationService> logger
+	, IOptions<NotificationSettings> notificationOptions
+	, IWebHostEnvironment environment
+	) : IMailNotificationService
 {
-	private readonly NotificationSettings _notificationSettings;
-	private readonly IFluentEmail _fluentEmail;
-	private readonly ILogger<MailNotificationService> _logger;
+	private readonly NotificationSettings notificationSettings = notificationOptions.Value;
 
-	public MailNotificationService(IOptions<NotificationSettings> notificationSettings, IFluentEmail fluentEmail, ILogger<MailNotificationService> logger)
+	static MailNotificationService()
 	{
-		_notificationSettings = notificationSettings.Value;
-		_fluentEmail = fluentEmail;
-		_logger = logger;
-
-		ServicePointManager.ServerCertificateValidationCallback = (s, c, h, e) => true;
+		ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
 	}
 
-	public async Task SendEmail(string toName, string toMail, string subject, string body)
+	public async Task<Result> SendEmailAsync(string emailRecipient, string subject, string body)
 	{
-#if DEBUG
-		//durante la fase di test sostituisco al destinatario l'mail di test
-		toName = _notificationSettings.EMailTest;
-		toMail = _notificationSettings.EMailTest;
-#endif
-		var sendResponse = await _fluentEmail.To(toMail, toName).Subject(subject).Body(body).SendAsync();
-		if (!sendResponse.Successful)
+		// Durante la fase di test sostituisco al destinatario l'email di test.
+		if (environment.IsDevelopment())
+			emailRecipient = notificationSettings.EMailTest;
+
+		try
 		{
-			_logger.LogWarning("E' stato impossibile inviare la mail a: {toMail}; per le seguenti cause: {ErrorMessages}", toMail, sendResponse.ErrorMessages?.ToCSV());
+			var sendResponse = await fluentEmailFactory.Create()
+				.To(emailRecipient)
+				.Subject(subject)
+				.Body(body)
+				.SendAsync();
+
+			if (!sendResponse.Successful)
+			{
+				logger.LogWarning(Errors.SendEmailError, emailRecipient, string.Join(", ", sendResponse.ErrorMessages));
+				return Result.Fail(FailureReasons.NetworkError, string.Join(", ", sendResponse.ErrorMessages));
+			}
+
+			return Result.Ok();
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, Errors.UnexpectedSendEmailError, emailRecipient);
+			return Result.Fail(FailureReasons.NetworkError, ex);
 		}
 	}
 
-	/// <summary>
-	/// Send E-Mail with specific template
-	/// </summary>
-	/// <param name="toName"></param>
-	/// <param name="toMail"></param>
-	/// <param name="subject"></param>
-	/// <param name="templateName">the name of template (with or without .cshtml)</param>
-	/// <param name="model">dynamic object with the parameters for the email template. note: dynamic model = new ExpandoObject();</param>
-	/// <returns></returns>
-	public async Task SendTemplateEmail(string toName, string toMail, string subject, string templateName, dynamic model)
+	public async Task<Result> SendEmailAsync(string emailRecipient, string subject, string templateName, string language, dynamic model)
 	{
-#if DEBUG
-		//durante la fase di test sostituisco al destinatario l'mail di test
-		toName = _notificationSettings.EMailTest;
-		toMail = _notificationSettings.EMailTest;
-#endif
+		// Durante la fase di test sostituisco al destinatario l'email di test.
+		if (environment.IsDevelopment())
+			emailRecipient = notificationSettings.EMailTest;
 
-		var ext = new FileInfo(templateName).Extension.ToLower();
-		if (ext != ".cshtml")
-			templateName = $"{templateName}.cshtml";
-		var templateFullFileName = Path.Combine(_notificationSettings.TemplatePath, templateName);
-
-		//volendo si potrebbe rendere dinamico anche la scelta del layout della mail in base al tenant o a qualcos'altro
-		model.LayoutFullFileName = Path.Combine(_notificationSettings.TemplatePath, "_EmailLayout.cshtml");
-
-		SendResponse sendResponse = await _fluentEmail
-			.To(toMail, toName)
-			.Subject(subject)
-			.UsingTemplateFromFile(templateFullFileName, model)
-			.SendAsync();
-
-		if (!sendResponse.Successful)
+		try
 		{
-			_logger.LogWarning("E' stato impossibile inviare la mail a: {toMail}; per le seguenti cause: {ErrorMessages}", toMail, sendResponse.ErrorMessages?.ToCSV());
+			logger.LogInformation($"Sending email to: {emailRecipient}");
+
+			var extension = Path.GetExtension(templateName);
+			if (!extension.EqualsIgnoreCase(".cshtml"))
+				templateName = $"{templateName}.cshtml";
+
+			var templatePath = notificationSettings.TemplatePath;
+			if (!Path.IsPathRooted(templatePath))
+				templatePath = Path.Combine(environment.WebRootPath, templatePath);
+
+			var templateFullFileName = Path.Combine(notificationSettings.TemplatePath, language.IsNotNullOrEmpty() ? language : Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName, templateName);
+
+			// Volendo si potrebbe rendere dinamico anche la scelta del layout della mail in base al tenant o a qualcos'altro
+			model.LayoutFullFileName = Path.Combine(notificationSettings.TemplatePath, "_EmailLayout.cshtml");
+			model.SupportEmail = notificationSettings.EMailSupport;
+
+			var sendResponse = await fluentEmailFactory.Create()
+				.SetFrom(notificationSettings.SenderEmail, notificationSettings.SenderName)
+				.To(emailRecipient)
+				.Subject(subject)
+				.UsingTemplateFromFile(templateFullFileName, model)
+				.SendAsync();
+
+			if (!sendResponse.Successful)
+			{
+				var message = (string)string.Join(", ", sendResponse.ErrorMessages);
+				logger.LogWarning(Errors.SendEmailError, emailRecipient, message);
+				return Result.Fail(FailureReasons.NetworkError, message);
+			}
+
+			logger.LogInformation($"Email successfully sent to: {emailRecipient}");
+
+			return Result.Ok();
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, Errors.UnexpectedSendEmailError, emailRecipient);
+			return Result.Fail(FailureReasons.NetworkError, ex);
 		}
 	}
 
-	string GetTemplate(string templateName)
+	public async Task SendMailProposal(Service service, ApplicationUser user)
 	{
-		return File.ReadAllText(Path.Combine(_notificationSettings.TemplatePath, templateName));
-	}
-
-	/*
-	public async Task SendRecoveryPassword(ApplicationUser user, string callbackUrl)
-	{
-		var model = new
+		var model = new ProposalEmailModel
 		{
 			FirstName = user.FirstName,
 			LastName = user.LastName,
 			FullName = user.FullName,
-			RecoveryPasswordCode = user.RecoveryPasswordCode,
-			EMailSupport = _notificationSettings.EMailSupport,
-			Callbackurl = callbackUrl
+			EMailSupport = notificationSettings.EMailSupport,
+			//CallbackUrl = callbackUrl
+
+			ServiceCode = service.Code,
+			ServiceTitle = service.Title,
+			ServiceDate = service.Date,
+			ServiceClientCode = service.Client.Code,
+			ServiceClientCompanyName = service.Client.CompanyName,
 		};
 
-		await SendTemplateEmail(user.FullName, user.Email, "Recovery Password", "RecoveryPassword", model);
+		await SendEmailAsync(user.FullName, user.Email, "Proposal", user.Language, model);
 	}
-	*/
 }

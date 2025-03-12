@@ -11,6 +11,8 @@ import { Otp } from 'app/core/auth/auth.types';
 import { Observable } from 'rxjs';
 import { UserService } from 'app/core/user/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ServiceSummaryComponent } from './service-summary/service-summary.component';
+import { TeamSummaryComponent } from './team-summary/team-summary.component';
 
 @UntilDestroy()
 @Component({
@@ -24,6 +26,8 @@ import { ActivatedRoute, Router } from '@angular/router';
         ReactiveFormsModule,
         MaterialModule,
         TranslocoModule,
+        ServiceSummaryComponent,
+        TeamSummaryComponent,
     ],
 })
 export class DashboardComponent implements OnInit {

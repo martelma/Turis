@@ -83,7 +83,7 @@ public static class ServiceExtensions
 		return list.SelectAsync(x => x.ToModelAsync(avatarContactService, bookmarks, attachments, tags));
 	}
 
-	public static async Task<ServiceInfoModel> ToModelInfoAsync(this Service entity)
+	public static Task<ServiceInfoModel> ToModelInfoAsync(this Service entity)
 	{
 		var model = new ServiceInfoModel
 		{
@@ -129,6 +129,6 @@ public static class ServiceExtensions
 			CommissionPaymentDate = entity.CashedDate ?? DateTimeOffset.MinValue,
 		};
 
-		return model;
+		return Task.FromResult(model);
 	}
 }

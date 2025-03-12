@@ -596,7 +596,7 @@ public class BullingService(ApplicationDbContext dbContext
 	{
 		var nomeFileZipFatturaPa = await GetNomeFileZipFatturaPA(clientCode, password);
 		var zipFullFileName = PrepareZipFile(xmlFilePath, xmlFileName, nomeFileZipFatturaPa);
-		UploadFileFatturaPA(clientCode, password, zipFullFileName);
+		await UploadFileFatturaPA(clientCode, password, zipFullFileName);
 
 		var idSdi = await SendElectronicInvoice(clientCode, password, zipFullFileName, notifyTo);
 		return idSdi;

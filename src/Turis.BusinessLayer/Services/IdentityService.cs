@@ -35,7 +35,7 @@ namespace Turis.BusinessLayer.Services;
 
 public class IdentityService(ApplicationDbContext dbContext,
 	UserManager<ApplicationUser> userManager,
-    SignInManager<ApplicationUser> signInManager,
+	SignInManager<ApplicationUser> signInManager,
 	ITimeLimitedDataProtector timeLimitedDataProtector,
 	ITimeLimitedDataProtector dataProtector,
 	IOptions<AuthenticationSettings> authenticationSettingsOptions,
@@ -98,7 +98,7 @@ public class IdentityService(ApplicationDbContext dbContext,
 				CallbackUrl = $"{appSettings.ApplicationUrl}"
 			};
 
-			await emailService.SendTemplateEmailAsync(user.FirstName, user.Email, Account.UserRegisteredTitle, "UserRegistered", userRegisteredModel);
+			await emailService.SendEmailAsync(user.FirstName, user.Email, Account.UserRegisteredTitle, "UserRegistered", userRegisteredModel);
 
 			var applicationUser = await GetUserAsync(user.Id);
 			return applicationUser;
@@ -121,7 +121,7 @@ public class IdentityService(ApplicationDbContext dbContext,
 				CallbackUrl = $"{appSettings.PasswordRecoveryCallbackUrl}?userId={user.Id}&token={passwordResetToken}"
 			};
 
-			await emailService.SendTemplateEmailAsync(user.FirstName, user.Email, Account.ResetPasswordTitle, "PasswordRecovery", passwordRecoveryModel);
+			await emailService.SendEmailAsync(user.FirstName, user.Email, Account.ResetPasswordTitle, "PasswordRecovery", passwordRecoveryModel);
 		}
 
 		return Result.Ok();
@@ -191,37 +191,37 @@ public class IdentityService(ApplicationDbContext dbContext,
 				return Result.Fail(FailureReasons.ClientError, Account.ErrorLoginUserPassword);
 		}
 
-//#if DEBUG
-//		return await LoginAsync(user);
-//#endif
-        var signInResult = await signInManager.PasswordSignInAsync(user, request.Password, false, lockoutOnFailure: true);
-        if (signInResult.Succeeded && user.PasswordExpiration.GetValueOrDefault(DateTime.MinValue) < DateTime.UtcNow)
-        {
-            // Il login ha avuto successo, ma la password è scaduta.
-            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+		//#if DEBUG
+		//		return await LoginAsync(user);
+		//#endif
+		var signInResult = await signInManager.PasswordSignInAsync(user, request.Password, false, lockoutOnFailure: true);
+		if (signInResult.Succeeded && user.PasswordExpiration.GetValueOrDefault(DateTime.MinValue) < DateTime.UtcNow)
+		{
+			// Il login ha avuto successo, ma la password è scaduta.
+			var token = await userManager.GeneratePasswordResetTokenAsync(user);
 
-            var response = new LoginResponse
-            {
-                UserId = user.Id,
-                PasswordExpiration = user.PasswordExpiration,
-                ChangePasswordToken = token
-            };
+			var response = new LoginResponse
+			{
+				UserId = user.Id,
+				PasswordExpiration = user.PasswordExpiration,
+				ChangePasswordToken = token
+			};
 
-            return response;
-        }
+			return response;
+		}
 
-        if (!signInResult.Succeeded)
-        {
-            if (signInResult.IsLockedOut)
-            {
-                return Result.Fail(CustomFailureReasons.LockedOut);
-            }
+		if (!signInResult.Succeeded)
+		{
+			if (signInResult.IsLockedOut)
+			{
+				return Result.Fail(CustomFailureReasons.LockedOut);
+			}
 
-            return Result.Fail(FailureReasons.ClientError, Account.ErrorLoginUserPassword);
-        }
+			return Result.Fail(FailureReasons.ClientError, Account.ErrorLoginUserPassword);
+		}
 
-        var result = await LoginAsync(user);
-        return result;
+		var result = await LoginAsync(user);
+		return result;
 	}
 
 	public async Task<Result<LoginResponse>> AuthenticateAsync()
@@ -262,7 +262,7 @@ public class IdentityService(ApplicationDbContext dbContext,
 
 		await userManager.UpdateSecurityStampAsync(user);
 
-		var loginResponse = CreateToken(user, claims);
+		var loginResponse = await CreateToken(user, claims);
 		return loginResponse;
 	}
 
@@ -514,28 +514,29 @@ public class IdentityService(ApplicationDbContext dbContext,
 
 	public async Task<Result<LoginResponse>> RefreshTokenAsync(RefreshTokenRequest request)
 	{
-		if (jwtBearerService.TryValidateToken(request.AccessToken, validateLifetime: false, out var user))
-		{
-			try
-			{
-				var userId = dataProtector.Unprotect(request.RefreshToken);
-				if (ClaimExtensions.GetId(user).ToString() == userId)
-				{
-					var dbUser = await userManager.FindByIdAsync(userId);
+		var jwtBearerValidationResult = await jwtBearerService.TryValidateTokenAsync(request.AccessToken, validateLifetime: false);
+		if (!jwtBearerValidationResult.IsValid) 
+			return Result.Fail(CustomFailureReasons.InvalidToken);
 
-					// Check if the user is actually active or not.
-					// Otherwise, the user can repeatedly access to the application even if he was disabled
-					if (dbUser is not null && dbUser.LockoutEnd.GetValueOrDefault() < DateTime.UtcNow)
-					{
-						// Il refresh token è valido.
-						var loginResponse = CreateToken(dbUser, user.Claims.ToList());
-						return loginResponse;
-					}
+		try
+		{
+			var userId = dataProtector.Unprotect(request.RefreshToken);
+			if (jwtBearerValidationResult.Principal.GetId().ToString() == userId)
+			{
+				var dbUser = await userManager.FindByIdAsync(userId);
+
+				// Check if the user is actually active or not.
+				// Otherwise, the user can repeatedly access to the application even if he was disabled
+				if (dbUser is not null && dbUser.LockoutEnd.GetValueOrDefault() < DateTime.UtcNow)
+				{
+					// Il refresh token è valido.
+					var loginResponse = await CreateToken(dbUser, jwtBearerValidationResult.Principal.Claims.ToList());
+					return loginResponse;
 				}
 			}
-			catch
-			{
-			}
+		}
+		catch
+		{
 		}
 
 		return Result.Fail(CustomFailureReasons.InvalidToken);
@@ -570,7 +571,7 @@ public class IdentityService(ApplicationDbContext dbContext,
 		return Result.Fail(FailureReasons.ClientError);
 	}
 
-	private LoginResponse CreateToken(ApplicationUser user, IList<Claim> claims)
+	private async Task<LoginResponse> CreateToken(ApplicationUser user, IList<Claim> claims)
 	{
 		var now = DateTime.UtcNow;
 		var tokenExpiration = now.Add(jwtBearerSettings.ExpirationTime.GetValueOrDefault(TimeSpan.FromDays(1)));
@@ -578,7 +579,7 @@ public class IdentityService(ApplicationDbContext dbContext,
 		var refrehTokenExpiration = now.Add(authenticationSettings.RefreshTokenExpirationTime);
 		var refreshToken = dataProtector.Protect(user.Id.ToString(), refrehTokenExpiration);
 
-		var token = jwtBearerService.CreateToken(user.UserName, claims, absoluteExpiration: tokenExpiration);
+		var token = await jwtBearerService.CreateTokenAsync(user.UserName, claims, absoluteExpiration: tokenExpiration);
 
 		var loginResponse = new LoginResponse
 		{

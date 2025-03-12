@@ -33,6 +33,11 @@ public class ContactService(IDbContext dbContext
 	private async Task<List<Bookmark>> GetMyBookmarks() 
 		=> await bookmarkService.ListAsync(userService.GetUserId(), EntryName);
 
+	public Task<Result<TeamSummaryModel>> TeamSummaryAsync()
+	{
+		throw new NotImplementedException();
+	}
+
 	public async Task<Result<PaginatedList<ContactModel>>> ListAsync(ContactSearchParameters parameters)
 	{
 		var bookmarks = await GetMyBookmarks();
@@ -88,7 +93,6 @@ public class ContactService(IDbContext dbContext
 		// Prova a prendere un elemento in più di quelli richiesti per controllare se ci sono pagine successive.
 		var data = query
 			.Skip(paginator.PageIndex * paginator.PageSize).Take(paginator.PageSize + 1)
-			//.ToModel()
 			.ToList();
 
 		var attachments = await attachmentService.ListAsync(EntryName, data.Select(x => x.Id).ToList());
@@ -127,72 +131,72 @@ public class ContactService(IDbContext dbContext
 		return model;
 	}
 
-	public async Task<Result<ContactModel>> SaveAsync(ContactRequest contact)
+	public async Task<Result<ContactModel>> SaveAsync(ContactRequest request)
 	{
-		var dbContact = await dbContext.GetData<Contact>(true)
-			.FirstOrDefaultAsync(x => x.Id == contact.Id);
+		var record = await dbContext.GetData<Contact>(true)
+			.FirstOrDefaultAsync(x => x.Id == request.Id);
 
-		if (dbContact is null)
+		if (record is null)
 		{
-			dbContact = new Contact();
-			dbContext.Insert(dbContact);
+			record = new Contact();
+			dbContext.Insert(record);
 		}
 
-		dbContact.Id = contact.Id != Guid.Empty ? contact.Id : dbContact.Id;
-		dbContact.Code = contact.Code;
-		dbContact.ExternalCode = contact.ExternalCode;
-		dbContact.Title = contact.Title;
-		dbContact.Sex = contact.Sex;
-		dbContact.Languages = contact.Languages?.ToCSV();
+		record.Id = request.Id != Guid.Empty ? request.Id : record.Id;
+		record.Code = request.Code;
+		record.ExternalCode = request.ExternalCode;
+		record.Title = request.Title;
+		record.Sex = request.Sex;
+		record.Languages = request.Languages?.ToCSV();
 		//dbContact.LanguageId = contact.LanguageId;
-		dbContact.FirstName = contact.FirstName;
-		dbContact.LastName = contact.LastName;
-		dbContact.FiscalCode = contact.FiscalCode;
-		dbContact.TaxCode = contact.TaxCode;
-		dbContact.CompanyName = contact.CompanyName;
-		dbContact.BirthDate = contact.BirthDate;
-		dbContact.BirthPlace = contact.BirthPlace;
-		dbContact.Address = contact.Address;
-		dbContact.City = contact.City;
-		dbContact.Cap = contact.Cap;
-		dbContact.RegionalCode = contact.RegionalCode;
-		dbContact.StateCode = contact.StateCode;
-		dbContact.Phone1 = contact.Phone1;
-		dbContact.Phone2 = contact.Phone2;
-		dbContact.Fax = contact.Fax;
-		dbContact.Web = contact.Web;
-		dbContact.EMail = contact.EMail;
-		dbContact.EMailAccounting = contact.EMailAccounting;
-		dbContact.Pec = contact.Pec;
-		dbContact.SdiCode = contact.SdiCode;
-		dbContact.Note = contact.Note;
+		record.FirstName = request.FirstName;
+		record.LastName = request.LastName;
+		record.FiscalCode = request.FiscalCode;
+		record.TaxCode = request.TaxCode;
+		record.CompanyName = request.CompanyName;
+		record.BirthDate = request.BirthDate;
+		record.BirthPlace = request.BirthPlace;
+		record.Address = request.Address;
+		record.City = request.City;
+		record.Cap = request.Cap;
+		record.RegionalCode = request.RegionalCode;
+		record.StateCode = request.StateCode;
+		record.Phone1 = request.Phone1;
+		record.Phone2 = request.Phone2;
+		record.Fax = request.Fax;
+		record.Web = request.Web;
+		record.EMail = request.EMail;
+		record.EMailAccounting = request.EMailAccounting;
+		record.Pec = request.Pec;
+		record.SdiCode = request.SdiCode;
+		record.Note = request.Note;
 
-		if (contact.DocumentType.IsNullOrEmpty())
-			dbContact.DocumentType = DocumentType.Undefined;
+		if (request.DocumentType.IsNullOrEmpty())
+			record.DocumentType = DocumentType.Undefined;
 		else
-			dbContact.DocumentType = (DocumentType)Enum.Parse(typeof(DocumentType), contact.DocumentType);
+			record.DocumentType = (DocumentType)Enum.Parse(typeof(DocumentType), request.DocumentType);
 
-		if (contact.ContactType.IsNullOrEmpty())
-			dbContact.ContactType = ContactType.Undefined;
+		if (request.ContactType.IsNullOrEmpty())
+			record.ContactType = ContactType.Undefined;
 		else
-			dbContact.ContactType = (ContactType)Enum.Parse(typeof(ContactType), contact.ContactType);
+			record.ContactType = (ContactType)Enum.Parse(typeof(ContactType), request.ContactType);
 
-		dbContact.PercentageGuida = contact.PercentageGuida;
-		dbContact.PercentageAccompagnamento = contact.PercentageAccompagnamento;
+		record.PercentageGuida = request.PercentageGuida;
+		record.PercentageAccompagnamento = request.PercentageAccompagnamento;
 
-		await entityTagService.UpdateTagsAsync(EntryName, dbContact.Id, contact.Tags);
+		await entityTagService.UpdateTagsAsync(EntryName, record.Id, request.Tags);
 
 		await dbContext.SaveAsync();
 		
-		await trackingService.AddOrUpdate(EntryName, dbContact.Id);
+		await trackingService.AddOrUpdate(EntryName, record.Id);
 
-		return dbContact.ToModel();
+		return record.ToModel();
 	}
 
-	public async Task<Result> DeleteAsync(Guid contactId)
+	public async Task<Result> DeleteAsync(Guid id)
 	{
 		var deletedRows = await dbContext.GetData<Contact>()
-			.Where(r => r.Id == contactId)
+			.Where(r => r.Id == id)
 			.ExecuteDeleteAsync();
 
 		if (deletedRows == 0)
@@ -201,7 +205,7 @@ public class ContactService(IDbContext dbContext
 		return Result.Ok();
 	}
 
-	public async Task<Result<IEnumerable<ContactModel>>> FilterClients(string pattern)
+	public Task<Result<IEnumerable<ContactModel>>> FilterClients(string pattern)
 	{
 		var query = dbContext.GetData<Contact>()
 			.Where(x => x.ContactType == ContactType.Client)
@@ -210,10 +214,10 @@ public class ContactService(IDbContext dbContext
 			;
 		var model = query.ToModel().ToList();
 
-		return model;
+		return Task.FromResult<Result<IEnumerable<ContactModel>>>(model);
 	}
 
-	public async Task<Result<IEnumerable<ContactModel>>> FilterCollaborators(string pattern)
+	public Task<Result<IEnumerable<ContactModel>>> FilterCollaborators(string pattern)
 	{
 		var query = dbContext.GetData<Contact>()
 			.Where(x => x.ContactType == ContactType.Collaborator)
@@ -223,6 +227,6 @@ public class ContactService(IDbContext dbContext
 			;
 		var model = query.ToModel().ToList();
 
-		return model;
+		return Task.FromResult<Result<IEnumerable<ContactModel>>>(model);
 	}
 }

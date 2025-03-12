@@ -1,5 +1,4 @@
-﻿using StackExchange.Redis;
-using Turis.BusinessLayer.Services.Base;
+﻿using Turis.BusinessLayer.Services.Base;
 
 namespace Turis.BusinessLayer.Services.Interfaces;
 

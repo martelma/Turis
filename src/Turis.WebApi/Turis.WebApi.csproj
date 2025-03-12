@@ -16,7 +16,6 @@
 		<Compile Remove="Filters\Swagger\**" />
 		<Compile Remove="Helpers\**" />
 		<Compile Remove="Logs\**" />
-		<Compile Remove="Mail\**" />
 		<Compile Remove="Plugin\**" />
 		<Compile Remove="Services\**" />
 		<Content Remove="Controllers\**" />
@@ -24,7 +23,6 @@
 		<Content Remove="Filters\Swagger\**" />
 		<Content Remove="Helpers\**" />
 		<Content Remove="Logs\**" />
-		<Content Remove="Mail\**" />
 		<Content Remove="Plugin\**" />
 		<Content Remove="Services\**" />
 		<EmbeddedResource Remove="Controllers\**" />
@@ -32,7 +30,6 @@
 		<EmbeddedResource Remove="Filters\Swagger\**" />
 		<EmbeddedResource Remove="Helpers\**" />
 		<EmbeddedResource Remove="Logs\**" />
-		<EmbeddedResource Remove="Mail\**" />
 		<EmbeddedResource Remove="Plugin\**" />
 		<EmbeddedResource Remove="Services\**" />
 		<EmbeddedResource Remove="appsettings.json" />
@@ -41,7 +38,6 @@
 		<None Remove="Filters\Swagger\**" />
 		<None Remove="Helpers\**" />
 		<None Remove="Logs\**" />
-		<None Remove="Mail\**" />
 		<None Remove="Plugin\**" />
 		<None Remove="Services\**" />
 	</ItemGroup>

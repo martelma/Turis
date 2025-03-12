@@ -256,7 +256,7 @@ public class AttachmentService(ApplicationDbContext dbContext
 		return await PrepareStreamFileContent(zipFile, $"{folder}.zip");
 	}
 
-	public async Task<string> GetFullPathAsync(Attachment attachment)
+	public Task<string> GetFullPathAsync(Attachment attachment)
 	{
 		//if (attachment.EntityName.EqualsIgnoreCase(nameof(Batch)))
 		//{
@@ -275,7 +275,7 @@ public class AttachmentService(ApplicationDbContext dbContext
 
 			var fullFileName = Path.Combine(path, $"{attachment.Id}-{attachment.OriginalFileName}");
 
-			return fullFileName;
+			return Task.FromResult(fullFileName);
 		//}
 
 		//return string.Empty;

@@ -98,8 +98,22 @@
             <mat-tab-group class="sm:px-2" mat-stretch-tabs="false" [animationDuration]="'0'">
                 <!-- Applications -->
                 <mat-tab label="My Home"> </mat-tab>
-                <mat-tab label="Admin"> </mat-tab>
-                <mat-tab label="Team"> </mat-tab>
+                <mat-tab label="Admin">
+                    <ng-template matTabContent>
+                        <app-service-summary></app-service-summary>
+                    </ng-template>
+                </mat-tab>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <span class="inline-flex items-center space-x-2">
+                            <span class="">Team</span>
+                            <span class="px-2 py-1 text-sm rounded-full bg-primary-100 text-on-primary-100">9</span>
+                        </span>
+                    </ng-template>
+                    <ng-template matTabContent>
+                        <app-team-summary></app-team-summary>
+                    </ng-template>
+                </mat-tab>
             </mat-tab-group>
         </div>
     </div>

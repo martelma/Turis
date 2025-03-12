@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MinimalHelpers.OpenApi;
+using OperationResults;
 using Turis.BusinessLayer.Erorrs;
 using Turis.BusinessLayer.Parameters;
 using Turis.BusinessLayer.Services.Interfaces;
+using Turis.Common.Models;
 using Turis.Common.Models.Requests;
 
 namespace Turis.WebApi.Endpoints;
@@ -22,6 +24,17 @@ public class ContactEndpoints : IEndpointRouteHandlerBuilder
 		templateApiGroup.MapDelete("{id:guid}", Delete);
 
 		var avatarsApiGroup = endpoints.MapGroup("/api/contact/{id:guid}/avatar");
+
+		templateApiGroup.MapGet("team-summary", TeamSummaryAsync)
+			.Produces<PaginatedList<TeamSummaryModel>>(StatusCodes.Status200OK)
+			.WithOpenApi(operation =>
+			{
+				operation.Summary = "Gets the team summary";
+
+				operation.Response(StatusCodes.Status200OK).Description = "The team summary";
+
+				return operation;
+			});
 
 		avatarsApiGroup.MapGet(string.Empty, GetAvatarAsync)
 			.AllowAnonymous()
@@ -64,6 +77,9 @@ public class ContactEndpoints : IEndpointRouteHandlerBuilder
 				return operation;
 			});
 	}
+
+	private static async Task<IResult> TeamSummaryAsync(HttpContext httpContext, IContactService service)
+		=> (await service.TeamSummaryAsync()).ToResponse(httpContext);
 
 	private static async Task<IResult> Get(HttpContext httpContext, IContactService service, Guid id)
 		=> (await service.GetAsync(id)).ToResponse(httpContext);

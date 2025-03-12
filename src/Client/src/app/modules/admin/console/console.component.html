@@ -26,28 +26,6 @@
             </button>
         </div>
 
-        <!-- Utilities -->
-        <section class="content mt-8">
-            <mat-accordion class="console-accordion">
-                <mat-expansion-panel [expanded]="utilitiesPanelOpenState">
-                    <mat-expansion-panel-header class="bg-blue-100 hover:bg-blue-100 py-10 px-8 rounded-none">
-                        <mat-panel-title class="text-2xl font-extrabold">
-                            {{ 'Admin.Console.Utilities' | transloco }}
-                        </mat-panel-title>
-                    </mat-expansion-panel-header>
-                    <div class="flex">
-                        <div class="mt-4 basis-1/2">
-                            <app-spinner-button
-                                [loading]="waiting"
-                                [label]="'Admin.Console.TruncateElmah' | transloco"
-                                [svgIcon]="'heroicons_outline:trash'"
-                                (callbackFn)="truncateElmah()"></app-spinner-button>
-                        </div>
-                    </div>
-                </mat-expansion-panel>
-            </mat-accordion>
-        </section>
-
         <!-- Configurations -->
         <section class="content mt-8">
             <mat-accordion class="console-accordion">
@@ -141,6 +119,50 @@
                                     *matRowDef="let row; columns: displayedColumns"
                                     class="even:bg-white odd:bg-gray-100 border-b"></tr>
                             </table>
+                        </div>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </section>
+
+        <!-- Utilities -->
+        <section class="content mt-8">
+            <mat-accordion class="console-accordion">
+                <mat-expansion-panel [expanded]="utilitiesPanelOpenState">
+                    <mat-expansion-panel-header class="bg-blue-100 hover:bg-blue-100 py-10 px-8 rounded-none">
+                        <mat-panel-title class="text-2xl font-extrabold">
+                            {{ 'Admin.Console.Utilities' | transloco }}
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <div class="flex">
+                        <div class="mt-4 basis-1/2">
+                            <app-spinner-button
+                                [loading]="waiting"
+                                [label]="'Admin.Console.TruncateElmah' | transloco"
+                                [svgIcon]="'heroicons_outline:trash'"
+                                (callbackFn)="truncateElmah()"></app-spinner-button>
+                        </div>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </section>
+
+        <!-- Mail Notification -->
+        <section class="content mt-8">
+            <mat-accordion class="console-accordion">
+                <mat-expansion-panel [expanded]="utilitiesPanelOpenState">
+                    <mat-expansion-panel-header class="bg-blue-100 hover:bg-blue-100 py-10 px-8 rounded-none">
+                        <mat-panel-title class="text-2xl font-extrabold">
+                            {{ 'Admin.Console.MailNotification' | transloco }}
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <div class="flex">
+                        <div class="mt-4 basis-1/2">
+                            <app-spinner-button
+                                [loading]="waiting"
+                                [label]="'Admin.Console.MailProposal' | transloco"
+                                [svgIcon]="'heroicons_outline:paper-airplane'"
+                                (callbackFn)="mailProposal()"></app-spinner-button>
                         </div>
                     </div>
                 </mat-expansion-panel>

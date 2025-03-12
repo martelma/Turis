@@ -19,6 +19,7 @@ import { emptyGuid, PaginatedListResult } from 'app/shared/services/shared.types
 import { BaseEntityService } from 'app/shared/services';
 import { environment } from 'environments/environment';
 import { DomSanitizer } from '@angular/platform-browser';
+import { TeamSummary } from '../admin/dashboard/dashboard.types';
 
 @Injectable({ providedIn: 'root' })
 export class ContactService extends BaseEntityService<Contact> {
@@ -26,6 +27,7 @@ export class ContactService extends BaseEntityService<Contact> {
     private _contactEdited: BehaviorSubject<string> = new BehaviorSubject(null);
     private _contactCopied: BehaviorSubject<string> = new BehaviorSubject(null);
 
+    private _teamSummary: BehaviorSubject<TeamSummary> = new BehaviorSubject(null);
     private _contacts: BehaviorSubject<PaginatedListResult<Contact>> = new BehaviorSubject(null);
     private _contact: BehaviorSubject<Contact> = new BehaviorSubject(null);
     private _contactsLoading: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -47,6 +49,10 @@ export class ContactService extends BaseEntityService<Contact> {
      */
     get contacts$(): Observable<PaginatedListResult<Contact>> {
         return this._contacts.asObservable();
+    }
+
+    get teamSummary$(): Observable<TeamSummary> {
+        return this._teamSummary.asObservable();
     }
 
     /**
@@ -155,6 +161,23 @@ export class ContactService extends BaseEntityService<Contact> {
                     ),
                 ),
             ),
+        );
+    }
+
+    teamSummary(): Observable<TeamSummary> {
+        this._contactsLoading.next(true);
+
+        const url = `summary`;
+
+        return this.apiGet<TeamSummary>(url).pipe(
+            map((data: TeamSummary) => {
+                this._teamSummary.next(data);
+
+                return data;
+            }),
+            finalize(() => {
+                this._contactsLoading.next(false);
+            }),
         );
     }
 

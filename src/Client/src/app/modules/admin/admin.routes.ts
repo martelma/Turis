@@ -6,6 +6,10 @@ export default [
         path: 'users',
         loadChildren: () => import('app/modules/admin/users/users.routes'),
     },
+    {
+        path: 'console',
+        loadChildren: () => import('app/modules/admin/console/console.routes'),
+    },
 
     { path: '', redirectTo: 'scope-groups', pathMatch: 'full' },
     {

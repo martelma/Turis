@@ -120,6 +120,34 @@ export class ConsoleComponent implements OnInit {
             });
     }
 
+    mailProposal(): void {
+        this.waiting = true;
+        this._service
+            .mailProposal()
+            .pipe(untilDestroyed(this))
+            .subscribe({
+                next: () => {
+                    this.snackBar.open(
+                        this._translocoService.translate('Messages.ElmahSuccessfullyTruncated'),
+                        this._translocoService.translate('General.Dismiss'),
+                        {
+                            panelClass: ['success'],
+                        },
+                    );
+                },
+                error: error => {
+                    console.error(error);
+
+                    this.snackBar.open(error.message, this._translocoService.translate('General.Dismiss'), {
+                        panelClass: ['error'],
+                    });
+                },
+            })
+            .add(() => {
+                this.waiting = false;
+            });
+    }
+
     private _loadBackendConfiguration(): void {
         this.apiConfigurations = [];
         this._service
