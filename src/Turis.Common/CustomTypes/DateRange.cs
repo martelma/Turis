@@ -39,17 +39,3 @@ public class DateRange : IRange<DateTime>
         return (Start <= range.Start) && (range.End <= End);
     }
 }
-
-public static class DateTimeExtensions
-{
-    public static bool IsInRanges(this DateTime dateToCheck, IEnumerable<DateRange> ranges)
-    {
-        foreach (var exception in ranges)
-        {
-            if (exception.Includes(dateToCheck))
-                return true;
-        }
-
-        return false;
-    }
-}

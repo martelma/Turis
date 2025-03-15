@@ -273,6 +273,43 @@ public class ServiceService(IDbContext dbContext
 		return randomService;
 	}
 
+	public async Task<Result<ContactSummaryModel>> ContactSummaryAsync(Guid contactId)
+	{
+		var data = await dbContext
+			.GetData<Service>()
+			.Where(x => x.CollaboratorId == contactId)
+			.OrderBy(x => x.Date)
+			.ToListAsync();
+
+		var model = new ContactSummaryModel
+		{
+			Years = data
+				.GroupBy(x => x.Date.Year) // Raggruppa per anno
+				.Select(yearGroup => new ContactSummaryDataModel
+				{
+					ViewOrder = yearGroup.Key,
+					Label = yearGroup.Key.ToString(),
+					Total = yearGroup.Sum(x => x.Commission > 0 ? x.Commission : x.CommissionCalculated), // Calcola il totale per l'anno
+					Payed = yearGroup.Where(x => x.CommissionPaid).Sum(x => x.Commission > 0 ? x.Commission : x.CommissionCalculated), // Calcola il totale pagato
+					Data = yearGroup
+						.GroupBy(x => x.Date.Month) // Raggruppa per mese
+						.Select(x => new ContactDataItemModel
+						{
+							ViewOrder = x.Key, // Numero del mese (1-12)
+							Label = new DateTime(1, x.Key, 1).ToString("MMM"), // Nome del mese
+							Value = x.Sum(y => y.Commission > 0 ? y.Commission : y.CommissionCalculated) // Totale del valore per il mese
+						})
+						.OrderBy(x => x.ViewOrder) // Ordina per ordine cronologico
+						.ToList()
+				})
+				.OrderBy(x => x.ViewOrder) // Ordina per anno
+				.ThenBy(x => x.Data.FirstOrDefault()?.ViewOrder) // Ordina per mese
+				.ToList()
+		};
+
+		return model;
+	}
+
 	public async Task<Result<ServiceModel>> SaveAsync(ServiceRequest service)
 	{
 		var dbService = await dbContext.GetData<Service>(true)

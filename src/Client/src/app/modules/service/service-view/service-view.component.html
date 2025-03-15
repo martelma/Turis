@@ -19,9 +19,6 @@
                 </ng-template>
                 <ng-template matTabContent>
                     <div class="flex flex-col flex-1 overflow-y-auto">
-                        <!-- Tags -->
-                        <!-- <tag-list [tags]="item?.tags" [viewMode]="'full'"></tag-list> -->
-
                         <div class="flex flex-col">
                             <div class="grid grid-cols-12 gap-2 w-full">
                                 <mat-form-field class="col-span-2">
@@ -54,18 +51,6 @@
                                         class="form-control font-bold"
                                         [readonly]="true"
                                         [value]="item?.dateText ? item.dateText : ''" />
-                                </mat-form-field>
-                                <mat-form-field class="col-span-2">
-                                    <mat-label>Status</mat-label>
-                                    <div class="status-container">
-                                        <span [ngClass]="getStatusColorClass(item)" class="color-box"></span>
-                                        <input
-                                            matInput
-                                            type="text"
-                                            class="form-control font-bold"
-                                            [readonly]="true"
-                                            [value]="item?.status ? item.status : ''" />
-                                    </div>
                                 </mat-form-field>
                                 <mat-form-field class="col-span-2">
                                     <mat-label>Type</mat-label>
@@ -102,6 +87,18 @@
                                         class="font-bold"
                                         [readonly]="true"
                                         [value]="item?.languages ? item.languages : ''" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label>Status</mat-label>
+                                    <div class="status-container">
+                                        <span [ngClass]="getStatusColorClass(item)" class="color-box"></span>
+                                        <input
+                                            matInput
+                                            type="text"
+                                            class="form-control font-bold"
+                                            [readonly]="true"
+                                            [value]="item?.status ? item.status : ''" />
+                                    </div>
                                 </mat-form-field>
                             </div>
                         </div>
@@ -173,19 +170,18 @@
                                 <mat-expansion-panel-header class="bg-primary py-4 px-8 rounded-none">
                                     <mat-panel-title>
                                         <div class="flex flex-1 justify-between items-center gap-2 text-white text-lg">
-                                            <!-- <mat-icon [svgIcon]="'heroicons_solid:user-circle'"></mat-icon> -->
                                             <span>Client</span>
                                             <button
                                                 mat-button
                                                 class="flex flex-1 justify-end"
-                                                (click)="openContact(item?.client); $event.stopPropagation()">
+                                                (click)="$event.stopPropagation(); openContact(item?.client)">
                                                 View
                                             </button>
                                         </div>
                                     </mat-panel-title>
                                 </mat-expansion-panel-header>
 
-                                <div class="flex flex-col">
+                                <div class="flex flex-col mt-4">
                                     <div class="grid grid-cols-12 gap-2 w-full">
                                         <mat-form-field class="col-span-2">
                                             <mat-label>Code</mat-label>
@@ -235,86 +231,102 @@
                                 <mat-expansion-panel-header class="bg-primary py-4 px-8 rounded-none">
                                     <mat-panel-title>
                                         <div class="flex flex-1 justify-between items-center gap-2 text-white text-lg">
-                                            <!-- <mat-icon [svgIcon]="'heroicons_solid:user-circle'"></mat-icon> -->
                                             <span>Collaborator</span>
                                             <button
                                                 mat-button
                                                 class="flex flex-1 justify-end"
-                                                (click)="openContact(item?.collaborator); $event.stopPropagation()">
+                                                [color]="'warn'"
+                                                (click)="$event.stopPropagation(); openContact(item?.collaborator)">
                                                 View
                                             </button>
                                         </div>
                                     </mat-panel-title>
                                 </mat-expansion-panel-header>
 
-                                <div class="flex flex-col">
-                                    <div class="grid grid-cols-12 gap-2 w-full">
-                                        <mat-form-field class="col-span-2">
-                                            <mat-label>Code</mat-label>
-                                            <input
-                                                matInput
-                                                type="text"
-                                                class="font-bold"
-                                                [readonly]="true"
-                                                [value]="item?.collaborator?.code ? item.collaborator.code : ''" />
-                                        </mat-form-field>
-                                        <mat-form-field class="col-span-10">
-                                            <mat-label>Name</mat-label>
-                                            <input
-                                                matInput
-                                                type="text"
-                                                class="font-bold"
-                                                [readonly]="true"
-                                                [value]="
-                                                    item?.collaborator?.fullName ? item.collaborator.fullName : ''
-                                                " />
-                                        </mat-form-field>
-                                    </div>
-                                    <div class="grid grid-cols-12 gap-2 w-full">
-                                        <mat-form-field class="col-span-2">
-                                            <mat-label>Commission %</mat-label>
-                                            <input
-                                                matInput
-                                                type="number"
-                                                min="0"
-                                                max="100"
-                                                mdInput
-                                                class="font-bold"
-                                                [readonly]="true"
-                                                [value]="item.commissionPercentage"
-                                                percentFormatter
-                                                percentDigits="1.2-2" />
-                                        </mat-form-field>
-                                        <mat-form-field class="col-span-2">
-                                            <mat-label>Commission Calculated</mat-label>
-                                            <input
-                                                matInput
-                                                type="text"
-                                                class="font-bold"
-                                                [readonly]="true"
-                                                [value]="item?.commissionCalculated ? item.commissionCalculated : ''" />
-                                        </mat-form-field>
-                                        <mat-form-field class="col-span-2">
-                                            <mat-label>Commission</mat-label>
-                                            <input
-                                                matInput
-                                                type="text"
-                                                class="font-bold"
-                                                [readonly]="true"
-                                                [value]="item?.commission ? item.commission : ''" />
-                                        </mat-form-field>
-                                    </div>
-                                    <div class="grid grid-cols-12 gap-2 w-full">
-                                        <mat-form-field class="col-span-12">
-                                            <mat-label>Commission Note</mat-label>
-                                            <input
-                                                matInput
-                                                type="text"
-                                                class="font-bold"
-                                                [readonly]="true"
-                                                [value]="item?.commissionNote ? item.commissionNote : ''" />
-                                        </mat-form-field>
-                                    </div>
+                                <div class="flex flex-col mt-4">
+                                    <ng-container *ngIf="item?.collaborator?.id; else noCollaborator">
+                                        <div class="grid grid-cols-12 gap-2 w-full">
+                                            <mat-form-field class="col-span-2">
+                                                <mat-label>Code</mat-label>
+                                                <input
+                                                    matInput
+                                                    type="text"
+                                                    class="font-bold"
+                                                    [readonly]="true"
+                                                    [value]="item?.collaborator?.code ? item.collaborator.code : ''" />
+                                            </mat-form-field>
+                                            <mat-form-field class="col-span-10">
+                                                <mat-label>Name</mat-label>
+                                                <input
+                                                    matInput
+                                                    type="text"
+                                                    class="font-bold"
+                                                    [readonly]="true"
+                                                    [value]="
+                                                        item?.collaborator?.fullName ? item.collaborator.fullName : ''
+                                                    " />
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="grid grid-cols-12 gap-2 w-full">
+                                            <mat-form-field class="col-span-2">
+                                                <mat-label>Commission %</mat-label>
+                                                <input
+                                                    matInput
+                                                    type="number"
+                                                    min="0"
+                                                    max="100"
+                                                    mdInput
+                                                    class="font-bold"
+                                                    [readonly]="true"
+                                                    [value]="item.commissionPercentage"
+                                                    percentFormatter
+                                                    percentDigits="1.2-2" />
+                                            </mat-form-field>
+                                            <mat-form-field class="col-span-2">
+                                                <mat-label>Commission Calculated</mat-label>
+                                                <input
+                                                    matInput
+                                                    type="text"
+                                                    class="font-bold"
+                                                    [readonly]="true"
+                                                    [value]="
+                                                        item?.commissionCalculated ? item.commissionCalculated : ''
+                                                    " />
+                                            </mat-form-field>
+                                            <mat-form-field class="col-span-2">
+                                                <mat-label>Commission</mat-label>
+                                                <input
+                                                    matInput
+                                                    type="text"
+                                                    class="font-bold"
+                                                    [readonly]="true"
+                                                    [value]="item?.commission ? item.commission : ''" />
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="grid grid-cols-12 gap-2 w-full">
+                                            <mat-form-field class="col-span-12">
+                                                <mat-label>Commission Note</mat-label>
+                                                <input
+                                                    matInput
+                                                    type="text"
+                                                    class="font-bold"
+                                                    [readonly]="true"
+                                                    [value]="item?.commissionNote ? item.commissionNote : ''" />
+                                            </mat-form-field>
+                                        </div>
+                                    </ng-container>
+
+                                    <ng-template #noCollaborator>
+                                        <span class="font-bold text-warn text-2xl"> Nessun Collaboratore </span>
+
+                                        <button
+                                            mat-flat-button
+                                            class="flex flex-1 max-w-20"
+                                            [color]="'primary'"
+                                            (click)="suggestCollaborator()">
+                                            Suggest
+                                        </button>
+                                    </ng-template>
                                 </div>
                             </mat-expansion-panel>
                         </mat-accordion>

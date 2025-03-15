@@ -1,6 +1,16 @@
 import { AccountStatementParameters, Service } from 'app/modules/service/service.types';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
-import { DatePipe, DecimalPipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
+import {
+    CurrencyPipe,
+    DatePipe,
+    DecimalPipe,
+    JsonPipe,
+    NgClass,
+    NgFor,
+    NgIf,
+    NgStyle,
+    NgTemplateOutlet,
+} from '@angular/common';
 import {
     AfterViewInit,
     ChangeDetectorRef,
@@ -10,6 +20,7 @@ import {
     OnDestroy,
     OnInit,
     SimpleChanges,
+    ViewChild,
     ViewEncapsulation,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -48,12 +59,15 @@ import {
     ContactTypes,
 } from 'app/constants';
 import { UntypedFormGroup } from '@angular/forms';
+import { ContactSummary, ContactSummaryData } from 'app/modules/admin/dashboard/dashboard.types';
+import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggleModule } from '@angular/material/button-toggle';
+import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
 
 @UntilDestroy()
 @Component({
-    selector: 'app-account-statement',
-    templateUrl: './account-statement.component.html',
-    styleUrls: ['./account-statement.component.scss'],
+    selector: 'app-collaborator-summary',
+    templateUrl: './collaborator-summary.component.html',
+    styleUrls: ['./collaborator-summary.component.scss'],
     styles: [
         `
             .list-grid {
@@ -71,8 +85,11 @@ import { UntypedFormGroup } from '@angular/forms';
         NgStyle,
         DatePipe,
         DecimalPipe,
+        CurrencyPipe,
         JsonPipe,
         RouterLink,
+        NgApexchartsModule,
+        NgTemplateOutlet,
         MatProgressBarModule,
         MatFormFieldModule,
         MatIconModule,
@@ -81,50 +98,47 @@ import { UntypedFormGroup } from '@angular/forms';
         MatMenuModule,
         MatSortModule,
         MatTooltipModule,
-        NgTemplateOutlet,
         MatPaginatorModule,
         MatSlideToggleModule,
         MatSelectModule,
         MatOptionModule,
         MatCheckboxModule,
         MatRippleModule,
-        FuseScrollResetDirective,
+        MatButtonToggleModule,
+        TextFieldModule,
         TranslocoModule,
         ContactViewComponent,
         ContactEditComponent,
         SpinnerButtonComponent,
+        FuseScrollResetDirective,
         FuseCardComponent,
-        TextFieldModule,
     ],
 })
-export class AccountStatementComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
+export class CollaboratorSummaryComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
     _contactId: string;
 
     @Input()
     set contactId(val: string) {
         setTimeout(() => {
             this._contactId = val;
-            this.accountStatementParameters.contactId = this.contactId;
-            this.loadAccountStatement();
+            // console.log('_contactId', this._contactId);
+            this.loadData();
         });
     }
     get contactId(): string {
         return this._contactId;
     }
 
-    @Input() contactType: string;
-
-    results: PaginatedListResult<Service>;
-    list: Service[] = [];
     itemsLoading = false;
-    accountStatementParameters: AccountStatementParameters = new AccountStatementParameters();
-
-    selectedItem: Service | null = null;
-    selectedItemForm: UntypedFormGroup;
+    data: ContactSummary;
+    currentData: ContactSummaryData;
+    chartData: ApexOptions = {};
 
     getStatusColorClass = getStatusColorClass;
     getBillingStatusColorClass = getBillingStatusColorClass;
     getCommissionStatusColorClass = getCommissionStatusColorClass;
+
+    @ViewChild('summarySelector') summarySelector: MatButtonToggleGroup;
 
     constructor(
         private _activatedRoute: ActivatedRoute,
@@ -140,13 +154,15 @@ export class AccountStatementComponent implements OnInit, AfterViewInit, OnChang
     ) {}
 
     ngOnInit(): void {
-        this._serviceService.services$.pipe(untilDestroyed(this)).subscribe((results: PaginatedListResult<Service>) => {
-            this.results = results;
-            this.list = results?.items;
+        this._serviceService.contactSummary$.pipe(untilDestroyed(this)).subscribe((data: ContactSummary) => {
+            this.data = data;
+            console.log('data', this.data);
 
-            this.list?.forEach(item => {
-                item.languages = item.languages.map(lang => lang.toLowerCase());
-            });
+            this._changeDetectorRef.detectChanges();
+
+            if (this.summarySelector?.value) {
+                this.summarySelector.value = '2024'; // Imposta un valore iniziale selezionato
+            }
         });
 
         // Services loading
@@ -155,7 +171,9 @@ export class AccountStatementComponent implements OnInit, AfterViewInit, OnChang
         });
     }
 
-    ngAfterViewInit(): void {}
+    ngAfterViewInit() {
+        this.loadData();
+    }
 
     ngOnChanges(changes: SimpleChanges): void {
         this.contactId = changes.currentValue.currentValue;
@@ -163,45 +181,111 @@ export class AccountStatementComponent implements OnInit, AfterViewInit, OnChang
 
     ngOnDestroy(): void {}
 
-    loadAccountStatement() {
-        this._serviceService
-            .listAccountStatement(this.accountStatementParameters)
-            .pipe(untilDestroyed(this))
-            .subscribe();
-    }
-
-    handlePageEvent(event: PageEvent): void {
-        this.accountStatementParameters = {
-            ...this.accountStatementParameters,
-            pageIndex: event.pageIndex,
-            pageSize: event.pageSize,
-        };
-
-        this.loadAccountStatement();
-    }
-
-    toggleDetails(item: Service): void {
-        // If the service is already selected...
-        if (this.selectedItem && this.selectedItem.id === item.id) {
-            // Close the details
-            this.closeDetails();
-            return;
+    loadData() {
+        if (this._contactId) {
+            this._serviceService.listContactSummary(this._contactId).pipe(untilDestroyed(this)).subscribe();
         }
-
-        this.selectedItem = item;
-
-        // Fill the form
-        this.selectedItemForm.patchValue(item);
-
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-
-        this._changeDetectorRef.detectChanges();
     }
 
-    closeDetails(): void {
-        this.selectedItem = null;
+    onToggleChange(event: MatButtonToggleChange): void {
+        this.summarySelector.value = event.value;
+        this.prepareChartData();
+    }
 
-        this.selectedItemForm.reset();
+    private prepareChartData(): void {
+        this.currentData = this.data.years.filter(x => x.label === this.summarySelector?.value)[0];
+        console.log('currentData', this.currentData);
+
+        this.chartData = {
+            chart: {
+                fontFamily: 'inherit',
+                foreColor: 'inherit',
+                height: '100%',
+                type: 'line',
+                toolbar: {
+                    show: false,
+                },
+                zoom: {
+                    enabled: false,
+                },
+            },
+            colors: ['#166534', '#991b1b'],
+            dataLabels: {
+                enabled: true,
+                enabledOnSeries: [0, 1],
+                background: {
+                    borderWidth: 0,
+                },
+            },
+            grid: {
+                borderColor: 'var(--fuse-border)',
+            },
+            labels: this.currentData.data.map(x => x.label),
+            legend: {
+                show: false,
+            },
+            plotOptions: {
+                bar: {
+                    columnWidth: '50%',
+                },
+            },
+            series: [
+                {
+                    name: 'total',
+                    type: 'column',
+                    data: this.currentData.data.map(x => x.value),
+                },
+                {
+                    name: 'payed',
+                    type: 'column',
+                    data: this.currentData.data.map(x => x.value),
+                },
+                {
+                    name: 'balance',
+                    type: 'line',
+                    data: this.currentData.data.map(x => x.balance),
+                },
+            ],
+            states: {
+                hover: {
+                    filter: {
+                        type: 'darken',
+                        value: 0.85,
+                    },
+                },
+            },
+            stroke: {
+                width: [3, 0],
+            },
+            tooltip: {
+                followCursor: true,
+                theme: 'dark',
+            },
+            xaxis: {
+                axisBorder: {
+                    show: false,
+                },
+                axisTicks: {
+                    color: 'var(--fuse-border)',
+                },
+                labels: {
+                    style: {
+                        colors: 'var(--fuse-text-secondary)',
+                    },
+                },
+                tooltip: {
+                    enabled: false,
+                },
+            },
+            yaxis: {
+                labels: {
+                    offsetX: -16,
+                    style: {
+                        colors: 'var(--fuse-text-secondary)',
+                    },
+                },
+            },
+        };
+        console.log('chartData', this.chartData);
     }
 }

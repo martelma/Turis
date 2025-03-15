@@ -13,6 +13,7 @@ import { UserService } from 'app/core/user/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ServiceSummaryComponent } from './service-summary/service-summary.component';
 import { TeamSummaryComponent } from './team-summary/team-summary.component';
+import { JournalEntrySummaryComponent } from './journal-entry-summary/journal-entry-summary.component';
 
 @UntilDestroy()
 @Component({
@@ -28,6 +29,7 @@ import { TeamSummaryComponent } from './team-summary/team-summary.component';
         TranslocoModule,
         ServiceSummaryComponent,
         TeamSummaryComponent,
+        JournalEntrySummaryComponent,
     ],
 })
 export class DashboardComponent implements OnInit {

@@ -15,4 +15,5 @@ public interface IServiceService : IService
 	Task<Result> DeleteAsync(Guid serviceId);
 	Task<Result<PaginatedList<ServiceModel>>> AccountStatement(AccountStatementParameters parameters);
 	Service GetRandom();
+	Task<Result<ContactSummaryModel>> ContactSummaryAsync(Guid contactId);
 }

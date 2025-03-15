@@ -10,11 +10,11 @@ public class DocumentEndpoints : IEndpointRouteHandlerBuilder
 	{
 		var templateApiGroup = endpoints.MapGroup("/api/Document");
 
-		templateApiGroup.MapGet("{id:guid}", Get).AllowAnonymous();
-		templateApiGroup.MapGet(string.Empty, List).AllowAnonymous();
-		templateApiGroup.MapPost(string.Empty, Save).AllowAnonymous();
-		templateApiGroup.MapPut(string.Empty, Save).AllowAnonymous();
-		templateApiGroup.MapDelete("{id:guid}", Delete).AllowAnonymous();
+		templateApiGroup.MapGet("{id:guid}", Get);
+		templateApiGroup.MapGet(string.Empty, List);
+		templateApiGroup.MapPost(string.Empty, Save);
+		templateApiGroup.MapPut(string.Empty, Save);
+		templateApiGroup.MapDelete("{id:guid}", Delete);
 	}
 
 	private static async Task<IResult> Get(HttpContext httpContext, IDocumentService service, Guid id)

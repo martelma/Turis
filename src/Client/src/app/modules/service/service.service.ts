@@ -3,9 +3,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, filter, finalize, map, of, switchMap, take, tap, throwError } from 'rxjs';
 import { BaseEntityService } from 'app/shared/services';
-import { emptyGuid, PaginatedListResult } from 'app/shared/services/shared.types';
+import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { AccountStatementParameters, Service, ServiceSearchParameters } from './service.types';
-import { ServiceSummary } from '../admin/dashboard/dashboard.types';
+import { ContactSummary, ServiceSummary } from '../admin/dashboard/dashboard.types';
 
 @Injectable({ providedIn: 'root' })
 export class ServiceService extends BaseEntityService<Service> {
@@ -14,6 +14,7 @@ export class ServiceService extends BaseEntityService<Service> {
     private _serviceCopied: BehaviorSubject<string> = new BehaviorSubject(null);
 
     private _serviceSummary: BehaviorSubject<ServiceSummary> = new BehaviorSubject(null);
+    private _contactSummary: BehaviorSubject<ContactSummary> = new BehaviorSubject(null);
     private _services: BehaviorSubject<PaginatedListResult<Service>> = new BehaviorSubject(null);
     private _service: BehaviorSubject<Service> = new BehaviorSubject(null);
     private _servicesLoading: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -29,6 +30,10 @@ export class ServiceService extends BaseEntityService<Service> {
 
     get serviceSummary$(): Observable<ServiceSummary> {
         return this._serviceSummary.asObservable();
+    }
+
+    get contactSummary$(): Observable<ContactSummary> {
+        return this._contactSummary.asObservable();
     }
 
     get services$(): Observable<PaginatedListResult<Service>> {
@@ -271,6 +276,23 @@ export class ServiceService extends BaseEntityService<Service> {
         return this.apiGet<ServiceSummary>(url).pipe(
             map((data: ServiceSummary) => {
                 this._serviceSummary.next(data);
+
+                return data;
+            }),
+            finalize(() => {
+                this._servicesLoading.next(false);
+            }),
+        );
+    }
+
+    listContactSummary(contactId: string): Observable<ContactSummary> {
+        this._servicesLoading.next(true);
+
+        const url = `contact-summary/${contactId}`;
+
+        return this.apiGet<ContactSummary>(url).pipe(
+            map((data: ContactSummary) => {
+                this._contactSummary.next(data);
 
                 return data;
             }),

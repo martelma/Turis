@@ -4,9 +4,11 @@ import { JournalEntry, JournalEntrySearchParameters } from '../journal-entry/jou
 import { BaseEntityService } from 'app/shared/services';
 import { BehaviorSubject, filter, finalize, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
 import { emptyGuid, PaginatedListResult } from 'app/shared/services/shared.types';
+import { JournalEntrySummary } from '../admin/dashboard/dashboard.types';
 
 @Injectable({ providedIn: 'root' })
 export class JournalEntryService extends BaseEntityService<JournalEntry> {
+    private _journalEntrySummary: BehaviorSubject<JournalEntrySummary> = new BehaviorSubject(null);
     private _journalEntries: BehaviorSubject<PaginatedListResult<JournalEntry>> = new BehaviorSubject(null);
     private _journalEntry: BehaviorSubject<JournalEntry> = new BehaviorSubject(null);
     private _journalEntryEdited: BehaviorSubject<string> = new BehaviorSubject(null);
@@ -19,6 +21,10 @@ export class JournalEntryService extends BaseEntityService<JournalEntry> {
     constructor(http: HttpClient) {
         super(http);
         this.defaultApiController = 'journal-entry';
+    }
+
+    get journalEntrySummary$(): Observable<JournalEntrySummary> {
+        return this._journalEntrySummary.asObservable();
     }
 
     /**
@@ -218,5 +224,22 @@ export class JournalEntryService extends BaseEntityService<JournalEntry> {
 
     editJournalEntry(journalEntryId: string): void {
         this._journalEntryEdited.next(journalEntryId);
+    }
+
+    summary(): Observable<JournalEntrySummary> {
+        this._journalEntriesLoading.next(true);
+
+        const url = `summary`;
+
+        return this.apiGet<JournalEntrySummary>(url).pipe(
+            map((data: JournalEntrySummary) => {
+                this._journalEntrySummary.next(data);
+
+                return data;
+            }),
+            finalize(() => {
+                this._journalEntriesLoading.next(false);
+            }),
+        );
     }
 }

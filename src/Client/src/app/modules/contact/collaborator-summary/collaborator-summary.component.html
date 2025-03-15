@@ -1,0 +1,90 @@
+<!-- Main -->
+<div class="flex flex-auto h-full">
+    <div
+        class="flex flex-col flex-auto h-full overflow-hidden sm:overflow-y-auto"
+        [ngClass]="{
+            'sm:mb-18': data
+        }">
+        <ng-container *ngIf="data; else noService">
+            <div class="grid overflow-hidden sm:overflow-y-auto">
+                <div
+                    class="w-full sm:col-span-2 md:col-span-4 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+                    <div class="flex flex-col sm:flex-row items-start justify-between">
+                        <div class="text-lg font-medium tracking-tight leading-6 truncate">Contact Summary</div>
+                        <div class="mt-3 sm:mt-0 sm:ml-2">
+                            <mat-button-toggle-group
+                                *ngIf="data.years.length > 0"
+                                #summarySelector="matButtonToggleGroup"
+                                (change)="onToggleChange($event)">
+                                <mat-button-toggle *ngFor="let year of data.years" [value]="year.label">
+                                    {{ year.label }}
+                                </mat-button-toggle>
+                            </mat-button-toggle-group>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 grid-flow-row gap-6 w-full mt-8 sm:mt-4">
+                        <div class="flex flex-col flex-auto">
+                            <div class="font-medium text-secondary">Commissioni vs. Pagamenti</div>
+                            <div class="flex flex-col flex-auto">
+                                <apx-chart
+                                    class="flex-auto w-full h-80"
+                                    [chart]="chartData?.chart"
+                                    [colors]="chartData?.colors"
+                                    [dataLabels]="chartData?.dataLabels"
+                                    [grid]="chartData?.grid"
+                                    [labels]="chartData?.labels"
+                                    [legend]="chartData?.legend"
+                                    [plotOptions]="chartData?.plotOptions"
+                                    [series]="chartData?.series"
+                                    [states]="chartData?.states"
+                                    [stroke]="chartData?.stroke"
+                                    [tooltip]="chartData?.tooltip"
+                                    [xaxis]="chartData?.xaxis"
+                                    [yaxis]="chartData?.yaxis"></apx-chart>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="font-medium text-secondary">Overview</div>
+                            <div class="flex-auto grid grid-cols-4 gap-4 mt-6">
+                                <div
+                                    class="col-span-2 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-green-50 text-green-800 dark:bg-white dark:bg-opacity-5 dark:text-green-500">
+                                    <div class="text-5xl sm:text-7xl font-semibold leading-none tracking-tight">
+                                        {{ currentData?.total | currency: 'EUR' }}
+                                    </div>
+                                    <div class="mt-3 text-sm sm:text-lg font-medium">Dovuto</div>
+                                </div>
+                                <div
+                                    class="col-span-2 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-red-50 text-red-800 dark:bg-white dark:bg-opacity-5 dark:text-red-500">
+                                    <div class="text-5xl sm:text-7xl font-semibold leading-none tracking-tight">
+                                        {{ currentData?.payed | currency: 'EUR' }}
+                                    </div>
+                                    <div class="mt-3 text-sm sm:text-lg font-medium">Pagato</div>
+                                </div>
+                                <div
+                                    class="col-span-4 flex flex-col items-center justify-center py-8 px-1 rounded-2xl"
+                                    [ngClass]="{
+                                        'bg-green-50 text-green-800 dark:bg-white dark:bg-opacity-5 dark:text-green-500':
+                                            currentData?.payed >= currentData?.total,
+                                        'bg-red-50 text-red-800 dark:bg-white dark:bg-opacity-5 dark:text-red-500':
+                                            currentData?.payed < currentData?.total
+                                    }">
+                                    <div class="text-5xl font-semibold leading-none tracking-tight">
+                                        {{ currentData?.total - currentData?.payed | currency: 'EUR' }}
+                                    </div>
+                                    <div class="mt-1 text-sm font-medium text-center">Da Pagare</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+
+        <ng-template #noService>
+            <div class="z-100 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+                <mat-icon class="icon-size-24" [svgIcon]="'heroicons_outline:circle-stack'"></mat-icon>
+                <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">There are no service</div>
+            </div>
+        </ng-template>
+    </div>
+</div>

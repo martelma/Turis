@@ -99,6 +99,7 @@ export class ServiceEditComponent implements OnInit {
     @Input()
     set service(value: Service) {
         this.item = value;
+        console.log('item', this.item);
 
         this.clientControl.setValue(this.item.client?.companyName);
         this.collaboratorControl.setValue(this.item.collaborator?.fullName);
@@ -208,6 +209,7 @@ export class ServiceEditComponent implements OnInit {
             .pipe(untilDestroyed(this))
             .subscribe(list => {
                 this.languages = list.items;
+                console.log('languages', this.languages);
             });
     }
 

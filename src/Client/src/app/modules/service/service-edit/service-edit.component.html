@@ -88,30 +88,6 @@
                                     </div>
                                 </mat-form-field>
                                 <mat-form-field class="col-span-2">
-                                    <mat-label for="status">Status</mat-label>
-                                    <mat-select
-                                        placeholder="Select a Status"
-                                        class="form-control font-bold"
-                                        id="status"
-                                        name="status"
-                                        #name="ngModel"
-                                        required
-                                        [(ngModel)]="item.status"
-                                        (ngModelChange)="statusTypeChanged()">
-                                        <mat-select-trigger>
-                                            <span [ngClass]="getStatusColorClass(item)" class="color-box"></span>
-                                            {{ getStatusText(item) }}
-                                        </mat-select-trigger>
-                                        <mat-option *ngFor="let x of statusTypes" [value]="x.value">
-                                            <span [ngClass]="x.colorClass" class="color-box"></span>
-                                            {{ x.text }}
-                                        </mat-option>
-                                    </mat-select>
-                                    <div *ngIf="status?.invalid">
-                                        <div *ngIf="status?.errors?.required">Status is required.</div>
-                                    </div>
-                                </mat-form-field>
-                                <mat-form-field class="col-span-2">
                                     <mat-label for="serviceType">Type</mat-label>
                                     <mat-select
                                         placeholder="Select a Type"
@@ -185,6 +161,30 @@
                                     <!-- <div *ngIf="languages?.invalid">
                                         <div *ngIf="languages?.errors?.required">Language is required.</div>
                                     </div> -->
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label for="status">Status</mat-label>
+                                    <mat-select
+                                        placeholder="Select a Status"
+                                        class="form-control font-bold"
+                                        id="status"
+                                        name="status"
+                                        #name="ngModel"
+                                        required
+                                        [(ngModel)]="item.status"
+                                        (ngModelChange)="statusTypeChanged()">
+                                        <mat-select-trigger>
+                                            <span [ngClass]="getStatusColorClass(item)" class="color-box"></span>
+                                            {{ getStatusText(item) }}
+                                        </mat-select-trigger>
+                                        <mat-option *ngFor="let x of statusTypes" [value]="x.value">
+                                            <span [ngClass]="x.colorClass" class="color-box"></span>
+                                            {{ x.text }}
+                                        </mat-option>
+                                    </mat-select>
+                                    <div *ngIf="status?.invalid">
+                                        <div *ngIf="status?.errors?.required">Status is required.</div>
+                                    </div>
                                 </mat-form-field>
                             </div>
                         </div>
@@ -298,7 +298,7 @@
                                     </mat-panel-title>
                                 </mat-expansion-panel-header>
 
-                                <div class="flex flex-col">
+                                <div class="flex flex-col mt-4">
                                     <mat-form-field class="example-full-width">
                                         <input
                                             type="text"
@@ -367,7 +367,7 @@
                                     </mat-panel-title>
                                 </mat-expansion-panel-header>
 
-                                <div class="flex flex-col">
+                                <div class="flex flex-col mt-4">
                                     <mat-form-field class="example-full-width">
                                         <input
                                             type="text"
@@ -395,7 +395,7 @@
                                     </mat-form-field>
                                     <div class="grid grid-cols-12 gap-2 w-full">
                                         <mat-form-field class="col-span-2">
-                                            <mat-labe for="commissionPercentage">Commission %</mat-labe>
+                                            <mat-label for="commissionPercentage">Commission %</mat-label>
                                             <input
                                                 matInput
                                                 type="number"

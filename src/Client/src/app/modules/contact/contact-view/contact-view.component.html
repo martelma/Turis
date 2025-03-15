@@ -295,7 +295,10 @@
             </mat-tab>
             <mat-tab>
                 <ng-template mat-tab-label>
-                    <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
+                    <mat-icon
+                        class="icon-size-5 mr-2"
+                        [svgIcon]="'heroicons_outline:pencil-square'"
+                        [ngClass]="{ 'red-icon': item?.note?.length > 0 }"></mat-icon>
                     {{ 'General.Notes' | transloco }}
                 </ng-template>
                 <ng-template matTabContent>
@@ -308,7 +311,10 @@
             </mat-tab>
             <mat-tab>
                 <ng-template mat-tab-label>
-                    <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:paper-clip'"></mat-icon>
+                    <mat-icon
+                        class="icon-size-5 mr-2"
+                        [svgIcon]="'heroicons_outline:paper-clip'"
+                        [ngClass]="{ 'red-icon': item?.attachmentsCount > 0 }"></mat-icon>
                     {{ 'General.Attachments' | transloco }}
                 </ng-template>
                 <ng-template matTabContent>
@@ -327,6 +333,22 @@
                         [contactId]="item?.id"
                         [contactType]="item.contactType"
                         class="h-full w-full"></app-account-statement>
+                </ng-template>
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:square-3-stack-3d'"></mat-icon>
+                    {{ 'Service.ContactAccountSummary' | transloco }}
+                </ng-template>
+                <ng-template matTabContent>
+                    <app-collaborator-summary
+                        *ngIf="item.contactType === 'Collaborator'"
+                        [contactId]="item?.id"
+                        class="h-full w-full"></app-collaborator-summary>
+                    <app-client-summary
+                        *ngIf="item.contactType === 'Client'"
+                        [contactId]="item?.id"
+                        class="h-full w-full"></app-client-summary>
                 </ng-template>
             </mat-tab>
             <mat-tab>

@@ -87,4 +87,8 @@ export class ServiceViewComponent implements OnInit, OnChanges {
         const url = this.router.serializeUrl(this.router.createUrlTree(['/contact', contact?.id]));
         window.open(url, '_blank');
     }
+
+    suggestCollaborator() {
+        console.log('suggestCollaborator');
+    }
 }

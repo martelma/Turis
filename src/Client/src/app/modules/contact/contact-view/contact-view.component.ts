@@ -7,7 +7,7 @@ import { FuseScrollResetDirective } from '@fuse/directives/scroll-reset';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { DatePipe, JsonPipe, NgFor, NgIf } from '@angular/common';
+import { DatePipe, JsonPipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ContactService } from '../contact.service';
 import { Contact } from '../contact.types';
@@ -15,6 +15,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { AccountStatementComponent } from '../account-statement/account-statement.component';
 import { AttachmentsComponent } from 'app/shared/components/attachments/attachments.component';
 import { AttachmentService } from 'app/shared/components/attachments/attachment.service';
+import { ClientSummaryComponent } from '../client-summary/client-summary.component';
+import { CollaboratorSummaryComponent } from '../collaborator-summary/collaborator-summary.component';
 
 @UntilDestroy()
 @Component({
@@ -26,6 +28,7 @@ import { AttachmentService } from 'app/shared/components/attachments/attachment.
     imports: [
         NgIf,
         NgFor,
+        NgClass,
         DatePipe,
         JsonPipe,
         FormsModule,
@@ -39,6 +42,8 @@ import { AttachmentService } from 'app/shared/components/attachments/attachment.
         FuseScrollResetDirective,
         TranslocoModule,
         AccountStatementComponent,
+        ClientSummaryComponent,
+        CollaboratorSummaryComponent,
         AttachmentsComponent,
     ],
 })

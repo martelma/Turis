@@ -9,6 +9,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TeamSummary } from '../dashboard.types';
 import { ServiceService } from 'app/modules/service/service.service';
 import { ContactService } from 'app/modules/contact/contact.service';
+import { log } from 'app/shared/shared.utils';
+import { Contact } from 'app/modules/contact/contact.types';
 
 @UntilDestroy()
 @Component({
@@ -24,10 +26,12 @@ export class TeamSummaryComponent implements OnInit {
 
     teamSummary: TeamSummary;
 
+    log = log;
+
     constructor(
         private _activatedRoute: ActivatedRoute,
         private _contactService: ContactService,
-        private _router: Router,
+        private router: Router,
     ) {}
 
     ngOnInit(): void {
@@ -39,13 +43,16 @@ export class TeamSummaryComponent implements OnInit {
     }
 
     loadData(): void {
-        console.log('Loading data');
-
         this._contactService
             .teamSummary()
             .pipe(untilDestroyed(this))
-            .subscribe(items => {
-                this.teamSummary = items;
+            .subscribe(data => {
+                this.teamSummary = data;
             });
+    }
+
+    openContact(contact: Contact) {
+        const url = this.router.serializeUrl(this.router.createUrlTree(['/contact', contact?.id]));
+        window.open(url, '_blank');
     }
 }

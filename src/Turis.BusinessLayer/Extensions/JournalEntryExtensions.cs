@@ -1,4 +1,5 @@
 ﻿using JeMa.Shared.Extensions;
+using System.Globalization;
 using Turis.Common.Models;
 using Turis.DataAccessLayer.Entities;
 
@@ -44,5 +45,22 @@ public static class JournalEntryExtensions
 				model.Add(await ToModel(item, bookmarks, attachments, tags));
 
 		return model;
+	}
+
+	public static string ToMonthLabel(this int value)
+	{
+		if (value is < 1 or > 12)
+			throw new ArgumentOutOfRangeException(nameof(value), "Il valore deve essere compreso tra 1 e 12.");
+
+		// Usa DateTime per ottenere il nome del mese
+		return new DateTime(1, value, 1).ToString("MMM");
+	}
+
+	public static string ToDayLabel(this DayOfWeek value, CultureInfo? culture = null)
+	{
+		culture ??= CultureInfo.CurrentCulture;
+
+		// Ottiene il nome del giorno della settimana basato sulla cultura
+		return culture.DateTimeFormat.GetDayName(value);
 	}
 }

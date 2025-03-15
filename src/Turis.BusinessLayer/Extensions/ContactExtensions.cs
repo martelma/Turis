@@ -20,8 +20,7 @@ public static class ContactExtensions
 			ExternalCode = entity.ExternalCode,
 			Title = entity.Title,
 			Sex = entity.Sex,
-			Languages = entity.Languages?.SplitCsv()?.Select(x => x.ToLower()).ToArray(),
-			//Language = entity.Language?.ToModel(),
+			Languages = entity.Languages?.SplitCsv()?.ToArray(),
 			FirstName = entity.FirstName,
 			LastName = entity.LastName,
 			FiscalCode = entity.FiscalCode,
@@ -69,5 +68,27 @@ public static class ContactExtensions
 		List<EntityTag> tags = null)
 	{
 		return list.Select(x => x.ToModel(bookmarks, attachments, tags));
+	}
+
+	public static TeamMemberModel ToTeamMemberModel(this Contact entity,
+		List<Bookmark> bookmarks = null,
+		List<Attachment> attachments = null,
+		List<EntityTag> tags = null)
+	{
+		var bookmarkId = bookmarks?.FirstOrDefault(x => x.EntityId == entity.Id)?.Id;
+
+		return new TeamMemberModel
+		{
+			Id = entity.Id,
+			Collaborator = entity.ToModel()
+		};
+	}
+
+	public static IEnumerable<TeamMemberModel> ToTeamMemberModel(this IEnumerable<Contact> list,
+		List<Bookmark> bookmarks = null,
+		List<Attachment> attachments = null,
+		List<EntityTag> tags = null)
+	{
+		return list.Select(x => x.ToTeamMemberModel(bookmarks, attachments, tags));
 	}
 }

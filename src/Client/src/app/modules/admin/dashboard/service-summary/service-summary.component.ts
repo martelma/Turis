@@ -38,8 +38,6 @@ export class ServiceSummaryComponent implements OnInit {
     }
 
     loadData(): void {
-        console.log('Loading data');
-
         this._serviceService
             .summary()
             .pipe(untilDestroyed(this))

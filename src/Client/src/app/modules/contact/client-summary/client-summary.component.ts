@@ -51,9 +51,9 @@ import { UntypedFormGroup } from '@angular/forms';
 
 @UntilDestroy()
 @Component({
-    selector: 'app-account-statement',
-    templateUrl: './account-statement.component.html',
-    styleUrls: ['./account-statement.component.scss'],
+    selector: 'app-client-summary',
+    templateUrl: './client-summary.component.html',
+    styleUrls: ['./client-summary.component.scss'],
     styles: [
         `
             .list-grid {
@@ -97,7 +97,7 @@ import { UntypedFormGroup } from '@angular/forms';
         TextFieldModule,
     ],
 })
-export class AccountStatementComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
+export class ClientSummaryComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
     _contactId: string;
 
     @Input()

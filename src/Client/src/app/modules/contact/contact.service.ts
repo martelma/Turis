@@ -167,7 +167,7 @@ export class ContactService extends BaseEntityService<Contact> {
     teamSummary(): Observable<TeamSummary> {
         this._contactsLoading.next(true);
 
-        const url = `summary`;
+        const url = `team-summary`;
 
         return this.apiGet<TeamSummary>(url).pipe(
             map((data: TeamSummary) => {

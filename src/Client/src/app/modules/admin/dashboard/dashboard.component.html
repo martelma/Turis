@@ -100,7 +100,14 @@
                 <mat-tab label="My Home"> </mat-tab>
                 <mat-tab label="Admin">
                     <ng-template matTabContent>
-                        <app-service-summary></app-service-summary>
+                        <div class="flex flex-col w-full gap-4">
+                            <div class="flex-1 w-full">
+                                <app-service-summary></app-service-summary>
+                            </div>
+                            <div class="flex-1 w-full">
+                                <app-journal-entry-summary></app-journal-entry-summary>
+                            </div>
+                        </div>
                     </ng-template>
                 </mat-tab>
                 <mat-tab>

@@ -9,7 +9,7 @@ ricroda di eliminare tutti gli .AllowAnonymous()
 
 TODO:
 -------------------------------------------------------------------------------------------------
-gitinit
+
 
 Servizi
 	problema con new
@@ -17,10 +17,22 @@ Servizi
 	nel backend nell'update, ho per il momento disabilitato il filtro di validazione del modello: da rivedere / studiare
 	
 	gestire il menù con N opzioni nell'intestazione a dx
-
-	dare maggior evidenza al servizio selezionato (sfondo giallino?)
-
-	gestione degli attachements
 	
-implementare tutto il mondo tags
+	gestione dei filtri basati sui tags
 
+Prima nota
+	cruscotto in home page con saldo e ultime operazioni
+	
+
+
+Proposta
+	PropostaDiGuidaToolStripMenuItem_Click
+
+Notifica
+	NotificaPromemoriaToolStripMenuItem_Click
+	
+Notifica
+	NotificaACollaboratoreToolStripMenuItem_Click
+
+Notifica
+	NotificaACollaboratore2ToolStripMenuItem_Click

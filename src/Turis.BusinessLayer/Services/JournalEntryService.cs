@@ -7,6 +7,7 @@ using Turis.BusinessLayer.Extensions;
 using Turis.BusinessLayer.Parameters;
 using Turis.BusinessLayer.Parameters.Base;
 using Turis.BusinessLayer.Services.Interfaces;
+using Turis.Common.CustomTypes;
 using Turis.Common.Models;
 using Turis.Common.Models.Requests;
 using Turis.DataAccessLayer;
@@ -22,15 +23,103 @@ public class JournalEntryService(ApplicationDbContext dbContext
 	, ILogger<JournalEntryService> logger) : IJournalEntryService
 {
 	private const string EntryName = nameof(JournalEntry);
-	
+
 	private readonly DbSet<JournalEntry> context = dbContext.JournalEntries;
 
-	private async Task<List<Bookmark>> GetMyBookmarks() 
+	private async Task<List<Bookmark>> GetMyBookmarks()
 		=> await bookmarkService.ListAsync(userService.GetUserId(), EntryName);
 
 	private IQueryable<JournalEntry> Query()
 	{
 		return context.Include(x => x.User);
+	}
+
+	public async Task<Result<JournalEntrySummaryModel>> Summary()
+	{
+		var startYear = DateTime.Now.StartYear();
+
+		var startMonth = DateTime.Now.StartMonth();
+		var endMonth = DateTime.Now.EndMonth();
+		var allMonthDays = startMonth.GenerateDaysRange(endMonth);
+
+		var startWeek = DateTime.Now.StartWeek();
+
+		var yearData = await Query()
+			.Where(x => x.Date.Date <= DateTime.UtcNow)
+			.Where(x => x.Date.Date >= startYear)
+			.ToListAsync();
+		var monthData = yearData.Where(x => x.Date.Date >= startMonth).ToList();
+		var weekData = yearData.Where(x => x.Date.Date >= startWeek).ToList();
+
+
+		var model = new JournalEntrySummaryModel
+		{
+			YearData = new SummaryData
+			{
+				Data = yearData
+					.GroupBy(x => x.Date.Month)
+					.Select(group => new DataItem
+					{
+						ViewOrder = group.Key,
+						Label = group.Key.ToMonthLabel(),
+						Income = group.Where(e => e.Amount > 0).Sum(e => e.Amount), // Totale delle entrate
+						Expense = group.Where(e => e.Amount < 0).Sum(e => e.Amount), // Totale delle uscite
+						Balance = group.MaxBy(e => e.Date)?.Balance ?? 0 // Saldo di fine periodo
+					})
+					.OrderBy(x => x.ViewOrder)
+					.ToList()
+			},
+			MonthData = new SummaryData
+			{
+				Data = monthData
+					.GroupBy(x => x.Date.Day)
+					.Select(group => new DataItem
+					{
+						ViewOrder = group.Key,
+						Label = group.Key.ToString(),
+						Income = group.Where(e => e.Amount > 0).Sum(e => e.Amount), // Totale delle entrate
+						Expense = group.Where(e => e.Amount < 0).Sum(e => e.Amount), // Totale delle uscite
+						Balance = group.MaxBy(e => e.Date)?.Balance ?? 0// Saldo di fine periodo
+					})
+					.OrderBy(x => x.ViewOrder)
+					.ToList()
+				/*
+				Data = allMonthDays
+					.GroupJoin(
+						yearData,
+						day => day, // Chiave di join (la data completa generata)
+						entry => entry.Date.Date, // Chiave di join dei dati originali
+						(day, entries) => new DataItem
+						{
+							ViewOrder = day.Day,
+							Label = day.ToString("dd"),
+							Income = entries.Where(e => e.Amount > 0).Sum(e => e.Amount), // Entrate
+							Expense = entries.Where(e => e.Amount < 0).Sum(e => e.Amount), // Uscite
+							Balance = entries.Any() ? entries.MaxBy(e => e.Date)?.Balance ?? 0 : 0 // Saldo
+						}
+					)
+					.OrderBy(x => x.ViewOrder)
+					.ToList()
+				*/
+			},
+			WeekData = new SummaryData
+			{
+				Data = weekData
+					.GroupBy(x => x.Date.DayOfWeek)
+					.Select(group => new DataItem
+					{
+						ViewOrder = (int)group.Key,
+						Label = group.Key.ToDayLabel(),
+						Income = group.Where(e => e.Amount > 0).Sum(e => e.Amount), // Totale delle entrate
+						Expense = group.Where(e => e.Amount < 0).Sum(e => e.Amount), // Totale delle uscite
+						Balance = group.MaxBy(e => e.Date)?.Balance ?? 0 // Saldo di fine periodo
+					})
+					.OrderBy(x => x.ViewOrder)
+					.ToList()
+			}
+		};
+
+		return await Task.FromResult(model);
 	}
 
 	public async Task<Result<JournalEntryModel>> GetAsync(Guid id)

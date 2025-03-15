@@ -10,12 +10,16 @@ public class JournalEntryEndpoints : IEndpointRouteHandlerBuilder
 	{
 		var templateApiGroup = endpoints.MapGroup("/api/journal-entry");
 
-		templateApiGroup.MapGet("{id:guid}", Get).AllowAnonymous();
-		templateApiGroup.MapGet(string.Empty, List).AllowAnonymous();
-		templateApiGroup.MapPost(string.Empty, Save).AllowAnonymous();
-		templateApiGroup.MapPut(string.Empty, Save).AllowAnonymous();
-		templateApiGroup.MapDelete("{id:guid}", Delete).AllowAnonymous();
+		templateApiGroup.MapGet("summary", Summary);
+		templateApiGroup.MapGet("{id:guid}", Get);
+		templateApiGroup.MapGet(string.Empty, List);
+		templateApiGroup.MapPost(string.Empty, Save);
+		templateApiGroup.MapPut(string.Empty, Save);
+		templateApiGroup.MapDelete("{id:guid}", Delete);
 	}
+
+	private static async Task<IResult> Summary(HttpContext httpContext, IJournalEntryService service)
+		=> (await service.Summary()).ToResponse(httpContext);
 
 	private static async Task<IResult> Get(HttpContext httpContext, IJournalEntryService service, Guid id)
 		=> (await service.GetAsync(id)).ToResponse(httpContext);

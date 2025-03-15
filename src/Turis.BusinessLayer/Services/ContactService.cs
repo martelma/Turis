@@ -35,7 +35,18 @@ public class ContactService(IDbContext dbContext
 
 	public Task<Result<TeamSummaryModel>> TeamSummaryAsync()
 	{
-		throw new NotImplementedException();
+		var query = dbContext.GetData<Contact>()
+				.Where(x => x.ContactType == ContactType.Collaborator)
+				.OrderBy(x => x.FirstName)
+				.ThenBy(x => x.LastName)
+			;
+
+		var model = new TeamSummaryModel
+		{
+			Members = query.ToTeamMemberModel()
+		};
+
+		return Task.FromResult<Result<TeamSummaryModel>>(model);
 	}
 
 	public async Task<Result<PaginatedList<ContactModel>>> ListAsync(ContactSearchParameters parameters)
