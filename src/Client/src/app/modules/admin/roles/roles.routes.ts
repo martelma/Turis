@@ -1,8 +1,8 @@
-import { Routes } from '@angular/router';
 import { inject } from '@angular/core';
-import { RolesComponent } from './roles.component';
+import { Routes } from '@angular/router';
 import { RoleListComponent } from './role-list/role-list.component';
-import { RoleService } from './role.service';
+import { ApplicationRoleService } from './role.service';
+import { RolesComponent } from './roles.component';
 
 export default [
     {
@@ -13,7 +13,7 @@ export default [
                 path: '',
                 component: RoleListComponent,
                 resolve: {
-                    users: () => inject(RoleService).list(),
+                    users: () => inject(ApplicationRoleService).list(),
                 },
                 children: [
                     {
@@ -32,7 +32,7 @@ export default [
         path: ':id/role',
         component: RolesComponent,
         resolve: {
-            applications: () => inject(RoleService).list(),
+            applications: () => inject(ApplicationRoleService).list(),
             // user: userResolver,
         },
     },
@@ -40,7 +40,7 @@ export default [
         path: ':id/role/:roleId',
         component: RolesComponent,
         resolve: {
-            applications: () => inject(RoleService).list(),
+            applications: () => inject(ApplicationRoleService).list(),
             // user: userResolver,
         },
     },

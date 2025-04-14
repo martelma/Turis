@@ -6,9 +6,9 @@ using Turis.Authentication.Entities;
 namespace Turis.Authentication;
 
 public class AuthenticationDbContext(DbContextOptions options)
-        : IdentityDbContext<ApplicationUser, ApplicationRole, Guid, IdentityUserClaim<Guid>, ApplicationUserRole, IdentityUserLogin<Guid>, IdentityRoleClaim<Guid>, IdentityUserToken<Guid>>(options)
+		: IdentityDbContext<ApplicationUser, ApplicationRole, Guid, IdentityUserClaim<Guid>, ApplicationUserRole, IdentityUserLogin<Guid>, IdentityRoleClaim<Guid>, IdentityUserToken<Guid>>(options)
 {
-    public DbSet<Application> Applications { get; set; }
+	public DbSet<Application> Applications { get; set; }
 
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
@@ -46,7 +46,8 @@ public class AuthenticationDbContext(DbContextOptions options)
 			entity.HasOne(r => r.Application)
 				.WithMany(a => a.Roles)
 				.HasForeignKey(r => r.ApplicationId)
-				.IsRequired().HasConstraintName("FK_Applications_AspNetRoles");
+				.HasConstraintName("FK_Applications_AspNetRoles")
+				.IsRequired();
 		});
 
 		builder.Entity<ApplicationScope>(entity =>
@@ -62,11 +63,14 @@ public class AuthenticationDbContext(DbContextOptions options)
 			entity.HasOne(s => s.Application)
 				.WithMany(a => a.Scopes)
 				.HasForeignKey(r => r.ApplicationId)
-				.IsRequired().HasConstraintName("FK_Applications_AspNetScopes");
+				.HasConstraintName("FK_Applications_AspNetScopes")
+				.IsRequired();
 
-			entity.HasOne(s => s.ScopeGroup).WithMany(sg => sg.Scopes)
-			   .HasForeignKey(s => s.ScopeGroupId)
-			   .HasConstraintName("FK_AspNetScopes_AspNetScopeGroups");
+			entity.HasOne(s => s.ScopeGroup)
+				.WithMany(sg => sg.Scopes)
+				.HasForeignKey(s => s.ScopeGroupId)
+				.HasConstraintName("FK_AspNetScopes_AspNetScopeGroups")
+				.IsRequired(false);
 		});
 
 		builder.Entity<ApplicationScopeGroup>(entity =>
@@ -80,7 +84,8 @@ public class AuthenticationDbContext(DbContextOptions options)
 			entity.HasOne(s => s.Application)
 				.WithMany(a => a.ScopeGroups)
 				.HasForeignKey(r => r.ApplicationId)
-				.IsRequired().HasConstraintName("FK_Applications_AspNetScopeGroups");
+				.HasConstraintName("FK_Applications_AspNetScopeGroups")
+				.IsRequired();
 		});
 
 		builder.Entity<ApplicationUserRole>(userRole =>
@@ -117,8 +122,8 @@ public class AuthenticationDbContext(DbContextOptions options)
 	}
 
 	protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
-    {
-        configurationBuilder.Properties<string>().AreUnicode(false);
-        base.ConfigureConventions(configurationBuilder);
-    }
+	{
+		configurationBuilder.Properties<string>().AreUnicode(false);
+		base.ConfigureConventions(configurationBuilder);
+	}
 }

@@ -13,7 +13,7 @@ public class ApplicationIdMiddleware(RequestDelegate next, IOptions<Authenticati
     {
         var applicationId = context.Request.Headers[authenticationSettings.ApplicationIdHeaderName].FirstOrDefault();
         if (applicationId is null
-            || !applicationId.EqualsIgnoreCase(authenticationSettings.ApplicationId?.ToString())
+            || !applicationId.EqualsIgnoreCase(authenticationSettings.ApplicationId.ToString())
             || (context.User.Identity.IsAuthenticated
                 && !context.User.Claims.Any(x => x.Type == ClaimNames.Application && x.Value.EqualsIgnoreCase(applicationId))))
         {

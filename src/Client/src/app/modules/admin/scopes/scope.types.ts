@@ -7,7 +7,6 @@ export class ApplicationScope {
     applicationId?: string;
     scopeGroupId?: string;
     scopeGroupName?: string;
-    // scopeGroup?: ApplicationScopeGroup;
     roleIds?: string[];
 }
 

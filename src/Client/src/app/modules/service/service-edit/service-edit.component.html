@@ -172,7 +172,7 @@
                                         #name="ngModel"
                                         required
                                         [(ngModel)]="item.status"
-                                        (ngModelChange)="statusTypeChanged()">
+                                        (ngModelChange)="checkChanged()">
                                         <mat-select-trigger>
                                             <span [ngClass]="getStatusColorClass(item)" class="color-box"></span>
                                             {{ getStatusText(item) }}

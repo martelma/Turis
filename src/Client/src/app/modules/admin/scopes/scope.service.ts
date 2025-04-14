@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { BehaviorSubject, Observable, filter, finalize, map, of, switchMap, take, tap, throwError } from 'rxjs';
+import { Injectable } from '@angular/core';
 import { BaseEntityService } from 'app/shared/services';
 import { emptyGuid, PaginatedListResult } from 'app/shared/services/shared.types';
+import { BehaviorSubject, filter, finalize, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
 import { ApplicationScopesSearchParameters, Scope } from '../roles/scopes.types';
 
 @Injectable({ providedIn: 'root' })
-export class ScopeService extends BaseEntityService<Scope> {
+export class ApplicationScopeService extends BaseEntityService<Scope> {
     private _scopes: BehaviorSubject<PaginatedListResult<Scope>> = new BehaviorSubject(null);
     private _scope: BehaviorSubject<Scope> = new BehaviorSubject(null);
     private _scopesLoading: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -17,7 +17,7 @@ export class ScopeService extends BaseEntityService<Scope> {
     });
     constructor(http: HttpClient) {
         super(http);
-        this.defaultApiController = 'scope';
+        this.defaultApiController = 'scopes';
     }
 
     /**
@@ -70,9 +70,13 @@ export class ScopeService extends BaseEntityService<Scope> {
             switchMap(scopes =>
                 of({
                     id: emptyGuid,
-                    code: '',
                     name: '',
+                    description: '',
                     codeIso: '',
+                    applicationId: emptyGuid,
+                    scopeGroupId: emptyGuid,
+                    scopeGroupName: '',
+                    roleIds: [],
                 }).pipe(
                     map(newScope => {
                         // Update the scopes with the new scope

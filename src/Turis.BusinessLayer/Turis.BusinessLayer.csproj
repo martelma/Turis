@@ -26,14 +26,6 @@
 		<Compile Remove="Projections\SerialProjection.cs" />
 		<Compile Remove="SdiHelper.cs" />
 		<Compile Remove="Services\JwtBearerService.cs" />
-		<Compile Remove="Validations\ApplicationRoleRequestValidator.cs" />
-		<Compile Remove="Validations\ApplicationScopeGroupRequestValidator.cs" />
-		<Compile Remove="Validations\ApplicationScopeRequestValidator.cs" />
-		<Compile Remove="Validations\ChangePasswordRequestValidator.cs" />
-		<Compile Remove="Validations\RegisterUserRequestValidator.cs" />
-		<Compile Remove="Validations\ResetPasswordRequestValidator.cs" />
-		<Compile Remove="Validations\SaveApplicationRequestValidator.cs" />
-		<Compile Remove="Validations\UpdateUserRequestValidator.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -30,6 +30,8 @@ import { UsersService } from '../users.service';
 import { UsersListComponent } from '../list/list.component';
 import { UsersFormComponent } from '../form/form.component';
 import { ApplicationRole } from '../../roles/role.types';
+import { UserRolesComponent } from '../user-roles/user-roles.component';
+import { ApplicationRoleService } from '../../roles/role.service';
 
 @UntilDestroy()
 @Component({
@@ -67,6 +69,7 @@ import { ApplicationRole } from '../../roles/role.types';
         FuseAlertComponent,
         FuseFindByKeyPipe,
         UsersFormComponent,
+        UserRolesComponent,
     ],
 })
 export class UsersDetailsComponent implements OnInit {
@@ -88,6 +91,14 @@ export class UsersDetailsComponent implements OnInit {
         userApplicationsSearchInputControl: UntypedFormControl = new UntypedFormControl();
     */
 
+    roles: PaginatedList<ApplicationRole> = {
+        items: [],
+        pageIndex: 0,
+        pageSize: 10,
+        totalCount: 0,
+        hasNextPage: false,
+    };
+
     userRoles: PaginatedList<ApplicationRole> = {
         items: [],
         pageIndex: 0,
@@ -100,6 +111,7 @@ export class UsersDetailsComponent implements OnInit {
         private _activatedRoute: ActivatedRoute,
         private _changeDetectorRef: ChangeDetectorRef,
         private _usersListComponent: UsersListComponent,
+        private _applicationRoleService: ApplicationRoleService,
         private _usersService: UsersService,
         private _router: Router,
         protected userService: UserService,
@@ -114,8 +126,6 @@ export class UsersDetailsComponent implements OnInit {
         this._subscribeUser();
 
         this._subscribeUserRoles();
-        // this._subscribeUserApplications();
-        // this._subscribeUserApplicationsFilter();
     }
 
     private _subscribeActivatedRouteParams(): void {
@@ -132,6 +142,18 @@ export class UsersDetailsComponent implements OnInit {
         });
     }
 
+    private _subscribeRoles(): void {
+        // Get the roles
+        this._applicationRoleService.roles$
+            .pipe(untilDestroyed(this))
+            .subscribe((list: PaginatedList<ApplicationRole>) => {
+                this.roles = list;
+                console.log('roles', this.roles);
+
+                this._changeDetectorRef.detectChanges();
+            });
+    }
+
     private _subscribeUserRoles(): void {
         // Get the user
         this._usersService.userRoles$.pipe(untilDestroyed(this)).subscribe((list: PaginatedList<ApplicationRole>) => {
@@ -142,42 +164,6 @@ export class UsersDetailsComponent implements OnInit {
         });
     }
 
-    /*
-        private _subscribeUserApplications(): void {
-            // Get the user
-            this._usersService.userApplications$
-                .pipe(untilDestroyed(this))
-                .subscribe((list: PaginatedList<Application>) => {
-                    this.userApplications = list;
-
-                    this._changeDetectorRef.detectChanges();
-                });
-        }
-
-        private _subscribeUserApplicationsFilter(): void {
-            // Subscribe to the search field value changes
-            this.userApplicationsSearchInputControl.valueChanges
-                .pipe(
-                    debounceTime(this.debounce),
-                    map(value => value),
-                    untilDestroyed(this),
-                )
-                .subscribe((value: string) => {
-                    if (!this.user?.id) {
-                        return;
-                    }
-
-                    this._usersService
-                        .getUserApplications(this.user?.id, {
-                            pageIndex: 0,
-                            pageSize: this.userApplications.pageSize,
-                            pattern: value,
-                        })
-                        .pipe(untilDestroyed(this))
-                        .subscribe();
-                });
-        }
-    */
     private setUser(user: User): void {
         // Open the drawer in case it is closed
         this._usersListComponent.matDrawer.open();

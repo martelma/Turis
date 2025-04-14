@@ -1,50 +1,47 @@
 <div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
     <!-- Header -->
-    <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
-        <!-- Title -->
-        <div class="text-4xl font-extrabold tracking-tight">
-            {{ 'Navigation.Calendar' | transloco }}
+    <div
+        class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+        <div class="flex-1 min-w-0">
+            <!-- Title -->
+            <div class="flex space-x-2 items-center">
+                <mat-icon class="icon-size-12" [svgIcon]="'heroicons_outline:calendar'"></mat-icon>
+                <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                    {{ 'Navigation.Calendar' | transloco }}
+                </h2>
+            </div>
         </div>
         <!-- Actions -->
         <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
-            <!-- Search -->
-            <app-search-input class="min-w-90"
-                [placeholder]="'General.Filter'"
-                (callbackFn)="filter($event)">
+            <app-search-input class="min-w-90" [placeholder]="'General.Filter'" (callbackFn)="filter($event)">
             </app-search-input>
 
-            <!-- Add priceList button -->
-            <button class="ml-4"
-                mat-flat-button
-                [color]="'primary'"
-                (click)="createService()">
+            <button class="ml-4" mat-flat-button [color]="'primary'" (click)="createService()">
                 <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
                 <span class="ml-2 mr-1">{{ 'General.Add' | transloco }}</span>
             </button>
         </div>
     </div>
     <div class="flex space-x-2 mb-2">
-        <button mat-flat-button
-            color="primary"
-            class="ml-2"
-            (click)="toggleFilter()">
-            <mat-icon *ngIf="!drawerFilterOpened"
+        <button mat-flat-button color="primary" class="ml-2" (click)="toggleFilter()">
+            <mat-icon
+                *ngIf="!drawerFilterOpened"
                 class="icon-size-5 mr-2"
                 [svgIcon]="'heroicons_outline:chevron-double-right'"></mat-icon>
-            <mat-icon *ngIf="drawerFilterOpened"
+            <mat-icon
+                *ngIf="drawerFilterOpened"
                 class="icon-size-5 mr-2"
                 [svgIcon]="'heroicons_outline:chevron-double-left'"></mat-icon>
             <span class="ml-2">{{ 'General.Filters' | transloco }}</span>
         </button>
 
-        <button mat-flat-button
-            color="primary"
-            class="ml-2"
-            (click)="toggleViewMode()">
-            <mat-icon *ngIf="viewMode === 'calendar'"
+        <button mat-flat-button color="primary" class="ml-2" (click)="toggleViewMode()">
+            <mat-icon
+                *ngIf="viewMode === 'calendar'"
                 class="icon-size-5 mr-2"
                 [svgIcon]="'heroicons_outline:list-bullet'"></mat-icon>
-            <mat-icon *ngIf="viewMode === 'list'"
+            <mat-icon
+                *ngIf="viewMode === 'list'"
                 class="icon-size-5 mr-2"
                 [svgIcon]="'heroicons_outline:calendar'"></mat-icon>
             <span class="ml-2">{{ viewMode === 'calendar' ? 'Switch to List View' : 'Switch to Calendar View' }}</span>
@@ -52,15 +49,15 @@
     </div>
 
     <!-- Main -->
-    <div class="relative flex flex-col flex-auto items-center justify-center h-full p-6 sm:p-10">
+    <div class="relative flex flex-col flex-auto items-center justify-center h-full p-3">
         <div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
             <mat-drawer-container class="flex-auto h-full">
                 <!-- Drawer -->
-                <mat-drawer class="w-90 dark:bg-gray-900"
+                <mat-drawer
+                    class="w-90 dark:bg-gray-900"
                     [mode]="drawerFilterMode"
                     [opened]="drawerFilterOpened"
                     #drawer>
-                    <!-- Queries sidebar -->
                     <app-service-sidebar (onFilterChanged)="serviceFilter($event)"></app-service-sidebar>
                 </mat-drawer>
 
@@ -70,12 +67,24 @@
                         <mat-drawer-content class="flex flex-col">
                             <!-- Main -->
                             <div class="flex flex-auto w-full overflow-hidden">
-                                <full-calendar *ngIf="viewMode === 'calendar'"
-                                    #fullCalendar
-                                    class="w-full h-full"
-                                    [options]="calendarOptions"
-                                    [deepChangeDetection]="true"></full-calendar>
-                                <div *ngIf="viewMode === 'list'">todo</div>
+                                <div *ngIf="viewMode === 'calendar'" class="w-full">
+                                    <app-calendar-view-calendar
+                                        class="w-full"
+                                        [(dateFrom)]="dateFrom"
+                                        [(dateTo)]="dateTo"
+                                        [services]="services"
+                                        (onDateChanged)="list()"
+                                        (onSelectedService)="selectedService($event)"></app-calendar-view-calendar>
+                                </div>
+                                <div *ngIf="viewMode === 'list'" class="w-full">
+                                    <app-calendar-view-grid
+                                        class="w-full"
+                                        [(dateFrom)]="dateFrom"
+                                        [(dateTo)]="dateTo"
+                                        [services]="services"
+                                        (onDateChanged)="list()"
+                                        (onSelectedService)="selectedService($event)"></app-calendar-view-grid>
+                                </div>
                             </div>
                         </mat-drawer-content>
                     </mat-drawer-container>
@@ -83,306 +92,18 @@
             </mat-drawer-container>
         </div>
     </div>
-
-    <!-- <div class="flex flex-auto overflow-hidden">
-        <div class="flex flex-col flex-auto overflow-hidden sm:overflow-y-auto">
-            <div class="flex flex-1 flex-auto w-full h-full">
-                <app-service-sidebar></app-service-sidebar>
-                <full-calendar
-                    #fullCalendar
-                    class="w-full h-full"
-                    [options]="calendarOptions"
-                    [deepChangeDetection]="true"></full-calendar>
-            </div>
-        </div>
-    </div> -->
-
-    <!-- Tabs -->
-    <!-- <mat-tab-group class="sm:px-2" mat-stretch-tabs="false" [animationDuration]="'0'">
-                <mat-tab label="Calendar"> </mat-tab>
-                <mat-tab label="List">
-                    <ng-container *ngIf="list?.length > 0; else noData">
-                        <div class="grid">
-                            <div
-                                class="list-grid z-10 sticky top-0 grid gap-4 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
-                                <div class="hidden md:block"></div>
-                                <div class="hidden md:block"></div>
-                                <div class="hidden md:block"></div>
-                                <div class="hidden md:block"></div>
-                                <div class="hidden sm:block">{{ 'Service.Date' | transloco }}</div>
-                                <div class="hidden lg:block">{{ 'Service.Location' | transloco }}</div>
-                                <div class="hidden lg:block">{{ 'Service.MeetingPlace' | transloco }}</div>
-                                <div class="hidden lg:block">{{ 'Service.Title' | transloco }}</div>
-                                <div class="hidden lg:block">{{ 'Service.Client' | transloco }}</div>
-                                <div class="hidden lg:block">{{ 'Service.Collaborator' | transloco }}</div>
-                                <div class="hidden lg:block">{{ 'Service.Languages' | transloco }}</div>
-                                <div class="hidden lg:block">{{ 'Service.ServiceType' | transloco }}</div>
-                                <div class="hidden lg:block">{{ 'Service.DurationType' | transloco }}</div>
-                                <div class="hidden lg:block">{{ 'Service.People' | transloco }}</div>
-                            </div>
-                            <ng-container *ngIf="list">
-                                <ng-container *ngFor="let item of list; trackBy: trackByFn">
-                                    <div class="list-grid grid items-center gap-4 py-3 px-6 md:px-8 border-b">
-                                        <div>
-                                            <mat-icon
-                                                *ngIf="!item.checked"
-                                                [svgIcon]="'heroicons_solid:exclamation-circle'"
-                                                [ngClass]="{ 'text-red-500': true }"
-                                                matTooltip="Servizio NON verificato!"></mat-icon>
-                                            <mat-icon
-                                                *ngIf="item.checked"
-                                                [svgIcon]="'heroicons_solid:check-circle'"
-                                                [ngClass]="{ 'text-green-500': true }"
-                                                matTooltip="Servizio verificato"></mat-icon>
-                                        </div>
-
-                                        <div>
-                                            <mat-icon
-                                                *ngIf="item.workflowCollaboratorStatus === 'DaComunicare'"
-                                                [svgIcon]="'heroicons_solid:exclamation-circle'"
-                                                [ngClass]="{ 'text-red-500': true }"
-                                                matTooltip="Servizio Da Comunicare"></mat-icon>
-                                            <mat-icon
-                                                *ngIf="item.workflowCollaboratorStatus === 'InAttesaDiConferma'"
-                                                [svgIcon]="'heroicons_solid:clock'"
-                                                [ngClass]="{ 'text-gray-500': true }"
-                                                matTooltip="Servizio in attesa di conferma..."></mat-icon>
-                                            <mat-icon
-                                                *ngIf="item.workflowCollaboratorStatus === 'Confermato'"
-                                                [svgIcon]="'heroicons_solid:check-circle'"
-                                                [ngClass]="{ 'text-green-500': true }"
-                                                matTooltip="Servizio Confermato!"></mat-icon>
-                                        </div>
-
-                                        <div></div>
-
-                                        <div></div>
-
-                                        <div>
-                                            {{ item?.date | date: 'dd/MM/yyyy' }}
-                                        </div>
-
-                                        <div class="truncate">
-                                            {{ item.location }}
-                                        </div>
-
-                                        <div class="truncate">
-                                            {{ item?.meetingPlace }}
-                                        </div>
-
-                                        <div>
-                                            {{ item?.title }}
-                                        </div>
-
-                                        <div>
-                                            {{ item?.client?.name }}
-                                        </div>
-
-                                        <div>
-                                            {{ item?.contact?.name }}
-                                        </div>
-
-                                        <div>
-                                            {{ item?.languages }}
-                                        </div>
-
-                                        <div>
-                                            {{ item?.serviceType }}
-                                        </div>
-
-                                        <div>
-                                            {{ item?.durationType }}
-                                        </div>
-
-                                        <div>
-                                            {{ item?.people }}
-                                        </div>
-                                    </div>
-                                    <div class="grid">
-                                        <ng-container *ngIf="selectedItem?.id === item.id">
-                                            <ng-container
-                                                *ngTemplateOutlet="
-                                                    rowDetailsTemplate;
-                                                    context: { $implicit: item }
-                                                "></ng-container>
-                                        </ng-container>
-                                    </div>
-                                </ng-container>
-                            </ng-container>
-                        </div>
-
-                        <mat-paginator
-                            class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
-                            [ngClass]="{ 'pointer-events-none': loading }"
-                            [length]="results?.totalCount ?? 0"
-                            [pageIndex]="queryParameters?.pageIndex ?? 0"
-                            [pageSize]="queryParameters?.pageSize ?? 10"
-                            [pageSizeOptions]="[5, 10, 25, 100]"
-                            (page)="handlePageEvent($event)"
-                            [showFirstLastButtons]="true"></mat-paginator>
-                    </ng-container>
-                    <ng-template #noData>
-                        <div
-                            class="z-100 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
-                            <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">
-                                {{ 'Service.NoData' | transloco }}
-                            </div>
-                        </div>
-                    </ng-template>
-                </mat-tab>
-            </mat-tab-group> -->
 </div>
 
-<fuse-drawer class="w-screen min-w-screen sm:w-128 sm:min-w-128 z-999"
+<fuse-drawer
+    class="w-screen min-w-screen sm:w-128 sm:min-w-128 z-999"
     fixed
     [mode]="'over'"
     [name]="'detailsDrawer'"
     [position]="'right'"
     (openedChanged)="drawerDetailsChanged($event)"
     #detailsDrawer>
-    <div class="flex flex-col flex-auto p-3">
-        <div class="flex flex-col w-full overflow-auto bg-card">
-            <div class="flex flex-row items-center px-6 h-20 min-h-20 text-white bg-primary">
-                <mat-icon class="icon-size-7 text-current"
-                    [svgIcon]="'heroicons_outline:square-3-stack-3d'"></mat-icon>
-                <div class="ml-3 text-2xl font-semibold tracking-tight">Service Details</div>
-                <button class="ml-auto"
-                    mat-icon-button
-                    (click)="closeDrawer()">
-                    <mat-icon class="text-current"
-                        [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
-                </button>
-            </div>
-
-            <a [routerLink]="['/service', currentService?.id]"
-                target="_blank">
-                <div class="flex-1 flex-col mt-2">
-                    <span class="text-lg font-extrabold">[{{ currentService?.code }}] - {{ currentService?.title }}</span>
-                </div>
-            </a>
-
-            <!-- Information -->
-            <div class="text-lg font-semibold mt-8">Information</div>
-            <div class="flex flex-col mt-4 border-t border-b divide-y font-medium">
-                <div class="flex items-center justify-between py-3">
-                    <div class="text-secondary">Status</div>
-                    <div>
-                        <span [ngClass]="getStatusColorClass(currentService)"
-                            class="color-box mr-3"
-                            [matTooltip]="currentService?.status"></span>
-                        <span [ngClass]="getBillingStatusColorClass(currentService)"
-                            class="color-box mr-3"
-                            [matTooltip]="currentService?.billingStatus"></span>
-                        <span [ngClass]="getCommissionStatusColorClass(currentService)"
-                            class="color-box"
-                            [matTooltip]="currentService?.commissionStatus"></span>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between py-3">
-                    <div class="text-secondary">Date</div>
-                    <div>{{ currentService?.dateText }}</div>
-                </div>
-                <div class="flex items-center justify-between py-3">
-                    <div class="text-secondary">Location</div>
-                    <div>{{ currentService?.location }}</div>
-                </div>
-                <div class="flex items-center justify-between py-3">
-                    <div class="text-secondary">People</div>
-                    <div>{{ currentService?.people }}</div>
-                </div>
-                <div class="flex items-center justify-between py-3">
-                    <div class="text-secondary">Languages</div>
-                    <!-- <div>{{ currentService?.languages }}</div> -->
-                    <div class="flex space-x-2 items-center">
-                        <div *ngFor="let lang of currentService?.languages">
-                            <span [matTooltip]="lang"
-                                [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between py-3">
-                    <div class="text-secondary">Service Type</div>
-                    <div>{{ currentService?.serviceType }}</div>
-                </div>
-                <div class="flex items-center justify-between py-3">
-                    <div class="text-secondary">Duration Type</div>
-                    <div>{{ currentService?.durationType }}</div>
-                </div>
-                <div class="flex items-center justify-between py-3">
-                    <div class="text-secondary">Meeting Place</div>
-                    <div>{{ currentService?.meetingPlace }}</div>
-                </div>
-                <div class="flex items-center justify-between py-3">
-                    <div class="text-secondary">Referent</div>
-                    <div>{{ currentService?.referent }}</div>
-                </div>
-                <div class="flex items-center justify-between py-3">
-                    <div class="text-secondary">Referent Phone</div>
-                    <div>{{ currentService?.referentPhone }}</div>
-                </div>
-            </div>
-
-            <div class="text-secondary mt-3 mb-1">Client</div>
-            <div class="flex w-full items-center mt-3">
-                <a [routerLink]="['/contact', currentService?.client?.id]"
-                    target="_blank">
-                    <div class="flex h-10 w-10 flex-0 items-center justify-center overflow-hidden rounded-full">
-                        <img alt="Avatar"
-                            class="h-full w-full"
-                            [src]="currentService?.client?.avatarUrl" />
-                    </div>
-                </a>
-                <div class="ml-4 min-w-0">
-                    <div class="truncate font-extrabold">{{ currentService?.client?.fullName }}</div>
-
-                    <div class="flex space-x-2 items-center">
-                        <div *ngFor="let lang of currentService?.client?.languages">
-                            <span [matTooltip]="lang"
-                                [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
-                        </div>
-                    </div>
-
-                    <!-- <div class="truncate font-semibold">{{ currentService?.collaborator?.fullName }}</div> -->
-                    <!-- <div class="mt-0.5 flex items-center leading-5">
-                <div>to</div>
-                <div class="ml-1 font-semibold">me</div>
-            </div> -->
-                </div>
-            </div>
-
-            <div class="text-secondary mt-3 mb-1">Collaborator</div>
-            <div class="flex w-full items-center mt-3">
-                <a [routerLink]="['/contact', currentService?.collaborator?.id]"
-                    target="_blank">
-                    <div class="flex h-10 w-10 flex-0 items-center justify-center overflow-hidden rounded-full">
-                        <img alt="Avatar"
-                            class="h-full w-full"
-                            [src]="currentService?.collaborator?.avatarUrl" />
-                    </div>
-                </a>
-                <div class="ml-4 min-w-0">
-                    <div class="truncate font-extrabold">{{ currentService?.collaborator?.fullName }}</div>
-
-                    <div class="flex space-x-2 items-center">
-                        <div *ngFor="let lang of currentService?.collaborator?.languages">
-                            <span [matTooltip]="lang"
-                                [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
-                        </div>
-                    </div>
-
-                    <!-- <div class="truncate font-semibold">{{ currentService?.collaborator?.fullName }}</div> -->
-                    <!-- <div class="mt-0.5 flex items-center leading-5">
-                    <div>to</div>
-                    <div class="ml-1 font-semibold">me</div>
-                </div> -->
-                </div>
-            </div>
-
-            <!-- Note -->
-            <div class="text-lg font-medium mt-8">Note</div>
-            <div class="flex flex-col mt-4 border-t border-b divide-y font-medium">
-                <pre>{{ currentService?.note }}</pre>
-            </div>
-        </div>
-    </div>
+    <app-calendar-detail
+        class="w-full"
+        [service]="currentService"
+        (onCloseDrawer)="closeDrawer()"></app-calendar-detail>
 </fuse-drawer>

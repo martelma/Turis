@@ -1,8 +1,13 @@
 import { SafeUrl } from '@angular/platform-browser';
+import { ApplicationRole } from 'app/modules/admin/roles/role.types';
 import { Application } from 'app/shared/services/shared.types';
 
 export interface User {
     id: string;
+    applicationId?: string;
+    applicationName?: string;
+    applicationRoles: ApplicationRole[];
+    applications: Application[];
     userName: string;
     firstName: string;
     lastName: string;
@@ -15,7 +20,8 @@ export interface User {
     language?: string;
 
     accountType?: AccountType;
-    applications: Application[];
+    roles: string[];
+    scopes: string[];
 }
 
 export enum AccountType {

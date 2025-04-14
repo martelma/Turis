@@ -1,6 +1,6 @@
 import { User } from 'app/core/user/user.types';
-import { Scope } from './scopes.types';
 import { BaseSearchParameters } from 'app/shared/types/shared.types';
+import { Scope } from './scopes.types';
 
 export interface ApplicationRole {
     applicationId?: string;
@@ -11,6 +11,6 @@ export interface ApplicationRole {
     users?: User[];
 }
 
-export interface RoleSearchParameters extends BaseSearchParameters {
+export interface ApplicationRoleSearchParameters extends BaseSearchParameters {
     pattern?: string;
 }

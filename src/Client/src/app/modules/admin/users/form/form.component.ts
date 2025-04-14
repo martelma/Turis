@@ -103,10 +103,18 @@ export class UsersFormComponent implements OnInit {
             firstName: '',
             lastName: '',
             fullName: '',
+            avatar: '',
+            avatarUrl: '',
+            language: '',
             isActive: false,
+            twoFactorEnabled: false,
+            applicationId: null,
+            applicationName: null,
+            applicationRoles: [],
             accountType: null,
             applications: [],
-            twoFactorEnabled: false,
+            roles: [],
+            scopes: [],
         };
         this.form = this._formBuilder.group(u);
     }

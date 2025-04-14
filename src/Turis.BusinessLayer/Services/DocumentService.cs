@@ -17,11 +17,11 @@ using Turis.DataAccessLayer.Entities;
 namespace Turis.BusinessLayer.Services;
 
 public class DocumentService(ApplicationDbContext dbContext
+	, ILogger<DocumentService> logger
 	, IUserService userService
 	, IBookmarkService bookmarkService
-	, IAttachmentService attachmentService
 	, IEntityTagService entityTagService
-	, ILogger<DocumentService> logger) : IDocumentService
+	) : IDocumentService
 {
 	private const string EntryName = nameof(Document);
 

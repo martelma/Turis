@@ -18,6 +18,7 @@ public interface IAttachmentService : IService
 	Task<Attachment> SaveAsync(AttachmentRequest model);
 	Task<Result> DeleteAsync(Guid id);
 	Task<Result> DeleteAllAsync(string entityName, Guid entityKey, string folder);
+	Task<Result<StreamFileContent>> DownloadAsync(Guid attachmentId);
 	Task<Result<StreamFileContent>> DownloadAllAsync(string entityName, Guid entityKey, string folder);
 	Task<Result> Upload(IFormFileCollection files, string entityName, string entityKey, string folder);
 }

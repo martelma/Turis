@@ -45,6 +45,7 @@ using Turis.WebApi.ClientContext;
 using Microsoft.Net.Http.Headers;
 using Turis.DataAccessLayer.Entities.Base;
 using Turis.BusinessLayer.Settings;
+using Turis.Common.Models.Requests;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -116,7 +117,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 		options.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
 	});
 
-	services.AddScoped<IRoleValidator<ApplicationRole>, ApplicationRoleValidator>();
+	services.AddScoped<IRoleValidator<ApplicationRoleRequest>, ApplicationRoleValidator>();
 	services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 		{
 			options.User.RequireUniqueEmail = true;
@@ -130,7 +131,6 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 			options.Password.RequireDigit = authenticationSettings.Password.RequireDigit;
 		})
 		.AddEntityFrameworkStores<ApplicationDbContext>()
-		.AddRoleValidator<ApplicationRoleValidator>()
 		.AddDefaultTokenProviders()
 		.AddErrorDescriber<LocalizedIdentityErrorDescriber>();
 

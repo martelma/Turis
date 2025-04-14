@@ -16,4 +16,6 @@ public class UserModel : BaseModel
 	public string Language { get; set; }
 
 	public IEnumerable<ApplicationModel> Applications { get; set; } = [];
+	public IEnumerable<string> Roles { get; set; } = [];
+	public IEnumerable<string> Scopes { get; set; } = [];
 }

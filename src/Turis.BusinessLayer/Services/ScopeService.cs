@@ -1,5 +1,4 @@
-﻿using System.Linq.Dynamic.Core;
-using System.Linq.Dynamic.Core.Exceptions;
+﻿using System.Linq.Dynamic.Core.Exceptions;
 using JeMa.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -9,130 +8,105 @@ using Turis.BusinessLayer.Services.Interfaces;
 using Turis.Common.Models;
 using Turis.DataAccessLayer;
 using Turis.BusinessLayer.Resources;
+using Microsoft.Extensions.Options;
+using TinyHelpers.Extensions;
+using Turis.Authentication.Settings;
+using Turis.BusinessLayer.Extensions;
+using Turis.Common.Models.Requests;
 
 namespace Turis.BusinessLayer.Services;
 
-public class ScopeService(IDbContext dbContext, ILogger<ScopeService> logger) : IScopeService
+public class ScopeService(IDbContext dbContext,
+	ILogger<ScopeService> logger,
+	IOptions<AuthenticationSettings> authenticationSettingsOptions) : IScopeService
 {
-    public async Task<Result<PaginatedList<ApplicationScopeModel>>> ListAsync(Guid applicationId, Guid? roleId, int pageIndex, int itemsPerPage, string orderBy)
-    {
-        var query = dbContext.GetData<ApplicationScope>().Where(s => s.ApplicationId == applicationId);
+	private readonly AuthenticationSettings authenticationSettings = authenticationSettingsOptions.Value;
 
-        var totalCount = await query.CountAsync();
+	public async Task<Result<PaginatedList<ApplicationScopeModel>>> ListAsync(Guid? roleId, int pageIndex, int itemsPerPage, string orderBy)
+	{
+		var query = dbContext.GetData<ApplicationScope>()
+			.Include(x => x.ScopeGroup)
+			.Include(x => x.Roles)
+			.Where(s => s.ApplicationId == authenticationSettings.ApplicationId)
+			.OrderBy(x => x.Name);
 
-        if (orderBy != null && orderBy.Trim().Length > 0)
-        {
-            try
-            {
-                query = query.OrderBy(orderBy);
-            }
-            catch (ParseException ex)
-            {
-                logger.LogError(ex, Errors.OrderByLoggerError, orderBy);
-                return Result.Fail(FailureReasons.ClientError, string.Format(Errors.OrderByError, orderBy));
-            }
-        }
+		var totalCount = await query.CountAsync();
 
-        var data = await query
-            .Skip(pageIndex * itemsPerPage).Take(itemsPerPage + 1)      // Prova a prendere un elemento in più di quelli richiesti per controllare se ci sono pagine successive.
-            .Select(s => new ApplicationScopeModel
+		if (orderBy != null && orderBy.Trim().Length > 0)
+		{
+			try
 			{
-                Id = s.Id,
-                Name = s.Name,
-                Description = s.Description,
-                RoleIds = s.Roles.Select(r => r.RoleId).ToList(),
-                ScopeGroupId = s.ScopeGroupId,
-                ScopeGroupName = s.ScopeGroup != null ? s.ScopeGroup.Name.ToString() : "No Group",
-                ApplicationId = s.ApplicationId
-            }).ToListAsync();
+				if (orderBy.EqualsIgnoreCase("Name"))
+					query = query.OrderBy(x => x.Name);
+			}
+			catch (ParseException ex)
+			{
+				logger.LogError(ex, Errors.OrderByLoggerError, orderBy);
+				return Result.Fail(FailureReasons.ClientError, string.Format(Errors.OrderByError, orderBy));
+			}
+		}
 
-        var result = new PaginatedList<ApplicationScopeModel>(data.Take(itemsPerPage), totalCount, data.Count > itemsPerPage);
-        return result;
-    }
+		var data = query
+			.Skip(pageIndex * itemsPerPage).Take(itemsPerPage + 1)      // Prova a prendere un elemento in più di quelli richiesti per controllare se ci sono pagine successive.
+			.ToModel()
+			.ToList();
 
-    public async Task<Result<ApplicationScopeModel>> GetAsync(Guid applicationId, Guid scopeId)
-    {
-        var scope = await dbContext.GetData<ApplicationScope>()
-            .Where(s => s.ApplicationId == applicationId && s.Id == scopeId)
-            .Select(s => new ApplicationScopeModel()
-            {
-                Id = s.Id,
-                Name = s.Name,
-                Description = s.Description,
-                RoleIds = s.Roles.Select(r => r.RoleId).ToList(),
-                ApplicationId = s.ApplicationId,
-                ScopeGroupId = s.ScopeGroupId,
-            }).FirstOrDefaultAsync();
+		var result = new PaginatedList<ApplicationScopeModel>(data.Take(itemsPerPage), totalCount, data.Count > itemsPerPage);
+		return result;
+	}
 
-        if (scope is null)
-        {
-            return Result.Fail(FailureReasons.ItemNotFound);
-        }
+	public async Task<Result<ApplicationScopeModel>> GetAsync(Guid scopeId)
+	{
+		var scope = await dbContext.GetData<ApplicationScope>()
+			.Include(x => x.ScopeGroup)
+			.Include(x => x.Roles)
+			.Where(s => s.ApplicationId == authenticationSettings.ApplicationId && s.Id == scopeId)
+			.FirstOrDefaultAsync();
 
-        return scope;
-    }
+		if (scope is null)
+		{
+			return Result.Fail(FailureReasons.ItemNotFound);
+		}
 
-    public async Task<Result<ApplicationScopeModel>> SaveAsync(Guid applicationId, ApplicationScopeModel scope)
-    {
-        var dbScope = await dbContext.GetAsync<ApplicationScope>(scope.Id);
+		return scope.ToModel();
+	}
 
-        if (dbScope is null)
-        {
-            dbScope = new ApplicationScope();
-            dbContext.Insert(dbScope);
-        }
+	public async Task<Result<ApplicationScopeModel>> SaveAsync(ApplicationScopeRequest request)
+	{
+		var dbScope = await dbContext.GetAsync<ApplicationScope>(request.Id);
 
-        dbScope.Id = scope.Id;
-        dbScope.ApplicationId = applicationId;
-        dbScope.Name = scope.Name;
-        dbScope.Description = scope.Description;
-        dbScope.ScopeGroupId = scope.ScopeGroupId;
+		if (dbScope is null)
+		{
+			dbScope = new ApplicationScope
+			{
+				Id = Guid.NewGuid()
+			};
+			dbContext.Insert(dbScope);
+		}
 
-        await SaveScopeRolesAsync(scope, dbScope);
+		//dbScope.Id = request.Id;
+		dbScope.ApplicationId = authenticationSettings.ApplicationId;
+		dbScope.Name = request.Name;
+		dbScope.Description = request.Description;
+		if (request.ScopeGroupId.HasValue())
+			dbScope.ScopeGroupId = request.ScopeGroupId.Value;
 
-        await dbContext.SaveAsync();
+		await dbContext.SaveAsync();
 
-        scope.Id = dbScope.Id;
-        return scope;
-    }
+		request.Id = dbScope.Id;
+		return dbScope.ToModel();
+	}
 
-    private static Task SaveScopeRolesAsync(ApplicationScopeModel model, ApplicationScope record)
-    {
-        record.Roles ??= [];
-        model.RoleIds ??= [];
+	public async Task<Result> DeleteAsync(Guid scopeId)
+	{
+		var deleteRows = await dbContext.GetData<ApplicationScope>()
+			.Where(r => r.ApplicationId == authenticationSettings.ApplicationId && r.Id == scopeId).ExecuteDeleteAsync();
 
-        //DELETE: Delete from the list of records the items no longer present in the new list
-        var newIds = model.RoleIds;
-        record.Roles.RemoveAll(x => !newIds.Contains(x.RoleId));
+		if (deleteRows == 0)
+		{
+			return Result.Fail(FailureReasons.ItemNotFound);
+		}
 
-        //ADD-UPDATE
-        foreach (var roleModelId in model.RoleIds)
-        {
-            var roleScope = record.Roles.FirstOrDefault(x => x.RoleId == roleModelId);
-            if (roleScope == null)
-            {
-                roleScope = new ApplicationRoleScope
-                {
-                    ScopeId = record.Id,
-                    RoleId = roleModelId,
-                };
-                record.Roles.Add(roleScope);
-            }
-        }
-
-        return Task.CompletedTask;
-    }
-
-    public async Task<Result> DeleteAsync(Guid applicationId, Guid scopeId)
-    {
-        var deleteRows = await dbContext.GetData<ApplicationScopeModel>()
-            .Where(r => r.ApplicationId == applicationId && r.Id == scopeId).ExecuteDeleteAsync();
-
-        if (deleteRows == 0)
-        {
-            return Result.Fail(FailureReasons.ItemNotFound);
-        }
-
-        return Result.Ok();
-    }
+		return Result.Ok();
+	}
 }

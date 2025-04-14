@@ -268,6 +268,18 @@ export class AuthService {
             );
     }
 
+    remainingLoginAttempts(userName: string): Observable<number> {
+        return this._httpClient.get<number>(
+            `${environment.baseUrl}/api/auth/remaining-login-attempts?userName=${userName}`,
+        );
+    }
+
+    requestUnlock(userName: string): Observable<void> {
+        return this._httpClient.post<void>(`${environment.baseUrl}/api/auth/request-unlock`, {
+            userName,
+        });
+    }
+
     unlockUser(userName: string): Observable<void> {
         return this._httpClient.post<void>(`${environment.baseUrl}/api/auth/unlock`, {
             userName,

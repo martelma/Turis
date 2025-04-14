@@ -1,12 +1,18 @@
 ﻿using FluentValidation;
+using Turis.BusinessLayer.Resources;
+using Turis.Common.Models.Requests;
 
 namespace Turis.BusinessLayer.Validations;
 
-public class ApplicationScopeRequestValidator : AbstractValidator<ApplicationScope>
+public class ApplicationScopeRequestValidator : AbstractValidator<ApplicationScopeRequest>
 {
     public ApplicationScopeRequestValidator()
     {
-        RuleFor(request => request.Name).NotEmpty().WithMessage(Account.FieldRequired).MaximumLength(128).WithMessage(Account.FieldMaxLength).WithName(Account.Name);
-        RuleFor(request => request.RoleIds).NotEmpty().WithMessage(Account.FieldRequired).WithName(Account.RoleId);
+        RuleFor(request => request.Name)
+	        .NotEmpty()
+	        .WithMessage(Account.FieldRequired)
+	        .MaximumLength(128)
+	        .WithMessage(Account.FieldMaxLength)
+	        .WithName(Account.Name);
     }
 }

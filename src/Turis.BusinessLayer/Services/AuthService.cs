@@ -18,12 +18,9 @@ namespace Turis.BusinessLayer.Services;
 public class AuthService(ApplicationDbContext dbContext,
 	UserManager<ApplicationUser> userManager,
 	IOptions<AuthenticationSettings> authenticationSettingsOptions,
-	SignInManager<ApplicationUser> signInManager,
 	IUserService userService,
 	IRoleService roleService,
-	IHttpContextAccessor httpContextAccessor,
-	ITimeLimitedDataProtector timeLimitedDataProtector,
-	IMemoryCache memoryCache
+	ITimeLimitedDataProtector timeLimitedDataProtector
 	) : BaseService, IAuthService
 {
 	private readonly AuthenticationSettings authenticationSettings = authenticationSettingsOptions.Value;
@@ -38,7 +35,7 @@ public class AuthService(ApplicationDbContext dbContext,
 
 	private async Task AddIfNotExistRole(string roleName)
 	{
-		var result = await roleService.GetAsync(authenticationSettings.ApplicationId.Value, roleName);
+		var result = await roleService.GetAsync(roleName);
 	}
 
 	private async Task<Result> AddIfNotExistUser(string firstName, string lastName, string userName, string email)

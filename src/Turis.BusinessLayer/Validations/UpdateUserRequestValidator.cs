@@ -1,4 +1,6 @@
 ﻿using FluentValidation;
+using Turis.BusinessLayer.Resources;
+using Turis.Common.Models.Requests;
 
 namespace Turis.BusinessLayer.Validations;
 

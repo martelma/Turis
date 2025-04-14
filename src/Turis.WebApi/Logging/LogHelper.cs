@@ -20,7 +20,7 @@ public static class LogHelper
 		}
 
 		var authenticationSettings = httpContext.RequestServices.GetRequiredService<IOptions<AuthenticationSettings>>().Value;
-		var applicationId = httpContext.Request.Headers[authenticationSettings.ApplicationIdHeaderName].FirstOrDefault().GetValueOrDefault(authenticationSettings.ApplicationId?.ToString());
+		var applicationId = httpContext.Request.Headers[authenticationSettings.ApplicationIdHeaderName].FirstOrDefault().GetValueOrDefault(authenticationSettings.ApplicationId.ToString());
 		if (applicationId.HasValue())
 		{
 			diagnosticContext.Set("ApplicationId", applicationId);

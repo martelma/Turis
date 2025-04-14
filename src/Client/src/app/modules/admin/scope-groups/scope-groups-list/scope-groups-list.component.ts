@@ -17,11 +17,10 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { trackByFn } from 'app/shared';
-import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { SearchInputComponent } from 'app/shared/components/ui/search-input/search-input.component';
+import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { ApplicationScopeGroupService } from '../scope-group.service';
 import { ApplicationScopeGroup, ApplicationScopeGroupSearchParameters } from '../scope-group.types';
-import { ApplicationScopesSearchParameters } from '../../roles/scopes.types';
 
 @UntilDestroy()
 @Component({
@@ -105,7 +104,7 @@ export class ApplicationScopeGroupListComponent implements OnInit, AfterViewInit
         });
 
         // ApplicationScopeGroups
-        this._scopeGroupApplicationScopeGroupService.applicationScopeGroups$
+        this._scopeGroupApplicationScopeGroupService.scopeGroups$
             .pipe(untilDestroyed(this))
             .subscribe((results: PaginatedListResult<ApplicationScopeGroup>) => {
                 this.results = results;
@@ -113,7 +112,7 @@ export class ApplicationScopeGroupListComponent implements OnInit, AfterViewInit
             });
 
         // ApplicationScopeGroups loading
-        this._scopeGroupApplicationScopeGroupService.applicationScopeGroupsLoading$
+        this._scopeGroupApplicationScopeGroupService.scopeGroupsLoading$
             .pipe(untilDestroyed(this))
             .subscribe((scopeGroupApplicationScopeGroupsLoading: boolean) => {
                 this.itemsLoading = scopeGroupApplicationScopeGroupsLoading;
@@ -168,7 +167,6 @@ export class ApplicationScopeGroupListComponent implements OnInit, AfterViewInit
     }
 
     private _updateSelectedItem(item: ApplicationScopeGroup): void {
-        // Go to new tag
         this.selectedItem = item;
 
         // Fill the form

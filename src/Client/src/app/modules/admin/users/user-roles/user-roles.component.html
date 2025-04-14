@@ -1,0 +1,101 @@
+<!-- Main actions -->
+<!-- <div class="mt-4 flex items-center sm:mt-0 md:mt-4">
+    <button class="ml-4" mat-flat-button [color]="'primary'" (click)="createRole()">
+        <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+        <span class="ml-2 mr-1">
+            {{ 'General.Add' | transloco }}
+        </span>
+    </button>
+</div> -->
+
+<!-- Main -->
+<div class="flex h-full flex-col px-6 pb-12 pt-9 md:p-8 md:pb-12 lg:p-12">
+    <!-- Load settings application -->
+    <ng-container *ngIf="applicationRoles?.length; else noRoles">
+        <div class="mt-2 flex h-full w-full overflow-y-auto">
+            <mat-grid-list #grid [cols]="cols" rowHeight="300px" class="flex h-full w-full" [gutterSize]="'5'">
+                <mat-grid-tile *ngFor="let role of applicationRoles; trackBy: trackByFn" [colspan]="1" [rowspan]="1">
+                    <div class="flex h-full w-full p-5">
+                        <fuse-card
+                            class="relative flex flex-1 transform cursor-pointer flex-col p-6 transition duration-200 hover:scale-110"
+                            (click)="hasUserRole(role) ? removeRole(role) : addRole(role)"
+                            role="button"
+                            tabindex="0"
+                            (keypress)="$event.preventDefault()">
+                            <!-- Check if selected -->
+                            <div *ngIf="hasUserRole(role)" class="absolute bottom-0 right-0 -m-6 h-24 w-24">
+                                <mat-icon
+                                    class="text-green-500 opacity-25 icon-size-24 dark:text-green-400"
+                                    [svgIcon]="'heroicons_outline:check-circle'"></mat-icon>
+                            </div>
+
+                            <div class="mb-4 flex items-center border-b pb-2">
+                                <div class="flex flex-col truncate">
+                                    <div
+                                        class="truncate text-xl font-semibold leading-6 tracking-tight"
+                                        [matTooltip]="role.name">
+                                        {{ role.name }}
+                                    </div>
+                                    <div class="text-sm font-medium text-green-600">
+                                        {{ role.description }}
+                                    </div>
+                                </div>
+                                <!-- <div class="-mt-2 ml-auto">
+                                        <button
+                                            mat-icon-button
+                                            [matMenuTriggerFor]="roleMenu"
+                                            (click)="$event.stopPropagation()">
+                                            <mat-icon
+                                                class="icon-size-5"
+                                                [svgIcon]="'heroicons_mini:ellipsis-vertical'"></mat-icon>
+                                        </button>
+                                        <mat-menu #roleMenu="matMenu">
+                                            <button mat-menu-item (click)="$event.stopPropagation(); editRole(role)">
+                                                <span class="flex items-center">
+                                                    <mat-icon
+                                                        class="mr-3 icon-size-5"
+                                                        [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
+                                                    <span>{{ 'General.Edit' | transloco }}</span>
+                                                </span>
+                                            </button>
+                                        </mat-menu>
+                                    </div> -->
+                            </div>
+
+                            <!-- Role Scopes -->
+                            <ng-container *ngIf="role?.scopes?.length">
+                                <div class="flex items-center space-x-2">
+                                    <mat-icon
+                                        class="icon-size-6"
+                                        [svgIcon]="'heroicons_outline:check-badge'"></mat-icon>
+                                    <span class="text-lg font-medium leading-6 tracking-tight"> Scopes </span>
+                                </div>
+                                <div class="mt-2 flex flex-col divide-y overflow-auto">
+                                    <ng-container *ngFor="let scope of role?.scopes; trackBy: trackByFn">
+                                        <div class="flex flex-row items-center justify-between px-2 py-4">
+                                            <div class="flex flex-col">
+                                                <div class="font-medium">{{ scope.name }}</div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                            <div *ngIf="!role?.scopes?.length">
+                                <fuse-alert [appearance]="'soft'" [type]="'info'">
+                                    {{ 'Users.NoScopesInRole' | transloco }}
+                                </fuse-alert>
+                            </div>
+                        </fuse-card>
+                    </div>
+                </mat-grid-tile>
+            </mat-grid-list>
+        </div>
+    </ng-container>
+
+    <!-- No Roles -->
+    <ng-template #noRoles>
+        <div class="border-t p-8 text-center text-4xl font-semibold tracking-tight sm:p-16">
+            {{ 'Users.NoRoles' | transloco }}
+        </div>
+    </ng-template>
+</div>

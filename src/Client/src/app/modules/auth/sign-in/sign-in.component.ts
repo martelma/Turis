@@ -20,11 +20,13 @@ import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
-import { switchMap, catchError, of, tap } from 'rxjs';
+import { switchMap, catchError, of, tap, map } from 'rxjs';
 import { emailOrUsernameValidator } from './sign-in.validators';
 import { Login, Otp, PartialLogin, isPartialLogin } from 'app/core/auth/auth.types';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { A11yModule } from '@angular/cdk/a11y';
+import { environment } from 'environments/environment';
+import { HttpStatusCode } from '@angular/common/http';
 
 @UntilDestroy()
 @Component({
@@ -62,10 +64,14 @@ export class SignInComponent implements OnInit {
     showAlert = false;
     signInForm: UntypedFormGroup;
     loginFailed = false;
+    remainingLoginAttempts = 5;
 
     // Partial Login
     partialLogin: PartialLogin;
     resetPasswordForm: UntypedFormGroup;
+
+    showRequestUnlock = false;
+    errors = [];
 
     public isSignInLoading = false;
     private _redirectURL = '';
@@ -84,10 +90,10 @@ export class SignInComponent implements OnInit {
 
     ngOnInit(): void {
         // Create the login form
-        if (isDevMode) {
+        if (!environment.production) {
             this.signInForm = this._formBuilder.group({
                 usernameEmail: ['mario', [Validators.required, emailOrUsernameValidator(/[a-zA-Z0-9]{3,}/)]],
-                password: ['Abc.123', Validators.required],
+                password: ['Abcd.1234', Validators.required],
             });
         } else {
             this.signInForm = this._formBuilder.group({
@@ -133,7 +139,7 @@ export class SignInComponent implements OnInit {
                         }
                     }
                 }),
-                catchError(() => {
+                catchError(error => {
                     this.loginFailed = true;
 
                     // Set focus on password input
@@ -141,7 +147,28 @@ export class SignInComponent implements OnInit {
                     this.passwordFieldInput.nativeElement.focus();
                     this._changeDetectorRef.detectChanges();
 
-                    return of(false);
+                    // return of(false);
+
+                    // Shows eventual errors from backend
+                    this.showAlert = true;
+                    this.alert = {
+                        ...this.alert,
+                        type: 'error',
+                        message: error.error.title,
+                    };
+
+                    this.showRequestUnlock = error.status === HttpStatusCode.Forbidden;
+
+                    // Updates the number of login attempts
+                    return this._authService.remainingLoginAttempts(this.signInForm.get('usernameEmail').value).pipe(
+                        tap(remainingLoginAttempts => {
+                            this.remainingLoginAttempts = remainingLoginAttempts;
+
+                            this._changeDetectorRef.detectChanges();
+                        }),
+                        map(() => of({ token: null })),
+                        untilDestroyed(this),
+                    );
                 }),
                 untilDestroyed(this),
             )

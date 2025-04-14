@@ -1,9 +1,26 @@
-import { CurrencyPipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { CurrencyPipe, JsonPipe, KeyValuePipe, NgClass, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
+import {
+    AfterViewInit,
+    ChangeDetectorRef,
+    Component,
+    OnInit,
+    QueryList,
+    ViewChild,
+    ViewChildren,
+    ViewEncapsulation,
+} from '@angular/core';
+import {
+    FormControl,
+    FormsModule,
+    ReactiveFormsModule,
+    UntypedFormBuilder,
+    UntypedFormGroup,
+    Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
+import { MatExpansionModule, MatExpansionPanel } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -19,8 +36,14 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { trackByFn } from 'app/shared';
 import { SearchInputComponent } from 'app/shared/components/ui/search-input/search-input.component';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
-import { ApplicationRole, RoleSearchParameters } from '../role.types';
-import { RoleService } from '../role.service';
+import { PaginatedList } from 'app/shared/types/shared.types';
+import { groupBy, mapValues, omit } from 'lodash';
+import { ApplicationScopeGroupService } from '../../scope-groups/scope-group.service';
+import { ApplicationScopeGroup } from '../../scope-groups/scope-group.types';
+import { ApplicationScopeService } from '../../scopes/scope.service';
+import { ApplicationScope } from '../../scopes/scope.types';
+import { ApplicationRoleService } from '../role.service';
+import { ApplicationRole, ApplicationRoleSearchParameters } from '../role.types';
 
 @UntilDestroy()
 @Component({
@@ -29,8 +52,8 @@ import { RoleService } from '../role.service';
     styles: [
         /* language=SCSS */
         `
-            .role-grid {
-                grid-template-columns: auto auto auto 1fr;
+            .list-grid {
+                grid-template-columns: auto 1fr 1fr;
             }
         `,
     ],
@@ -44,6 +67,7 @@ import { RoleService } from '../role.service';
         NgStyle,
         JsonPipe,
         CurrencyPipe,
+        KeyValuePipe,
         FormsModule,
         ReactiveFormsModule,
         MatProgressBarModule,
@@ -53,6 +77,7 @@ import { RoleService } from '../role.service';
         MatButtonModule,
         MatSortModule,
         NgTemplateOutlet,
+        MatExpansionModule,
         MatPaginatorModule,
         MatSlideToggleModule,
         MatSelectModule,
@@ -67,67 +92,112 @@ export class RoleListComponent implements OnInit, AfterViewInit {
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
     @ViewChild(MatSort) private _sort: MatSort;
 
+    @ViewChildren('card') cards: QueryList<MatExpansionPanel>;
+
+    public collapsed = false;
+
     flashMessage: 'success' | 'error' | null = null;
 
     results: PaginatedListResult<ApplicationRole>;
-    roles: ApplicationRole[] = [];
+    list: ApplicationRole[] = [];
     itemsLoading = false;
-    queryParameters: RoleSearchParameters;
+    queryParameters: ApplicationRoleSearchParameters;
 
     activeLang: string;
     selectedItem: ApplicationRole | null = null;
     selectedItemForm: UntypedFormGroup;
 
-    rolesColumns = ['code', 'name', 'description', 'details'];
+    displayColumns = ['name', 'description'];
+
+    allApplicationScopes: ApplicationScope[] = [];
+
+    public groupedApplicationScopes: {
+        [x: string]: Pick<
+            ApplicationScope,
+            'name' | 'description' | 'applicationId' | 'id' | 'roleIds' | 'scopeGroupId'
+        >[];
+    };
+
+    public allApplicationScopeGroups: ApplicationScopeGroup[] = [];
+
+    public isCreatingScopeGroup = false;
+
+    public applicationScopes: ApplicationScope[] = [];
+
+    filterScopesInputControl = new FormControl('');
 
     trackByFn = trackByFn;
-
-    // User
-    userCanDeleteRoles = false;
-    userCanUpdateRoles = false;
 
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
         private _fuseConfirmationService: FuseConfirmationService,
         private _formBuilder: UntypedFormBuilder,
-        private _roleService: RoleService,
+        private _applicationRoleService: ApplicationRoleService,
+        private _applicationScopeGroupService: ApplicationScopeGroupService,
+        private _applicationScopeService: ApplicationScopeService,
         private _translocoService: TranslocoService,
     ) {}
 
     ngOnInit(): void {
         this.activeLang = this._translocoService.getActiveLang();
 
-        // Create the selected role form
+        // Create the selected scopeGroupApplicationRole form
         this.selectedItemForm = this._formBuilder.group({
             id: [''],
-            code: ['', [Validators.required]],
             name: ['', [Validators.required]],
+            description: [''],
+            applicationId: [''],
+            application: undefined,
+            scopes: [],
         });
 
-        this._subscribeUser();
-
-        // Roles
-        this._roleService.roles$
+        // ApplicationRoles
+        this._applicationRoleService.roles$
             .pipe(untilDestroyed(this))
             .subscribe((results: PaginatedListResult<ApplicationRole>) => {
                 this.results = results;
-
-                this.roles = results?.items;
+                this.list = results?.items;
             });
 
-        // Roles loading
-        this._roleService.rolesLoading$.pipe(untilDestroyed(this)).subscribe((rolesLoading: boolean) => {
-            this.itemsLoading = rolesLoading;
-        });
+        // ApplicationRoles loading
+        this._applicationRoleService.rolesLoading$
+            .pipe(untilDestroyed(this))
+            .subscribe((scopeGroupApplicationRolesLoading: boolean) => {
+                this.itemsLoading = scopeGroupApplicationRolesLoading;
+            });
 
         // Query parameters
-        this._roleService.queryParameters$
+        this._applicationRoleService.queryParameters$
             .pipe(untilDestroyed(this))
-            .subscribe((queryParameters: RoleSearchParameters) => {
+            .subscribe((queryParameters: ApplicationRoleSearchParameters) => {
                 this.queryParameters = queryParameters;
             });
 
-        // Subscribe to language changes
+        // Get the scope groups
+        this._applicationScopeGroupService.scopeGroups$
+            .pipe(untilDestroyed(this))
+            .subscribe((list: PaginatedList<ApplicationScopeGroup>) => {
+                this.allApplicationScopeGroups = list.items;
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
+
+        // Get the scopes
+        this._applicationScopeService.scopes$
+            .pipe(untilDestroyed(this))
+            .subscribe((list: PaginatedList<ApplicationScope>) => {
+                this.allApplicationScopes = list.items;
+
+                this.groupedApplicationScopes = mapValues(groupBy(list.items, 'scopeGroupName'), applicationList =>
+                    applicationList.map(a => omit(a, 'scopeGroupName')),
+                );
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
+
+        // Subscribe to scopeGroupApplicationRole changes
         this._translocoService.langChanges$.pipe(untilDestroyed(this)).subscribe(activeLang => {
             // Get the active lang
             this.activeLang = activeLang;
@@ -155,18 +225,59 @@ export class RoleListComponent implements OnInit, AfterViewInit {
                 this.closeDetails();
             });
         }
+        this._list();
+        this._listScopes();
     }
 
-    private _subscribeUser(): void {}
-
-    refreshRoles(): void {
-        // TODO: To get the list of available roles from M3 and parse them into valid M3-Console objects
+    private _listScopes(): void {
+        this._applicationScopeService.listEntities().pipe(untilDestroyed(this)).subscribe();
     }
 
-    deleteSelectedRole(): void {
+    create(): void {
+        // Create the scopeGroupApplicationRole
+        this._applicationRoleService
+            .createEntity()
+            .pipe(untilDestroyed(this))
+            .subscribe(item => {
+                this._updateSelectedItem(item);
+            });
+    }
+
+    private _updateSelectedItem(item: ApplicationRole): void {
+        this.selectedItem = item;
+
+        // Fill the form
+        this.selectedItemForm.patchValue(item);
+
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
+    }
+
+    updateSelectedItem(): void {
+        // Get the scopeGroupApplicationRole object
+        const scopeGroupApplicationRole = {
+            ...this.selectedItemForm.getRawValue(),
+        };
+
+        // Update the scopeGroupApplicationRole on the server
+        this._applicationRoleService
+            .updateEntity(scopeGroupApplicationRole.id, scopeGroupApplicationRole)
+            .pipe(untilDestroyed(this))
+            .subscribe(() => {
+                // this._fuseConfirmationService.open(getSuccessModal());
+
+                setTimeout(() => {
+                    this.closeDetails();
+                    this._list();
+                    // this._scopeGroupApplicationRoleService.list().pipe(untilDestroyed(this)).subscribe();
+                }, 2000);
+            });
+    }
+
+    deleteSelectedItem(): void {
         // Open the confirmation dialog
         const confirmation = this._fuseConfirmationService.open({
-            title: this._translocoService.translate('Roles.DeleteRole'),
+            title: this._translocoService.translate('ApplicationRoles.DeleteApplicationRole'),
             message: this._translocoService.translate('Questions.AreYouSure'),
             actions: {
                 cancel: {
@@ -185,12 +296,12 @@ export class RoleListComponent implements OnInit, AfterViewInit {
             .subscribe(result => {
                 // If the confirm button pressed...
                 if (result === 'confirmed') {
-                    // Get the role object
-                    const role = this.selectedItemForm.getRawValue();
+                    // Get the scopeGroupApplicationRole object
+                    const scopeGroupApplicationRole = this.selectedItemForm.getRawValue();
 
-                    // Delete the role on the server
-                    this._roleService
-                        .deleteEntity(role.id)
+                    // Delete the scopeGroupApplicationRole on the server
+                    this._applicationRoleService
+                        .deleteEntity(scopeGroupApplicationRole.id)
                         .pipe(untilDestroyed(this))
                         .subscribe(() => {
                             // Close the details
@@ -216,24 +327,24 @@ export class RoleListComponent implements OnInit, AfterViewInit {
         }, 3000);
     }
 
-    toggleDetails(roleId: string): void {
-        // If the role is already selected...
-        if (this.selectedItem && this.selectedItem.id === roleId) {
+    toggleDetails(id: string): void {
+        // If the scopeGroupApplicationRole is already selected...
+        if (this.selectedItem && this.selectedItem.id === id) {
             // Close the details
             this.closeDetails();
             return;
         }
 
-        // Get the role by id
-        this._roleService
-            .getById(roleId)
+        // Get the scopeGroupApplicationRole by id
+        this._applicationRoleService
+            .getById(id)
             .pipe(untilDestroyed(this))
-            .subscribe(role => {
+            .subscribe(item => {
                 // Set the selected role
-                this.selectedItem = role;
+                this.selectedItem = item;
 
                 // Fill the form
-                this.selectedItemForm.patchValue(role);
+                this.selectedItemForm.patchValue(item);
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
@@ -251,11 +362,11 @@ export class RoleListComponent implements OnInit, AfterViewInit {
     handlePageEvent(event: PageEvent): void {
         this.queryParameters = { ...this.queryParameters, pageIndex: event.pageIndex, pageSize: event.pageSize };
 
-        this._getRoles();
+        this._list();
     }
 
-    private _getRoles(): void {
-        this._roleService
+    private _list(): void {
+        this._applicationRoleService
             .listEntities({ ...this.queryParameters })
             .pipe(untilDestroyed(this))
             .subscribe();
@@ -263,7 +374,93 @@ export class RoleListComponent implements OnInit, AfterViewInit {
 
     filter(value: string): void {
         this.queryParameters = { pattern: value };
+        this._list();
+    }
 
-        this._getRoles();
+    private _filterScopes(value: string): void {
+        const scopes = this.allApplicationScopes.filter(x => x.name.toLowerCase().includes(value.toLowerCase()));
+
+        this.groupedApplicationScopes = mapValues(groupBy(scopes, 'scopeGroup.name'), applicationList =>
+            applicationList.map(a => omit(a, 'scopeGroup.name')),
+        );
+
+        this._changeDetectorRef.detectChanges();
+    }
+
+    unselectAllInScopeGroup(scopeGroupName: string): void {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const found = Object.entries(this.groupedApplicationScopes).find(([key, _]) => key === scopeGroupName);
+        if (found) {
+            found[1].forEach(scope => {
+                this.selectedItem.scopes = this.selectedItem?.scopes?.filter(s => s.id !== scope.id);
+            });
+        }
+    }
+
+    selectAllInScopeGroup(scopeGroupName: string): void {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const found = Object.entries(this.groupedApplicationScopes).find(([key, _]) => key === scopeGroupName);
+        if (found) {
+            found[1].forEach(scope => {
+                if (this.selectedItem?.scopes?.find(s => s.id === scope.id) == null) {
+                    this.selectedItem?.scopes?.push(scope);
+                }
+            });
+        }
+    }
+
+    expandAll(): void {
+        this.collapsed = false;
+
+        this.cards.forEach(c => {
+            c.open();
+        });
+    }
+
+    collapseAll(): void {
+        this.collapsed = true;
+
+        this.cards.forEach(c => {
+            c.close();
+        });
+    }
+
+    isScopeChecked(scopeId: string): boolean {
+        return (
+            this.selectedItem?.scopes?.find(s => {
+                return s?.id === scopeId;
+            }) != null
+        );
+    }
+
+    isScopeGroupChecked(scopeGroupId: string): boolean {
+        return this.selectedItem?.scopes?.some(
+            () => this.allApplicationScopes?.find(scope => scope.id === scope.id)?.scopeGroupId === scopeGroupId,
+        );
+    }
+
+    toggleScope(scopeId: string): void {
+        if (this.isScopeChecked(scopeId)) {
+            this.selectedItem.scopes = this.selectedItem?.scopes?.filter(scope => scope.id !== scopeId);
+        } else {
+            const scope = this.allApplicationScopes?.find(s => s.id === scopeId);
+            if (scope) {
+                this.selectedItem?.scopes?.push(scope);
+            }
+        }
+    }
+
+    toggleScopeGroup(scopeGroupId: string): void {
+        if (this.isScopeGroupChecked(scopeGroupId)) {
+            this.selectedItem.scopes = this.selectedItem?.scopes?.filter(
+                scope => this.allApplicationScopes?.find(s => s.id === scope.id)?.scopeGroupId !== scopeGroupId,
+            );
+        } else {
+            this.allApplicationScopes?.forEach(scope => {
+                if (scope.scopeGroupId === scopeGroupId && !this.selectedItem?.scopes?.find(s => s.id === scope.id)) {
+                    this.selectedItem?.scopes?.push(scope);
+                }
+            });
+        }
     }
 }

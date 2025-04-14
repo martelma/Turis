@@ -21,10 +21,11 @@ using Turis.DataAccessLayer.Entities;
 namespace Turis.BusinessLayer.Services;
 
 public class AttachmentService(ApplicationDbContext dbContext
+	, ILogger<AttachmentService> logger
 	, IOptions<CdnSettings> cdnOptions
 	, IUserService userService
 	, IAuthService authService
-	, ILogger<AttachmentService> logger) : BaseService, IAttachmentService
+	) : BaseService, IAttachmentService
 {
 	private readonly DbSet<Attachment> context = dbContext.Attachments;
 	private readonly CdnSettings cdnSettings = cdnOptions.Value;
@@ -226,6 +227,18 @@ public class AttachmentService(ApplicationDbContext dbContext
 		return Result.Ok();
 	}
 
+	public async Task<Result<StreamFileContent>> DownloadAsync(Guid attachmentId)
+	{
+		var record = await dbContext.Attachments.FindAsync(attachmentId);
+		if (record == null)
+			return Result.Fail(FailureReasons.ItemNotFound);
+
+		var fullPath = await GetFullPathAsync(record);
+		await using var fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
+
+		return await PrepareStreamFileContent(fileStream, record.OriginalFileName);
+	}
+
 	public async Task<Result<StreamFileContent>> DownloadAllAsync(string entityName, Guid entityKey, string folder)
 	{
 		var records = await ListAsync(entityName, entityKey, folder);
@@ -258,26 +271,12 @@ public class AttachmentService(ApplicationDbContext dbContext
 
 	public Task<string> GetFullPathAsync(Attachment attachment)
 	{
-		//if (attachment.EntityName.EqualsIgnoreCase(nameof(Batch)))
-		//{
-		//	var batch = await GetBatch(record.EntityKey);
+		var path = Path.Combine(cdnSettings.Root, cdnSettings.AttachmentFolder, attachment.EntityName, attachment.EntityKey.ToString());
+		if (attachment.Folder.HasValue())
+			path = Path.Combine(path, attachment.Folder);
 
-		//	var batchRootPath = BatchRootPath(batch, attachment.Folder);
-		//	var fullFileName = Path.Combine(batchRootPath, attachment.OriginalFileName);
+		var fullFileName = Path.Combine(path, $"{attachment.Id}-{attachment.OriginalFileName}");
 
-		//	return fullFileName;
-		//}
-		//else
-		//{
-			var path = Path.Combine(cdnSettings.Root, cdnSettings.AttachmentFolder, attachment.EntityName, attachment.EntityKey.ToString());
-			if (attachment.Folder.HasValue())
-				path = Path.Combine(path, attachment.Folder);
-
-			var fullFileName = Path.Combine(path, $"{attachment.Id}-{attachment.OriginalFileName}");
-
-			return Task.FromResult(fullFileName);
-		//}
-
-		//return string.Empty;
+		return Task.FromResult(fullFileName);
 	}
 }

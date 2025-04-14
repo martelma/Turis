@@ -16,11 +16,12 @@ using Turis.DataAccessLayer.Entities;
 namespace Turis.BusinessLayer.Services;
 
 public class JournalEntryService(ApplicationDbContext dbContext
+	, ILogger<JournalEntryService> logger
 	, IUserService userService
 	, IBookmarkService bookmarkService
 	, IAttachmentService attachmentService
 	, IEntityTagService entityTagService
-	, ILogger<JournalEntryService> logger) : IJournalEntryService
+	) : IJournalEntryService
 {
 	private const string EntryName = nameof(JournalEntry);
 

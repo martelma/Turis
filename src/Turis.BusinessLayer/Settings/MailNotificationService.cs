@@ -1,7 +1,5 @@
 ﻿using System.Net;
 using FluentEmail.Core;
-using FluentEmail.Core.Models;
-using JeMa.Shared.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

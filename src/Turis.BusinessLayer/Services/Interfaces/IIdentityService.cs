@@ -28,7 +28,6 @@ public interface IIdentityService : IService
 	Task<Result> ResetDefaultPasswordAsync(ResetDefaultPasswordRequest request);
 	Task<Result<OtpResponse>> GenerateOtpAsync();
 	Task<Result<LoginResponse>> ValidateOtpAsync(ValidateOtpRequest request);
-	Task<Result> CopyUserSettingsAsync(CopyUserSettingsRequest request);
 	Task<Result> UpdateLanguageAsync(Guid id, UpdateUserLanguageRequest request);
 	Task<Result<SecurityCode>> CreateSecurityCodeAsync();
 }

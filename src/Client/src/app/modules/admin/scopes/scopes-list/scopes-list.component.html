@@ -1,0 +1,200 @@
+<div class="bg-card flex min-w-0 flex-auto flex-col dark:bg-transparent sm:absolute sm:inset-0 sm:overflow-hidden">
+    <!-- Header -->
+    <div
+        class="relative flex flex-0 flex-col border-b px-6 py-8 sm:flex-row sm:items-center sm:justify-between md:px-8">
+        <!-- Loader -->
+        <div class="absolute inset-x-0 bottom-0" *ngIf="itemsLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+        <!-- Title -->
+        <div class="text-4xl font-extrabold tracking-tight">
+            {{ 'Navigation.Scopes' | transloco }}
+        </div>
+        <!-- Actions -->
+        <div class="mt-6 flex shrink-0 items-center sm:ml-4 sm:mt-0">
+            <!-- Search -->
+            <app-search-input class="min-w-90" [placeholder]="'Scope.FilterScope'" (callbackFn)="filter($event)">
+            </app-search-input>
+
+            <!-- Add scope button -->
+            <button class="ml-4" mat-flat-button [color]="'primary'" (click)="create()">
+                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                <span class="ml-2 mr-1">{{ 'General.Add' | transloco }}</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+        <!-- Scopes list -->
+        <div
+            class="flex flex-auto flex-col overflow-hidden sm:overflow-y-auto"
+            [ngClass]="{
+                'sm:mb-18': results?.items?.length > 0
+            }">
+            <ng-container *ngIf="results?.items?.length > 0; else noScopes">
+                <div class="grid">
+                    <!-- Header -->
+                    <div
+                        class="list-grid text-secondary sticky top-0 z-10 grid gap-4 bg-gray-50 px-6 py-4 text-md font-semibold shadow dark:bg-black dark:bg-opacity-5 md:px-8">
+                        <div class="w-10"></div>
+                        <div class="hidden sm:block">{{ 'Scopes.Name' | transloco }}</div>
+                        <div class="hidden lg:block">{{ 'Scopes.Description' | transloco }}</div>
+                        <div class="hidden lg:block">{{ 'Scopes.ScopeGroup' | transloco }}</div>
+                    </div>
+                    <!-- Rows -->
+                    <ng-container *ngIf="list">
+                        <ng-container *ngFor="let scope of results?.items; trackBy: trackByFn">
+                            <div class="list-grid grid items-center gap-4 border-b px-6 py-3 md:px-8">
+                                <!-- Details button -->
+                                <div class="w-10">
+                                    <button
+                                        class="h-7 min-h-7 min-w-10 px-2 leading-6"
+                                        mat-stroked-button
+                                        (click)="toggleDetails(scope.id)">
+                                        <mat-icon
+                                            *ngIf="selectedItem?.id !== scope.id"
+                                            class="mr-2 icon-size-5"
+                                            [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
+
+                                        <mat-icon
+                                            *ngIf="selectedItem?.id === scope.id"
+                                            class="mr-2 icon-size-5"
+                                            [svgIcon]="'heroicons_outline:arrow-uturn-left'"></mat-icon>
+                                    </button>
+                                </div>
+
+                                <!-- Name -->
+                                <div class="truncate">
+                                    {{ scope.name }}
+                                </div>
+
+                                <!-- Description -->
+                                <div class="truncate">
+                                    {{ scope?.description }}
+                                </div>
+
+                                <!-- ScopeGroup -->
+                                <div class="truncate">
+                                    {{ scope?.scopeGroupName }}
+                                </div>
+                            </div>
+                            <!-- Selected Item -->
+                            <div class="grid">
+                                <ng-container *ngIf="selectedItem?.id === scope.id">
+                                    <ng-container
+                                        *ngTemplateOutlet="
+                                            rowDetailsTemplate;
+                                            context: { $implicit: scope }
+                                        "></ng-container>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                </div>
+
+                <!-- Paginator -->
+                <mat-paginator
+                    class="z-10 border-b bg-gray-50 dark:bg-transparent sm:absolute sm:inset-x-0 sm:bottom-0 sm:border-b-0 sm:border-t"
+                    [ngClass]="{ 'pointer-events-none': scopesLoading }"
+                    [length]="results?.totalCount ?? 0"
+                    [pageIndex]="queryParameters?.pageIndex ?? 0"
+                    [pageSize]="queryParameters?.pageSize ?? 10"
+                    [pageSizeOptions]="[5, 10, 25, 100]"
+                    (page)="handlePageEvent($event)"
+                    [showFirstLastButtons]="true"></mat-paginator>
+            </ng-container>
+
+            <ng-template #rowDetailsTemplate let-scope>
+                <div class="overflow-hidden shadow-lg">
+                    <div class="flex border-b">
+                        <form class="flex w-full flex-col" [formGroup]="selectedItemForm">
+                            <div class="flex flex-col sm:flex-row">
+                                <div class="flex flex-auto flex-wrap">
+                                    <div class="flex w-full flex-col sm:p-8">
+                                        <div class="grid w-full grid-cols-12 gap-2">
+                                            <!-- Name -->
+                                            <mat-form-field appearance="fill" class="col-span-6">
+                                                <mat-label>{{ 'Scopes.Name' | transloco }}</mat-label>
+                                                <input matInput [formControlName]="'name'" />
+                                            </mat-form-field>
+
+                                            <div class="col-span-6 flex flex-row justify-between">
+                                                <mat-form-field appearance="fill" class="w-full">
+                                                    <mat-label>Scope group</mat-label>
+                                                    <mat-select matInput formControlName="scopeGroupId">
+                                                        <mat-option
+                                                            *ngFor="let scopeGroup of scopeGroups; trackBy: trackByFn"
+                                                            [value]="scopeGroup.id">
+                                                            {{ scopeGroup.name }}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                                <button
+                                                    matSuffix
+                                                    mat-icon-button="button"
+                                                    style="align-self: anchor-center"
+                                                    (click)="selectedItemForm.get('scopeGroupId').setValue(emptyGuid)">
+                                                    <mat-icon
+                                                        class="text-red-500"
+                                                        [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="grid w-full grid-cols-12 gap-2">
+                                            <!-- Description -->
+                                            <mat-form-field class="col-span-12">
+                                                <mat-label>{{ 'Scopes.Description' | transloco }}</mat-label>
+                                                <input matInput [formControlName]="'description'" />
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex w-full items-center justify-between border-t px-8 py-4">
+                                <!-- Delete Button -->
+                                <button class="-ml-4" mat-flat-button [color]="'warn'" (click)="deleteSelectedItem()">
+                                    {{ 'General.Delete' | transloco }}
+                                </button>
+
+                                <!-- Flash messages -->
+                                <div class="flex items-center">
+                                    <div class="mr-4 flex items-center" *ngIf="flashMessage">
+                                        <ng-container *ngIf="flashMessage === 'success'">
+                                            <mat-icon
+                                                class="text-green-500"
+                                                [svgIcon]="'heroicons_outline:check'"></mat-icon>
+                                            <span class="ml-2">Scope updated</span>
+                                        </ng-container>
+                                        <ng-container *ngIf="flashMessage === 'error'">
+                                            <mat-icon
+                                                class="text-red-500"
+                                                [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                                            <span class="ml-2">An error occurred, try again!</span>
+                                        </ng-container>
+                                    </div>
+
+                                    <!-- Update Button -->
+                                    <button mat-flat-button [color]="'primary'" (click)="updateSelectedItem()">
+                                        {{ 'General.Update' | transloco }}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </ng-template>
+
+            <!-- No scopes -->
+            <ng-template #noScopes>
+                <div class="z-100 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+                    <!-- <mat-icon class="icon-size-24" [svgIcon]="'heroicons_outline:scope'"></mat-icon> -->
+                    <div class="text-secondary mt-4 text-2xl font-semibold tracking-tight">
+                        {{ 'Scopes.NoScopes' | transloco }}
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>

@@ -1,36 +1,36 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { BehaviorSubject, Observable, filter, finalize, map, of, switchMap, take, tap, throwError } from 'rxjs';
+import { Injectable } from '@angular/core';
 import { BaseEntityService } from 'app/shared/services';
-import { Role, RoleSearchParameters } from './role.types';
 import { emptyGuid, PaginatedListResult } from 'app/shared/services/shared.types';
+import { BehaviorSubject, filter, finalize, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
+import { ApplicationRole, ApplicationRoleSearchParameters } from './role.types';
 
 @Injectable({ providedIn: 'root' })
-export class RoleService extends BaseEntityService<Role> {
-    private _roles: BehaviorSubject<PaginatedListResult<Role>> = new BehaviorSubject(null);
-    private _role: BehaviorSubject<Role> = new BehaviorSubject(null);
+export class ApplicationRoleService extends BaseEntityService<ApplicationRole> {
+    private _roles: BehaviorSubject<PaginatedListResult<ApplicationRole>> = new BehaviorSubject(null);
+    private _role: BehaviorSubject<ApplicationRole> = new BehaviorSubject(null);
     private _rolesLoading: BehaviorSubject<boolean> = new BehaviorSubject(false);
-    private _queryParameters: BehaviorSubject<RoleSearchParameters> = new BehaviorSubject({
+    private _queryParameters: BehaviorSubject<ApplicationRoleSearchParameters> = new BehaviorSubject({
         length: 0,
         pageIndex: 0,
         pageSize: 10,
     });
     constructor(http: HttpClient) {
         super(http);
-        this.defaultApiController = 'role';
+        this.defaultApiController = 'roles';
     }
 
     /**
      * Getter for roles
      */
-    get roles$(): Observable<PaginatedListResult<Role>> {
+    get roles$(): Observable<PaginatedListResult<ApplicationRole>> {
         return this._roles.asObservable();
     }
 
     /**
      * Getter for role
      */
-    get role$(): Observable<Role> {
+    get role$(): Observable<ApplicationRole> {
         return this._role.asObservable();
     }
 
@@ -44,14 +44,14 @@ export class RoleService extends BaseEntityService<Role> {
     /**
      * Getter for query parameters
      */
-    get queryParameters$(): Observable<RoleSearchParameters> {
+    get queryParameters$(): Observable<ApplicationRoleSearchParameters> {
         return this._queryParameters.asObservable();
     }
 
     /**
      * Get a role identified by the given role id
      */
-    getById(id: string): Observable<Role> {
+    getById(id: string): Observable<ApplicationRole> {
         return this.getSingle(id).pipe(
             map(role => {
                 this._role.next(role);
@@ -64,15 +64,17 @@ export class RoleService extends BaseEntityService<Role> {
     /**
      * Create a dummy role
      */
-    createEntity(): Observable<Role> {
+    createEntity(): Observable<ApplicationRole> {
         return this.roles$.pipe(
             take(1),
             switchMap(roles =>
                 of({
                     id: emptyGuid,
-                    code: '',
+                    applicationId: emptyGuid,
                     name: '',
-                    codeIso: '',
+                    description: '',
+                    scopes: [],
+                    users: [],
                 }).pipe(
                     map(newRole => {
                         // Update the roles with the new role
@@ -92,7 +94,7 @@ export class RoleService extends BaseEntityService<Role> {
      * @param id
      * @param role
      */
-    updateEntity(id: string, role: Role): Observable<Role> {
+    updateEntity(id: string, role: ApplicationRole): Observable<ApplicationRole> {
         return this.roles$.pipe(
             take(1),
             switchMap(roles =>
@@ -132,7 +134,7 @@ export class RoleService extends BaseEntityService<Role> {
      * Gets all roles
      * @returns
      */
-    listEntities(params?: RoleSearchParameters): Observable<PaginatedListResult<Role>> {
+    listEntities(params?: ApplicationRoleSearchParameters): Observable<PaginatedListResult<ApplicationRole>> {
         this._rolesLoading.next(true);
 
         let httpParams = new HttpParams();
@@ -144,8 +146,8 @@ export class RoleService extends BaseEntityService<Role> {
 
         const url = `?${queryString}`;
 
-        return this.apiGet<PaginatedListResult<Role>>(url).pipe(
-            map((list: PaginatedListResult<Role>) => {
+        return this.apiGet<PaginatedListResult<ApplicationRole>>(url).pipe(
+            map((list: PaginatedListResult<ApplicationRole>) => {
                 this._roles.next(list);
 
                 this._queryParameters.next({
@@ -168,7 +170,7 @@ export class RoleService extends BaseEntityService<Role> {
      * @param id
      * @returns
      */
-    deleteEntity(id: string): Observable<Role> {
+    deleteEntity(id: string): Observable<ApplicationRole> {
         return this._roles.pipe(
             take(1),
             switchMap(roles => {

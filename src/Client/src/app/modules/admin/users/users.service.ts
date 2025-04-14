@@ -106,15 +106,24 @@ export class UsersService extends BaseEntityService<User> {
 
         if (id === 'new') {
             const user = {
-                id: '',
+                id: null,
                 userName: '',
+                email: '',
                 firstName: '',
                 lastName: '',
                 fullName: '',
-                email: '',
-                roles: [],
-                applications: [],
+                avatar: '',
+                avatarUrl: '',
+                language: '',
+                isActive: false,
                 twoFactorEnabled: false,
+                applicationId: null,
+                applicationName: null,
+                applicationRoles: [],
+                accountType: null,
+                applications: [],
+                roles: [],
+                scopes: [],
             };
 
             this._user.next(user);
@@ -152,7 +161,7 @@ export class UsersService extends BaseEntityService<User> {
         );
     }
 
-    getUserRoles(userid: string, params?: BaseSearchParameters): Observable<PaginatedList<User>> {
+    getUserRoles(userid: string, params?: BaseSearchParameters): Observable<PaginatedList<ApplicationRole>> {
         if (!userid) {
             return of({
                 items: [],
@@ -170,7 +179,7 @@ export class UsersService extends BaseEntityService<User> {
         httpParams = httpParams.append('pattern', params?.pattern ?? '');
 
         return this.apiGet(`${userid}/UserRoles`, 'roles', XApplicationIdHeader, httpParams).pipe(
-            map((roles: PaginatedList<User>) => {
+            map((roles: PaginatedList<ApplicationRole>) => {
                 this._userRoles.next(roles);
 
                 return roles;

@@ -1,8 +1,8 @@
+import { Application } from 'app/shared/services/shared.types';
 import { BaseSearchParameters } from 'app/shared/types/shared.types';
 import { ApplicationScope } from '../scopes/scope.types';
-import { Application } from 'app/shared/services/shared.types';
 
-export interface ApplicationScopeGroup {
+export interface ApplicationScopeGroup extends BaseSearchParameters {
     id?: string;
     name?: string;
     description?: string;
@@ -12,5 +12,9 @@ export interface ApplicationScopeGroup {
 }
 
 export interface ApplicationScopeGroupSearchParameters extends BaseSearchParameters {
+    pattern?: string;
+}
+
+export interface ApplicationScopeSearchParameters extends BaseSearchParameters {
     pattern?: string;
 }

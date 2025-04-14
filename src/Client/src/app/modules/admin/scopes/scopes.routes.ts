@@ -1,8 +1,8 @@
 import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
-import { ApplicationScopesListComponent } from './list/list.component';
+import { ApplicationScopeService } from './scope.service';
+import { ApplicationScopesListComponent } from './scopes-list/scopes-list.component';
 import { ApplicationScopesComponent } from './scopes.component';
-import { ScopeService } from './scope.service';
 
 export default [
     {
@@ -13,7 +13,7 @@ export default [
                 path: '',
                 component: ApplicationScopesListComponent,
                 resolve: {
-                    users: () => inject(ScopeService).list(),
+                    users: () => inject(ApplicationScopeService).list(),
                 },
                 children: [
                     {
@@ -32,7 +32,7 @@ export default [
         path: ':id/scope',
         component: ApplicationScopesComponent,
         resolve: {
-            applications: () => inject(ScopeService).list(),
+            applications: () => inject(ApplicationScopeService).list(),
             // user: userResolver,
         },
     },
@@ -40,7 +40,7 @@ export default [
         path: ':id/scope/:scopeId',
         component: ApplicationScopesComponent,
         resolve: {
-            applications: () => inject(ScopeService).list(),
+            applications: () => inject(ApplicationScopeService).list(),
             // user: userResolver,
         },
     },

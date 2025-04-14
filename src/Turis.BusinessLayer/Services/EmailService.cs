@@ -9,96 +9,110 @@ using Turis.BusinessLayer.Services.Interfaces;
 using Turis.BusinessLayer.Settings;
 using Turis.Common.Mailing;
 using Turis.BusinessLayer.Resources;
-using OperationResults;
 
 namespace Turis.BusinessLayer.Services;
 
-public class EmailService(IFluentEmailFactory fluentEmailFactory
-	, ILogger<MailNotificationService> logger
-	, IOptions<NotificationSettings> notificationOptions
+public class EmailService(IFluentEmail fluentEmail
+	, IOptions<SmtpSettings> smtpSettingsOptions
+	, IOptions<NotificationSettings> notificationSettingsOptions
 	, IWebHostEnvironment environment
-	) : IEmailService
+	, ILogger<EmailService> logger) : IEmailService
 {
-	private readonly NotificationSettings notificationSettings = notificationOptions.Value;
+	private readonly SmtpSettings smtpSettings = smtpSettingsOptions.Value;
+	private readonly NotificationSettings notificationSettings = notificationSettingsOptions.Value;
 
 	static EmailService()
-    {
-        ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
-    }
-
-	public async Task<Result> SendEmailAsync(string emailRecipient, string subject, string body)
 	{
-		// Durante la fase di test sostituisco al destinatario l'email di test.
+		ServicePointManager.ServerCertificateValidationCallback = (_, _, _, _) => true;
+	}
+
+	public async Task TestEmailAsync()
+	{
+		var toName = notificationSettings.EMailTest;
+		var toEmail = notificationSettings.EMailTest;
+		var subject = "Test Email";
+		var body = "This is a test email";
+		await SendEmailAsync(toName, toEmail, subject, body);
+	}
+
+	public async Task SendEmailAsync(string toName, string toEmail, string subject, string body)
+	{
 		if (environment.IsDevelopment())
-			emailRecipient = notificationSettings.EMailTest;
+		{
+			// Durante la fase di test sostituisco al destinatario l'email di test.
+			toName = notificationSettings.EMailTest;
+			toEmail = notificationSettings.EMailTest;
+		}
 
 		try
 		{
-			var sendResponse = await fluentEmailFactory.Create()
-				.To(emailRecipient)
-				.Subject(subject)
-				.Body(body)
-				.SendAsync();
-
+			var sendResponse = await fluentEmail.To(toEmail, toName).Subject(subject).Body(body).SendAsync();
 			if (!sendResponse.Successful)
 			{
-				logger.LogWarning(Errors.SendEmailError, emailRecipient, string.Join(", ", sendResponse.ErrorMessages));
-				return Result.Fail(FailureReasons.NetworkError, string.Join(", ", sendResponse.ErrorMessages));
+				logger.LogWarning(Errors.SendEmailError, toEmail, string.Join(", ", sendResponse.ErrorMessages));
 			}
-
-			return Result.Ok();
 		}
 		catch (Exception ex)
 		{
-			logger.LogError(ex, Errors.UnexpectedSendEmailError, emailRecipient);
-			return Result.Fail(FailureReasons.NetworkError, ex);
+			logger.LogError(ex, Errors.UnexpectedSendEmailError, toEmail);
 		}
 	}
 
-	public async Task<Result> SendEmailAsync(string emailRecipient, string subject, string templateName, string language, dynamic model)
+	public async Task SendTemplateEmailAsync<T>(string toName, string toEmail, string subject, string templateName, T model)
+		where T : BaseEmailModel
 	{
-		// Durante la fase di test sostituisco al destinatario l'email di test.
 		if (environment.IsDevelopment())
-			emailRecipient = notificationSettings.EMailTest;
+		{
+			// Durante la fase di test sostituisco al destinatario l'email di test.
+			toName = notificationSettings.EMailTest;
+			toEmail = notificationSettings.EMailTest;
+		}
 
 		try
 		{
-			logger.LogInformation($"Sending email to: {emailRecipient}");
-
 			var extension = Path.GetExtension(templateName);
 			if (!extension.EqualsIgnoreCase(".cshtml"))
+			{
 				templateName = $"{templateName}.cshtml";
+			}
 
 			var templatePath = notificationSettings.TemplatePath;
 			if (!Path.IsPathRooted(templatePath))
+			{
 				templatePath = Path.Combine(environment.WebRootPath, templatePath);
+			}
 
-			var templateFullFileName = Path.Combine(notificationSettings.TemplatePath, language.IsNotNullOrEmpty() ? language : Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName, templateName);
+			var templateFullFileName = Path.Combine(templatePath, Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName, templateName);
 
 			// Volendo si potrebbe rendere dinamico anche la scelta del layout della mail in base al tenant o a qualcos'altro
-			model.LayoutFullFileName = Path.Combine(notificationSettings.TemplatePath, "_EmailLayout.cshtml");
-			model.SupportEmail = notificationSettings.EMailSupport;
+			model.LayoutFullFileName ??= Path.Combine(templatePath, "_EmailLayout.cshtml");
+			model.SupportEmail ??= notificationSettings.EMailSupport;
 
-			var sendResponse = await fluentEmailFactory.Create()
-				.To(emailRecipient)
+			//var sendResponse = await fluentEmail
+			//    .To(toEmail, toName)
+			//    .Subject(subject)
+			//    .UsingTemplateFromFile(templateFullFileName, model)
+			//    .SendAsync();
+
+			var email = fluentEmail
+				.To(toEmail, toName)
 				.Subject(subject)
-				.UsingTemplateFromFile(templateFullFileName, model)
-				.SendAsync();
+				.UsingTemplateFromFile(templateFullFileName, model);
+#if DEBUG
+			var htmlContent = email.Data.Body;
+			var filePath = @"C:\\Temp\emailContent.html";
+			await File.WriteAllTextAsync(filePath, htmlContent);
+#endif
+			var sendResponse = await email.SendAsync();
 
 			if (!sendResponse.Successful)
 			{
-				logger.LogWarning(Errors.SendEmailError, emailRecipient, (string)string.Join(", ", sendResponse.ErrorMessages));
-				return Result.Fail(FailureReasons.NetworkError, string.Join(", ", sendResponse.ErrorMessages));
+				logger.LogWarning(Errors.SendEmailError, toEmail, string.Join(", ", sendResponse.ErrorMessages));
 			}
-
-			logger.LogInformation($"Email successfully sent to: {emailRecipient}");
-
-			return Result.Ok();
 		}
 		catch (Exception ex)
 		{
-			logger.LogError(ex, Errors.UnexpectedSendEmailError, emailRecipient);
-			return Result.Fail(FailureReasons.NetworkError, ex);
+			logger.LogError(ex, Errors.UnexpectedSendEmailError, toEmail);
 		}
 	}
 }

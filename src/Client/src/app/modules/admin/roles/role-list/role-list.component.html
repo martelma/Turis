@@ -1,7 +1,7 @@
-<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+<div class="bg-card flex min-w-0 flex-auto flex-col dark:bg-transparent sm:absolute sm:inset-0 sm:overflow-hidden">
     <!-- Header -->
     <div
-        class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+        class="relative flex flex-0 flex-col border-b px-6 py-8 sm:flex-row sm:items-center sm:justify-between md:px-8">
         <!-- Loader -->
         <div class="absolute inset-x-0 bottom-0" *ngIf="itemsLoading">
             <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
@@ -11,28 +11,24 @@
             {{ 'Navigation.Roles' | transloco }}
         </div>
         <!-- Actions -->
-        <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+        <div class="mt-6 flex shrink-0 items-center sm:ml-4 sm:mt-0">
             <!-- Search -->
-            <app-search-input class="min-w-90" [placeholder]="'Roles.FilterRoles'" (callbackFn)="filter($event)">
+            <app-search-input class="min-w-90" [placeholder]="'Roles.FilterScope'" (callbackFn)="filter($event)">
             </app-search-input>
 
-            <!-- Refresh button -->
-            <!-- <button class="ml-4" mat-flat-button [color]="'primary'" (click)="refreshRoles()">
-                <mat-icon [svgIcon]="'heroicons_outline:arrow-path'"></mat-icon>
-                <span class="ml-2 mr-1">{{ 'Roles.Refresh' | transloco }}</span>
-            </button> -->
+            <!-- Add scope button -->
+            <button class="ml-4" mat-flat-button [color]="'primary'" (click)="create()">
+                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                <span class="ml-2 mr-1">{{ 'General.Add' | transloco }}</span>
+            </button>
         </div>
     </div>
 
-    <!-- <pre>
-        {{ selectedItemForm?.value | json }}
-    </pre> -->
-
     <!-- Main -->
     <div class="flex flex-auto overflow-hidden">
-        <!-- Roles list -->
+        <!-- Scopes list -->
         <div
-            class="flex flex-col flex-auto overflow-hidden sm:overflow-y-auto"
+            class="flex flex-auto flex-col overflow-hidden sm:overflow-y-auto"
             [ngClass]="{
                 'sm:mb-18': results?.items?.length > 0
             }">
@@ -40,36 +36,31 @@
                 <div class="grid">
                     <!-- Header -->
                     <div
-                        class="role-grid z-10 sticky top-0 grid gap-4 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
-                        <div class="hidden md:block">{{ 'Roles.Code' | transloco }}</div>
-                        <div class="hidden md:block">{{ 'Roles.Name' | transloco }}</div>
-                        <div class="hidden sm:block">{{ 'Roles.Description' | transloco }}</div>
+                        class="list-grid text-secondary sticky top-0 z-10 grid gap-4 bg-gray-50 px-6 py-4 text-md font-semibold shadow dark:bg-black dark:bg-opacity-5 md:px-8">
+                        <div class="w-10"></div>
+                        <div class="hidden sm:block">{{ 'Roles.Name' | transloco }}</div>
+                        <div class="hidden lg:block">{{ 'Roles.Description' | transloco }}</div>
                     </div>
                     <!-- Rows -->
-                    <ng-container *ngIf="roles">
+                    <ng-container *ngIf="list">
                         <ng-container *ngFor="let role of results?.items; trackBy: trackByFn">
-                            <div class="role-grid grid items-center gap-4 py-3 px-6 md:px-8 border-b">
+                            <div class="list-grid grid items-center gap-4 border-b px-6 py-3 md:px-8">
                                 <!-- Details button -->
-                                <div>
+                                <div class="w-10">
                                     <button
-                                        class="min-w-10 min-h-7 h-7 px-2 leading-6"
+                                        class="h-7 min-h-7 min-w-10 px-2 leading-6"
                                         mat-stroked-button
                                         (click)="toggleDetails(role.id)">
                                         <mat-icon
                                             *ngIf="selectedItem?.id !== role.id"
-                                            class="icon-size-5 mr-2"
+                                            class="mr-2 icon-size-5"
                                             [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
 
                                         <mat-icon
                                             *ngIf="selectedItem?.id === role.id"
-                                            class="icon-size-5 mr-2"
+                                            class="mr-2 icon-size-5"
                                             [svgIcon]="'heroicons_outline:arrow-uturn-left'"></mat-icon>
                                     </button>
-                                </div>
-
-                                <!-- Code -->
-                                <div class="truncate">
-                                    {{ role.code }}
                                 </div>
 
                                 <!-- Name -->
@@ -78,10 +69,11 @@
                                 </div>
 
                                 <!-- Description -->
-                                <div class="whitespace-pre-wrap">
-                                    {{ getTranslation(role?.descriptions, activeLang) | transloco }}
+                                <div class="truncate">
+                                    {{ role?.description }}
                                 </div>
                             </div>
+                            <!-- Selected Item -->
                             <div class="grid">
                                 <ng-container *ngIf="selectedItem?.id === role.id">
                                     <ng-container
@@ -95,8 +87,9 @@
                     </ng-container>
                 </div>
 
+                <!-- Paginator -->
                 <mat-paginator
-                    class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                    class="z-10 border-b bg-gray-50 dark:bg-transparent sm:absolute sm:inset-x-0 sm:bottom-0 sm:border-b-0 sm:border-t"
                     [ngClass]="{ 'pointer-events-none': rolesLoading }"
                     [length]="results?.totalCount ?? 0"
                     [pageIndex]="queryParameters?.pageIndex ?? 0"
@@ -107,78 +100,291 @@
             </ng-container>
 
             <ng-template #rowDetailsTemplate let-role>
-                <div class="shadow-lg overflow-hidden">
+                <div class="overflow-hidden shadow-lg">
                     <div class="flex border-b">
-                        <!-- Selected role form -->
-                        <form class="flex flex-col w-full" [formGroup]="selectedItemForm">
-                            <div class="flex flex-col sm:flex-row p-8">
+                        <form class="flex w-full flex-col" [formGroup]="selectedItemForm">
+                            <div class="flex flex-col sm:flex-row">
                                 <div class="flex flex-auto flex-wrap">
-                                    <!-- Name, SKU & etc. -->
-                                    <div class="flex flex-col w-full lg:w-2/4 sm:pl-8">
-                                        <!-- Code -->
-                                        <mat-form-field class="w-full">
-                                            <mat-label>{{ 'Roles.Code' | transloco }}</mat-label>
-                                            <input matInput [formControlName]="'code'" />
-                                        </mat-form-field>
-
-                                        <!-- Name -->
-                                        <mat-form-field class="w-full">
-                                            <mat-label>{{ 'Roles.Name' | transloco }}</mat-label>
-                                            <input matInput [formControlName]="'name'" />
-                                        </mat-form-field>
-
-                                        <!-- Description -->
-                                        <div>
-                                            <div class="font-semibold">
-                                                {{ 'Roles.Description' | transloco }}
-                                            </div>
-                                            <app-translations
-                                                class="flex flex-auto"
-                                                [parentFormGroup]="selectedItemForm"
-                                                [translations]="selectedItem?.descriptions"
-                                                [bodyClass]="'max-h-[300px]'"></app-translations>
+                                    <div class="flex w-1/2 flex-col sm:p-8">
+                                        <div class="grid w-full grid-cols-12 gap-2">
+                                            <!-- Name -->
+                                            <mat-form-field class="col-span-12">
+                                                <mat-label>{{ 'Roles.Name' | transloco }}</mat-label>
+                                                <input matInput [formControlName]="'name'" />
+                                            </mat-form-field>
                                         </div>
+                                        <div class="grid w-full grid-cols-12 gap-2">
+                                            <!-- Description -->
+                                            <mat-form-field class="col-span-12">
+                                                <mat-label>{{ 'Roles.Description' | transloco }}</mat-label>
+                                                <textarea
+                                                    matInput
+                                                    [formControlName]="'description'"
+                                                    rows="5"></textarea>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <div class="flex w-1/2 flex-col sm:p-8">
+                                        <fuse-card class="flex flex-1 flex-col p-6">
+                                            <div class="flex items-center justify-between gap-2">
+                                                <div class="truncate text-3xl font-bold">
+                                                    {{ 'Navigation.Scopes' | transloco }}
+                                                </div>
+
+                                                <div
+                                                    *ngIf="isUserOwner"
+                                                    class="my-2 ml-auto flex flex-1 items-center justify-end gap-x-4 text-sm hover:cursor-pointer">
+                                                    <mat-form-field
+                                                        class="fuse-mat-dense w-full min-w-50"
+                                                        subscriptSizing="dynamic">
+                                                        <mat-icon
+                                                            class="icon-size-5"
+                                                            matPrefix
+                                                            [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+
+                                                        <input
+                                                            matInput
+                                                            [formControl]="filterScopesInputControl"
+                                                            [autocomplete]="'off'"
+                                                            [placeholder]="'Filter scopes'" />
+
+                                                        <button
+                                                            type="button"
+                                                            *ngIf="filterScopesInputControl.value"
+                                                            matSuffix
+                                                            mat-icon-button
+                                                            aria-label="Clear"
+                                                            (click)="filterScopesInputControl.setValue('')">
+                                                            <mat-icon [svgIcon]="'heroicons_solid:x-mark'"></mat-icon>
+                                                        </button>
+                                                    </mat-form-field>
+
+                                                    <!-- Unselect All -->
+                                                    <button
+                                                        mat-icon-button
+                                                        (click)="unselectAll()"
+                                                        tabindex="0"
+                                                        (keypress)="(null)"
+                                                        [matTooltip]="'General.UnselectAll' | transloco">
+                                                        <mat-icon [svgIcon]="'mat_outline:rule'"></mat-icon>
+                                                    </button>
+
+                                                    <!-- Select All -->
+                                                    <button
+                                                        mat-icon-button
+                                                        (click)="selectAll()"
+                                                        tabindex="0"
+                                                        (keypress)="(null)"
+                                                        [matTooltip]="'General.SelectAll' | transloco">
+                                                        <mat-icon [svgIcon]="'mat_outline:checklist'"></mat-icon>
+                                                    </button>
+
+                                                    <!-- Expand / Collapse -->
+                                                    <button
+                                                        mat-icon-button
+                                                        [matTooltip]="collapsed ? 'Expand' : 'Collapse'"
+                                                        (click)="collapsed ? expandAll() : collapseAll()">
+                                                        <mat-icon
+                                                            [svgIcon]="
+                                                                collapsed
+                                                                    ? 'heroicons_outline:chevron-double-down'
+                                                                    : 'heroicons_outline:chevron-double-up'
+                                                            "></mat-icon>
+                                                    </button>
+
+                                                    <!-- Add button -->
+                                                    <!-- <button mat-icon-button (click)="createScope()">
+                                                        <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                                                    </button> -->
+                                                </div>
+                                            </div>
+
+                                            <!-- List of scopes -->
+                                            <div class="overflow-y-auto">
+                                                <mat-accordion
+                                                    *ngFor="
+                                                        let group of groupedApplicationScopes | keyvalue;
+                                                        trackBy: trackByFn
+                                                    ">
+                                                    <mat-expansion-panel
+                                                        #card
+                                                        [expanded]="true"
+                                                        class="dark:bg-gray-800">
+                                                        <mat-expansion-panel-header
+                                                            class="rounded-none px-8 py-10 dark:bg-gray-800">
+                                                            <mat-panel-title>
+                                                                <!-- Scope Group Title -->
+                                                                <span
+                                                                    class="mt-4 flex w-full items-center justify-between space-x-2">
+                                                                    <mat-icon
+                                                                        class="icon-size-6 dark:text-gray-200"
+                                                                        [svgIcon]="
+                                                                            'heroicons_outline:rectangle-group'
+                                                                        "></mat-icon>
+                                                                    <span
+                                                                        class="text-2xl font-semibold dark:text-gray-200"
+                                                                        >{{ group?.key }}</span
+                                                                    >
+
+                                                                    <div
+                                                                        class="my-2 flex flex-1 justify-end space-x-4 text-sm hover:cursor-pointer">
+                                                                        <!-- Unselect All -->
+                                                                        <button
+                                                                            mat-icon-button
+                                                                            (click)="
+                                                                                unselectAllInScopeGroup(group?.key);
+                                                                                $event.stopPropagation()
+                                                                            "
+                                                                            tabindex="0"
+                                                                            (keypress)="(null)"
+                                                                            [matTooltip]="
+                                                                                'General.UnselectAll' | transloco
+                                                                            "
+                                                                            class="dark:text-gray-200">
+                                                                            <mat-icon
+                                                                                [svgIcon]="
+                                                                                    'mat_outline:rule'
+                                                                                "></mat-icon>
+                                                                        </button>
+
+                                                                        <!-- Select All -->
+                                                                        <button
+                                                                            mat-icon-button
+                                                                            (click)="
+                                                                                selectAllInScopeGroup(group?.key);
+                                                                                $event.stopPropagation()
+                                                                            "
+                                                                            tabindex="0"
+                                                                            (keypress)="(null)"
+                                                                            [matTooltip]="
+                                                                                'General.SelectAll' | transloco
+                                                                            "
+                                                                            class="dark:text-gray-200">
+                                                                            <mat-icon
+                                                                                [svgIcon]="
+                                                                                    'mat_outline:checklist'
+                                                                                "></mat-icon>
+                                                                        </button>
+                                                                    </div>
+                                                                </span>
+                                                            </mat-panel-title>
+                                                        </mat-expansion-panel-header>
+
+                                                        <ng-container
+                                                            *ngFor="
+                                                                let scope of group.value;
+                                                                let i = index;
+                                                                trackBy: trackByFn;
+                                                                let last = last
+                                                            ">
+                                                            <div
+                                                                class="flex w-full flex-row items-center bg-white p-3 dark:bg-gray-700"
+                                                                [ngClass]="{
+                                                                    'border-b dark:border-gray-600': !last,
+                                                                    'border-0': last
+                                                                }">
+                                                                <div class="flex flex-col justify-center">
+                                                                    <!-- Checkbox to check scope -->
+                                                                    <mat-checkbox
+                                                                        class="scale-125"
+                                                                        color="primary"
+                                                                        [checked]="isScopeChecked(scope.id)"
+                                                                        (change)="toggleScope(scope.id)"></mat-checkbox>
+                                                                </div>
+                                                                <div class="flex h-full w-full items-center">
+                                                                    <span class="flex flex-col">
+                                                                        <span class="font-bold dark:text-gray-200">
+                                                                            {{ scope.name }}
+                                                                        </span>
+
+                                                                        <!-- Scope Description -->
+                                                                        <ng-container *ngIf="scope.description?.length">
+                                                                            <span class="text-sm dark:text-gray-300">{{
+                                                                                scope.description
+                                                                            }}</span>
+                                                                        </ng-container>
+                                                                    </span>
+                                                                </div>
+
+                                                                <span *ngIf="isUserOwner" class="mr-6 flex">
+                                                                    <button
+                                                                        mat-icon-button
+                                                                        [matMenuTriggerFor]="roleMenu">
+                                                                        <mat-icon
+                                                                            class="icon-size-5 dark:text-gray-200"
+                                                                            [svgIcon]="
+                                                                                'heroicons_mini:ellipsis-vertical'
+                                                                            "
+                                                                            (click)="
+                                                                                $event.stopPropagation()
+                                                                            "></mat-icon>
+                                                                    </button>
+                                                                    <mat-menu #roleMenu="matMenu">
+                                                                        <button
+                                                                            mat-menu-item
+                                                                            (click)="openScopesEditModal(scope)">
+                                                                            <span class="flex items-center">
+                                                                                <mat-icon
+                                                                                    class="mr-3 icon-size-5"
+                                                                                    [svgIcon]="
+                                                                                        'heroicons_outline:pencil'
+                                                                                    "></mat-icon>
+                                                                                <span>{{
+                                                                                    'General.Edit' | transloco
+                                                                                }}</span>
+                                                                            </span>
+                                                                        </button>
+                                                                        <button
+                                                                            mat-menu-item
+                                                                            (click)="deleteScope(scope)">
+                                                                            <span class="flex items-center">
+                                                                                <mat-icon
+                                                                                    class="text-red-600"
+                                                                                    [svgIcon]="
+                                                                                        'heroicons_outline:trash'
+                                                                                    "></mat-icon>
+                                                                                <span>{{
+                                                                                    'General.Delete' | transloco
+                                                                                }}</span>
+                                                                            </span>
+                                                                        </button>
+                                                                    </mat-menu>
+                                                                </span>
+                                                            </div>
+                                                        </ng-container>
+                                                    </mat-expansion-panel>
+                                                </mat-accordion>
+                                            </div>
+                                        </fuse-card>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="flex items-center justify-between w-full border-t px-8 py-4">
-                                <!-- Delete -->
-                                <button
-                                    *ngIf="userCanDeleteRoles"
-                                    class="-ml-4"
-                                    mat-button
-                                    [color]="'warn'"
-                                    (click)="deleteSelectedRole()">
+                            <div class="flex w-full items-center justify-between border-t px-8 py-4">
+                                <!-- Delete Button -->
+                                <button class="-ml-4" mat-flat-button [color]="'warn'" (click)="deleteSelectedItem()">
                                     {{ 'General.Delete' | transloco }}
                                 </button>
 
+                                <!-- Flash messages -->
                                 <div class="flex items-center">
-                                    <div class="flex items-center mr-4" *ngIf="flashMessage">
+                                    <div class="mr-4 flex items-center" *ngIf="flashMessage">
                                         <ng-container *ngIf="flashMessage === 'success'">
                                             <mat-icon
                                                 class="text-green-500"
                                                 [svgIcon]="'heroicons_outline:check'"></mat-icon>
-                                            <span class="ml-2">
-                                                {{ 'Roles.RoleUpdated' | transloco }}
-                                            </span>
+                                            <span class="ml-2">Role updated</span>
                                         </ng-container>
                                         <ng-container *ngIf="flashMessage === 'error'">
                                             <mat-icon
                                                 class="text-red-500"
                                                 [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
-                                            <span class="ml-2">
-                                                {{ 'General.AnErrorOccurred' | transloco }}
-                                            </span>
+                                            <span class="ml-2">An error occurred, try again!</span>
                                         </ng-container>
                                     </div>
 
-                                    <!-- Update -->
-                                    <button
-                                        *ngIf="userCanUpdateRoles"
-                                        mat-flat-button
-                                        [color]="'primary'"
-                                        (click)="updateSelectedRole()">
+                                    <!-- Update Button -->
+                                    <button mat-flat-button [color]="'primary'" (click)="updateSelectedItem()">
                                         {{ 'General.Update' | transloco }}
                                     </button>
                                 </div>
@@ -188,10 +394,11 @@
                 </div>
             </ng-template>
 
+            <!-- No roles -->
             <ng-template #noRoles>
                 <div class="z-100 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
-                    <mat-icon class="icon-size-24" [svgIcon]="'heroicons_outline:role'"></mat-icon>
-                    <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">
+                    <!-- <mat-icon class="icon-size-24" [svgIcon]="'heroicons_outline:role'"></mat-icon> -->
+                    <div class="text-secondary mt-4 text-2xl font-semibold tracking-tight">
                         {{ 'Roles.NoRoles' | transloco }}
                     </div>
                 </div>

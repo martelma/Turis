@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { BehaviorSubject, Observable, filter, finalize, map, of, switchMap, take, tap, throwError } from 'rxjs';
+import { Injectable } from '@angular/core';
 import { BaseEntityService } from 'app/shared/services';
 import { emptyGuid, PaginatedListResult } from 'app/shared/services/shared.types';
+import { BehaviorSubject, filter, finalize, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
 import { ApplicationScopeGroup, ApplicationScopeGroupSearchParameters } from './scope-group.types';
 
 @Injectable({ providedIn: 'root' })
@@ -25,21 +25,21 @@ export class ApplicationScopeGroupService extends BaseEntityService<ApplicationS
     /**
      * Getter for applicationScopeGroups
      */
-    get applicationScopeGroups$(): Observable<PaginatedListResult<ApplicationScopeGroup>> {
+    get scopeGroups$(): Observable<PaginatedListResult<ApplicationScopeGroup>> {
         return this._applicationScopeGroups.asObservable();
     }
 
     /**
      * Getter for applicationScopeGroup
      */
-    get applicationScopeGroup$(): Observable<ApplicationScopeGroup> {
+    get scopeGroup$(): Observable<ApplicationScopeGroup> {
         return this._applicationScopeGroup.asObservable();
     }
 
     /**
      * Getter for applicationScopeGroups loading
      */
-    get applicationScopeGroupsLoading$(): Observable<boolean> {
+    get scopeGroupsLoading$(): Observable<boolean> {
         return this._applicationScopeGroupsLoading.asObservable();
     }
 
@@ -67,14 +67,14 @@ export class ApplicationScopeGroupService extends BaseEntityService<ApplicationS
      * Create a dummy applicationScopeGroup
      */
     createEntity(): Observable<ApplicationScopeGroup> {
-        return this.applicationScopeGroups$.pipe(
+        return this.scopeGroups$.pipe(
             take(1),
             switchMap(applicationScopeGroups =>
                 of({
                     id: emptyGuid,
                     name: '',
                     descrition: '',
-                    applicationId: '',
+                    applicationId: emptyGuid,
                     application: null,
                     scopes: [],
                 }).pipe(
@@ -100,7 +100,7 @@ export class ApplicationScopeGroupService extends BaseEntityService<ApplicationS
      * @param applicationScopeGroup
      */
     updateEntity(id: string, applicationScopeGroup: ApplicationScopeGroup): Observable<ApplicationScopeGroup> {
-        return this.applicationScopeGroups$.pipe(
+        return this.scopeGroups$.pipe(
             take(1),
             switchMap(applicationScopeGroups =>
                 this.create(applicationScopeGroup).pipe(
@@ -118,7 +118,7 @@ export class ApplicationScopeGroupService extends BaseEntityService<ApplicationS
                         return applicationScopeGroup;
                     }),
                     switchMap(updatedApplicationScopeGroup =>
-                        this.applicationScopeGroup$.pipe(
+                        this.scopeGroup$.pipe(
                             take(1),
                             filter(item => item && item.id === id),
                             tap(() => {

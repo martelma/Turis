@@ -13,11 +13,20 @@ using Turis.Common.Enums;
 using Turis.Common.Models;
 using Turis.DataAccessLayer;
 using Turis.BusinessLayer.Resources;
+using Microsoft.Extensions.Options;
+using Turis.Authentication.Settings;
+using Turis.BusinessLayer.Extensions;
+using Turis.Common.Models.Requests;
 
 namespace Turis.BusinessLayer.Services;
 
-public class RoleService(IDbContext dbContext, ILogger<RoleService> logger, IIdentityService identityService) : IRoleService
+public class RoleService(IDbContext dbContext,
+	ILogger<RoleService> logger,
+	IOptions<AuthenticationSettings> authenticationSettingsOptions,
+	IIdentityService identityService) : IRoleService
 {
+	private readonly AuthenticationSettings authenticationSettings = authenticationSettingsOptions.Value;
+
 	private IIncludableQueryable<ApplicationRole, ApplicationScope> Query()
 	{
 		return dbContext.GetData<ApplicationRole>()
@@ -25,10 +34,10 @@ public class RoleService(IDbContext dbContext, ILogger<RoleService> logger, IIde
 			.ThenInclude(x => x.Scope);
 	}
 
-	public async Task<Result<PaginatedList<ApplicationRoleModel>>> ListAsync(Guid userId, Guid applicationId, int pageIndex, int itemsPerPage, string orderBy)
+	public async Task<Result<PaginatedList<ApplicationRoleModel>>> ListAsync(Guid userId, int pageIndex, int itemsPerPage, string orderBy)
 	{
 		var query = Query()
-			.Where(r => r.ApplicationId == applicationId);
+			.Where(r => r.ApplicationId == authenticationSettings.ApplicationId);
 
 		// Hides the special Owner Role, only visible to those who are already owners and hidden for the others
 		var user = (await identityService.GetUserAsync(userId)).Content;
@@ -38,11 +47,14 @@ public class RoleService(IDbContext dbContext, ILogger<RoleService> logger, IIde
 
 		var totalCount = await query.CountAsync();
 
+		query = query.OrderBy(x => x.Name);
+
 		if (orderBy.HasValue())
 		{
 			try
 			{
-				query = query.OrderBy(orderBy);
+				if (orderBy.EqualsIgnoreCase("Name"))
+					query = query.OrderBy(x => x.Name);
 			}
 			catch (ParseException ex)
 			{
@@ -143,13 +155,14 @@ public class RoleService(IDbContext dbContext, ILogger<RoleService> logger, IIde
 		return result;
 	}
 
-	public async Task<Result<ApplicationRoleModel>> GetAsync(Guid applicationId, Guid roleId)
+	public async Task<Result<ApplicationRoleModel>> GetAsync(Guid roleId)
 	{
-		var role = await dbContext.GetData<ApplicationRole>()
+		var role = (await dbContext.GetData<ApplicationRole>()
 			.Include(x => x.Scopes)
 			.ThenInclude(x => x.Scope)
-			.Where(r => r.ApplicationId == applicationId && r.Id == roleId)
-			.Select(r => ToModel(r)).FirstOrDefaultAsync();
+			.Where(r => r.ApplicationId == authenticationSettings.ApplicationId && r.Id == roleId)
+			.FirstOrDefaultAsync())
+			.ToModel();
 
 		if (role is null)
 			return Result.Fail(FailureReasons.ItemNotFound);
@@ -157,13 +170,14 @@ public class RoleService(IDbContext dbContext, ILogger<RoleService> logger, IIde
 		return role;
 	}
 
-	public async Task<Result<ApplicationRoleModel>> GetAsync(Guid applicationId, string roleName)
+	public async Task<Result<ApplicationRoleModel>> GetAsync(string roleName)
 	{
-		var role = await dbContext.GetData<ApplicationRole>()
+		var role = (await dbContext.GetData<ApplicationRole>()
 			.Include(x => x.Scopes)
 			.ThenInclude(x => x.Scope)
-			.Where(r => r.ApplicationId == applicationId && r.Name == roleName)
-			.Select(r => ToModel(r)).FirstOrDefaultAsync();
+			.Where(r => r.ApplicationId == authenticationSettings.ApplicationId && r.Name == roleName)
+			.FirstOrDefaultAsync())
+			.ToModel();
 
 		if (role is null)
 			return Result.Fail(FailureReasons.ItemNotFound);
@@ -171,38 +185,7 @@ public class RoleService(IDbContext dbContext, ILogger<RoleService> logger, IIde
 		return role;
 	}
 
-	private static ApplicationRoleModel ToModel(ApplicationRole r)
-	{
-		return new ApplicationRoleModel
-		{
-			Id = r.Id,
-			Name = r.Name,
-			Description = r.Description,
-			Scopes = r.Scopes.Select(s => new ApplicationScopeModel
-			{
-				Id = s.Scope.Id,
-				Name = s.Scope.Name,
-				RoleIds = r.Scopes.Select(rs => rs.RoleId).ToList(),
-				ScopeGroupId = s.Scope.ScopeGroupId,
-				ApplicationId = s.Scope.ApplicationId
-			}).ToList(),
-			Users = r.UserRoles.Select(ur => new UserModel
-			{
-				Id = ur.User.Id,
-				UserName = ur.User.UserName,
-				FirstName = ur.User.FirstName,
-				LastName = ur.User.LastName,
-				Email = ur.User.Email,
-				Language = ur.User.Language,
-				IsActive = ur.User.LockoutEnd.GetValueOrDefault(DateTimeOffset.MinValue) < DateTime.UtcNow,
-				AccountType = ur.User.PasswordHash != null ? AccountType.Local : AccountType.AzureActiveDirectory
-			})
-				.GroupBy(u => u.Id)
-				.Select(u => u.First())
-		};
-	}
-
-	public async Task<Result<ApplicationRoleModel>> SaveAsync(Guid applicationId, ApplicationRoleModel role)
+	public async Task<Result<ApplicationRoleModel>> SaveAsync(ApplicationRoleRequest role)
 	{
 		var dbRole = await dbContext.GetData<ApplicationRole>(true)
 			.Include(x => x.Scopes)
@@ -216,7 +199,7 @@ public class RoleService(IDbContext dbContext, ILogger<RoleService> logger, IIde
 		}
 
 		dbRole.Id = role.Id != Guid.Empty ? role.Id : dbRole.Id;
-		dbRole.ApplicationId = applicationId;
+		dbRole.ApplicationId = authenticationSettings.ApplicationId;
 		dbRole.Name = role.Name;
 		dbRole.Description = role.Description;
 		dbRole.NormalizedName = role.Name.ToUpperInvariant();
@@ -227,27 +210,27 @@ public class RoleService(IDbContext dbContext, ILogger<RoleService> logger, IIde
 		await dbContext.SaveAsync();
 
 		role.Id = dbRole.Id;
-		return role;
+		return dbRole.ToModel();
 	}
 
-	private static Task SaveRoleScopesAsync(ApplicationRoleModel model, ApplicationRole record)
+	private static Task SaveRoleScopesAsync(ApplicationRoleRequest model, ApplicationRole record)
 	{
 		record.Scopes ??= [];
 		model.Scopes ??= [];
 
 		//DELETE: Delete from the list of records the items no longer present in the new list
-		var newIds = model.Scopes.Select(x => x.Id);
+		var newIds = model.Scopes?.Select(x => x.Id);
 		record.Scopes.RemoveAll(x => !newIds.Contains(x.ScopeId));
 
 		//ADD-UPDATE
-		foreach (var scopeModel in model.Scopes)
+		foreach (var scopeId in newIds)
 		{
-			var roleScope = record.Scopes.FirstOrDefault(x => x.ScopeId == scopeModel.Id);
+			var roleScope = record.Scopes.FirstOrDefault(x => x.ScopeId == scopeId);
 			if (roleScope == null)
 			{
 				roleScope = new ApplicationRoleScope
 				{
-					ScopeId = scopeModel.Id,
+					ScopeId = scopeId,
 					RoleId = record.Id,
 				};
 				record.Scopes.Add(roleScope);
@@ -257,7 +240,7 @@ public class RoleService(IDbContext dbContext, ILogger<RoleService> logger, IIde
 		return Task.CompletedTask;
 	}
 
-	public async Task<Result> DeleteAsync(Guid applicationId, Guid roleId)
+	public async Task<Result> DeleteAsync(Guid roleId)
 	{
 		// Controlla se il ruolo è associato a qualche utente o scope.
 		var roleInUse = await dbContext.GetData<ApplicationUserRole>().AnyAsync(r => r.RoleId == roleId)
@@ -269,7 +252,7 @@ public class RoleService(IDbContext dbContext, ILogger<RoleService> logger, IIde
 		}
 
 		var deleteRows = await dbContext.GetData<ApplicationRole>()
-			.Where(r => r.ApplicationId == applicationId && r.Id == roleId).ExecuteDeleteAsync();
+			.Where(r => r.ApplicationId == authenticationSettings.ApplicationId && r.Id == roleId).ExecuteDeleteAsync();
 
 		if (deleteRows == 0)
 		{

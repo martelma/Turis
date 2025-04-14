@@ -34,8 +34,10 @@ using Turis.BusinessLayer.Resources;
 namespace Turis.BusinessLayer.Services;
 
 public class IdentityService(ApplicationDbContext dbContext,
+	ILogger<IdentityService> logger,
 	UserManager<ApplicationUser> userManager,
 	SignInManager<ApplicationUser> signInManager,
+	IAvatarContactService avatarContactService,
 	ITimeLimitedDataProtector timeLimitedDataProtector,
 	ITimeLimitedDataProtector dataProtector,
 	IOptions<AuthenticationSettings> authenticationSettingsOptions,
@@ -44,8 +46,8 @@ public class IdentityService(ApplicationDbContext dbContext,
 	IHttpContextAccessor httpContextAccessor,
 	IAvatarUserService avatarUserService,
 	IJwtBearerService jwtBearerService,
-	IEmailService emailService,
-	ILogger<IdentityService> logger) : IIdentityService
+	IEmailService emailService
+	) : IIdentityService
 {
 	private readonly AuthenticationSettings authenticationSettings = authenticationSettingsOptions.Value;
 	private readonly JwtBearerSettings jwtBearerSettings = jwtBearerSettingsOptions.Value;
@@ -98,7 +100,7 @@ public class IdentityService(ApplicationDbContext dbContext,
 				CallbackUrl = $"{appSettings.ApplicationUrl}"
 			};
 
-			await emailService.SendEmailAsync(user.FirstName, user.Email, Account.UserRegisteredTitle, "UserRegistered", userRegisteredModel);
+			await emailService.SendTemplateEmailAsync(user.FirstName, user.Email, Account.UserRegisteredTitle, "UserRegistered", userRegisteredModel);
 
 			var applicationUser = await GetUserAsync(user.Id);
 			return applicationUser;
@@ -109,7 +111,8 @@ public class IdentityService(ApplicationDbContext dbContext,
 
 	public async Task<Result> GeneratePasswordResetTokenAsync(GeneratePasswordResetTokenRequest request)
 	{
-		var user = await userManager.FindByEmailAsync(request.Email);
+		var user = await userManager.FindByNameAsync(request.UserName);
+		//var user = await userManager.FindByEmailAsync(request.Email);
 		if (user is not null)
 		{
 			var passwordResetToken = await userManager.GeneratePasswordResetTokenAsync(user);
@@ -121,7 +124,7 @@ public class IdentityService(ApplicationDbContext dbContext,
 				CallbackUrl = $"{appSettings.PasswordRecoveryCallbackUrl}?userId={user.Id}&token={passwordResetToken}"
 			};
 
-			await emailService.SendEmailAsync(user.FirstName, user.Email, Account.ResetPasswordTitle, "PasswordRecovery", passwordRecoveryModel);
+			await emailService.SendTemplateEmailAsync(user.FirstName, user.Email, Account.ResetPasswordTitle, "PasswordRecovery", passwordRecoveryModel);
 		}
 
 		return Result.Ok();
@@ -248,21 +251,20 @@ public class IdentityService(ApplicationDbContext dbContext,
 			.ToListAsync();
 
 		var claims = new Claim[]
-		{
-			new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-			new(ClaimTypes.Name, user.UserName),
-			new(ClaimTypes.GivenName, user.FirstName ?? string.Empty),
-			new(ClaimTypes.Surname, user.LastName ?? string.Empty),
-			new(ClaimTypes.Locality, user.Language ?? string.Empty)
-		}
-		.Union(userRoles.Select(r => r.ApplicationId).Distinct().Select(a => new Claim(ClaimNames.Application, a.ToString())))
-		.Union(userRoles.Select(r => new Claim(ClaimTypes.Role, $"{r.ApplicationId}:{r.Name}")))
-		.Union(userRoles.SelectMany(r => r.Scopes.Select(s => new Claim(ClaimNames.Scope, $"{r.ApplicationId}:{s.Scope.Name}"))))
-		.ToList();
+			{
+				new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+				new(ClaimTypes.Name, user.UserName),
+				new(ClaimTypes.GivenName, user.FirstName ?? string.Empty),
+				new(ClaimTypes.Surname, user.LastName ?? string.Empty),
+				new(ClaimTypes.Locality, user.Language ?? string.Empty)
+			}
+			.Union(userRoles.Select(r => new Claim(ClaimTypes.Role, r.Name)))
+			.Union(userRoles.SelectMany(r => r.Scopes.Select(s => new Claim(ClaimNames.Scope, s.Scope.Name))))
+			.ToList();
 
 		await userManager.UpdateSecurityStampAsync(user);
 
-		var loginResponse = await CreateToken(user, claims);
+		var loginResponse = CreateToken(user, claims);
 		return loginResponse;
 	}
 
@@ -270,7 +272,11 @@ public class IdentityService(ApplicationDbContext dbContext,
 	{
 		var paginator = new Paginator(parameters);
 
-		var query = dbContext.GetData<ApplicationUser>();
+		var query = dbContext.Users
+			.Include(x => x.UserRoles)
+			.ThenInclude(x => x.Role)
+			.AsQueryable();
+
 		var totalCount = await query.CountAsync();
 
 		if (parameters.Pattern.HasValue())
@@ -308,7 +314,8 @@ public class IdentityService(ApplicationDbContext dbContext,
 				Language = u.Language,
 				IsActive = u.LockoutEnd.GetValueOrDefault(DateTimeOffset.MinValue) < DateTime.UtcNow,
 				AccountType = u.PasswordHash != null ? AccountType.Local : AccountType.AzureActiveDirectory,
-				Avatar = (await avatarUserService.GetAsync(u.Id))?.Content != null ? (await avatarUserService.GetAsync(u.Id))?.Content.Content.ConvertToBase64String() : null
+				Avatar = (await avatarUserService.GetAsync(u.Id))?.Content != null ? (await avatarUserService.GetAsync(u.Id))?.Content.Content.ConvertToBase64String() : null,
+				Roles = u.UserRoles.Select(x => x.Role.Name).ToList()
 			});
 
 		var result = new PaginatedList<UserModel>(data.ToList().Take(paginator.PageSize), totalCount, paginator.PageIndex, paginator.PageSize);
@@ -318,6 +325,7 @@ public class IdentityService(ApplicationDbContext dbContext,
 	public async Task<Result<UserModel>> GetCurrentUserAsync()
 	{
 		var user = (await GetUserAsync(ClaimExtensions.GetId(httpContext.User)))?.Content;
+
 		return user;
 	}
 
@@ -367,12 +375,22 @@ public class IdentityService(ApplicationDbContext dbContext,
 					.OrderBy(s => s.Name).ToList(),
 				}).OrderBy(r => r.Name).ToList()
 			}).ToList(),
+			Roles = dbUser.UserRoles.Select(x => x.Role.Name).ToList(),
+			Scopes = dbUser.UserRoles.SelectMany(x => x.Role.Scopes).Select(x => x.Scope.Name).Distinct().ToList(),
 		};
 
 		var avatar = (await avatarUserService.GetAsync(user.Id))?.Content;
 		if (avatar != null)
 			user.Avatar = avatar.Content.ConvertToBase64String();
-
+		else
+		{
+			var contact = await dbContext.Contacts.FindAsync(userId);
+			if (contact != null)
+			{
+				var content = (await avatarContactService.GetAsync(contact.Code, contact.Sex))?.Content;
+				user.Avatar = content?.Content.ConvertToBase64String();
+			}
+		}
 		return user;
 	}
 
@@ -514,29 +532,28 @@ public class IdentityService(ApplicationDbContext dbContext,
 
 	public async Task<Result<LoginResponse>> RefreshTokenAsync(RefreshTokenRequest request)
 	{
-		var jwtBearerValidationResult = await jwtBearerService.TryValidateTokenAsync(request.AccessToken, validateLifetime: false);
-		if (!jwtBearerValidationResult.IsValid) 
-			return Result.Fail(CustomFailureReasons.InvalidToken);
-
-		try
+		if (jwtBearerService.TryValidateToken(request.AccessToken, validateLifetime: false, out var user))
 		{
-			var userId = dataProtector.Unprotect(request.RefreshToken);
-			if (jwtBearerValidationResult.Principal.GetId().ToString() == userId)
+			try
 			{
-				var dbUser = await userManager.FindByIdAsync(userId);
-
-				// Check if the user is actually active or not.
-				// Otherwise, the user can repeatedly access to the application even if he was disabled
-				if (dbUser is not null && dbUser.LockoutEnd.GetValueOrDefault() < DateTime.UtcNow)
+				var userId = dataProtector.Unprotect(request.RefreshToken);
+				if (ClaimExtensions.GetId(user).ToString() == userId)
 				{
-					// Il refresh token è valido.
-					var loginResponse = await CreateToken(dbUser, jwtBearerValidationResult.Principal.Claims.ToList());
-					return loginResponse;
+					var dbUser = await userManager.FindByIdAsync(userId);
+
+					// Check if the user is actually active or not.
+					// Otherwise, the user can repeatedly access to the application even if he was disabled
+					if (dbUser is not null && dbUser.LockoutEnd.GetValueOrDefault() < DateTime.UtcNow)
+					{
+						// Il refresh token è valido.
+						var loginResponse = CreateToken(dbUser, user.Claims.ToList());
+						return loginResponse;
+					}
 				}
 			}
-		}
-		catch
-		{
+			catch
+			{
+			}
 		}
 
 		return Result.Fail(CustomFailureReasons.InvalidToken);
@@ -571,7 +588,7 @@ public class IdentityService(ApplicationDbContext dbContext,
 		return Result.Fail(FailureReasons.ClientError);
 	}
 
-	private async Task<LoginResponse> CreateToken(ApplicationUser user, IList<Claim> claims)
+	private LoginResponse CreateToken(ApplicationUser user, IList<Claim> claims)
 	{
 		var now = DateTime.UtcNow;
 		var tokenExpiration = now.Add(jwtBearerSettings.ExpirationTime.GetValueOrDefault(TimeSpan.FromDays(1)));
@@ -579,7 +596,7 @@ public class IdentityService(ApplicationDbContext dbContext,
 		var refrehTokenExpiration = now.Add(authenticationSettings.RefreshTokenExpirationTime);
 		var refreshToken = dataProtector.Protect(user.Id.ToString(), refrehTokenExpiration);
 
-		var token = await jwtBearerService.CreateTokenAsync(user.UserName, claims, absoluteExpiration: tokenExpiration);
+		var token = jwtBearerService.CreateToken(user.UserName, claims, absoluteExpiration: tokenExpiration);
 
 		var loginResponse = new LoginResponse
 		{
@@ -594,51 +611,6 @@ public class IdentityService(ApplicationDbContext dbContext,
 		};
 
 		return loginResponse;
-	}
-
-	public async Task<Result> CopyUserSettingsAsync(CopyUserSettingsRequest request)
-	{
-		var sourceUser = await dbContext.Users
-			.Include(u => u.UserRoles)
-			.ThenInclude(x => x.Role)
-			.FirstOrDefaultAsync(u => u.Id == request.UserSourceId);
-
-		if (sourceUser is null)
-		{
-			return Result.Fail(FailureReasons.ItemNotFound);
-		}
-
-		var userTarget = await dbContext.Users
-			.Include(u => u.UserRoles)
-			.ThenInclude(x => x.Role)
-			.FirstOrDefaultAsync(u => u.Id == request.UserTargetId);
-
-		if (userTarget is null)
-		{
-			return Result.Fail(FailureReasons.ItemNotFound);
-		}
-
-		// Retrieves the roles selected for the user and adds them to the list.
-		dbContext.UserRoles.RemoveRange(userTarget.UserRoles.Where(r => r.Role.ApplicationId == request.ApplicationId));
-
-		var userRoleIds = sourceUser.UserRoles
-			.Where(ur => ur.Role.ApplicationId == request.ApplicationId)
-			.Select(ur => ur.RoleId)
-			.ToList();
-
-		var rolesToCopy = await dbContext.Roles
-					.Include(x => x.Application)
-					.Where(r => userRoleIds.Contains(r.Id))
-					.ToListAsync();
-
-		foreach (var role in rolesToCopy)
-		{
-			dbContext.UserRoles.Add(new() { User = userTarget, Role = role });
-		}
-
-		await dbContext.SaveAsync();
-
-		return Result.Ok();
 	}
 
 	public async Task<Result> UpdateLanguageAsync(Guid id, UpdateUserLanguageRequest request)

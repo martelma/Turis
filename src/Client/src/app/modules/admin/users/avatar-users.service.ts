@@ -75,14 +75,24 @@ export class AvatarUsersService extends BaseEntityService<User> {
 
         if (id === 'new') {
             const user = {
-                id: '',
+                id: null,
                 userName: '',
+                email: '',
                 firstName: '',
                 lastName: '',
                 fullName: '',
-                email: '',
-                roles: [],
+                avatar: '',
+                avatarUrl: '',
+                language: '',
+                isActive: false,
+                twoFactorEnabled: false,
+                applicationId: null,
+                applicationName: null,
+                applicationRoles: [],
+                accountType: null,
                 applications: [],
+                roles: [],
+                scopes: [],
             };
 
             this._user.next(user);

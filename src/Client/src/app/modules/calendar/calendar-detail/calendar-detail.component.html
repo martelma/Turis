@@ -1,0 +1,134 @@
+<div class="flex flex-col flex-auto p-3">
+    <div class="flex flex-col w-full overflow-auto bg-card">
+        <div class="flex flex-row items-center px-6 h-20 min-h-20 text-white bg-primary">
+            <mat-icon class="icon-size-7 text-current" [svgIcon]="'heroicons_outline:square-3-stack-3d'"></mat-icon>
+            <div class="ml-3 text-2xl font-semibold tracking-tight">Service Details</div>
+            <button class="ml-auto" mat-icon-button (click)="closeDrawer()">
+                <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+            </button>
+        </div>
+
+        <a [routerLink]="['/service', service?.id]" target="_blank">
+            <div class="flex-1 flex-col mt-2">
+                <span class="text-lg font-extrabold">[{{ service?.code }}] - {{ service?.title }}</span>
+            </div>
+        </a>
+
+        <!-- Information -->
+        <div class="text-lg font-semibold mt-8">Information</div>
+        <div class="flex flex-col mt-4 border-t border-b divide-y font-medium">
+            <div class="flex items-center justify-between py-3">
+                <div class="text-secondary">Status</div>
+                <div>
+                    <span
+                        [ngClass]="getStatusColorClass(service)"
+                        class="color-box mr-3"
+                        [matTooltip]="service?.status"></span>
+                    <span
+                        [ngClass]="getBillingStatusColorClass(service)"
+                        class="color-box mr-3"
+                        [matTooltip]="service?.billingStatus"></span>
+                    <span
+                        [ngClass]="getCommissionStatusColorClass(service)"
+                        class="color-box"
+                        [matTooltip]="service?.commissionStatus"></span>
+                </div>
+            </div>
+            <div class="flex items-center justify-between py-3">
+                <div class="text-secondary">Date</div>
+                <div>{{ service?.dateText }}</div>
+            </div>
+            <div class="flex items-center justify-between py-3">
+                <div class="text-secondary">Location</div>
+                <div>{{ service?.location }}</div>
+            </div>
+            <div class="flex items-center justify-between py-3">
+                <div class="text-secondary">People</div>
+                <div>{{ service?.people }}</div>
+            </div>
+            <div class="flex items-center justify-between py-3">
+                <div class="text-secondary">Languages</div>
+                <!-- <div>{{ service?.languages }}</div> -->
+                <div class="flex space-x-2 items-center">
+                    <div *ngFor="let lang of service?.languages">
+                        <span [matTooltip]="lang" [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center justify-between py-3">
+                <div class="text-secondary">Service Type</div>
+                <div>{{ service?.serviceType }}</div>
+            </div>
+            <div class="flex items-center justify-between py-3">
+                <div class="text-secondary">Duration Type</div>
+                <div>{{ service?.durationType }}</div>
+            </div>
+            <div class="flex items-center justify-between py-3">
+                <div class="text-secondary">Meeting Place</div>
+                <div>{{ service?.meetingPlace }}</div>
+            </div>
+            <div class="flex items-center justify-between py-3">
+                <div class="text-secondary">Referent</div>
+                <div>{{ service?.referent }}</div>
+            </div>
+            <div class="flex items-center justify-between py-3">
+                <div class="text-secondary">Referent Phone</div>
+                <div>{{ service?.referentPhone }}</div>
+            </div>
+        </div>
+
+        <div class="text-secondary mt-3 mb-1">Client</div>
+        <div class="flex w-full items-center mt-3">
+            <a [routerLink]="['/contact', service?.client?.id]" target="_blank">
+                <div class="flex h-10 w-10 flex-0 items-center justify-center overflow-hidden rounded-full">
+                    <img alt="Avatar" class="h-full w-full" [src]="service?.client?.avatarUrl" />
+                </div>
+            </a>
+            <div class="ml-4 min-w-0">
+                <div class="truncate font-extrabold">{{ service?.client?.fullName }}</div>
+
+                <div class="flex space-x-2 items-center">
+                    <div *ngFor="let lang of service?.client?.languages">
+                        <span [matTooltip]="lang" [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
+                    </div>
+                </div>
+
+                <!-- <div class="truncate font-semibold">{{ service?.collaborator?.fullName }}</div> -->
+                <!-- <div class="mt-0.5 flex items-center leading-5">
+            <div>to</div>
+            <div class="ml-1 font-semibold">me</div>
+        </div> -->
+            </div>
+        </div>
+
+        <div class="text-secondary mt-3 mb-1">Collaborator</div>
+        <div class="flex w-full items-center mt-3">
+            <a [routerLink]="['/contact', service?.collaborator?.id]" target="_blank">
+                <div class="flex h-10 w-10 flex-0 items-center justify-center overflow-hidden rounded-full">
+                    <img alt="Avatar" class="h-full w-full" [src]="service?.collaborator?.avatarUrl" />
+                </div>
+            </a>
+            <div class="ml-4 min-w-0">
+                <div class="truncate font-extrabold">{{ service?.collaborator?.fullName }}</div>
+
+                <div class="flex space-x-2 items-center">
+                    <div *ngFor="let lang of service?.collaborator?.languages">
+                        <span [matTooltip]="lang" [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
+                    </div>
+                </div>
+
+                <!-- <div class="truncate font-semibold">{{ service?.collaborator?.fullName }}</div> -->
+                <!-- <div class="mt-0.5 flex items-center leading-5">
+                <div>to</div>
+                <div class="ml-1 font-semibold">me</div>
+            </div> -->
+            </div>
+        </div>
+
+        <!-- Note -->
+        <div class="text-lg font-medium mt-8">Note</div>
+        <div class="flex flex-col mt-4 border-t border-b divide-y font-medium">
+            <pre>{{ service?.note }}</pre>
+        </div>
+    </div>
+</div>
