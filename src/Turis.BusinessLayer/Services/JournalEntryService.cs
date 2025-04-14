@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using JeMa.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OperationResults;
@@ -7,7 +8,6 @@ using Turis.BusinessLayer.Extensions;
 using Turis.BusinessLayer.Parameters;
 using Turis.BusinessLayer.Parameters.Base;
 using Turis.BusinessLayer.Services.Interfaces;
-using Turis.Common.CustomTypes;
 using Turis.Common.Models;
 using Turis.Common.Models.Requests;
 using Turis.DataAccessLayer;

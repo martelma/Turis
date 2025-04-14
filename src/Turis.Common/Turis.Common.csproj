@@ -9,8 +9,11 @@
 
 	<ItemGroup>
 	  <Compile Remove="Config\**" />
+	  <Compile Remove="CustomTypes\**" />
 	  <EmbeddedResource Remove="Config\**" />
+	  <EmbeddedResource Remove="CustomTypes\**" />
 	  <None Remove="Config\**" />
+	  <None Remove="CustomTypes\**" />
 	</ItemGroup>
 
 	<ItemGroup>
