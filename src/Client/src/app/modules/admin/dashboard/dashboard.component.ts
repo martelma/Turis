@@ -56,7 +56,12 @@ export class DashboardComponent implements OnInit {
     }
 
     private _loadUser(): void {
-        this._userService.me().pipe(untilDestroyed(this)).subscribe();
+        this._userService
+            .me()
+            .pipe(untilDestroyed(this))
+            .subscribe((user: User) => {
+                this.user = user;
+            });
     }
 
     private _getSiteOtp(): Observable<Otp> {

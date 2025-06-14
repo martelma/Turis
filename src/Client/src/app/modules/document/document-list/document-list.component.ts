@@ -141,7 +141,7 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
         this.activeLang = this._translocoService.getActiveLang();
 
         // Document
-        this._documentService.documents$
+        this._documentService.list$
             .pipe(untilDestroyed(this))
             .subscribe((results: PaginatedListResult<Document>) => {
                 this.results = results;
@@ -149,12 +149,12 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
             });
 
         // Document loading
-        this._documentService.documentsLoading$.pipe(untilDestroyed(this)).subscribe((documentsLoadin: boolean) => {
+        this._documentService.loading$.pipe(untilDestroyed(this)).subscribe((documentsLoadin: boolean) => {
             this.itemsLoading = documentsLoadin;
         });
 
         // Service parameters
-        this._documentService.documentParameters$
+        this._documentService.parameters$
             .pipe(untilDestroyed(this))
             .subscribe((documentParameters: DocumentSearchParameters) => {
                 this.documentParameters = documentParameters;
@@ -194,7 +194,7 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
     }
 
     private _subscribeDocumentParameters(): void {
-        this._documentService.documentParameters$
+        this._documentService.parameters$
             .pipe(untilDestroyed(this))
             .subscribe((documentParameters: DocumentSearchParameters) => {
                 this.documentParameters = documentParameters;

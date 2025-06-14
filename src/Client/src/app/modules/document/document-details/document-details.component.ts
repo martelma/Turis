@@ -89,7 +89,7 @@ export class DocumentDetailsComponent implements OnInit {
     }
 
     private _subscribeDocument() {
-        this._documentService.document$.pipe(untilDestroyed(this)).subscribe((document: Document) => {
+        this._documentService.item$.pipe(untilDestroyed(this)).subscribe((document: Document) => {
             this.document = document;
 
             console.log('_subscribeDocument - document', this.document);
@@ -99,7 +99,7 @@ export class DocumentDetailsComponent implements OnInit {
     }
 
     private _subscribeDocumentEdited(): void {
-        this._documentService.documentEdited$.pipe(untilDestroyed(this)).subscribe((documentId: string) => {
+        this._documentService.edited$.pipe(untilDestroyed(this)).subscribe((documentId: string) => {
             if (documentId != null) {
                 this._documentService
                     .getById(documentId)
@@ -185,11 +185,11 @@ export class DocumentDetailsComponent implements OnInit {
     }
 
     edit(): void {
-        this._documentService.editDocument(this.document.id);
+        this._documentService.editEntity(this.document.id);
     }
 
     cancel(): void {
-        this._documentService.editDocument(null);
+        this._documentService.editEntity(null);
 
         if (this.document?.id === undefined) {
             this._router.navigate(['../'], { relativeTo: this._activatedRoute });

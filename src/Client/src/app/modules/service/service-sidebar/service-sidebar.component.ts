@@ -92,7 +92,7 @@ export class ServiceSidebarComponent implements OnInit {
     }
 
     private _subscribeServiceParameters(): void {
-        this._serviceService.serviceParameters$
+        this._serviceService.parameters$
             .pipe(untilDestroyed(this))
             .subscribe((serviceParameters: ServiceSearchParameters) => {
                 this.serviceParameters = serviceParameters;

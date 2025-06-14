@@ -11,11 +11,6 @@ TODO:
 -------------------------------------------------------------------------------------------------
 
 
-tre cose mobile 
-	full-calendar: brutta la header
-	gaming tutto da rivedere
-
-
 Servizi
 	problema con new
 	

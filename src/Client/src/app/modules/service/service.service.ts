@@ -9,20 +9,21 @@ import { ContactSummary, ServiceSummary } from '../admin/dashboard/dashboard.typ
 
 @Injectable({ providedIn: 'root' })
 export class ServiceService extends BaseEntityService<Service> {
-    selectedServiceChanged: BehaviorSubject<any> = new BehaviorSubject(null);
-    private _serviceEdited: BehaviorSubject<string> = new BehaviorSubject(null);
+    private _edited: BehaviorSubject<string> = new BehaviorSubject(null);
     private _serviceCopied: BehaviorSubject<string> = new BehaviorSubject(null);
 
     private _serviceSummary: BehaviorSubject<ServiceSummary> = new BehaviorSubject(null);
     private _contactSummary: BehaviorSubject<ContactSummary> = new BehaviorSubject(null);
-    private _services: BehaviorSubject<PaginatedListResult<Service>> = new BehaviorSubject(null);
-    private _service: BehaviorSubject<Service> = new BehaviorSubject(null);
-    private _servicesLoading: BehaviorSubject<boolean> = new BehaviorSubject(false);
-    private _serviceParameters: BehaviorSubject<ServiceSearchParameters> = new BehaviorSubject({
+
+    private _list: BehaviorSubject<PaginatedListResult<Service>> = new BehaviorSubject(null);
+    private _item: BehaviorSubject<Service> = new BehaviorSubject(null);
+    private _loading: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    private _parameters: BehaviorSubject<ServiceSearchParameters> = new BehaviorSubject({
         length: 0,
         pageIndex: 0,
         pageSize: 10,
     });
+
     constructor(http: HttpClient) {
         super(http);
         this.defaultApiController = 'service';
@@ -36,56 +37,38 @@ export class ServiceService extends BaseEntityService<Service> {
         return this._contactSummary.asObservable();
     }
 
-    get services$(): Observable<PaginatedListResult<Service>> {
-        return this._services.asObservable();
+    get list$(): Observable<PaginatedListResult<Service>> {
+        return this._list.asObservable();
     }
 
-    /**
-     * Getter for service
-     */
-    get service$(): Observable<Service> {
-        return this._service.asObservable();
+    get item$(): Observable<Service> {
+        return this._item.asObservable();
     }
 
-    /**
-     * Getter for services loading
-     */
-    get servicesLoading$(): Observable<boolean> {
-        return this._servicesLoading.asObservable();
+    get loading$(): Observable<boolean> {
+        return this._loading.asObservable();
     }
 
-    /**
-     * Getter for service parameters
-     */
-    get serviceParameters$(): Observable<ServiceSearchParameters> {
-        return this._serviceParameters.asObservable();
+    get parameters$(): Observable<ServiceSearchParameters> {
+        return this._parameters.asObservable();
     }
 
-    /**
-     * Getter for service edited
-     */
-    get serviceEdited$(): Observable<string> {
-        return this._serviceEdited.asObservable();
+    get edited$(): Observable<string> {
+        return this._edited.asObservable();
     }
 
-    /**
-     * Get a service identified by the given service id
-     */
     getById(id: string): Observable<Service> {
         return this.getSingle(id).pipe(
             map(service => {
-                this._service.next(service);
+                this._item.next(service);
 
                 return service;
             }),
         );
     }
 
-    /**
-     * Create a dummy service
-     */
     createEntity(): Observable<Service> {
-        const service: Service = {
+        const item: Service = {
             id: undefined,
             code: '',
             title: '',
@@ -98,7 +81,6 @@ export class ServiceService extends BaseEntityService<Service> {
             referent: '',
             referentPhone: '',
             note: '',
-            // language: null,
             languages: [],
             userId: undefined,
             creationDate: undefined,
@@ -140,19 +122,13 @@ export class ServiceService extends BaseEntityService<Service> {
             selected: false,
         };
 
-        this._service.next(service);
+        this._item.next(item);
 
-        return of(service);
+        return of(item);
     }
 
-    /**
-     * Update service
-     *
-     * @param id
-     * @param service
-     */
     saveEntity(id: string, service: Service): Observable<Service> {
-        return this.services$.pipe(
+        return this.list$.pipe(
             take(1),
             switchMap(services =>
                 this.create(service).pipe(
@@ -164,18 +140,18 @@ export class ServiceService extends BaseEntityService<Service> {
                         services[index] = service;
 
                         // Update the service
-                        this._service.next(service);
+                        this._item.next(service);
 
                         // Return the updated service
                         return service;
                     }),
                     switchMap(updatedService =>
-                        this.service$.pipe(
+                        this.item$.pipe(
                             take(1),
                             filter(item => item && item.id === id),
                             tap(() => {
                                 // Update the service if it's selected
-                                this._service.next(updatedService);
+                                this._item.next(updatedService);
 
                                 // Return the updated service
                                 return updatedService;
@@ -187,12 +163,8 @@ export class ServiceService extends BaseEntityService<Service> {
         );
     }
 
-    /**
-     * Gets all services
-     * @returns
-     */
     listEntities(params?: ServiceSearchParameters): Observable<PaginatedListResult<Service>> {
-        this._servicesLoading.next(true);
+        this._loading.next(true);
 
         let httpParams = new HttpParams();
         httpParams = httpParams.append('pageIndex', params?.pageIndex ?? 0);
@@ -214,10 +186,10 @@ export class ServiceService extends BaseEntityService<Service> {
 
         return this.apiGet<PaginatedListResult<Service>>(url).pipe(
             map((data: PaginatedListResult<Service>) => {
-                this._services.next(data);
+                this._list.next(data);
 
-                this._serviceParameters.next({
-                    ...this._serviceParameters,
+                this._parameters.next({
+                    ...this._parameters,
                     ...params,
                     pageIndex: data.pageIndex,
                     pageSize: data.pageSize,
@@ -226,13 +198,13 @@ export class ServiceService extends BaseEntityService<Service> {
                 return data;
             }),
             finalize(() => {
-                this._servicesLoading.next(false);
+                this._loading.next(false);
             }),
         );
     }
 
     listAccountStatement(params?: AccountStatementParameters): Observable<PaginatedListResult<Service>> {
-        this._servicesLoading.next(true);
+        this._loading.next(true);
 
         let httpParams = new HttpParams();
         httpParams = httpParams.append('contactid', params?.contactId);
@@ -251,10 +223,10 @@ export class ServiceService extends BaseEntityService<Service> {
 
         return this.apiGet<PaginatedListResult<Service>>(url).pipe(
             map((data: PaginatedListResult<Service>) => {
-                this._services.next(data);
+                this._list.next(data);
 
-                this._serviceParameters.next({
-                    ...this._serviceParameters,
+                this._parameters.next({
+                    ...this._parameters,
                     ...params,
                     pageIndex: data.pageIndex,
                     pageSize: data.pageSize,
@@ -263,13 +235,13 @@ export class ServiceService extends BaseEntityService<Service> {
                 return data;
             }),
             finalize(() => {
-                this._servicesLoading.next(false);
+                this._loading.next(false);
             }),
         );
     }
 
     summary(): Observable<ServiceSummary> {
-        this._servicesLoading.next(true);
+        this._loading.next(true);
 
         const url = `summary`;
 
@@ -280,13 +252,13 @@ export class ServiceService extends BaseEntityService<Service> {
                 return data;
             }),
             finalize(() => {
-                this._servicesLoading.next(false);
+                this._loading.next(false);
             }),
         );
     }
 
     listContactSummary(contactId: string): Observable<ContactSummary> {
-        this._servicesLoading.next(true);
+        this._loading.next(true);
 
         const url = `contact-summary/${contactId}`;
 
@@ -297,25 +269,20 @@ export class ServiceService extends BaseEntityService<Service> {
                 return data;
             }),
             finalize(() => {
-                this._servicesLoading.next(false);
+                this._loading.next(false);
             }),
         );
     }
 
-    /**
-     * Delete the service identified by the given id
-     * @param id
-     * @returns
-     */
     deleteEntity(id: string): Observable<Service> {
-        return this._services.pipe(
+        return this._list.pipe(
             take(1),
             switchMap(services => {
                 // Remove the service
-                this._service.next(null);
+                this._item.next(null);
 
                 // Remove the service from the services
-                this._services.next({ ...services, items: services.items.filter(item => item.id !== id) });
+                this._list.next({ ...services, items: services.items.filter(item => item.id !== id) });
 
                 // Return the service
                 return this.delete(id);
@@ -330,22 +297,22 @@ export class ServiceService extends BaseEntityService<Service> {
         );
     }
 
-    downloadData(serviceId: string): Observable<void> {
+    downloadData(id: string): Observable<void> {
         return this.http.post<void>(this.prepareUrl('download-data'), {
-            id: serviceId,
+            id: id,
         });
     }
 
-    publish(serviceId: string): Observable<void> {
-        return this.http.post<void>(this.prepareUrl(`${serviceId}/publish`), null);
+    publish(id: string): Observable<void> {
+        return this.http.post<void>(this.prepareUrl(`${id}/publish`), null);
     }
 
-    copyService(serviceId: string): void {
-        this._serviceCopied.next(serviceId);
+    copyEntity(id: string): void {
+        this._serviceCopied.next(id);
     }
 
-    editService(serviceId: string): void {
-        this._serviceEdited.next(serviceId);
+    editEntity(id: string): void {
+        this._edited.next(id);
     }
 
     setCheck(service: Service): void {

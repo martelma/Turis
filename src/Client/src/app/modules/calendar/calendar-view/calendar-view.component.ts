@@ -144,18 +144,18 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
         this.activeLang = this._translocoService.getActiveLang();
 
         // Services
-        this._serviceService.services$.pipe(untilDestroyed(this)).subscribe((results: PaginatedListResult<Service>) => {
+        this._serviceService.list$.pipe(untilDestroyed(this)).subscribe((results: PaginatedListResult<Service>) => {
             this.results = results;
             this.services = results?.items;
         });
 
         // Services loading
-        this._serviceService.servicesLoading$.pipe(untilDestroyed(this)).subscribe((servicesLoading: boolean) => {
+        this._serviceService.loading$.pipe(untilDestroyed(this)).subscribe((servicesLoading: boolean) => {
             this.itemsLoading = servicesLoading;
         });
 
         // Query parameters
-        this._serviceService.serviceParameters$
+        this._serviceService.parameters$
             .pipe(untilDestroyed(this))
             .subscribe((queryParameters: ServiceSearchParameters) => {
                 this.serviceSearchParameters = queryParameters;

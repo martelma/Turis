@@ -126,7 +126,7 @@ export class JournalEntryListComponent implements OnInit, AfterViewInit {
         this.activeLang = this._translocoService.getActiveLang();
 
         // JournalEntry
-        this._journalEntryService.journalEntries$
+        this._journalEntryService.list$
             .pipe(untilDestroyed(this))
             .subscribe((results: PaginatedListResult<JournalEntry>) => {
                 this.results = results;
@@ -134,14 +134,14 @@ export class JournalEntryListComponent implements OnInit, AfterViewInit {
             });
 
         // JournalEntry loading
-        this._journalEntryService.journalEntriesLoading$
+        this._journalEntryService.loading$
             .pipe(untilDestroyed(this))
             .subscribe((journalEntriesLoading: boolean) => {
                 this.itemsLoading = journalEntriesLoading;
             });
 
         // Service parameters
-        this._journalEntryService.journalEntryParameters$
+        this._journalEntryService.parameters$
             .pipe(untilDestroyed(this))
             .subscribe((journalEntryParameters: JournalEntrySearchParameters) => {
                 this.journalEntryParameters = journalEntryParameters;
@@ -181,7 +181,7 @@ export class JournalEntryListComponent implements OnInit, AfterViewInit {
     }
 
     private _subscribeJournalEntryParameters(): void {
-        this._journalEntryService.journalEntryParameters$
+        this._journalEntryService.parameters$
             .pipe(untilDestroyed(this))
             .subscribe((journalEntryParameters: JournalEntrySearchParameters) => {
                 this.journalEntryParameters = journalEntryParameters;

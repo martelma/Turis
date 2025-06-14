@@ -89,7 +89,7 @@ export class JournalEntrySidebarComponent implements OnInit {
     }
 
     private _subscribeJournalEntryParameters(): void {
-        this._journalEntryService.journalEntryParameters$
+        this._journalEntryService.parameters$
             .pipe(untilDestroyed(this))
             .subscribe((journalEntryParameters: JournalEntrySearchParameters) => {
                 this.journalEntryParameters = journalEntryParameters;

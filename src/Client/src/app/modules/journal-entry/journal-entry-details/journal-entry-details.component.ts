@@ -110,7 +110,7 @@ export class JournalEntryDetailsComponent implements OnInit {
     }
 
     private _subscribeJournalEntry() {
-        this._journalEntryService.journalEntry$
+        this._journalEntryService.item$
             .pipe(
                 tap((journalEntry: JournalEntry) => {
                     this.setJournalEntry(journalEntry);
@@ -129,7 +129,7 @@ export class JournalEntryDetailsComponent implements OnInit {
     }
 
     private _subscribeJournalEntryEdited(): void {
-        this._journalEntryService.journalEntryEdited$
+        this._journalEntryService.edited$
             .pipe(untilDestroyed(this))
             .subscribe((journalEntriesId: string) => {
                 if (journalEntriesId != null) {
@@ -146,11 +146,11 @@ export class JournalEntryDetailsComponent implements OnInit {
     }
 
     edit(): void {
-        this._journalEntryService.editJournalEntry(this.journalEntry.id);
+        this._journalEntryService.editEntity(this.journalEntry.id);
     }
 
     cancel(): void {
-        this._journalEntryService.editJournalEntry(null);
+        this._journalEntryService.editEntity(null);
 
         if (this.journalEntry?.id === undefined) {
             this._router.navigate(['../'], { relativeTo: this._activatedRoute });

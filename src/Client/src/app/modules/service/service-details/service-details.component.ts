@@ -93,7 +93,6 @@ export class ServiceDetailsComponent implements OnInit {
     }
 
     private _subscribeRouteParams() {
-        console.log('_subscribeRouteParams');
         this._activatedRoute.params
             .pipe(
                 tap(params => {
@@ -106,17 +105,15 @@ export class ServiceDetailsComponent implements OnInit {
     }
 
     private _subscribeService() {
-        this._serviceService.service$.pipe(untilDestroyed(this)).subscribe((service: Service) => {
+        this._serviceService.item$.pipe(untilDestroyed(this)).subscribe((service: Service) => {
             this.service = service;
-
-            console.log('service', service);
 
             this.editMode = service?.id === undefined;
         });
     }
 
     private _subscribeServiceEdited(): void {
-        this._serviceService.serviceEdited$.pipe(untilDestroyed(this)).subscribe((serviceId: string) => {
+        this._serviceService.edited$.pipe(untilDestroyed(this)).subscribe((serviceId: string) => {
             if (serviceId != null) {
                 this._serviceService
                     .getById(serviceId)
@@ -135,36 +132,16 @@ export class ServiceDetailsComponent implements OnInit {
     }
 
     edit(): void {
-        this._serviceService.editService(this.service.id);
+        this._serviceService.editEntity(this.service.id);
     }
 
     cancel(): void {
-        this._serviceService.editService(null);
+        this._serviceService.editEntity(null);
 
         if (this.service?.id === undefined) {
             this._router.navigate(['../'], { relativeTo: this._activatedRoute });
         }
     }
-
-    /*
-    toggleTag(tag: Tag): void {
-        let deleted = false;
-
-        // Update the service object
-        if (this.service.tags.includes(tag.id)) {
-            // Set the deleted
-            deleted = true;
-
-            // Delete the tag
-            this.service.tags.splice(this.service.tags.indexOf(tag.id), 1);
-        } else {
-            // Add the tag
-            this.service.tags.push(tag.id);
-        }
-
-        //TODO: da finire...
-    }
-    */
 
     menuItem1(service: Service) {
         console.log('menuItem1', service);
@@ -175,18 +152,13 @@ export class ServiceDetailsComponent implements OnInit {
     }
 
     save(): void {
-        // if (this.isCopy) {
-        //     newValue.id = emptyGuid;
-        // }
-
         this._serviceService
             .update(this.service)
             .pipe(untilDestroyed(this))
             .subscribe(() => {
                 this._refresh();
 
-                this._serviceService.editService(null);
-                // this._serviceService.copyService(null);
+                this._serviceService.editEntity(null);
             });
     }
 

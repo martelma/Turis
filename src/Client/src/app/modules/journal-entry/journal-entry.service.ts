@@ -8,16 +8,19 @@ import { JournalEntrySummary } from '../admin/dashboard/dashboard.types';
 
 @Injectable({ providedIn: 'root' })
 export class JournalEntryService extends BaseEntityService<JournalEntry> {
+    private _edited: BehaviorSubject<string> = new BehaviorSubject(null);
+
     private _journalEntrySummary: BehaviorSubject<JournalEntrySummary> = new BehaviorSubject(null);
-    private _journalEntries: BehaviorSubject<PaginatedListResult<JournalEntry>> = new BehaviorSubject(null);
-    private _journalEntry: BehaviorSubject<JournalEntry> = new BehaviorSubject(null);
-    private _journalEntryEdited: BehaviorSubject<string> = new BehaviorSubject(null);
-    private _journalEntriesLoading: BehaviorSubject<boolean> = new BehaviorSubject(false);
-    private _queryParameters: BehaviorSubject<JournalEntrySearchParameters> = new BehaviorSubject({
+
+    private _list: BehaviorSubject<PaginatedListResult<JournalEntry>> = new BehaviorSubject(null);
+    private _item: BehaviorSubject<JournalEntry> = new BehaviorSubject(null);
+    private _loading: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    private _parameters: BehaviorSubject<JournalEntrySearchParameters> = new BehaviorSubject({
         length: 0,
         pageIndex: 0,
         pageSize: 10,
     });
+
     constructor(http: HttpClient) {
         super(http);
         this.defaultApiController = 'journal-entry';
@@ -27,98 +30,62 @@ export class JournalEntryService extends BaseEntityService<JournalEntry> {
         return this._journalEntrySummary.asObservable();
     }
 
-    /**
-     * Getter for journalEntrys
-     */
-    get journalEntries$(): Observable<PaginatedListResult<JournalEntry>> {
-        return this._journalEntries.asObservable();
+    get list$(): Observable<PaginatedListResult<JournalEntry>> {
+        return this._list.asObservable();
     }
 
-    /**
-     * Getter for journalEntry
-     */
-    get journalEntry$(): Observable<JournalEntry> {
-        return this._journalEntry.asObservable();
+    get item$(): Observable<JournalEntry> {
+        return this._item.asObservable();
     }
 
-    /**
-     * Getter for journalEntrys loading
-     */
-    get journalEntriesLoading$(): Observable<boolean> {
-        return this._journalEntriesLoading.asObservable();
+    get loading$(): Observable<boolean> {
+        return this._loading.asObservable();
     }
 
-    /**
-     * Getter for journalEntry edited
-     */
-    get journalEntryEdited$(): Observable<string> {
-        return this._journalEntryEdited.asObservable();
+    get edited$(): Observable<string> {
+        return this._edited.asObservable();
     }
 
-    /**
-     * Getter for query parameters
-     */
-    get journalEntryParameters$(): Observable<JournalEntrySearchParameters> {
-        return this._queryParameters.asObservable();
+    get parameters$(): Observable<JournalEntrySearchParameters> {
+        return this._parameters.asObservable();
     }
 
-    /**
-     * Get a journalEntry identified by the given journalEntry id
-     */
     getById(id: string): Observable<JournalEntry> {
         return this.getSingle(id).pipe(
             map(journalEntry => {
-                this._journalEntry.next(journalEntry);
+                this._item.next(journalEntry);
 
                 return journalEntry;
             }),
         );
     }
 
-    /**
-     * Create a dummy journalEntry
-     */
     createEntity(): Observable<JournalEntry> {
-        return this.journalEntries$.pipe(
-            take(1),
-            switchMap(journalEntrys =>
-                of({
-                    id: emptyGuid,
-                    userId: undefined,
-                    userFullName: undefined,
-                    timeStamp: undefined,
-                    date: undefined,
-                    amount: undefined,
-                    description: undefined,
-                    note: undefined,
-                    bookmarkId: undefined,
-                    balance: undefined,
-                    selected: false,
-                    tags: [],
-                }).pipe(
-                    map(newJournalEntry => {
-                        // Update the journalEntrys with the new journalEntry
-                        this._journalEntries.next({
-                            ...journalEntrys,
-                            items: [newJournalEntry, ...journalEntrys.items],
-                        });
+        const item: JournalEntry = {
+            id: undefined,
+            userId: '',
+            userFullName: '',
+            timeStamp: new Date(),
+            date: new Date(),
+            description: '',
+            note: '',
+            amount: 0,
+            balance: 0,
 
-                        // Return the new journalEntry
-                        return newJournalEntry;
-                    }),
-                ),
-            ),
-        );
+            tags: [],
+
+            bookmarkId: '',
+
+            selected: false,
+        };
+
+        this._item.next(item);
+
+        return of(item);
     }
 
-    /**
-     * Update journalEntry
-     *
-     * @param id
-     * @param journalEntry
-     */
     updateEntity(id: string, journalEntry: JournalEntry): Observable<JournalEntry> {
-        return this.journalEntries$.pipe(
+        return this.list$.pipe(
             take(1),
             switchMap(journalEntrys =>
                 this.create(journalEntry).pipe(
@@ -130,18 +97,18 @@ export class JournalEntryService extends BaseEntityService<JournalEntry> {
                         journalEntrys[index] = journalEntry;
 
                         // Update the journalEntry
-                        this._journalEntry.next(journalEntry);
+                        this._item.next(journalEntry);
 
                         // Return the updated journalEntry
                         return journalEntry;
                     }),
                     switchMap(updatedJournalEntry =>
-                        this.journalEntry$.pipe(
+                        this.item$.pipe(
                             take(1),
                             filter(item => item && item.id === id),
                             tap(() => {
                                 // Update the journalEntry if it's selected
-                                this._journalEntry.next(updatedJournalEntry);
+                                this._item.next(updatedJournalEntry);
 
                                 // Return the updated journalEntry
                                 return updatedJournalEntry;
@@ -153,12 +120,8 @@ export class JournalEntryService extends BaseEntityService<JournalEntry> {
         );
     }
 
-    /**
-     * Gets all journalEntrys
-     * @returns
-     */
     listEntities(params?: JournalEntrySearchParameters): Observable<PaginatedListResult<JournalEntry>> {
-        this._journalEntriesLoading.next(true);
+        this._loading.next(true);
 
         let httpParams = new HttpParams();
         httpParams = httpParams.append('pageIndex', params?.pageIndex ?? 0);
@@ -174,10 +137,10 @@ export class JournalEntryService extends BaseEntityService<JournalEntry> {
 
         return this.apiGet<PaginatedListResult<JournalEntry>>(url).pipe(
             map((list: PaginatedListResult<JournalEntry>) => {
-                this._journalEntries.next(list);
+                this._list.next(list);
 
-                this._queryParameters.next({
-                    ...this._queryParameters,
+                this._parameters.next({
+                    ...this._parameters,
                     ...params,
                     pageIndex: list.pageIndex,
                     pageSize: list.pageSize,
@@ -186,25 +149,20 @@ export class JournalEntryService extends BaseEntityService<JournalEntry> {
                 return list;
             }),
             finalize(() => {
-                this._journalEntriesLoading.next(false);
+                this._loading.next(false);
             }),
         );
     }
 
-    /**
-     * Delete the journalEntry identified by the given id
-     * @param id
-     * @returns
-     */
     deleteEntity(id: string): Observable<JournalEntry> {
-        return this._journalEntries.pipe(
+        return this._list.pipe(
             take(1),
             switchMap(journalEntrys => {
                 // Remove the journalEntry
-                this._journalEntry.next(null);
+                this._item.next(null);
 
                 // Remove the journalEntry from the _journalEntrys
-                this._journalEntries.next({
+                this._list.next({
                     ...journalEntrys,
                     items: journalEntrys.items.filter(item => item.id !== id),
                 });
@@ -222,12 +180,12 @@ export class JournalEntryService extends BaseEntityService<JournalEntry> {
         );
     }
 
-    editJournalEntry(journalEntryId: string): void {
-        this._journalEntryEdited.next(journalEntryId);
+    editEntity(id: string): void {
+        this._edited.next(id);
     }
 
     summary(): Observable<JournalEntrySummary> {
-        this._journalEntriesLoading.next(true);
+        this._loading.next(true);
 
         const url = `summary`;
 
@@ -238,7 +196,7 @@ export class JournalEntryService extends BaseEntityService<JournalEntry> {
                 return data;
             }),
             finalize(() => {
-                this._journalEntriesLoading.next(false);
+                this._loading.next(false);
             }),
         );
     }

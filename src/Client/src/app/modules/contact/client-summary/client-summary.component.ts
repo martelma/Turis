@@ -140,7 +140,7 @@ export class ClientSummaryComponent implements OnInit, AfterViewInit, OnChanges,
     ) {}
 
     ngOnInit(): void {
-        this._serviceService.services$.pipe(untilDestroyed(this)).subscribe((results: PaginatedListResult<Service>) => {
+        this._serviceService.list$.pipe(untilDestroyed(this)).subscribe((results: PaginatedListResult<Service>) => {
             this.results = results;
             this.list = results?.items;
 
@@ -150,7 +150,7 @@ export class ClientSummaryComponent implements OnInit, AfterViewInit, OnChanges,
         });
 
         // Services loading
-        this._serviceService.servicesLoading$.pipe(untilDestroyed(this)).subscribe((servicesLoading: boolean) => {
+        this._serviceService.loading$.pipe(untilDestroyed(this)).subscribe((servicesLoading: boolean) => {
             this.itemsLoading = servicesLoading;
         });
     }

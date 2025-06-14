@@ -7,134 +7,99 @@ import { emptyGuid, PaginatedListResult } from 'app/shared/services/shared.types
 
 @Injectable({ providedIn: 'root' })
 export class DocumentService extends BaseEntityService<Document> {
-    private _documents: BehaviorSubject<PaginatedListResult<Document>> = new BehaviorSubject(null);
-    private _document: BehaviorSubject<Document> = new BehaviorSubject(null);
-    private _documentEdited: BehaviorSubject<string> = new BehaviorSubject(null);
-    private _documentsLoading: BehaviorSubject<boolean> = new BehaviorSubject(false);
-    private _queryParameters: BehaviorSubject<DocumentSearchParameters> = new BehaviorSubject({
+    private _edited: BehaviorSubject<string> = new BehaviorSubject(null);
+    private _list: BehaviorSubject<PaginatedListResult<Document>> = new BehaviorSubject(null);
+    private _item: BehaviorSubject<Document> = new BehaviorSubject(null);
+    private _loading: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    private _parameters: BehaviorSubject<DocumentSearchParameters> = new BehaviorSubject({
         length: 0,
         pageIndex: 0,
         pageSize: 10,
     });
+
     constructor(http: HttpClient) {
         super(http);
         this.defaultApiController = 'document';
     }
 
-    /**
-     * Getter for documents
-     */
-    get documents$(): Observable<PaginatedListResult<Document>> {
-        return this._documents.asObservable();
+    get list$(): Observable<PaginatedListResult<Document>> {
+        return this._list.asObservable();
     }
 
-    /**
-     * Getter for document
-     */
-    get document$(): Observable<Document> {
-        return this._document.asObservable();
+    get item$(): Observable<Document> {
+        return this._item.asObservable();
     }
 
-    /**
-     * Getter for documents loading
-     */
-    get documentsLoading$(): Observable<boolean> {
-        return this._documentsLoading.asObservable();
+    get loading$(): Observable<boolean> {
+        return this._loading.asObservable();
     }
 
-    /**
-     * Getter for document edited
-     */
-    get documentEdited$(): Observable<string> {
-        return this._documentEdited.asObservable();
+    get edited$(): Observable<string> {
+        return this._edited.asObservable();
     }
 
-    /**
-     * Getter for query parameters
-     */
-    get documentParameters$(): Observable<DocumentSearchParameters> {
-        return this._queryParameters.asObservable();
+    get parameters$(): Observable<DocumentSearchParameters> {
+        return this._parameters.asObservable();
     }
 
-    /**
-     * Get a document identified by the given document id
-     */
     getById(id: string): Observable<Document> {
         return this.getSingle(id).pipe(
             map(document => {
-                this._document.next(document);
+                this._item.next(document);
 
                 return document;
             }),
         );
     }
 
-    /**
-     * Create a dummy document
-     */
     createEntity(): Observable<Document> {
-        return this.documents$.pipe(
-            take(1),
-            switchMap(documents =>
-                of({
-                    id: emptyGuid,
-                    documentRefId: undefined,
-                    documentRef: undefined,
-                    type: undefined,
-                    status: undefined,
-                    clientId: undefined,
-                    client: undefined,
-                    idSdi: undefined,
-                    date: undefined,
-                    sectional: undefined,
-                    number: undefined,
-                    discountPercentage: undefined,
-                    discount: undefined,
-                    amount: undefined,
-                    vatRate: undefined,
-                    vat: undefined,
-                    aliquotaRitenutaDiAcconto: undefined,
-                    ritenutaDiAcconto: undefined,
-                    totalExemptExpenses: undefined,
-                    totalExpenses: undefined,
-                    total: undefined,
-                    importoBollo: undefined,
-                    desTipoPagamento: undefined,
-                    saldato: undefined,
-                    dataIncasso: undefined,
-                    collaboratorId: undefined,
-                    collaborator: undefined,
-                    sdiCodiceTipoPagamento: undefined,
-                    sdiValoreTipoPagamento: undefined,
-                    sdiCodiceCondizionePagamento: undefined,
-                    dataScadenzaPagamento: undefined,
-                    idDocumento: undefined,
-                    cig: undefined,
-                    cup: undefined,
-                    bookmarkId: undefined,
-                    selected: false,
-                    items: [],
-                }).pipe(
-                    map(newDocument => {
-                        // Update the documents with the new document
-                        this._documents.next({ ...documents, items: [newDocument, ...documents.items] });
+        const item: Document = {
+            id: emptyGuid,
+            documentRefId: undefined,
+            documentRef: undefined,
+            type: undefined,
+            status: undefined,
+            clientId: undefined,
+            client: undefined,
+            idSdi: undefined,
+            date: undefined,
+            sectional: undefined,
+            number: undefined,
+            discountPercentage: undefined,
+            discount: undefined,
+            amount: undefined,
+            vatRate: undefined,
+            vat: undefined,
+            aliquotaRitenutaDiAcconto: undefined,
+            ritenutaDiAcconto: undefined,
+            totalExemptExpenses: undefined,
+            totalExpenses: undefined,
+            total: undefined,
+            importoBollo: undefined,
+            desTipoPagamento: undefined,
+            saldato: undefined,
+            dataIncasso: undefined,
+            collaboratorId: undefined,
+            collaborator: undefined,
+            sdiCodiceTipoPagamento: undefined,
+            sdiValoreTipoPagamento: undefined,
+            sdiCodiceCondizionePagamento: undefined,
+            dataScadenzaPagamento: undefined,
+            idDocumento: undefined,
+            cig: undefined,
+            cup: undefined,
+            bookmarkId: undefined,
+            selected: false,
+            items: [],
+        };
 
-                        // Return the new document
-                        return newDocument;
-                    }),
-                ),
-            ),
-        );
+        this._item.next(item);
+
+        return of(item);
     }
 
-    /**
-     * Update document
-     *
-     * @param id
-     * @param document
-     */
     updateEntity(id: string, document: Document): Observable<Document> {
-        return this.documents$.pipe(
+        return this.list$.pipe(
             take(1),
             switchMap(documents =>
                 this.create(document).pipe(
@@ -146,18 +111,18 @@ export class DocumentService extends BaseEntityService<Document> {
                         documents[index] = document;
 
                         // Update the document
-                        this._document.next(document);
+                        this._item.next(document);
 
                         // Return the updated document
                         return document;
                     }),
                     switchMap(updatedDocument =>
-                        this.document$.pipe(
+                        this.item$.pipe(
                             take(1),
                             filter(item => item && item.id === id),
                             tap(() => {
                                 // Update the document if it's selected
-                                this._document.next(updatedDocument);
+                                this._item.next(updatedDocument);
 
                                 // Return the updated document
                                 return updatedDocument;
@@ -169,12 +134,8 @@ export class DocumentService extends BaseEntityService<Document> {
         );
     }
 
-    /**
-     * Gets all documents
-     * @returns
-     */
     listEntities(params?: DocumentSearchParameters): Observable<PaginatedListResult<Document>> {
-        this._documentsLoading.next(true);
+        this._loading.next(true);
 
         let httpParams = new HttpParams();
         httpParams = httpParams.append('pageIndex', params?.pageIndex ?? 0);
@@ -194,10 +155,10 @@ export class DocumentService extends BaseEntityService<Document> {
 
         return this.apiGet<PaginatedListResult<Document>>(url).pipe(
             map((list: PaginatedListResult<Document>) => {
-                this._documents.next(list);
+                this._list.next(list);
 
-                this._queryParameters.next({
-                    ...this._queryParameters,
+                this._parameters.next({
+                    ...this._parameters,
                     ...params,
                     pageIndex: list.pageIndex,
                     pageSize: list.pageSize,
@@ -206,25 +167,20 @@ export class DocumentService extends BaseEntityService<Document> {
                 return list;
             }),
             finalize(() => {
-                this._documentsLoading.next(false);
+                this._loading.next(false);
             }),
         );
     }
 
-    /**
-     * Delete the document identified by the given id
-     * @param id
-     * @returns
-     */
     deleteEntity(id: string): Observable<Document> {
-        return this._documents.pipe(
+        return this._list.pipe(
             take(1),
             switchMap(documents => {
                 // Remove the document
-                this._document.next(null);
+                this._item.next(null);
 
                 // Remove the document from the _documents
-                this._documents.next({ ...documents, items: documents.items.filter(item => item.id !== id) });
+                this._list.next({ ...documents, items: documents.items.filter(item => item.id !== id) });
 
                 // Return the document
                 return this.delete(id);
@@ -239,7 +195,7 @@ export class DocumentService extends BaseEntityService<Document> {
         );
     }
 
-    editDocument(documentId: string): void {
-        this._documentEdited.next(documentId);
+    editEntity(id: string): void {
+        this._edited.next(id);
     }
 }

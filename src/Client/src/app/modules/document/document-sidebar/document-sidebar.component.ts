@@ -90,7 +90,7 @@ export class DocumentSidebarComponent implements OnInit {
     }
 
     private _subscribeDocumentParameters(): void {
-        this._documentService.documentParameters$
+        this._documentService.parameters$
             .pipe(untilDestroyed(this))
             .subscribe((documentParameters: DocumentSearchParameters) => {
                 this.documentParameters = documentParameters;

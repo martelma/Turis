@@ -99,7 +99,7 @@ export class ServiceEditComponent implements OnInit {
     @Input()
     set service(value: Service) {
         this.item = value;
-        console.log('item', this.item);
+        // console.log('item', this.item);
 
         this.clientControl.setValue(this.item.client?.companyName);
         this.collaboratorControl.setValue(this.item.collaborator?.fullName);
@@ -182,6 +182,7 @@ export class ServiceEditComponent implements OnInit {
     onSelectedClient(event: any) {
         const selectedClient: Contact = event.option.value;
         this.item.client = selectedClient;
+        this.item.clientId = selectedClient.id;
         this.clientControl.setValue(selectedClient.companyName);
         this.rebuild();
     }
@@ -189,6 +190,7 @@ export class ServiceEditComponent implements OnInit {
     onSelectedCollaborator(event: any) {
         const selectedCollaborator: Collaborator = event.option.value;
         this.item.collaborator = selectedCollaborator;
+        this.item.collaboratorId = selectedCollaborator.id;
         this.collaboratorControl.setValue(selectedCollaborator.fullName);
         this.rebuild();
     }

@@ -120,7 +120,7 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
         this.activeLang = this._translocoService.getActiveLang();
 
         // Services
-        this._serviceService.services$.pipe(untilDestroyed(this)).subscribe((results: PaginatedListResult<Service>) => {
+        this._serviceService.list$.pipe(untilDestroyed(this)).subscribe((results: PaginatedListResult<Service>) => {
             this.results = results;
             this.list = results?.items;
 
@@ -130,12 +130,12 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
         });
 
         // Services loading
-        this._serviceService.servicesLoading$.pipe(untilDestroyed(this)).subscribe((servicesLoading: boolean) => {
+        this._serviceService.loading$.pipe(untilDestroyed(this)).subscribe((servicesLoading: boolean) => {
             this.itemsLoading = servicesLoading;
         });
 
         // Service parameters
-        this._serviceService.serviceParameters$
+        this._serviceService.parameters$
             .pipe(untilDestroyed(this))
             .subscribe((serviceParameters: ServiceSearchParameters) => {
                 this.serviceParameters = serviceParameters;
@@ -175,7 +175,7 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
     }
 
     private _subscribeServiceParameters(): void {
-        this._serviceService.serviceParameters$
+        this._serviceService.parameters$
             .pipe(untilDestroyed(this))
             .subscribe((serviceParameters: ServiceSearchParameters) => {
                 this.serviceParameters = serviceParameters;

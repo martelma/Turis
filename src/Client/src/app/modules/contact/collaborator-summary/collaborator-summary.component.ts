@@ -166,7 +166,7 @@ export class CollaboratorSummaryComponent implements OnInit, AfterViewInit, OnCh
         });
 
         // Services loading
-        this._serviceService.servicesLoading$.pipe(untilDestroyed(this)).subscribe((servicesLoading: boolean) => {
+        this._serviceService.loading$.pipe(untilDestroyed(this)).subscribe((servicesLoading: boolean) => {
             this.itemsLoading = servicesLoading;
         });
     }
