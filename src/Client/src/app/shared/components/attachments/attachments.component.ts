@@ -173,7 +173,7 @@ export class AttachmentsComponent implements OnInit, OnChanges, OnDestroy {
         setTimeout(() => (this.dataSource.paginator = this.paginator));
         setTimeout(() => (this.dataSource.sort = this.sort));
 
-        console.log('attachments', this.attachments);
+        // console.log('attachments', this.attachments);
         this.onListChanged.emit(this.attachments);
 
         // console.log('onAttachmentsCountChange', this.attachments.length);

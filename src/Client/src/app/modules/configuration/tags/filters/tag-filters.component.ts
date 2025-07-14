@@ -99,7 +99,7 @@ export class TagFiltersComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        console.log('selectedTags', this.selectedTags);
+        // console.log('selectedTags', this.selectedTags);
         if (!this.selectedTags) {
             this.selectedTags = [];
         }
@@ -111,7 +111,7 @@ export class TagFiltersComponent implements OnInit {
             // .pipe(untilDestroyed(this))
             .subscribe(list => {
                 this.allTags = list.items;
-                console.log('allTags', this.allTags);
+                // console.log('allTags', this.allTags);
             });
     }
 

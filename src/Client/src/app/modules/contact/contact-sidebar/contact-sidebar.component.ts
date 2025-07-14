@@ -80,14 +80,14 @@ export class ContactSidebarComponent implements OnInit {
                 untilDestroyed(this),
             )
             .subscribe(value => {
-                console.log('_subscribeFilterValueChanges', value);
+                // console.log('_subscribeFilterValueChanges', value);
                 this._search(value);
             });
     }
 
     filter() {
-        console.log('serviceParameters', this.contactParameters);
-        console.log('filter', event);
+        // console.log('serviceParameters', this.contactParameters);
+        // console.log('filter', event);
 
         this._search(this.contactParameters);
     }

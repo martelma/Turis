@@ -30,7 +30,7 @@ import { fuseAnimations } from '@fuse/animations';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { getStatusColorClass, getBillingStatusColorClass, getCommissionStatusColorClass } from 'app/constants';
 import { MaterialModule } from 'app/modules/material.module';
 import { ServiceSidebarComponent } from 'app/modules/service/service-sidebar/service-sidebar.component';
@@ -41,7 +41,6 @@ import { SearchInputComponent } from 'app/shared/components/ui/search-input/sear
 import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { CalendarSelectorComponent } from '../calendar-selector/calendar-selector.component';
-import { toUtcString } from 'app/shared/shared.utils';
 import { CalendarDetailComponent } from '../calendar-detail/calendar-detail.component';
 
 declare let $: any;
@@ -54,7 +53,7 @@ declare let $: any;
     styles: [
         `
             .list-grid {
-                grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
             }
         `,
     ],
@@ -156,17 +155,30 @@ export class CalendarViewGridComponent implements OnInit, AfterViewInit {
 
     handlePageEvent(event: PageEvent): void {}
 
+    handleItem(item: Service) {
+        this.selectedItem = item;
+        // console.log('selectedItem', this.selectedItem);
+        this.onSelectedService.emit(this.selectedItem);
+    }
+
     dateChanged(date: Date) {
-        console.log('dateChanged', date);
-        this.currentDate = date;
+        // console.log('dateChanged', date);
+        this.currentDate = new Date(date);
         this.setDates();
     }
 
     setDates() {
-        this.dateFrom = this.currentDate;
+        // console.log('currentDate', this.currentDate);
+
+        this.dateFrom = new Date(this.currentDate);
+        console.log('dateFrom', this.dateFrom);
         this.dateFromChange.emit(this.dateFrom);
-        this.dateTo.setDate(this.currentDate.getDate() + 1);
+
+        this.dateTo = new Date(this.currentDate);
+        this.dateTo.setDate(this.dateTo.getDate() + 1);
+        console.log('dateTo', this.dateTo);
         this.dateToChange.emit(this.dateTo);
+
         this.onDateChanged.emit();
     }
 
@@ -215,7 +227,8 @@ export class CalendarViewGridComponent implements OnInit, AfterViewInit {
                 // this.loading = false;
             });
     }
-*/
+    */
+
     async drawerDetailsChanged(opened: boolean): Promise<void> {
         if (!opened) {
             this.selectedItem = null;

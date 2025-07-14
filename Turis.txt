@@ -11,11 +11,7 @@ TODO:
 -------------------------------------------------------------------------------------------------
 
 
-Servizi
-	problema con new
-	
-	nel backend nell'update, ho per il momento disabilitato il filtro di validazione del modello: da rivedere / studiare
-	
+Servizi	
 	gestire il menù con N opzioni nell'intestazione a dx
 	
 	gestione dei filtri basati sui tags
@@ -36,3 +32,19 @@ Notifica
 
 Notifica
 	NotificaACollaboratore2ToolStripMenuItem_Click
+
+
+
+proposta inviata > pallino giallo
+
+quando la guida risponde. arriva la mail. se la guida conferma, devo rientrare nel servizio, e mettere il pallino verde
+
+no suggerimenti !!!!!!!!!!!!!!!!!!!!
+
+la sera prima inviare notifica promemoria in automatico
+
+vedere di collegare 2 o più servizi, per poter dire a guida1 chi è la guida2
+
+
+dopo 90gg invio automatico di 1° sollecito
+dopo 120gg invio automatico di 2° sollecito

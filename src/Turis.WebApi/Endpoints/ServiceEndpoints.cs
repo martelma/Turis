@@ -63,21 +63,22 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 		templateApiGroup.MapGet("account-statement", AccountStatement);
 
 		templateApiGroup.MapPost(string.Empty, SaveAsync)
-			.WithValidation<ServiceRequest>()
-			.Produces<ServiceModel>(StatusCodes.Status200OK)
-			.ProducesValidationProblem()
-			.WithOpenApi(operation =>
-			{
-				operation.Summary = "Creates or saves a service";
+			//.WithValidation<ServiceRequest>()
+			//.Produces<ServiceModel>(StatusCodes.Status200OK)
+			//.ProducesValidationProblem()
+			//.WithOpenApi(operation =>
+			//{
+			//	operation.Summary = "Creates or saves a service";
 
-				operation.Response(StatusCodes.Status200OK).Description = "The service created/modified";
-				operation.Response(StatusCodes.Status400BadRequest).Description = "Data validation error";
+			//	operation.Response(StatusCodes.Status200OK).Description = "The service created/modified";
+			//	operation.Response(StatusCodes.Status400BadRequest).Description = "Data validation error";
 
-				return operation;
-			});
+			//	return operation;
+			//})
+			;
 
 		templateApiGroup.MapPut(string.Empty, SaveAsync)
-			//.WithValidation<ServiceRequest>()
+			.WithValidation<ServiceRequest>()
 			.Produces<ServiceModel>(StatusCodes.Status200OK)
 			.ProducesValidationProblem()
 			.WithOpenApi(operation =>
@@ -88,7 +89,8 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 				operation.Response(StatusCodes.Status400BadRequest).Description = "Data validation error";
 
 				return operation;
-			});
+			})
+			;
 
 		templateApiGroup.MapDelete("{serviceId:guid}", DeleteAsync)
 			.Produces(StatusCodes.Status204NoContent)

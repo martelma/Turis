@@ -141,12 +141,10 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
         this.activeLang = this._translocoService.getActiveLang();
 
         // Document
-        this._documentService.list$
-            .pipe(untilDestroyed(this))
-            .subscribe((results: PaginatedListResult<Document>) => {
-                this.results = results;
-                this.list = results?.items;
-            });
+        this._documentService.list$.pipe(untilDestroyed(this)).subscribe((results: PaginatedListResult<Document>) => {
+            this.results = results;
+            this.list = results?.items;
+        });
 
         // Document loading
         this._documentService.loading$.pipe(untilDestroyed(this)).subscribe((documentsLoadin: boolean) => {
@@ -202,7 +200,7 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
     }
 
     createDocument(): void {
-        console.log('createDocument');
+        // console.log('createDocument');
         this._router.navigate(['./', 'new'], { relativeTo: this._activatedRoute });
     }
 

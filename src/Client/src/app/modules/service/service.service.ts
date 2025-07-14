@@ -177,6 +177,16 @@ export class ServiceService extends BaseEntityService<Service> {
         httpParams = httpParams.append('note', params?.note ?? '');
         httpParams = httpParams.append('serviceType', params?.serviceType ?? '');
         httpParams = httpParams.append('durationType', params?.durationType ?? '');
+
+        params?.languages?.forEach(x => {
+            httpParams = httpParams.append('languages', x);
+        });
+
+        httpParams = httpParams.append('status', params?.status ?? '');
+        // params?.statuses?.forEach(x => {
+        //     httpParams = httpParams.append('statuses', x);
+        // });
+
         httpParams = httpParams.append('dateFrom', params?.dateFrom ?? '');
         httpParams = httpParams.append('dateTo', params?.dateTo ?? '');
 

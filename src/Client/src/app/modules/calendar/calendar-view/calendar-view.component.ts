@@ -225,6 +225,8 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
         this.serviceSearchParameters.dateFrom = toUtcString(this.dateFrom);
         this.serviceSearchParameters.dateTo = toUtcString(this.dateTo);
 
+        console.log('serviceSearchParameters', this.serviceSearchParameters);
+
         this._serviceService
             .listEntities({ ...this.serviceSearchParameters })
             .pipe(untilDestroyed(this))
@@ -246,7 +248,7 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
                         }
                     });
 
-                    console.log('services', this.services);
+                    // console.log('services', this.services);
                 },
                 error: error => {
                     console.error(error);
@@ -259,7 +261,7 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
     }
 
     selectedService(service: Service) {
-        console.log('selectedService', service);
+        // console.log('selectedService', service);
         this.currentService = service;
         this.detailsDrawer.toggle();
     }
@@ -272,7 +274,7 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
     }
 
     handleEvents(events: EventApi[]) {
-        console.log('handleEvents', events);
+        // console.log('handleEvents', events);
     }
 
     createService() {

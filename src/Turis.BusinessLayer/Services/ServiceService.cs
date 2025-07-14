@@ -28,7 +28,7 @@ public class ServiceService(IDbContext dbContext
 	, IAvatarContactService avatarContactService
 	) : IServiceService
 {
-	private const string EntryName = nameof(Service);
+	private const string EntryName = nameof(DataAccessLayer.Entities.Service);
 
 	private async Task<List<Bookmark>> GetMyBookmarks()
 		=> await bookmarkService.ListAsync(userService.GetUserId(), EntryName);
@@ -40,7 +40,7 @@ public class ServiceService(IDbContext dbContext
 		var tags = await entityTagService.ListAsync(EntryName, serviceId);
 
 		var query = dbContext
-			.GetData<Service>()
+			.GetData<DataAccessLayer.Entities.Service>()
 			.Include(x => x.PriceList)
 			.Include(x => x.Client)
 			.Include(x => x.Collaborator)
@@ -57,7 +57,7 @@ public class ServiceService(IDbContext dbContext
 	public Task<Result<ServiceSummaryModel>> SummaryAsync()
 	{
 		var query = dbContext
-			.GetData<Service>()
+			.GetData<DataAccessLayer.Entities.Service>()
 			.Include(x => x.Collaborator)
 			.Where(x => x.Date.Year == DateTime.Now.Year);
 
@@ -108,7 +108,7 @@ public class ServiceService(IDbContext dbContext
 
 		var paginator = new Paginator(parameters);
 
-		var query = dbContext.GetData<Service>()
+		var query = dbContext.GetData<DataAccessLayer.Entities.Service>()
 			.Include(x => x.PriceList)
 			.Include(x => x.Client)
 			.Include(x => x.Collaborator)
@@ -158,6 +158,16 @@ public class ServiceService(IDbContext dbContext
 			query = query.Where(x => x.DurationType == durationType);
 		}
 
+		query = query.WhereIf(parameters.Languages.HasItems(), x => parameters.Languages.Any(y => x.Languages.Contains(y)));
+
+		//query = query.WhereIf(parameters.Statuses.HasItems(), x => x.Status != null && parameters.Statuses.Contains(x.Status.ToString()));		if (parameters.DurationType.HasValue())
+		if (parameters.Status.HasValue())
+		{
+			var status = (ServiceStatus)Enum.Parse(typeof(ServiceStatus), parameters.Status);
+			query = query.Where(x => x.Status == status);
+		}
+
+
 		var totalCount = await query.AsSplitQuery().CountAsync();
 
 		if (parameters.OrderBy.HasValue())
@@ -193,7 +203,7 @@ public class ServiceService(IDbContext dbContext
 
 		var paginator = new Paginator(parameters);
 
-		var query = dbContext.GetData<Service>()
+		var query = dbContext.GetData<DataAccessLayer.Entities.Service>()
 			.Include(x => x.PriceList)
 			.Include(x => x.Client)
 			.Include(x => x.Collaborator)
@@ -262,10 +272,10 @@ public class ServiceService(IDbContext dbContext
 		return result;
 	}
 
-	public Service GetRandom()
+	public DataAccessLayer.Entities.Service GetRandom()
 	{
 		var randomService = dbContext
-			.GetData<Service>()
+			.GetData<DataAccessLayer.Entities.Service>()
 			.Include(x => x.Client)
 			.OrderBy(s => Guid.NewGuid()) // Ordina casualmente usando un nuovo GUID
 			.FirstOrDefault();
@@ -275,7 +285,7 @@ public class ServiceService(IDbContext dbContext
 	public async Task<Result<ContactSummaryModel>> ContactSummaryAsync(Guid contactId)
 	{
 		var data = await dbContext
-			.GetData<Service>()
+			.GetData<DataAccessLayer.Entities.Service>()
 			.Where(x => x.CollaboratorId == contactId)
 			.OrderBy(x => x.Date)
 			.ToListAsync();
@@ -311,12 +321,12 @@ public class ServiceService(IDbContext dbContext
 
 	public async Task<Result<ServiceModel>> SaveAsync(ServiceRequest service)
 	{
-		var dbService = await dbContext.GetData<Service>(true)
+		var dbService = await dbContext.GetData<DataAccessLayer.Entities.Service>(true)
 			.FirstOrDefaultAsync(x => x.Id == service.Id);
 
 		if (dbService is null)
 		{
-			dbService = new Service
+			dbService = new DataAccessLayer.Entities.Service
 			{
 				Id = Guid.NewGuid(),
 				UserId = userService.GetUserId(),
@@ -390,7 +400,7 @@ public class ServiceService(IDbContext dbContext
 
 	public async Task<Result> DeleteAsync(Guid serviceId)
 	{
-		var deletedRows = await dbContext.GetData<Service>()
+		var deletedRows = await dbContext.GetData<DataAccessLayer.Entities.Service>()
 			.Where(r => r.Id == serviceId)
 			.ExecuteDeleteAsync();
 

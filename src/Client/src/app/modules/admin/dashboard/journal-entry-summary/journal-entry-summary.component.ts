@@ -58,19 +58,19 @@ export class JournalEntrySummaryComponent implements OnInit, AfterViewInit {
     }
 
     loadData(): void {
-        console.log('loadData');
+        // console.log('loadData');
         this._journalEntryService
             .summary()
             .pipe(untilDestroyed(this))
             .subscribe(items => {
                 this.journalEntrySummary = items;
-                console.log('summary', this.journalEntrySummary);
+                // console.log('summary', this.journalEntrySummary);
                 this.prepareChartData();
             });
     }
 
     private prepareChartData(): void {
-        console.log('summarySelector', this.summarySelector?.value);
+        // console.log('summarySelector', this.summarySelector?.value);
         this.chartData = {
             chart: {
                 fontFamily: 'inherit',
@@ -161,6 +161,6 @@ export class JournalEntrySummaryComponent implements OnInit, AfterViewInit {
                 },
             },
         };
-        console.log('chartData', this.chartData);
+        // console.log('chartData', this.chartData);
     }
 }

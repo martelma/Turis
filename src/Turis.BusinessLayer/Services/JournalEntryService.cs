@@ -1,4 +1,6 @@
 ﻿using System.Globalization;
+using FluentDateTime;
+using FluentDateTimeOffset;
 using JeMa.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -41,6 +43,7 @@ public class JournalEntryService(ApplicationDbContext dbContext
 
 		var startMonth = DateTime.Now.StartMonth();
 		var endMonth = DateTime.Now.EndMonth();
+		var allYearMonths = startYear.GenerateMonthsRange(DateTime.Now);
 		var allMonthDays = startMonth.GenerateDaysRange(endMonth);
 
 		var startWeek = DateTime.Now.StartWeek();
@@ -53,25 +56,60 @@ public class JournalEntryService(ApplicationDbContext dbContext
 		var weekData = yearData.Where(x => x.Date.Date >= startWeek).ToList();
 
 
+		var yearDataSymmary = yearData
+			.GroupBy(x => x.Date.Month)
+			.Select(group => new DataItem
+			{
+				ViewOrder = group.Key,
+				Label = group.Key.ToMonthLabel(),
+				Income = group.Where(e => e.Amount > 0).Sum(e => e.Amount), // Totale delle entrate
+				Expense = group.Where(e => e.Amount < 0).Sum(e => e.Amount), // Totale delle uscite
+				Balance = group.MaxBy(e => e.Date)?.Balance ?? 0 // Saldo di fine periodo
+			})
+			.OrderBy(x => x.ViewOrder)
+			.ToList();
+
+		var monthDataSummary = monthData
+			.GroupJoin(
+				yearData,
+				day => day.Date.FirstDayOfMonth(), // Chiave di join (la data completa generata)
+				entry => entry.Date.FirstDayOfMonth(), // Chiave di join dei dati originali
+				(day, entries) => new DataItem
+				{
+					ViewOrder = day.Date.Month,
+					Label = day.Date.ToString("MM"),
+					Income = entries.Where(e => e.Amount > 0).Sum(e => e.Amount), // Entrate
+					Expense = entries.Where(e => e.Amount < 0).Sum(e => e.Amount), // Uscite
+					Balance = entries.Any()
+						? entries.MaxBy(e => e.Date.FirstDayOfMonth())?.Balance ?? 0
+						: 0 // Saldo
+				}
+			)
+			.OrderBy(x => x.ViewOrder)
+			.ToList();
+
+		var weekDataSummary = weekData
+			.GroupBy(x => x.Date.DayOfWeek)
+			.Select(group => new DataItem
+			{
+				ViewOrder = (int)group.Key,
+				Label = group.Key.ToDayLabel(),
+				Income = group.Where(e => e.Amount > 0).Sum(e => e.Amount), // Totale delle entrate
+				Expense = group.Where(e => e.Amount < 0).Sum(e => e.Amount), // Totale delle uscite
+				Balance = group.MaxBy(e => e.Date)?.Balance ?? 0 // Saldo di fine periodo
+			})
+			.OrderBy(x => x.ViewOrder)
+			.ToList();
 		var model = new JournalEntrySummaryModel
 		{
 			YearData = new SummaryData
 			{
-				Data = yearData
-					.GroupBy(x => x.Date.Month)
-					.Select(group => new DataItem
-					{
-						ViewOrder = group.Key,
-						Label = group.Key.ToMonthLabel(),
-						Income = group.Where(e => e.Amount > 0).Sum(e => e.Amount), // Totale delle entrate
-						Expense = group.Where(e => e.Amount < 0).Sum(e => e.Amount), // Totale delle uscite
-						Balance = group.MaxBy(e => e.Date)?.Balance ?? 0 // Saldo di fine periodo
-					})
-					.OrderBy(x => x.ViewOrder)
-					.ToList()
+				Data = yearDataSymmary
 			},
 			MonthData = new SummaryData
 			{
+				Data = monthDataSummary
+				/*
 				Data = monthData
 					.GroupBy(x => x.Date.Day)
 					.Select(group => new DataItem
@@ -105,18 +143,7 @@ public class JournalEntryService(ApplicationDbContext dbContext
 			},
 			WeekData = new SummaryData
 			{
-				Data = weekData
-					.GroupBy(x => x.Date.DayOfWeek)
-					.Select(group => new DataItem
-					{
-						ViewOrder = (int)group.Key,
-						Label = group.Key.ToDayLabel(),
-						Income = group.Where(e => e.Amount > 0).Sum(e => e.Amount), // Totale delle entrate
-						Expense = group.Where(e => e.Amount < 0).Sum(e => e.Amount), // Totale delle uscite
-						Balance = group.MaxBy(e => e.Date)?.Balance ?? 0 // Saldo di fine periodo
-					})
-					.OrderBy(x => x.ViewOrder)
-					.ToList()
+				Data = weekDataSummary
 			}
 		};
 
@@ -130,7 +157,7 @@ public class JournalEntryService(ApplicationDbContext dbContext
 		var tags = await entityTagService.ListAsync(EntryName, id);
 
 		var record = await Query()
-			.FirstOrDefaultAsync(x => x.Id == id);
+		.FirstOrDefaultAsync(x => x.Id == id);
 
 		if (record is null)
 			return Result.Fail(FailureReasons.ItemNotFound);
@@ -226,9 +253,9 @@ public class JournalEntryService(ApplicationDbContext dbContext
 		try
 		{
 			var data = query
-				.Skip(paginator.PageIndex * paginator.PageSize)
-				.Take(paginator.PageSize)
-				.ToList();
+			.Skip(paginator.PageIndex * paginator.PageSize)
+			.Take(paginator.PageSize)
+			.ToList();
 
 			var attachments = await attachmentService.ListAsync(EntryName, data.Select(x => x.Id).ToList());
 			var tags = await entityTagService.ListAsync(EntryName, data.Select(x => x.Id).ToList());

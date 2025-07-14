@@ -89,8 +89,8 @@ export class UserRolesComponent implements OnInit, AfterViewInit, OnChanges {
             .pipe(untilDestroyed(this))
             .subscribe(data => {
                 this.applicationRoles = data.items;
-                console.log('this.user', this.user);
-                console.log('this.applicationRoles', this.applicationRoles);
+                // console.log('this.user', this.user);
+                // console.log('this.applicationRoles', this.applicationRoles);
             });
     }
 

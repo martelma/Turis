@@ -258,10 +258,10 @@ export class CalendarViewCalendarComponent implements OnInit, AfterViewInit {
     }
 
     prepareCalendarEvents() {
-        console.log('_services', this._services);
-        this.calendarApi.removeAllEvents();
+        // console.log('_services', this._services);
+        this.calendarApi?.removeAllEvents();
 
-        this._services.forEach(item => {
+        this._services?.forEach(item => {
             const event = {
                 title: item.title,
                 date: item.date.toString().replace(/T.$/, ''),
@@ -357,11 +357,11 @@ export class CalendarViewCalendarComponent implements OnInit, AfterViewInit {
     }
 
     handleDateSelect(selectInfo: DateSelectArg) {
-        console.log('handleDateSelect', selectInfo);
+        // console.log('handleDateSelect', selectInfo);
     }
 
     handleEventClick(clickInfo: EventClickArg) {
-        console.log('handleEventClick', clickInfo);
+        // console.log('handleEventClick', clickInfo);
         this.currentEvent = clickInfo.event;
         this.currentService = clickInfo.event.extendedProps as Service;
         this.onSelectedService.emit(this.currentService);

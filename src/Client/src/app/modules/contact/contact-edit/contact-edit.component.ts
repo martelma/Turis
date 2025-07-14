@@ -135,7 +135,7 @@ export class ContactEditComponent implements OnInit {
     }
 
     onChanged() {
-        console.log('onChanged');
+        // console.log('onChanged');
         this.checkChanged();
     }
 

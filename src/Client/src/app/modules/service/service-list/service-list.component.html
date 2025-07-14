@@ -98,15 +98,9 @@
                                 </div>
 
                                 <div class="flex space-x-2 items-center">
-                                    <div *ngFor="let lang of item.languages">
-                                        <span
-                                            [matTooltip]="lang"
-                                            [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
-                                    </div>
-
                                     <!-- Date -->
                                     <div class="ml-auto text-md text-right whitespace-nowrap text-hint">
-                                        {{ item.date | date: 'dd MMM yy' }}
+                                        {{ item.date | date: 'EEE dd MMM y' : '' : 'it-IT' | titlecase }}
                                     </div>
 
                                     <!-- Actions Menu -->
@@ -143,12 +137,30 @@
                                 </div>
                             </div>
 
-                            <div class="mt-1 leading-normal line-clamp-2 text-secondary whitespace-pre-wrap">
+                            <!-- <div class="mt-1 leading-normal line-clamp-2 text-secondary whitespace-pre-wrap">
                                 <mat-icon
                                     [svgIcon]="'heroicons_solid:map-pin'"
                                     class="mr-2"
                                     [matTooltip]="'Location'"></mat-icon>
                                 {{ item?.location }}
+                            </div> -->
+
+                            <div
+                                class="flex items-center w-full justify-between mt-1 leading-normal line-clamp-2 text-secondary whitespace-pre-wrap">
+                                <div class="flex items-center space-x-2">
+                                    <mat-icon
+                                        [svgIcon]="'heroicons_solid:map-pin'"
+                                        class="mr-2"
+                                        [matTooltip]="'Location'"></mat-icon>
+                                    {{ item?.location }}
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div *ngFor="let lang of item.languages">
+                                        <span
+                                            [matTooltip]="lang"
+                                            [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="mt-1 leading-normal line-clamp-2 text-secondary whitespace-pre-wrap">

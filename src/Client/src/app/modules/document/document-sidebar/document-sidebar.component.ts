@@ -106,7 +106,7 @@ export class DocumentSidebarComponent implements OnInit {
     }
 
     filter() {
-        console.log('documentParameters', this.documentParameters);
+        // console.log('documentParameters', this.documentParameters);
         this.documentParameters.dateFrom = toUtcString(this.dateFrom);
         this.documentParameters.dateTo = toUtcString(this.dateTo);
         this._search(this.documentParameters);

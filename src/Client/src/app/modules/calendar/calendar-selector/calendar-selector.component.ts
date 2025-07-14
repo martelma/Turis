@@ -3,18 +3,17 @@ import {
     ChangeDetectorRef,
     Component,
     EventEmitter,
-    inject,
     Input,
     OnDestroy,
     OnInit,
     Output,
-    signal,
+    ViewChild,
     ViewEncapsulation,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { DateAdapter, MAT_DATE_FORMATS, MatOptionModule, MatRippleModule } from '@angular/material/core';
+import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -39,8 +38,6 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { CalendarViewGridComponent } from '../calendar-view-grid/calendar-view-grid.component';
 import { MatCalendar, MatDatepickerModule } from '@angular/material/datepicker';
-import { startWith, Subject, takeUntil } from 'rxjs';
-import { ChangeDetectionStrategy } from '@angular/compiler';
 import { MatCardModule } from '@angular/material/card';
 
 @UntilDestroy()
@@ -89,6 +86,8 @@ import { MatCardModule } from '@angular/material/card';
     ],
 })
 export class CalendarSelectorComponent implements OnInit, OnDestroy {
+    @ViewChild(MatCalendar) calendar!: MatCalendar<Date>;
+
     @Input() date: Date = new Date();
     @Output() onDateChanged: EventEmitter<Date> = new EventEmitter<Date>();
 
@@ -113,24 +112,34 @@ export class CalendarSelectorComponent implements OnInit, OnDestroy {
     ngOnDestroy() {}
 
     preview() {
-        const newDate = new Date();
+        const newDate = new Date(this.date);
         newDate.setDate(this.date.getDate() - 1);
 
         this.date = newDate;
+
+        if (this.calendar) {
+            this.calendar._goToDateInView(this.date, 'month');
+        }
+
         this.onDateChanged.emit(this.date);
     }
 
     next() {
-        const newDate = new Date();
+        const newDate = new Date(this.date);
         newDate.setDate(this.date.getDate() + 1);
 
         this.date = newDate;
+
+        if (this.calendar) {
+            this.calendar._goToDateInView(this.date, 'month');
+        }
+
         this.onDateChanged.emit(this.date);
     }
 
     onDateChange(newDate: Date): void {
         this.date = newDate;
-        console.log('Data aggiornata:', this.date);
+        // console.log('Data aggiornata:', this.date);
         this.onDateChanged.emit(this.date);
     }
 }

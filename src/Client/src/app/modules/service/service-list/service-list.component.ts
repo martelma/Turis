@@ -1,5 +1,4 @@
 import { TagSummaryComponent } from './../../../shared/components/tag-summary/tag-summary.component';
-import { Tag } from './../../configuration/tags/tag.types';
 import { CurrencyPipe, DatePipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
 import {
     AfterViewInit,
@@ -37,6 +36,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
 import { DurationTypes, getStatusColorClass, getStatusText, ServiceTypes, StatusTypes } from 'app/constants';
 import { ServiceViewComponent } from '../service-view/service-view.component';
+import { TitleCasePipe } from '@angular/common';
 
 @UntilDestroy()
 @Component({
@@ -54,6 +54,7 @@ import { ServiceViewComponent } from '../service-view/service-view.component';
         CurrencyPipe,
         DatePipe,
         JsonPipe,
+        TitleCasePipe,
         FormsModule,
         ReactiveFormsModule,
         RouterOutlet,
@@ -183,7 +184,7 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
     }
 
     createService(): void {
-        console.log('createService');
+        // console.log('createService');
         this._router.navigate(['./', 'new'], { relativeTo: this._activatedRoute });
     }
 

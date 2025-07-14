@@ -80,7 +80,10 @@
 
                                 <div class="flex space-x-2 items-center">
                                     <div *ngFor="let lang of item.languages">
-                                        <span [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
+                                        <span
+                                            [ngClass]="
+                                                'fi fi-' + ((lang | lowercase) === 'en' ? 'gb' : (lang | lowercase))
+                                            "></span>
                                     </div>
                                 </div>
                             </div>

@@ -150,7 +150,9 @@
                                         <div *ngFor="let lang of contact.languages">
                                             <span
                                                 [matTooltip]="lang"
-                                                [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
+                                                [ngClass]="
+                                                    'fi fi-' + ((lang | lowercase) === 'en' ? 'gb' : (lang | lowercase))
+                                                "></span>
                                         </div>
                                     </div>
                                 </div>

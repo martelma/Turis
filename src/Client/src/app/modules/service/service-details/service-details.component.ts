@@ -22,6 +22,8 @@ import { ServiceViewComponent } from '../service-view/service-view.component';
 import { ServiceComponent } from '../service.component';
 import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
 import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summary.component';
+import { StatusTypes } from 'app/constants';
+import { ConfirmationDialogService } from 'app/shared/services/confirmation-dialog.service';
 
 @UntilDestroy()
 @Component({
@@ -64,6 +66,7 @@ export class ServiceDetailsComponent implements OnInit {
     isDownloading = false;
     downloadingData = false;
     validating = false;
+    loading = false;
 
     service: Service;
 
@@ -77,6 +80,7 @@ export class ServiceDetailsComponent implements OnInit {
     constructor(
         private _activatedRoute: ActivatedRoute,
         private _router: Router,
+        private _confirmationDialogService: ConfirmationDialogService,
         private _serviceService: ServiceService,
         private _translocoService: TranslocoService,
         private _bookmarkService: BookmarkService,
@@ -98,6 +102,7 @@ export class ServiceDetailsComponent implements OnInit {
                 tap(params => {
                     // Activates the create user mode
                     this.isCreate = params.id === 'new';
+                    // this.service.status = StatusTypes[0].value;
                 }),
                 untilDestroyed(this),
             )
@@ -144,7 +149,29 @@ export class ServiceDetailsComponent implements OnInit {
     }
 
     menuItem1(service: Service) {
-        console.log('menuItem1', service);
+        // console.log('menuItem1', service);
+        this._confirmationDialogService
+            .showWarningMessage({
+                title: 'Are you sure?',
+                text: "Confermi l'eliminazione di questo Servizio?",
+                showCancelButton: true,
+                confirmButtonText: 'Confirm',
+            })
+            .then(result => {
+                if (result.value) {
+                    this.loading = true;
+                    this._serviceService.delete(this.service.id).subscribe({
+                        next: () => {
+                            this._refresh();
+                        },
+                        error: error => {
+                            this.loading = false;
+                            console.error(error);
+                            // this._toastr.error(error.detail, 'Error!');
+                        },
+                    });
+                }
+            });
     }
 
     menuItem2(service: Service) {
@@ -152,14 +179,27 @@ export class ServiceDetailsComponent implements OnInit {
     }
 
     save(): void {
-        this._serviceService
-            .update(this.service)
-            .pipe(untilDestroyed(this))
-            .subscribe(() => {
-                this._refresh();
+        if (this.isCreate) {
+            // console.log('Creating new service', this.service);
+            this._serviceService
+                .create(this.service)
+                .pipe(untilDestroyed(this))
+                .subscribe(() => {
+                    this._refresh();
 
-                this._serviceService.editEntity(null);
-            });
+                    this._serviceService.editEntity(null);
+                });
+        } else {
+            // console.log('Updating service', this.service);
+            this._serviceService
+                .update(this.service)
+                .pipe(untilDestroyed(this))
+                .subscribe(() => {
+                    this._refresh();
+
+                    this._serviceService.editEntity(null);
+                });
+        }
     }
 
     private _refresh(): void {

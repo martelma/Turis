@@ -156,7 +156,7 @@ export class CollaboratorSummaryComponent implements OnInit, AfterViewInit, OnCh
     ngOnInit(): void {
         this._serviceService.contactSummary$.pipe(untilDestroyed(this)).subscribe((data: ContactSummary) => {
             this.data = data;
-            console.log('data', this.data);
+            // console.log('data', this.data);
 
             this._changeDetectorRef.detectChanges();
 
@@ -194,7 +194,7 @@ export class CollaboratorSummaryComponent implements OnInit, AfterViewInit, OnCh
 
     private prepareChartData(): void {
         this.currentData = this.data.years.filter(x => x.label === this.summarySelector?.value)[0];
-        console.log('currentData', this.currentData);
+        // console.log('currentData', this.currentData);
 
         this.chartData = {
             chart: {
@@ -286,6 +286,6 @@ export class CollaboratorSummaryComponent implements OnInit, AfterViewInit, OnCh
                 },
             },
         };
-        console.log('chartData', this.chartData);
+        // console.log('chartData', this.chartData);
     }
 }

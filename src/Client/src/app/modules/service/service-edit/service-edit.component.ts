@@ -99,7 +99,12 @@ export class ServiceEditComponent implements OnInit {
     @Input()
     set service(value: Service) {
         this.item = value;
-        // console.log('item', this.item);
+        if (this.item.id === undefined) {
+            this.service.status = StatusTypes[0].value;
+            this.service.serviceType = ServiceTypes[0].value;
+            this.service.durationType = DurationTypes[0].value;
+        }
+        console.log('item', this.item);
 
         this.clientControl.setValue(this.item.client?.companyName);
         this.collaboratorControl.setValue(this.item.collaborator?.fullName);
@@ -175,6 +180,7 @@ export class ServiceEditComponent implements OnInit {
 
     onPriceListSelected(event: any) {
         const selectedPriceList: PriceList = event.value;
+        this.item.priceListId = selectedPriceList.id;
         this.item.priceList = selectedPriceList;
         this.rebuild();
     }
@@ -211,7 +217,7 @@ export class ServiceEditComponent implements OnInit {
             .pipe(untilDestroyed(this))
             .subscribe(list => {
                 this.languages = list.items;
-                console.log('languages', this.languages);
+                // console.log('languages', this.languages);
             });
     }
 

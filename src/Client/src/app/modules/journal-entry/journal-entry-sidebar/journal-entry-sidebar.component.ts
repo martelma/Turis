@@ -105,7 +105,7 @@ export class JournalEntrySidebarComponent implements OnInit {
     }
 
     filter() {
-        console.log('JournalEntryParameters', this.journalEntryParameters);
+        // console.log('JournalEntryParameters', this.journalEntryParameters);
         this.journalEntryParameters.dateFrom = toUtcString(this.dateFrom);
         this.journalEntryParameters.dateTo = toUtcString(this.dateTo);
         this._search(this.journalEntryParameters);

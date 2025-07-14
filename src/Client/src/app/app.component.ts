@@ -39,6 +39,6 @@ export class AppComponent implements OnInit {
         // Append the new favicon to the document head
         document.head.appendChild(newFavIcon);
 
-        console.log('Favicon updated to:', newFavIcon.href);
+        // console.log('Favicon updated to:', newFavIcon.href);
     }
 }

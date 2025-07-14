@@ -71,6 +71,8 @@ export class ServiceSearchParameters extends BaseSearchParameters {
     serviceType?: string;
     durationType?: string;
     languages?: string[];
+    status?: string;
+    statuses?: string[];
     dateFrom?: string;
     dateTo?: string;
 }

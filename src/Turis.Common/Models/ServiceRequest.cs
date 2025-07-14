@@ -16,8 +16,8 @@ public class ServiceRequest : BaseRequest
 	public string ReferentPhone { get; set; }
 	public string Note { get; set; }
 	public string[] Languages { get; set; }
-	public Guid UserId { get; set; }
-	public DateTimeOffset CreationDate { get; set; }
+	public Guid? UserId { get; set; }
+	public DateTimeOffset? CreationDate { get; set; }
 	public string Status { get; set; }
 	public string WorkflowCollaboratorStatus { get; set; }
 	public DateTimeOffset? OptionExpiration { get; set; }

@@ -4,16 +4,16 @@ import { MatDateFormats, MAT_DATE_FORMATS } from '@angular/material/core';
 import { DateFormats } from './shared/services/shared.types';
 
 export const ServiceTypes = [
-    { value: '', text: '' },
+    // { value: '', text: '' },
     { value: 'Guida', text: 'Guida' },
     { value: 'Accompagnamento', text: 'Accompagnamento' },
     { value: 'Altro', text: 'Altro' },
 ];
 
 export const DurationTypes = [
-    { value: '', text: '' },
-    { value: 'HalfDay', text: 'Half Day' },
+    // { value: '', text: '' },
     { value: 'FullDay', text: 'Full Day' },
+    { value: 'HalfDay', text: 'Half Day' },
     { value: 'Altro', text: 'Altro' },
 ];
 

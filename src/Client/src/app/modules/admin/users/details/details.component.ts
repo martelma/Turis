@@ -148,7 +148,7 @@ export class UsersDetailsComponent implements OnInit {
             .pipe(untilDestroyed(this))
             .subscribe((list: PaginatedList<ApplicationRole>) => {
                 this.roles = list;
-                console.log('roles', this.roles);
+                // console.log('roles', this.roles);
 
                 this._changeDetectorRef.detectChanges();
             });
@@ -158,7 +158,7 @@ export class UsersDetailsComponent implements OnInit {
         // Get the user
         this._usersService.userRoles$.pipe(untilDestroyed(this)).subscribe((list: PaginatedList<ApplicationRole>) => {
             this.userRoles = list;
-            console.log('userRoles', this.userRoles);
+            // console.log('userRoles', this.userRoles);
 
             this._changeDetectorRef.detectChanges();
         });

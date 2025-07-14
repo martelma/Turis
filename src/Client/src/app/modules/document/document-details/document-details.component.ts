@@ -92,7 +92,7 @@ export class DocumentDetailsComponent implements OnInit {
         this._documentService.item$.pipe(untilDestroyed(this)).subscribe((document: Document) => {
             this.document = document;
 
-            console.log('_subscribeDocument - document', this.document);
+            // console.log('_subscribeDocument - document', this.document);
 
             this.editMode = document?.id === undefined;
         });

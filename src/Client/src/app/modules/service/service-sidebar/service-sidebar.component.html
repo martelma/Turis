@@ -86,6 +86,38 @@
     </mat-form-field>
 
     <mat-form-field class="col-span-2">
+        <mat-label for="status">Status</mat-label>
+        <mat-select
+            placeholder="Select a Duration"
+            class="form-control font-bold"
+            id="status"
+            name="status"
+            #name="ngModel"
+            [(ngModel)]="serviceParameters.status"
+            (ngModelChange)="filter()">
+            <mat-option *ngFor="let x of statusTypes" [value]="x.value">
+                {{ x.text }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <!-- <mat-form-field class="col-span-4">
+        <mat-label for="status">Status</mat-label>
+        <mat-select
+            multiple
+            class="form-control font-bold"
+            id="status"
+            name="status"
+            #name="ngModel"
+            [(ngModel)]="serviceParameters.statuses"
+            (ngModelChange)="filter()">
+            <mat-option *ngFor="let x of statusTypes" [value]="x.value">
+                <span [ngClass]="x.colorClass" class="color-box"></span>
+                {{ x.text }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field> -->
+
+    <mat-form-field class="col-span-2">
         <mat-label for="dateFrom">Date From</mat-label>
         <input
             matInput

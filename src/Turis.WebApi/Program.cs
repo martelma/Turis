@@ -1,6 +1,7 @@
 using ElmahCore.Mvc;
 using ElmahCore.Sql;
 using FluentEmail.MailKitSmtp;
+using FluentValidation;
 using Hangfire;
 using Hangfire.Dashboard;
 using Hangfire.SqlServer;
@@ -9,43 +10,43 @@ using JeMa.Shared.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.Identity.Web;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using SimpleAuthentication;
 using StackExchange.Redis.Extensions.Core.Configuration;
 using StackExchange.Redis.Extensions.Newtonsoft;
+using Swashbuckle.AspNetCore.SwaggerUI;
+using System.Text.Json;
 using System.Text.Json.Serialization;
-using FluentValidation;
-using SimpleAuthentication;
 using TinyHelpers.AspNetCore.Extensions;
 using TinyHelpers.AspNetCore.Swagger;
+using TinyHelpers.Json.Serialization;
+using Turis.Authentication;
 using Turis.Authentication.Entities;
+using Turis.Authentication.Handlers;
 using Turis.Authentication.Settings;
+using Turis.Authentication.Validators;
+using Turis.BusinessLayer.Erorrs;
 using Turis.BusinessLayer.EventInterceptor.Base;
 using Turis.BusinessLayer.Projections.Base;
+using Turis.BusinessLayer.Services.Base;
+using Turis.BusinessLayer.Settings;
 using Turis.BusinessLayer.Validations;
+using Turis.Common.Hubs;
 using Turis.Common.Interfaces;
+using Turis.Common.Models.Requests;
 using Turis.Common.Services;
 using Turis.DataAccessLayer;
-using Turis.WebApi.Extensions;
-using TinyHelpers.Json.Serialization;
-using Turis.Authentication.Handlers;
-using Turis.Authentication.Validators;
-using Turis.Authentication;
-using Microsoft.Identity.Web;
-using Microsoft.Extensions.Options;
-using Turis.BusinessLayer.Erorrs;
-using Turis.BusinessLayer.Services.Base;
-using Turis.WebApi.Logging;
-using Microsoft.AspNetCore.Http.Connections;
-using Turis.Common.Hubs;
-using Swashbuckle.AspNetCore.SwaggerUI;
-using Turis.WebApi.ClientContext;
-using Microsoft.Net.Http.Headers;
 using Turis.DataAccessLayer.Entities.Base;
-using Turis.BusinessLayer.Settings;
-using Turis.Common.Models.Requests;
+using Turis.WebApi.ClientContext;
+using Turis.WebApi.Extensions;
+using Turis.WebApi.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -79,6 +80,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 
 	services.ConfigureHttpJsonOptions(options =>
 	{
+		options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 		options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
 		options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 		options.SerializerOptions.Converters.Add(new StringEnumMemberConverter());

@@ -11,7 +11,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { ServiceSearchParameters } from '../service.types';
-import { DurationTypes, MY_DATE_FORMATS, ServiceTypes } from 'app/constants';
+import { DurationTypes, MY_DATE_FORMATS, ServiceTypes, StatusTypes } from 'app/constants';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -79,6 +79,7 @@ export class ServiceSidebarComponent implements OnInit {
 
     serviceTypes = ServiceTypes;
     durationTypes = DurationTypes;
+    statusTypes = StatusTypes;
 
     constructor(
         private _serviceService: ServiceService,
@@ -130,7 +131,7 @@ export class ServiceSidebarComponent implements OnInit {
     }
 
     filter() {
-        console.log('serviceParameters', this.serviceParameters);
+        // console.log('serviceParameters', this.serviceParameters);
         this.serviceParameters.dateFrom = toUtcString(this.dateFrom);
         this.serviceParameters.dateTo = toUtcString(this.dateTo);
         this._search(this.serviceParameters);

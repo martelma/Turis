@@ -51,7 +51,9 @@
                 <!-- <div>{{ service?.languages }}</div> -->
                 <div class="flex space-x-2 items-center">
                     <div *ngFor="let lang of service?.languages">
-                        <span [matTooltip]="lang" [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
+                        <span
+                            [matTooltip]="lang"
+                            [ngClass]="'fi fi-' + ((lang | lowercase) === 'en' ? 'gb' : (lang | lowercase))"></span>
                     </div>
                 </div>
             </div>
@@ -89,7 +91,9 @@
 
                 <div class="flex space-x-2 items-center">
                     <div *ngFor="let lang of service?.client?.languages">
-                        <span [matTooltip]="lang" [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
+                        <span
+                            [matTooltip]="lang"
+                            [ngClass]="'fi fi-' + ((lang | lowercase) === 'en' ? 'gb' : (lang | lowercase))"></span>
                     </div>
                 </div>
 

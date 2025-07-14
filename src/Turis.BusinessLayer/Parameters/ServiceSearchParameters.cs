@@ -23,4 +23,10 @@ public class ServiceSearchParameters : BaseSearchParameters
 	public string ServiceType { get; set; }
 	[FromQuery]
 	public string DurationType { get; set; }
+	[FromQuery]
+	public string[] Languages { get; set; }
+	[FromQuery]
+	public string Status { get; set; }
+	[FromQuery]
+	public string[] Statuses { get; set; }
 }

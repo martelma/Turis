@@ -105,7 +105,7 @@ public class MailNotificationService(IFluentEmailFactory fluentEmailFactory
 		}
 	}
 
-	public async Task SendMailProposal(Service service, ApplicationUser user)
+	public async Task SendMailProposal(DataAccessLayer.Entities.Service service, ApplicationUser user)
 	{
 		var model = new ProposalEmailModel
 		{

@@ -134,11 +134,9 @@ export class JournalEntryListComponent implements OnInit, AfterViewInit {
             });
 
         // JournalEntry loading
-        this._journalEntryService.loading$
-            .pipe(untilDestroyed(this))
-            .subscribe((journalEntriesLoading: boolean) => {
-                this.itemsLoading = journalEntriesLoading;
-            });
+        this._journalEntryService.loading$.pipe(untilDestroyed(this)).subscribe((journalEntriesLoading: boolean) => {
+            this.itemsLoading = journalEntriesLoading;
+        });
 
         // Service parameters
         this._journalEntryService.parameters$
@@ -274,7 +272,7 @@ export class JournalEntryListComponent implements OnInit, AfterViewInit {
     }
 
     createJournalEntry(): void {
-        console.log('createJournalEntry');
+        // console.log('createJournalEntry');
         this._router.navigate(['./', 'new'], { relativeTo: this._activatedRoute });
     }
 
