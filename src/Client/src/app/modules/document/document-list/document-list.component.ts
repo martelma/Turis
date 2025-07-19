@@ -274,9 +274,9 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
             .listEntities({ ...this.documentParameters })
             .pipe(untilDestroyed(this))
             .subscribe(items => {
-                if (items?.items?.length > 0) {
-                    this.navigateToItem(items.items[0]);
-                }
+                // if (items?.items?.length > 0) {
+                //     this.navigateToItem(items.items[0]);
+                // }
             });
     }
 

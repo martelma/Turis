@@ -9,6 +9,7 @@ import {
     Input,
     EventEmitter,
     Output,
+    OnDestroy,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -42,6 +43,8 @@ import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { CalendarSelectorComponent } from '../calendar-selector/calendar-selector.component';
 import { CalendarDetailComponent } from '../calendar-detail/calendar-detail.component';
+import { GlobalShortcutsService } from 'app/components/global-shortcuts/global-shortcuts.service';
+import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 
 declare let $: any;
 
@@ -94,9 +97,50 @@ declare let $: any;
         ServiceSidebarComponent,
         CalendarSelectorComponent,
         CalendarDetailComponent,
+        KeyboardShortcutsModule,
     ],
 })
-export class CalendarViewGridComponent implements OnInit, AfterViewInit {
+export class CalendarViewGridComponent implements OnInit, OnDestroy, AfterViewInit {
+    currentPageTitle = 'Calendar';
+    private _componentShortcuts = [
+        // {
+        //     key: 'ctrl + shift + -',
+        //     preventDefault: true,
+        //     label: this.currentPageTitle,
+        //     description: 'Collapse all',
+        //     command: () => this.collapseAll(),
+        // },
+        // {
+        //     key: 'ctrl + shift + plus',
+        //     preventDefault: true,
+        //     label: this.currentPageTitle,
+        //     description: 'Expand all',
+        //     command: () => this.expandAll(),
+        // },
+        // {
+        //     key: 'ctrl + alt + plus',
+        //     preventDefault: true,
+        //     label: this.currentPageTitle,
+        //     description: 'Add Production Batch',
+        //     command: () => this.addProductionBatch(),
+        // },
+        {
+            key: 'ctrl + right',
+            preventDefault: true,
+            label: this.currentPageTitle,
+            description: 'Next Day',
+            command: () => this.setNextDay(),
+        },
+        {
+            key: 'ctrl + left',
+            preventDefault: true,
+            label: this.currentPageTitle,
+            description: 'Previous Day',
+            command: () => this.setPreviousDay(),
+        },
+    ];
+
+    @ViewChild(CalendarSelectorComponent) private _calendarSelector: CalendarSelectorComponent;
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
     @ViewChild(MatSort) private _sort: MatSort;
 
@@ -143,14 +187,24 @@ export class CalendarViewGridComponent implements OnInit, AfterViewInit {
         private _userSettingsService: UserSettingsService,
         private _router: Router,
         private _activatedRoute: ActivatedRoute,
+        public globalShortcutsService: GlobalShortcutsService,
     ) {}
 
-    async ngOnInit(): Promise<void> {}
+    ngOnInit(): void {
+        this.globalShortcutsService.addShortcuts(this.currentPageTitle, this._componentShortcuts);
+    }
 
-    async ngAfterViewInit(): Promise<void> {
+    ngAfterViewInit(): void {
         if (!this.dateFrom) {
             this.setDates();
         }
+    }
+
+    ngOnDestroy(): void {
+        setTimeout(() => {
+            this.globalShortcutsService.addShortcuts(this.currentPageTitle, this._componentShortcuts);
+        });
+        this._changeDetectorRef.detectChanges();
     }
 
     handlePageEvent(event: PageEvent): void {}
@@ -161,6 +215,14 @@ export class CalendarViewGridComponent implements OnInit, AfterViewInit {
         this.onSelectedService.emit(this.selectedItem);
     }
 
+    setNextDay() {
+        this._calendarSelector.next();
+    }
+
+    setPreviousDay() {
+        this._calendarSelector.previous();
+    }
+
     dateChanged(date: Date) {
         // console.log('dateChanged', date);
         this.currentDate = new Date(date);
@@ -168,15 +230,11 @@ export class CalendarViewGridComponent implements OnInit, AfterViewInit {
     }
 
     setDates() {
-        // console.log('currentDate', this.currentDate);
-
         this.dateFrom = new Date(this.currentDate);
-        console.log('dateFrom', this.dateFrom);
         this.dateFromChange.emit(this.dateFrom);
 
         this.dateTo = new Date(this.currentDate);
         this.dateTo.setDate(this.dateTo.getDate() + 1);
-        console.log('dateTo', this.dateTo);
         this.dateToChange.emit(this.dateTo);
 
         this.onDateChanged.emit();

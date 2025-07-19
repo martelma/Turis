@@ -260,9 +260,9 @@ export class JournalEntryListComponent implements OnInit, AfterViewInit {
             .listEntities({ ...this.journalEntryParameters })
             .pipe(untilDestroyed(this))
             .subscribe(items => {
-                if (items?.items?.length > 0) {
-                    this.navigateToItem(items.items[0]);
-                }
+                // if (items?.items?.length > 0) {
+                //     this.navigateToItem(items.items[0]);
+                // }
             });
     }
 

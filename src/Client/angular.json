@@ -58,7 +58,7 @@
                     },
                     "configurations": {
                         "production": {
-                            "outputPath": "../../_deploy/production-app",
+                            "outputPath": "../../_deploy/version-app",
                             "budgets": [
                                 {
                                     "type": "initial",
@@ -75,28 +75,6 @@
                                 {
                                     "replace": "src/environments/environment.ts",
                                     "with": "src/environments/environment.production.ts"
-                                }
-                            ],
-                            "outputHashing": "all"
-                        },
-                        "staging": {
-                            "outputPath": "../../_deploy/staging-app",
-                            "budgets": [
-                                {
-                                    "type": "initial",
-                                    "maximumWarning": "10mb",
-                                    "maximumError": "10mb"
-                                },
-                                {
-                                    "type": "anyComponentStyle",
-                                    "maximumWarning": "75kb",
-                                    "maximumError": "90kb"
-                                }
-                            ],
-                            "fileReplacements": [
-                                {
-                                    "replace": "src/environments/environment.ts",
-                                    "with": "src/environments/environment.staging.ts"
                                 }
                             ],
                             "outputHashing": "all"

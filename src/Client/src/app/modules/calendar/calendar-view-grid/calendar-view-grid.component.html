@@ -1,5 +1,9 @@
+<ng-keyboard-shortcuts [shortcuts]="globalShortcutsService.shortcuts$ | async"></ng-keyboard-shortcuts>
 <div class="flex flex-1 h-full w-full">
-    <app-calendar-selector [date]="currentDate" (onDateChanged)="dateChanged($event)"></app-calendar-selector>
+    <app-calendar-selector
+        #calendarSelector
+        [date]="currentDate"
+        (onDateChanged)="dateChanged($event)"></app-calendar-selector>
     <div
         class="flex flex-col flex-1 h-full w-full overflow-hidden sm:overflow-y-auto"
         [ngClass]="{

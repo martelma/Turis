@@ -126,22 +126,17 @@ export class CalendarSelectorComponent implements OnInit, AfterViewInit, OnDestr
 
     ngOnDestroy() {}
 
-    preview() {
-        const newDate = new Date(this.date);
-        newDate.setDate(this.date.getDate() - 1);
-
-        this.date = newDate;
-
-        if (this.calendar) {
-            this.calendar._goToDateInView(this.date, 'month');
-        }
-
-        this.onDateChanged.emit(this.date);
+    public previous() {
+        this.changeCurrentDate(-1);
     }
 
-    next() {
+    public next() {
+        this.changeCurrentDate(1);
+    }
+
+    changeCurrentDate(days: number) {
         const newDate = new Date(this.date);
-        newDate.setDate(this.date.getDate() + 1);
+        newDate.setDate(this.date.getDate() + days);
 
         this.date = newDate;
 

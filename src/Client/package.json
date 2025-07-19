@@ -1,13 +1,15 @@
 {
     "name": "turis",
     "version": "1.0.0",
-    "description": "An application to handle users and their applications and roles associated within jema.",
+    "description": "A JeMa solution for Turis Management",
     "private": true,
     "scripts": {
         "ng": "ng",
         "start": "ng serve --port 5200",
         "build": "ng build --configuration production --base-href /app/",
-        "staging": "ng build --configuration staging --base-href /app/",
+        "deploy-major": "npm version major && npm run build",
+        "deploy-minor": "npm version minor && npm run build",
+        "deploy-patch": "npm version patch && npm run build",
         "watch": "ng build --watch --configuration development",
         "test": "ng test",
         "lint": "ng lint"
@@ -44,6 +46,7 @@
         "luxon": "3.3.0",
         "moment": "^2.30.1",
         "ng-apexcharts": "1.7.6",
+        "ng-keyboard-shortcuts": "^13.0.8",
         "ngx-dropzone": "^3.1.0",
         "ngx-quill": "22.0.0",
         "perfect-scrollbar": "1.5.5",

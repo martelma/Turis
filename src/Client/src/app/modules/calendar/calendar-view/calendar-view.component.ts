@@ -1,5 +1,13 @@
 import { CommonModule, CurrencyPipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectorRef,
+    Component,
+    OnDestroy,
+    OnInit,
+    ViewChild,
+    ViewEncapsulation,
+} from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -46,6 +54,8 @@ import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { CalendarViewGridComponent } from '../calendar-view-grid/calendar-view-grid.component';
 import { CalendarDetailComponent } from '../calendar-detail/calendar-detail.component';
 import { CalendarViewCalendarComponent } from '../calendar-view-calendar/calendar-view-calendar.component';
+import { GlobalShortcutsService } from 'app/components/global-shortcuts/global-shortcuts.service';
+import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 
 declare let $: any;
 
@@ -58,6 +68,7 @@ declare let $: any;
     animations: fuseAnimations,
     standalone: true,
     imports: [
+        KeyboardShortcutsModule,
         NgIf,
         NgFor,
         NgClass,
@@ -94,7 +105,18 @@ declare let $: any;
         CalendarViewCalendarComponent,
     ],
 })
-export class CalendarViewComponent implements OnInit, AfterViewInit {
+export class CalendarViewComponent implements OnInit, OnDestroy, AfterViewInit {
+    currentPageTitle = 'Calendar';
+    private _componentShortcuts = [
+        {
+            key: 'ctrl + shift + plus',
+            preventDefault: true,
+            label: this.currentPageTitle,
+            description: 'Toggle ViewMode',
+            command: () => this.toggleViewMode(),
+        },
+    ];
+
     @ViewChild('detailsDrawer') detailsDrawer: MatDrawer;
 
     getStatusColorClass = getStatusColorClass;
@@ -138,9 +160,15 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
         private _userSettingsService: UserSettingsService,
         private _router: Router,
         private _activatedRoute: ActivatedRoute,
+        public globalShortcutsService: GlobalShortcutsService,
     ) {}
 
-    async ngOnInit(): Promise<void> {
+    ngOnInit(): void {
+        setTimeout(() => {
+            this.globalShortcutsService.addShortcuts(this.currentPageTitle, this._componentShortcuts);
+        });
+        this._changeDetectorRef.detectChanges();
+
         this.activeLang = this._translocoService.getActiveLang();
 
         // Services
@@ -169,15 +197,6 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
     }
 
     async ngAfterViewInit(): Promise<void> {
-        // if (this._sort && this._paginator) {
-        //     // Set the initial sort
-        //     this._sort.sort({
-        //         id: 'name',
-        //         start: 'asc',
-        //         disableClear: true,
-        //     });
-        // }
-
         const toggleFilterValue = await this._userSettingsService.getValue(`${AppSettings.Calendar}:toggleFilter`);
         this.drawerFilterOpened = toggleFilterValue === '' ? false : toggleFilterValue === 'true';
 
@@ -187,9 +206,9 @@ export class CalendarViewComponent implements OnInit, AfterViewInit {
         this.list();
     }
 
-    // handlePageEvent(event: PageEvent): void {
-    //     this._list();
-    // }
+    ngOnDestroy(): void {
+        this.globalShortcutsService.removeShortcuts(this.currentPageTitle);
+    }
 
     async toggleViewMode() {
         this.viewMode = this.viewMode === 'calendar' ? 'list' : 'calendar';
