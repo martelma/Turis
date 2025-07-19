@@ -1,4 +1,4 @@
-﻿using JeMa.Shared.Extensions;
+﻿using TinyHelpers.Extensions;
 using Turis.Common.Models;
 using Turis.DataAccessLayer.Entities;
 

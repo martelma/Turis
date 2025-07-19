@@ -1,5 +1,4 @@
 ﻿using System.Linq.Dynamic.Core.Exceptions;
-using JeMa.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OperationResults;

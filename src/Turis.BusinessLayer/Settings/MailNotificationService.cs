@@ -10,7 +10,6 @@ using Turis.Authentication.Entities;
 using Turis.BusinessLayer.Resources;
 using Turis.BusinessLayer.Services.Interfaces;
 using Turis.Common.Mailing;
-using Turis.DataAccessLayer.Entities;
 
 namespace Turis.BusinessLayer.Settings;
 

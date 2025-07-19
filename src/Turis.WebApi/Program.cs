@@ -186,7 +186,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 		{
 			options.AddAcceptLanguageHeader();
 			options.AddOperationParameters();
-			options.AddDefaultResponse();
+			options.AddDefaultProblemDetailsResponse();
 
 			options.AddSimpleAuthentication(configuration);
 		});
