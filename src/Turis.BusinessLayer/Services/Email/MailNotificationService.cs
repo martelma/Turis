@@ -60,7 +60,7 @@ public class MailNotificationService(IFluentEmailFactory fluentEmailFactory
 	public async Task<Result> SendEmailAsync(string emailRecipient, string subject, string templateName, string language, dynamic model)
 	{
 		// Durante la fase di test sostituisco al destinatario l'email di test.
-		if (environment.IsDevelopment())
+		if (notificationSettings.DebugMode)
 			emailRecipient = notificationSettings.EMailTest;
 
 		try

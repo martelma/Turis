@@ -7,9 +7,6 @@ siamo d'accordo per 5+5 in questo anno e 5+5 nel prossimo quello dopo ancora rip
 
 ricroda di eliminare tutti gli .AllowAnonymous()
 
-TODO:
--------------------------------------------------------------------------------------------------
-
 
 Servizi	
 	gestire il menù con N opzioni nell'intestazione a dx
@@ -19,7 +16,6 @@ Servizi
 Prima nota
 	cruscotto in home page con saldo e ultime operazioni
 	
-
 
 Proposta
 	PropostaDiGuidaToolStripMenuItem_Click
@@ -48,3 +44,5 @@ vedere di collegare 2 o più servizi, per poter dire a guida1 chi è la guida2
 
 dopo 90gg invio automatico di 1° sollecito
 dopo 120gg invio automatico di 2° sollecito
+
+TUTTO IL MONDO FATTURAZIONE!!!!!!!!!!!!!!!!!!!!!!!!!
