@@ -255,7 +255,7 @@
                                                     [readonly]="true"
                                                     [value]="item?.collaborator?.code ? item.collaborator.code : ''" />
                                             </mat-form-field>
-                                            <mat-form-field class="col-span-10">
+                                            <mat-form-field class="col-span-8">
                                                 <mat-label>Name</mat-label>
                                                 <input
                                                     matInput
@@ -265,6 +265,24 @@
                                                     [value]="
                                                         item?.collaborator?.fullName ? item.collaborator.fullName : ''
                                                     " />
+                                            </mat-form-field>
+                                            <mat-form-field class="col-span-2">
+                                                <mat-label>Status</mat-label>
+                                                <div class="status-container">
+                                                    <span
+                                                        [ngClass]="getWorkflowCollaboratorStatusColorClass(item)"
+                                                        class="color-box"></span>
+                                                    <input
+                                                        matInput
+                                                        type="text"
+                                                        class="form-control font-bold"
+                                                        [readonly]="true"
+                                                        [value]="
+                                                            item?.workflowCollaboratorStatus
+                                                                ? item.workflowCollaboratorStatus
+                                                                : ''
+                                                        " />
+                                                </div>
                                             </mat-form-field>
                                         </div>
                                         <div class="grid grid-cols-12 gap-2 w-full">

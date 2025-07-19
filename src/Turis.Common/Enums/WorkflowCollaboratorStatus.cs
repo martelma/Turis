@@ -2,8 +2,7 @@
 
 public enum WorkflowCollaboratorStatus
 {
-	Undefined,
-	DaComunicare,
-	InAttesaDiConferma,
-	Confermato
+	ToBeCommunicated,
+	Pending,
+	Confirmed,
 }

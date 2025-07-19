@@ -97,6 +97,18 @@ public class ServiceService(IDbContext dbContext
 				.Where(x => x.Checked)
 				.Where(x => x.Date >= startOfWeek && x.Date <= endOfWeek)
 				.Count(x => x.Status == ServiceStatus.Closed),
+
+			ToBeCommunicated = query
+				.Where(x => x.Checked)
+				.Count(x => x.WorkflowCollaboratorStatus == WorkflowCollaboratorStatus.ToBeCommunicated),
+
+			Pending = query
+				.Where(x => x.Checked)
+				.Count(x => x.WorkflowCollaboratorStatus == WorkflowCollaboratorStatus.Pending),
+
+			Confirmed = query
+				.Where(x => x.Checked)
+				.Count(x => x.WorkflowCollaboratorStatus == WorkflowCollaboratorStatus.Confirmed),
 		};
 
 		return Task.FromResult<Result<ServiceSummaryModel>>(model);
@@ -167,6 +179,11 @@ public class ServiceService(IDbContext dbContext
 			query = query.Where(x => x.Status == status);
 		}
 
+		if (parameters.WorkflowCollaboratorStatus.HasValue())
+		{
+			var workflowCollaboratorStatus = (WorkflowCollaboratorStatus)Enum.Parse(typeof(WorkflowCollaboratorStatus), parameters.WorkflowCollaboratorStatus);
+			query = query.Where(x => x.WorkflowCollaboratorStatus == workflowCollaboratorStatus);
+		}
 
 		var totalCount = await query.AsSplitQuery().CountAsync();
 
@@ -371,7 +388,7 @@ public class ServiceService(IDbContext dbContext
 			dbService.Status = (ServiceStatus)Enum.Parse(typeof(ServiceStatus), service.Status);
 
 		if (service.WorkflowCollaboratorStatus.IsNullOrEmpty())
-			dbService.WorkflowCollaboratorStatus = WorkflowCollaboratorStatus.Undefined;
+			dbService.WorkflowCollaboratorStatus = WorkflowCollaboratorStatus.ToBeCommunicated;
 		else
 			dbService.WorkflowCollaboratorStatus = (WorkflowCollaboratorStatus)Enum.Parse(typeof(WorkflowCollaboratorStatus), service.WorkflowCollaboratorStatus);
 

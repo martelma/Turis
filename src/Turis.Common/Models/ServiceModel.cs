@@ -19,7 +19,6 @@ public class ServiceModel : BaseModel
 	public Guid UserId { get; set; }
 	public DateTimeOffset CreationDate { get; set; }
 	public string Status { get; set; }
-	public string WorkflowCollaboratorStatus { get; set; }
 	public DateTimeOffset? OptionExpiration { get; set; }
 	public string OptionExpirationText { get; set; }
 	public string Location { get; set; }
@@ -32,6 +31,7 @@ public class ServiceModel : BaseModel
 	public decimal Price { get; set; }
 	public Guid? ClientId { get; set; }
 	public ContactModel Client { get; set; }
+	public string WorkflowCollaboratorStatus { get; set; }
 	public Guid? CollaboratorId { get; set; }
 	public ContactModel Collaborator { get; set; }
 	public string CIGCode { get; set; }

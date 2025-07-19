@@ -14,7 +14,12 @@ import { Service } from '../service.types';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { Router, RouterLink } from '@angular/router';
 import { Contact } from 'app/modules/contact/contact.types';
-import { getStatusColorClass, getStatusText } from 'app/constants';
+import {
+    getStatusColorClass,
+    getStatusText,
+    getWorkflowCollaboratorStatusColorClass,
+    getWorkflowCollaboratorStatusText,
+} from 'app/constants';
 import { AttachmentsComponent } from 'app/shared/components/attachments/attachments.component';
 import { AttachmentService } from 'app/shared/components/attachments/attachment.service';
 
@@ -65,6 +70,8 @@ export class ServiceViewComponent implements OnInit, OnChanges {
 
     getStatusColorClass = getStatusColorClass;
     getStatusText = getStatusText;
+    getWorkflowCollaboratorStatusColorClass = getWorkflowCollaboratorStatusColorClass;
+    getWorkflowCollaboratorStatus = getWorkflowCollaboratorStatusText;
 
     constructor(
         private _formBuilder: UntypedFormBuilder,

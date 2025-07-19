@@ -299,6 +299,7 @@
 
                                 <div class="flex flex-col mt-4">
                                     <mat-form-field class="example-full-width">
+                                        <mat-label for="status">Client</mat-label>
                                         <input
                                             type="text"
                                             class="form-control font-bold"
@@ -367,31 +368,65 @@
                                 </mat-expansion-panel-header>
 
                                 <div class="flex flex-col mt-4">
-                                    <mat-form-field class="example-full-width">
-                                        <input
-                                            type="text"
-                                            class="form-control font-bold"
-                                            placeholder="Collaborator"
-                                            aria-label="Collaborator"
-                                            matInput
-                                            [formControl]="collaboratorControl"
-                                            [matAutocomplete]="auto2" />
-                                        <mat-autocomplete
-                                            #auto2="matAutocomplete"
-                                            (optionSelected)="onSelectedCollaborator($event)">
-                                            <mat-option
+                                    <div class="grid grid-cols-12 gap-2 w-full">
+                                        <mat-form-field class="col-span-10">
+                                            <mat-label for="status">Collaborator</mat-label>
+                                            <input
+                                                type="text"
                                                 class="form-control font-bold"
-                                                *ngFor="let option of filteredCollaborators | async"
-                                                [value]="option">
-                                                <div class="option-container">
-                                                    <div class="option-name">{{ option.fullName }}</div>
-                                                    <div class="option-email">
-                                                        {{ option.address }} {{ option.city }}
+                                                placeholder="Collaborator"
+                                                aria-label="Collaborator"
+                                                matInput
+                                                [formControl]="collaboratorControl"
+                                                [matAutocomplete]="auto2" />
+                                            <mat-autocomplete
+                                                #auto2="matAutocomplete"
+                                                (optionSelected)="onSelectedCollaborator($event)">
+                                                <mat-option
+                                                    class="form-control font-bold"
+                                                    *ngFor="let option of filteredCollaborators | async"
+                                                    [value]="option">
+                                                    <div class="option-container">
+                                                        <div class="option-name">{{ option.fullName }}</div>
+                                                        <div class="option-email">
+                                                            {{ option.address }} {{ option.city }}
+                                                        </div>
                                                     </div>
+                                                </mat-option>
+                                            </mat-autocomplete>
+                                        </mat-form-field>
+                                        <mat-form-field class="col-span-2">
+                                            <mat-label for="status">Status</mat-label>
+                                            <mat-select
+                                                placeholder="Select a Status"
+                                                class="form-control font-bold"
+                                                id="workflowCollaboratorStatus"
+                                                name="workflowCollaboratorStatus"
+                                                #name="ngModel"
+                                                required
+                                                [(ngModel)]="item.workflowCollaboratorStatus"
+                                                (ngModelChange)="checkChanged()">
+                                                <mat-select-trigger>
+                                                    <span
+                                                        [ngClass]="getWorkflowCollaboratorStatusColorClass(item)"
+                                                        class="color-box"></span>
+                                                    {{ getWorkflowCollaboratorStatus(item) }}
+                                                </mat-select-trigger>
+                                                <mat-option
+                                                    *ngFor="let x of workflowCollaboratorStatus"
+                                                    [value]="x.value">
+                                                    <span [ngClass]="x.colorClass" class="color-box"></span>
+                                                    {{ x.text }}
+                                                </mat-option>
+                                            </mat-select>
+                                            <div *ngIf="workflowCollaboratorStatus?.invalid">
+                                                <div *ngIf="workflowCollaboratorStatus?.errors?.required">
+                                                    Status is required.
                                                 </div>
-                                            </mat-option>
-                                        </mat-autocomplete>
-                                    </mat-form-field>
+                                            </div>
+                                        </mat-form-field>
+                                    </div>
+
                                     <div class="grid grid-cols-12 gap-2 w-full">
                                         <mat-form-field class="col-span-2">
                                             <mat-label for="commissionPercentage">Commission %</mat-label>

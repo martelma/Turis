@@ -24,9 +24,12 @@ import {
     DurationTypes,
     getStatusColorClass,
     getStatusText,
+    getWorkflowCollaboratorStatusColorClass,
+    getWorkflowCollaboratorStatusText,
     MY_DATE_FORMATS,
     ServiceTypes,
     StatusTypes,
+    WorkflowCollaboratorStatusTypes,
 } from 'app/constants';
 import { PriceList } from 'app/modules/configuration/price-list/price-list.types';
 import { PriceListService } from 'app/modules/configuration/price-list/price-list.service';
@@ -103,6 +106,7 @@ export class ServiceEditComponent implements OnInit {
             this.service.status = StatusTypes[0].value;
             this.service.serviceType = ServiceTypes[0].value;
             this.service.durationType = DurationTypes[0].value;
+            this.service.workflowCollaboratorStatus = WorkflowCollaboratorStatusTypes[0].value;
         }
         console.log('item', this.item);
 
@@ -132,6 +136,7 @@ export class ServiceEditComponent implements OnInit {
     serviceTypes = ServiceTypes;
     durationTypes = DurationTypes;
     statusTypes = StatusTypes;
+    workflowCollaboratorStatus = WorkflowCollaboratorStatusTypes;
 
     originalPriceLists: PriceList[] = [];
     priceLists: PriceList[] = [];
@@ -143,6 +148,8 @@ export class ServiceEditComponent implements OnInit {
     trackByFn = trackByFn;
     getStatusColorClass = getStatusColorClass;
     getStatusText = getStatusText;
+    getWorkflowCollaboratorStatusColorClass = getWorkflowCollaboratorStatusColorClass;
+    getWorkflowCollaboratorStatus = getWorkflowCollaboratorStatusText;
 
     constructor(
         private _priceListService: PriceListService,

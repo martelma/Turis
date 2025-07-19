@@ -29,4 +29,6 @@ public class ServiceSearchParameters : BaseSearchParameters
 	public string Status { get; set; }
 	[FromQuery]
 	public string[] Statuses { get; set; }
+	[FromQuery]
+	public string WorkflowCollaboratorStatus { get; set; }
 }

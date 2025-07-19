@@ -12,4 +12,8 @@ public class ServiceSummaryModel : BaseModel
 	public int WeekToDo { get; set; }
 	public int Done { get; set; }
 	public int WeekDone { get; set; }
+
+	public int ToBeCommunicated { get; set; }
+	public int Pending { get; set; }
+	public int Confirmed { get; set; }
 }

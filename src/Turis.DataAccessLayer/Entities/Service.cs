@@ -17,7 +17,6 @@ public class Service : BaseEntity
 	public Guid UserId { get; set; }
 	public DateTimeOffset CreationDate { get; set; }
 	public ServiceStatus Status { get; set; }
-	public WorkflowCollaboratorStatus WorkflowCollaboratorStatus { get; set; }
 	public DateTimeOffset? OptionExpiration { get; set; }
 	public string Location { get; set; }
 	public string? MeetingPlace { get; set; }
@@ -27,6 +26,7 @@ public class Service : BaseEntity
 	public PriceList? PriceList { get; set; }
 	public decimal? PriceCalculated { get; set; }
 	public decimal? Price{ get; set; }
+	public WorkflowCollaboratorStatus WorkflowCollaboratorStatus { get; set; }
 	public Guid? CollaboratorId { get; set; }
 	public Contact? Collaborator { get; set; }
 	public Guid? ClientId { get; set; }

@@ -35,6 +35,7 @@ export class Service {
     price: number;
     clientId: string;
     client: Contact;
+
     collaboratorId: string;
     collaborator: Collaborator;
     cIGCode: string;
@@ -73,6 +74,7 @@ export class ServiceSearchParameters extends BaseSearchParameters {
     languages?: string[];
     status?: string;
     statuses?: string[];
+    workflowCollaboratorStatus?: string;
     dateFrom?: string;
     dateTo?: string;
 }

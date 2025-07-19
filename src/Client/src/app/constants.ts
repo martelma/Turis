@@ -25,6 +25,12 @@ export const StatusTypes = [
     { value: 'Cancelled', text: 'Cancelled', colorClass: 'bg-red-500' },
 ];
 
+export const WorkflowCollaboratorStatusTypes = [
+    { value: 'ToBeCommunicated', text: 'ToBeCommunicated', colorClass: 'bg-red-500' },
+    { value: 'Pending', text: 'Pending', colorClass: 'bg-yellow-500' },
+    { value: 'Confirmed', text: 'Confirmed', colorClass: 'bg-green-500' },
+];
+
 export const BillingStatusTypes = [
     { value: 'CashedIn', text: 'Cashed In', colorClass: 'bg-green-500' },
     { value: 'ToBeCashed', text: 'To Be Cashed', colorClass: 'bg-yellow-500' },
@@ -102,6 +108,17 @@ export function getStatusColorClass(item: Service) {
 
 export function getStatusText(item: Service) {
     return StatusTypes.find(x => x.value === item?.status)?.text || '';
+}
+
+export function getWorkflowCollaboratorStatusColorClass(item: Service) {
+    return (
+        WorkflowCollaboratorStatusTypes.find(x => x.value === item?.workflowCollaboratorStatus)?.colorClass ||
+        'bg-default'
+    );
+}
+
+export function getWorkflowCollaboratorStatusText(item: Service) {
+    return WorkflowCollaboratorStatusTypes.find(x => x.value === item?.workflowCollaboratorStatus)?.text || '';
 }
 
 export function getBillingStatusColorClass(item: Service) {

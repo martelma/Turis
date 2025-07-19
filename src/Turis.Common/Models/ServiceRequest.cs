@@ -32,6 +32,7 @@ public class ServiceRequest : BaseRequest
 	public decimal Price { get; set; }
 	public Guid ClientId { get; set; }
 	//public ContactModel Client { get; set; }
+	public string CollaboratorStatus { get; set; }
 	public Guid CollaboratorId { get; set; }
 	//public ContactModel Collaborator { get; set; }
 	public string CIGCode { get; set; }
