@@ -266,9 +266,9 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
             .listEntities({ ...this.serviceParameters })
             .pipe(untilDestroyed(this))
             .subscribe(items => {
-                if (items?.items?.length > 0) {
-                    this.navigateToItem(items.items[0]);
-                }
+                // if (items?.items?.length > 0) {
+                //     this.navigateToItem(items.items[0]);
+                // }
             });
     }
 

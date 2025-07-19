@@ -50,3 +50,23 @@
     font-weight: 500;
     text-align: center;
 }
+
+::ng-deep .date-badge {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    background: #ff4444;
+    color: white;
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    font-size: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    z-index: 10;
+    pointer-events: none;
+    transform: translate(50%, -50%);
+    /* Sposta il badge fuori dalla cella */
+}

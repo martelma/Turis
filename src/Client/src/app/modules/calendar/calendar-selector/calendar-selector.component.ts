@@ -1,5 +1,6 @@
 import { CommonModule, CurrencyPipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
 import {
+    AfterViewInit,
     ChangeDetectorRef,
     Component,
     EventEmitter,
@@ -85,11 +86,18 @@ import { MatCardModule } from '@angular/material/card';
         CalendarViewGridComponent,
     ],
 })
-export class CalendarSelectorComponent implements OnInit, OnDestroy {
+export class CalendarSelectorComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(MatCalendar) calendar!: MatCalendar<Date>;
 
     @Input() date: Date = new Date();
     @Output() onDateChanged: EventEmitter<Date> = new EventEmitter<Date>();
+
+    // Mappa che contiene il numero di item per ogni data
+    dateItemCounts: { [key: string]: number } = {
+        '2025-07-15': 3,
+        '2025-07-16': 1,
+        '2025-07-20': 5,
+    };
 
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
@@ -107,6 +115,13 @@ export class CalendarSelectorComponent implements OnInit, OnDestroy {
         if (!(this.date instanceof Date)) {
             this.date = new Date();
         }
+    }
+
+    ngAfterViewInit() {
+        // Ascolta i cambiamenti della vista del calendario
+        this.calendar.stateChanges.subscribe(() => {
+            setTimeout(() => this.addBadgesToCalendar(), 50);
+        });
     }
 
     ngOnDestroy() {}
@@ -140,6 +155,38 @@ export class CalendarSelectorComponent implements OnInit, OnDestroy {
     onDateChange(newDate: Date): void {
         this.date = newDate;
         // console.log('Data aggiornata:', this.date);
+
+        setTimeout(() => this.addBadgesToCalendar(), 50);
+
         this.onDateChanged.emit(this.date);
+    }
+
+    addBadgesToCalendar() {
+        const cells = document.querySelectorAll('.mat-calendar-body-cell');
+
+        cells.forEach((cell: any) => {
+            // Rimuovi badge esistenti
+            const existingBadge = cell.querySelector('.date-badge');
+            if (existingBadge) {
+                existingBadge.remove();
+            }
+
+            // Ottieni la data dalla cella
+            const ariaLabel = cell.getAttribute('aria-label');
+            if (ariaLabel) {
+                const date = new Date(ariaLabel);
+                const dateKey = date.toISOString().split('T')[0];
+                const count = this.dateItemCounts[dateKey];
+
+                if (count && count > 0) {
+                    // Crea e aggiungi il badge
+                    const badge = document.createElement('span');
+                    badge.className = 'date-badge';
+                    badge.textContent = count.toString();
+                    cell.style.position = 'relative';
+                    cell.appendChild(badge);
+                }
+            }
+        });
     }
 }
