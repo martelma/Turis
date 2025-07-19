@@ -6,8 +6,8 @@ using Microsoft.Extensions.Configuration;
 using OperationResults;
 using Turis.Authentication.Entities;
 using Turis.BusinessLayer.Services.Base;
+using Turis.BusinessLayer.Services.Email;
 using Turis.BusinessLayer.Services.Interfaces;
-using Turis.BusinessLayer.Settings;
 using Turis.Common;
 
 namespace Turis.BusinessLayer.Services;

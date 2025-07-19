@@ -52,7 +52,9 @@
     "ShowOnlyBookmarked": "Mostra solo preferiti",
     "ShowAll": "Mostra tutti",
     "Json": "Json",
-    "Commission": "Commissione"
+    "Commission": "Commissione",
+    "Truncate": "Truncate",
+    "Dismiss": "Chiudi"
   },
   "Dashboard": {
     "WelcomeBack": "Bentornato"
@@ -212,5 +214,9 @@
   "ServiceUnavailable": {
     "ErrorMessage": "Turis Workspace non è al momento disponibile o è temporaneamente inattivo",
     "ContactHelpDesk": "Contatta l'HelpDesk IT"
+  },
+  "Messages": {
+    "MailProposalSuccessfullySent": "Mail di proposta inviata con successo",
+    "ElmahSuccessfullyTruncated": "Elmah Table Truncated"
   }
 }

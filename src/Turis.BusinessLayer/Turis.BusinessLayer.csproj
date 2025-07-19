@@ -10,13 +10,10 @@
     <ItemGroup>
       <Compile Remove="Projections\Identity\**" />
       <Compile Remove="ServiceReference\**" />
-      <Compile Remove="Services\Email\**" />
       <EmbeddedResource Remove="Projections\Identity\**" />
       <EmbeddedResource Remove="ServiceReference\**" />
-      <EmbeddedResource Remove="Services\Email\**" />
       <None Remove="Projections\Identity\**" />
       <None Remove="ServiceReference\**" />
-      <None Remove="Services\Email\**" />
     </ItemGroup>
 
 	<ItemGroup>

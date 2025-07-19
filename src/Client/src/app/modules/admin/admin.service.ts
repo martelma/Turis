@@ -12,12 +12,12 @@ export class AdminService extends BaseService {
         this.defaultApiController = 'admin';
     }
 
-    truncateElmah(): Observable<string> {
-        return this.apiPost<string>('truncate-elmah', null);
-    }
-
     backendConfiguration(): Observable<KeyValue[]> {
         return this.apiGet<KeyValue[]>('backend-configuration');
+    }
+
+    truncateElmah(): Observable<string> {
+        return this.apiPost<string>('truncate-elmah', null);
     }
 
     mailProposal(): Observable<string> {

@@ -8,6 +8,7 @@
 		<Configurations>Debug;Release;Staging</Configurations>
 		<PreserveCompilationContext>true</PreserveCompilationContext>
 		<IsWebConfigTransformDisabled>true</IsWebConfigTransformDisabled>
+		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
 	</PropertyGroup>
 
 	<ItemGroup>

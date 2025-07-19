@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
@@ -14,6 +14,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { KeyValue } from './console.types';
 import { environment } from 'environments/environment';
 import { AdminService } from '../admin.service';
+import { finalize } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -54,6 +55,7 @@ export class ConsoleComponent implements OnInit {
         private _fuseConfirmationService: FuseConfirmationService,
         private _service: AdminService,
         private _translocoService: TranslocoService,
+        private _changeDetectorRef: ChangeDetectorRef,
         public snackBar: MatSnackBar,
     ) {
         const snapshot = this._activatedRoute.snapshot;
@@ -94,7 +96,13 @@ export class ConsoleComponent implements OnInit {
                     this.waiting = true;
                     this._service
                         .truncateElmah()
-                        .pipe(untilDestroyed(this))
+                        .pipe(
+                            finalize(() => {
+                                this.waiting = false;
+                                this._changeDetectorRef.detectChanges();
+                            }),
+                            untilDestroyed(this),
+                        )
                         .subscribe({
                             next: () => {
                                 this.snackBar.open(
@@ -112,9 +120,6 @@ export class ConsoleComponent implements OnInit {
                                     panelClass: ['error'],
                                 });
                             },
-                        })
-                        .add(() => {
-                            this.waiting = false;
                         });
                 }
             });
@@ -122,13 +127,20 @@ export class ConsoleComponent implements OnInit {
 
     mailProposal(): void {
         this.waiting = true;
+
         this._service
             .mailProposal()
-            .pipe(untilDestroyed(this))
+            .pipe(
+                finalize(() => {
+                    this.waiting = false;
+                    this._changeDetectorRef.detectChanges();
+                }),
+                untilDestroyed(this),
+            )
             .subscribe({
                 next: () => {
                     this.snackBar.open(
-                        this._translocoService.translate('Messages.ElmahSuccessfullyTruncated'),
+                        this._translocoService.translate('Messages.MailProposalSuccessfullySent'),
                         this._translocoService.translate('General.Dismiss'),
                         {
                             panelClass: ['success'],
@@ -142,9 +154,6 @@ export class ConsoleComponent implements OnInit {
                         panelClass: ['error'],
                     });
                 },
-            })
-            .add(() => {
-                this.waiting = false;
             });
     }
 

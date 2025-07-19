@@ -52,7 +52,9 @@
     "ShowOnlyBookmarked": "Show Only Bookmarked",
     "ShowAll": "Show All",
     "Json": "Json",
-    "Commission": "Commission"
+    "Commission": "Commission",
+    "Truncate": "Truncate",
+    "Dismiss": "Dismiss"
   },
   "Dashboard": {
     "WelcomeBack": "Welcome back"
@@ -211,5 +213,9 @@
   "ServiceUnavailable": {
     "ErrorMessage": "The Turis Workspace is currently unavailable or temporarily down",
     "ContactHelpDesk": "Please contact the IT HelpDesk"
+  },
+  "Messages": {
+    "MailProposalSuccessfullySent": "Mail Proposal Successfully Sent",
+    "ElmahSuccessfullyTruncated": "Elmah Successfully Truncated"
   }
 }

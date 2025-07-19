@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Identity.Web;
 using Microsoft.Net.Http.Headers;
@@ -24,6 +25,7 @@ using StackExchange.Redis.Extensions.Newtonsoft;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using FluentEmail.Core.Interfaces;
 using TinyHelpers.AspNetCore.Extensions;
 using TinyHelpers.AspNetCore.Swagger;
 using TinyHelpers.Json.Serialization;
@@ -36,6 +38,7 @@ using Turis.BusinessLayer.Erorrs;
 using Turis.BusinessLayer.EventInterceptor.Base;
 using Turis.BusinessLayer.Projections.Base;
 using Turis.BusinessLayer.Services.Base;
+using Turis.BusinessLayer.Services.Email;
 using Turis.BusinessLayer.Settings;
 using Turis.BusinessLayer.Validations;
 using Turis.Common.Hubs;
@@ -236,6 +239,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 	services.AddFluentEmail(notificationSettings.SenderEmail, notificationSettings.SenderName)
 		.AddRazorRenderer()
 		.AddMailKitSender(smtpClientOptions);
+	services.AddTransient<FileSaveSender>();
 	services.AddScoped<MailNotificationService>();
 
 	services.ConfigureHttpJsonOptions(options =>

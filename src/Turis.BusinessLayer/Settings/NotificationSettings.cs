@@ -11,4 +11,6 @@ public class NotificationSettings
 	public string EMailTest { get; set; }
 	public string SenderName { get; set; }
 	public string SenderEmail { get; set; }
+	public bool SaveToFile { get; set; }
+	public string MailDebugPath { get; set; }
 }

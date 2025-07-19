@@ -1,21 +1,23 @@
-﻿using System.Net;
-using FluentEmail.Core;
+﻿using FluentEmail.Core;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OperationResults;
+using System.Net;
 using TinyHelpers.Extensions;
 using Turis.Authentication.Entities;
 using Turis.BusinessLayer.Resources;
 using Turis.BusinessLayer.Services.Interfaces;
+using Turis.BusinessLayer.Settings;
 using Turis.Common.Mailing;
 
-namespace Turis.BusinessLayer.Settings;
+namespace Turis.BusinessLayer.Services.Email;
 
 public class MailNotificationService(IFluentEmailFactory fluentEmailFactory
 	, ILogger<MailNotificationService> logger
 	, IOptions<NotificationSettings> notificationOptions
+	, FileSaveSender fileSaveSender
 	, IWebHostEnvironment environment
 	) : IMailNotificationService
 {
@@ -79,18 +81,26 @@ public class MailNotificationService(IFluentEmailFactory fluentEmailFactory
 			model.LayoutFullFileName = Path.Combine(notificationSettings.TemplatePath, "_EmailLayout.cshtml");
 			model.SupportEmail = notificationSettings.EMailSupport;
 
-			var sendResponse = await fluentEmailFactory.Create()
+			var email = fluentEmailFactory.Create()
 				.SetFrom(notificationSettings.SenderEmail, notificationSettings.SenderName)
 				.To(emailRecipient)
 				.Subject(subject)
-				.UsingTemplateFromFile(templateFullFileName, model)
-				.SendAsync();
+				.UsingTemplateFromFile(templateFullFileName, model);
 
-			if (!sendResponse.Successful)
+			if (notificationSettings.SaveToFile)
 			{
-				var message = (string)string.Join(", ", sendResponse.ErrorMessages);
-				logger.LogWarning(Errors.SendEmailError, emailRecipient, message);
-				return Result.Fail(FailureReasons.NetworkError, message);
+				await fileSaveSender.SendAsync(email);
+			}
+			else
+			{
+				var sendResponse = await email.SendAsync();
+
+				if (!sendResponse.Successful)
+				{
+					var message = (string)string.Join(", ", sendResponse.ErrorMessages);
+					logger.LogWarning(Errors.SendEmailError, emailRecipient, message);
+					return Result.Fail(FailureReasons.NetworkError, message);
+				}
 			}
 
 			logger.LogInformation($"Email successfully sent to: {emailRecipient}");
