@@ -10,7 +10,7 @@
             mat-stretch-tabs="false"
             [color]="form.valid ? 'primary' : 'warn'"
             [animationDuration]="'0'"
-            (selectedTabChange)="onSelectedTabChange()">
+            (selectedTabChange)="onSelectedTabChange($event)">
             <!-- Service Info -->
             <mat-tab>
                 <ng-template mat-tab-label>
@@ -378,6 +378,29 @@
                 <ng-template matTabContent>
                     <div class="flex flex-col flex-1 overflow-y-auto">
                         <app-attachments [entityName]="'Service'" [entityKey]="item?.id"></app-attachments>
+                    </div>
+                </ng-template>
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:link'"></mat-icon>
+                    {{ 'General.LinkedServices' | transloco }}
+                </ng-template>
+                <ng-template matTabContent>
+                    <div class="flex flex-col flex-1 overflow-y-auto">To Do...</div>
+                </ng-template>
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:square-3-stack-3d'"></mat-icon>
+                    {{ 'General.EventLogs' | transloco }}
+                </ng-template>
+                <ng-template matTabContent>
+                    <div class="flex flex-col flex-1 overflow-y-auto">
+                        <app-service-event-log
+                            #eventLogs
+                            [entityName]="'Service'"
+                            [entityKey]="item?.id"></app-service-event-log>
                     </div>
                 </ng-template>
             </mat-tab>

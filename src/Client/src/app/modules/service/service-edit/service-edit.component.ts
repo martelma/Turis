@@ -50,6 +50,7 @@ import { ContactService } from 'app/modules/contact/contact.service';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { Tag } from 'app/modules/configuration/tags/tag.types';
 import { TagFiltersComponent } from 'app/modules/configuration/tags/filters/tag-filters.component';
+import { ServiceService } from '../service.service';
 
 @UntilDestroy()
 @Component({
@@ -152,6 +153,7 @@ export class ServiceEditComponent implements OnInit {
     getWorkflowCollaboratorStatus = getWorkflowCollaboratorStatusText;
 
     constructor(
+        private _serviceService: ServiceService,
         private _priceListService: PriceListService,
         private _languageService: LanguageService,
         private _contactService: ContactService,
@@ -205,6 +207,9 @@ export class ServiceEditComponent implements OnInit {
         this.item.collaborator = selectedCollaborator;
         this.item.collaboratorId = selectedCollaborator.id;
         this.collaboratorControl.setValue(selectedCollaborator.fullName);
+
+        this.item.workflowCollaboratorStatus = WorkflowCollaboratorStatusTypes.find(x => x.text === 'Pending')?.value;
+
         this.rebuild();
     }
 
@@ -317,5 +322,26 @@ export class ServiceEditComponent implements OnInit {
     onTagsSelectionChange(tags: Tag[]): void {
         this.service.tags = tags;
         this.checkChanged();
+    }
+
+    notifyProposal() {
+        // console.log('notifyProposal called', this.service);
+        this.service.workflowCollaboratorStatus = WorkflowCollaboratorStatusTypes.find(
+            x => x.text === 'Pending',
+        )?.value;
+
+        this._serviceService
+            .saveEntity(this.service.id, this.service)
+            .pipe(untilDestroyed(this))
+            .subscribe(() => {
+                this._serviceService
+                    .notifyProposal(this.service.id)
+                    .pipe(untilDestroyed(this))
+                    .subscribe(() => {});
+            });
+    }
+
+    notifyReminder() {
+        console.log('notifyReminder called', this.service);
     }
 }

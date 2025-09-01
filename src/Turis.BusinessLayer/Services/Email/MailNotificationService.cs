@@ -11,6 +11,8 @@ using Turis.BusinessLayer.Resources;
 using Turis.BusinessLayer.Services.Interfaces;
 using Turis.BusinessLayer.Settings;
 using Turis.Common.Mailing;
+using Turis.DataAccessLayer.Entities;
+using Service = Turis.DataAccessLayer.Entities.Service;
 
 namespace Turis.BusinessLayer.Services.Email;
 
@@ -132,5 +134,25 @@ public class MailNotificationService(IFluentEmailFactory fluentEmailFactory
 		};
 
 		await SendEmailAsync(user.FullName, user.Email, "Proposal", user.Language, model);
+	}
+
+	public async Task SendMailProposal(Service service, Contact collaborator)
+	{
+		var model = new ProposalEmailModel
+		{
+			FirstName = collaborator.FirstName,
+			LastName = collaborator.LastName,
+			FullName = collaborator.FullName,
+			EMailSupport = notificationSettings.EMailSupport,
+			//CallbackUrl = callbackUrl
+
+			ServiceCode = service.Code,
+			ServiceTitle = service.Title,
+			ServiceDate = service.Date,
+			ServiceClientCode = service.Client.Code,
+			ServiceClientCompanyName = service.Client.CompanyName,
+		};
+
+		await SendEmailAsync(collaborator.FullName, collaborator.EMail, "Proposal", null, model);
 	}
 }

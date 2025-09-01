@@ -16,4 +16,5 @@ public interface IServiceService : IService
 	Task<Result<PaginatedList<ServiceModel>>> AccountStatement(AccountStatementParameters parameters);
 	Service GetRandom();
 	Task<Result<ContactSummaryModel>> ContactSummaryAsync(Guid contactId);
+	Task<Result> NotifyProposalAsync(Guid serviceId);
 }

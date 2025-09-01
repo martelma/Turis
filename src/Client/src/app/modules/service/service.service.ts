@@ -332,4 +332,8 @@ export class ServiceService extends BaseEntityService<Service> {
     setUnCheck(service: Service): void {
         return;
     }
+
+    notifyProposal(serviceId: string) {
+        return this.apiPost(`notify-proposal/${serviceId}`, { serviceId: serviceId });
+    }
 }

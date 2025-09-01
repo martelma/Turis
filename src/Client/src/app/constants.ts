@@ -3,6 +3,8 @@ import { Document } from 'app/modules/document/document.types';
 import { MatDateFormats, MAT_DATE_FORMATS } from '@angular/material/core';
 import { DateFormats } from './shared/services/shared.types';
 
+export type EventLogViewMode = 'grid' | 'activities';
+
 export const ServiceTypes = [
     // { value: '', text: '' },
     { value: 'Guida', text: 'Guida' },

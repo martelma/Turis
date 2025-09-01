@@ -5,15 +5,15 @@ namespace Turis.BusinessLayer.Extensions;
 
 public static class EventLogExtensions
 {
-    public static EventLogModel ToViewModel(this EventLog item)
+    public static EventLogModel ToModel(this EventLog item)
     {
         var model = new EventLogModel
 		{
             Id = item.Id,
             User = item.User.ToModel(),
-            TimeStampe = item.TimeStampe,
+            TimeStampe = item.TimeStamp,
             EntityName = item.EntityName,
-            EntityId = item.EntityId,
+            EntityKey = item.EntityKey,
             EventName = item.EventName,
             AdditionalInfo = item.AdditionalInfo,
         };
@@ -21,8 +21,8 @@ public static class EventLogExtensions
         return model;
     }
 
-    public static IEnumerable<EventLogModel> ToViewModel(this IEnumerable<EventLog> items)
+    public static IEnumerable<EventLogModel> ToModel(this IEnumerable<EventLog> items)
     {
-        return items.Select(x => x.ToViewModel());
+        return items.Select(x => x.ToModel());
     }
 }

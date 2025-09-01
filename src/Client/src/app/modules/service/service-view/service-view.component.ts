@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, Input, OnChanges, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTabGroup, MatTabsModule } from '@angular/material/tabs';
+import { MatTabChangeEvent, MatTabGroup, MatTabsModule } from '@angular/material/tabs';
 import { TranslocoModule } from '@ngneat/transloco';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { FuseScrollResetDirective } from '@fuse/directives/scroll-reset';
@@ -22,6 +22,7 @@ import {
 } from 'app/constants';
 import { AttachmentsComponent } from 'app/shared/components/attachments/attachments.component';
 import { AttachmentService } from 'app/shared/components/attachments/attachment.service';
+import { ServiceEventLogComponent } from '../service-event-log/service-event-log.component';
 
 @UntilDestroy()
 @Component({
@@ -48,6 +49,7 @@ import { AttachmentService } from 'app/shared/components/attachments/attachment.
         FuseScrollResetDirective,
         TranslocoModule,
         AttachmentsComponent,
+        ServiceEventLogComponent,
     ],
 })
 export class ServiceViewComponent implements OnInit, OnChanges {
@@ -65,6 +67,7 @@ export class ServiceViewComponent implements OnInit, OnChanges {
     attachmentsCount = 0;
 
     @ViewChild(MatTabGroup) matTabGroup: MatTabGroup;
+    @ViewChild(ServiceEventLogComponent) eventLogs: ServiceEventLogComponent;
 
     form: UntypedFormGroup;
 
@@ -88,7 +91,11 @@ export class ServiceViewComponent implements OnInit, OnChanges {
         this.form = this._formBuilder.group({});
     }
 
-    onSelectedTabChange(): void {}
+    onSelectedTabChange(event: MatTabChangeEvent): void {
+        if (event.index === 4) {
+            this.eventLogs?.loadData();
+        }
+    }
 
     openContact(contact: Contact) {
         const url = this.router.serializeUrl(this.router.createUrlTree(['/contact', contact?.id]));

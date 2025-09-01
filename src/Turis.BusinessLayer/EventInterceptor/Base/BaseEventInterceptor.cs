@@ -1,5 +1,4 @@
-﻿using JeMa.Shared.Extensions;
-using Turis.BusinessLayer.Services.Interfaces;
+﻿using Turis.BusinessLayer.Services.Interfaces;
 using Turis.Common.Hubs;
 using Turis.DataAccessLayer.Entities;
 
@@ -21,17 +20,17 @@ public class BaseEventInterceptor
     /// <summary>
     /// Save event into write model and update projection
     /// </summary>
-    /// <param name="boxEvent"></param>
-    protected void SaveEventLog(IApplicationEvent boxEvent)
+    /// <param name="applicationEvent"></param>
+    protected void SaveEventLog(IApplicationEvent applicationEvent)
     {
         var eventLog = new EventLog
         {
             UserId = UserService.GetUserId(),
-            TimeStampe = DateTime.Now,
-            EntityName = boxEvent.EntityName,
-            EntityId = boxEvent.EntityId.ToGuid(),
-            EventName = boxEvent.EventName,
-            AdditionalInfo = boxEvent.AdditionalInfo
+            TimeStamp = DateTime.Now,
+            EntityName = applicationEvent.EntityName,
+            EntityKey = applicationEvent.EntityKey,
+            EventName = applicationEvent.EventName,
+            AdditionalInfo = applicationEvent.AdditionalInfo
         };
 
         SaveEventLog(eventLog);

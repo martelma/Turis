@@ -1,0 +1,67 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turis.WebApi", "Turis.WebApi\Turis.WebApi.csproj", "{4F3D343E-51F9-4036-B126-2FD589BEA1B1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turis.Common", "Turis.Common\Turis.Common.csproj", "{5A89CB23-6ACA-4B6D-BC20-110C07430334}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turis.BusinessLayer", "Turis.BusinessLayer\Turis.BusinessLayer.csproj", "{4AA29614-87E5-46C1-98BE-0CD09D260278}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turis.DataAccessLayer", "Turis.DataAccessLayer\Turis.DataAccessLayer.csproj", "{B3FAA1E9-329A-4B7B-B6E2-3EC545D20285}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JeMa.Shared", "..\..\JeMa.Shared\src\JeMa.Shared.csproj", "{833B217A-EF66-44E9-9F80-67DC46D86D3D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JeMa.Shared.AspNetCore", "..\..\JeMa.Shared.AspNetCore\src\JeMa.Shared.AspNetCore.csproj", "{B0950297-65D1-4A56-87A5-4FFBF5C59D03}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turis.Authentication", "Turis.Authentication\Turis.Authentication.csproj", "{B157A715-428A-4655-A863-1999179AE265}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalProjects", "ExternalProjects", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4F3D343E-51F9-4036-B126-2FD589BEA1B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F3D343E-51F9-4036-B126-2FD589BEA1B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F3D343E-51F9-4036-B126-2FD589BEA1B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F3D343E-51F9-4036-B126-2FD589BEA1B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A89CB23-6ACA-4B6D-BC20-110C07430334}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A89CB23-6ACA-4B6D-BC20-110C07430334}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A89CB23-6ACA-4B6D-BC20-110C07430334}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A89CB23-6ACA-4B6D-BC20-110C07430334}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AA29614-87E5-46C1-98BE-0CD09D260278}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AA29614-87E5-46C1-98BE-0CD09D260278}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AA29614-87E5-46C1-98BE-0CD09D260278}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AA29614-87E5-46C1-98BE-0CD09D260278}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3FAA1E9-329A-4B7B-B6E2-3EC545D20285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3FAA1E9-329A-4B7B-B6E2-3EC545D20285}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3FAA1E9-329A-4B7B-B6E2-3EC545D20285}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3FAA1E9-329A-4B7B-B6E2-3EC545D20285}.Release|Any CPU.Build.0 = Release|Any CPU
+		{833B217A-EF66-44E9-9F80-67DC46D86D3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{833B217A-EF66-44E9-9F80-67DC46D86D3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{833B217A-EF66-44E9-9F80-67DC46D86D3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{833B217A-EF66-44E9-9F80-67DC46D86D3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0950297-65D1-4A56-87A5-4FFBF5C59D03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0950297-65D1-4A56-87A5-4FFBF5C59D03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0950297-65D1-4A56-87A5-4FFBF5C59D03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0950297-65D1-4A56-87A5-4FFBF5C59D03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B157A715-428A-4655-A863-1999179AE265}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B157A715-428A-4655-A863-1999179AE265}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B157A715-428A-4655-A863-1999179AE265}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B157A715-428A-4655-A863-1999179AE265}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{833B217A-EF66-44E9-9F80-67DC46D86D3D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{B0950297-65D1-4A56-87A5-4FFBF5C59D03} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {522A3141-01AD-4C97-A2FC-DBE6A517EF1F}
+	EndGlobalSection
+EndGlobal

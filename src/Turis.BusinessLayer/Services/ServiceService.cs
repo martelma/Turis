@@ -1,20 +1,22 @@
-﻿using System.Globalization;
-using System.Linq.Dynamic.Core;
-using System.Linq.Dynamic.Core.Exceptions;
-using JeMa.Shared.Extensions;
+﻿using JeMa.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OperationResults;
+using System.Globalization;
+using System.Linq.Dynamic.Core;
+using System.Linq.Dynamic.Core.Exceptions;
 using TinyHelpers.Extensions;
 using Turis.BusinessLayer.Extensions;
 using Turis.BusinessLayer.Parameters;
 using Turis.BusinessLayer.Parameters.Base;
 using Turis.BusinessLayer.Resources;
+using Turis.BusinessLayer.Services.Email;
 using Turis.BusinessLayer.Services.Interfaces;
 using Turis.Common.Enums;
 using Turis.Common.Models;
 using Turis.DataAccessLayer;
 using Turis.DataAccessLayer.Entities;
+using Service = Turis.DataAccessLayer.Entities.Service;
 
 namespace Turis.BusinessLayer.Services;
 
@@ -26,9 +28,11 @@ public class ServiceService(IDbContext dbContext
 	, IEntityTagService entityTagService
 	, IContactService contactService
 	, IAvatarContactService avatarContactService
+	, MailNotificationService mailNotificationService
+	, IEventLogService eventLogService
 	) : IServiceService
 {
-	private const string EntryName = nameof(DataAccessLayer.Entities.Service);
+	private const string EntryName = nameof(Service);
 
 	private async Task<List<Bookmark>> GetMyBookmarks()
 		=> await bookmarkService.ListAsync(userService.GetUserId(), EntryName);
@@ -40,7 +44,7 @@ public class ServiceService(IDbContext dbContext
 		var tags = await entityTagService.ListAsync(EntryName, serviceId);
 
 		var query = dbContext
-			.GetData<DataAccessLayer.Entities.Service>()
+			.GetData<Service>()
 			.Include(x => x.PriceList)
 			.Include(x => x.Client)
 			.Include(x => x.Collaborator)
@@ -57,7 +61,7 @@ public class ServiceService(IDbContext dbContext
 	public Task<Result<ServiceSummaryModel>> SummaryAsync()
 	{
 		var query = dbContext
-			.GetData<DataAccessLayer.Entities.Service>()
+			.GetData<Service>()
 			.Include(x => x.Collaborator)
 			.Where(x => x.Date.Year == DateTime.Now.Year);
 
@@ -120,7 +124,7 @@ public class ServiceService(IDbContext dbContext
 
 		var paginator = new Paginator(parameters);
 
-		var query = dbContext.GetData<DataAccessLayer.Entities.Service>()
+		var query = dbContext.GetData<Service>()
 			.Include(x => x.PriceList)
 			.Include(x => x.Client)
 			.Include(x => x.Collaborator)
@@ -220,7 +224,7 @@ public class ServiceService(IDbContext dbContext
 
 		var paginator = new Paginator(parameters);
 
-		var query = dbContext.GetData<DataAccessLayer.Entities.Service>()
+		var query = dbContext.GetData<Service>()
 			.Include(x => x.PriceList)
 			.Include(x => x.Client)
 			.Include(x => x.Collaborator)
@@ -289,10 +293,10 @@ public class ServiceService(IDbContext dbContext
 		return result;
 	}
 
-	public DataAccessLayer.Entities.Service GetRandom()
+	public Service GetRandom()
 	{
 		var randomService = dbContext
-			.GetData<DataAccessLayer.Entities.Service>()
+			.GetData<Service>()
 			.Include(x => x.Client)
 			.OrderBy(s => Guid.NewGuid()) // Ordina casualmente usando un nuovo GUID
 			.FirstOrDefault();
@@ -302,7 +306,7 @@ public class ServiceService(IDbContext dbContext
 	public async Task<Result<ContactSummaryModel>> ContactSummaryAsync(Guid contactId)
 	{
 		var data = await dbContext
-			.GetData<DataAccessLayer.Entities.Service>()
+			.GetData<Service>()
 			.Where(x => x.CollaboratorId == contactId)
 			.OrderBy(x => x.Date)
 			.ToListAsync();
@@ -336,14 +340,30 @@ public class ServiceService(IDbContext dbContext
 		return model;
 	}
 
+	public async Task<Result> NotifyProposalAsync(Guid serviceId)
+	{
+		var service = await dbContext.GetData<Service>()
+			.Include(x => x.Client)
+			.Include(x => x.Collaborator)
+			.FirstOrDefaultAsync(x => x.Id == serviceId);
+
+		var collaborator = service.Collaborator;
+		await mailNotificationService.SendMailProposal(service, collaborator);
+
+		await eventLogService.SaveEventLogAsync(nameof(Service), serviceId.ToString(), "Proposal",
+			$"Proposal email sent at {DateTime.Now:dd/MM/yyyy HH:mm}", CancellationToken.None);
+
+		return Result.Ok();
+	}
+
 	public async Task<Result<ServiceModel>> SaveAsync(ServiceRequest service)
 	{
-		var dbService = await dbContext.GetData<DataAccessLayer.Entities.Service>(true)
+		var dbService = await dbContext.GetData<Service>(true)
 			.FirstOrDefaultAsync(x => x.Id == service.Id);
 
 		if (dbService is null)
 		{
-			dbService = new DataAccessLayer.Entities.Service
+			dbService = new Service
 			{
 				Id = Guid.NewGuid(),
 				UserId = userService.GetUserId(),
@@ -417,7 +437,7 @@ public class ServiceService(IDbContext dbContext
 
 	public async Task<Result> DeleteAsync(Guid serviceId)
 	{
-		var deletedRows = await dbContext.GetData<DataAccessLayer.Entities.Service>()
+		var deletedRows = await dbContext.GetData<Service>()
 			.Where(r => r.Id == serviceId)
 			.ExecuteDeleteAsync();
 

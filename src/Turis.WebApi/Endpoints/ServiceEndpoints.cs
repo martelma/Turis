@@ -106,6 +106,21 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 
 				return operation;
 			});
+
+		templateApiGroup.MapPost("notify-proposal/{serviceId:guid}", NotifyProposalAsync)
+			.Produces(StatusCodes.Status204NoContent)
+			.Produces<ServiceError>(StatusCodes.Status404NotFound)
+			.ProducesValidationProblem()
+			.WithOpenApi(operation =>
+			{
+				operation.Summary = "Notify a Proposal for a specific service";
+
+				operation.Response(StatusCodes.Status204NoContent).Description = "The Proposal has been successfully sent";
+				operation.Response(StatusCodes.Status400BadRequest).Description = "The Proposal could not be sent";
+				operation.Response(StatusCodes.Status404NotFound).Description = "service not found";
+
+				return operation;
+			});
 	}
 
 	private static async Task<IResult> SummaryAsync(HttpContext httpContext, IServiceService service)
@@ -128,4 +143,7 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 
 	private static async Task<IResult> DeleteAsync(HttpContext httpContext, IServiceService service, Guid serviceId)
 		=> (await service.DeleteAsync(serviceId)).ToResponse(httpContext);
+
+	private static async Task<IResult> NotifyProposalAsync(HttpContext httpContext, IServiceService service, Guid serviceId)
+		=> (await service.NotifyProposalAsync(serviceId)).ToResponse(httpContext);
 }

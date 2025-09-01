@@ -9,6 +9,7 @@ namespace Turis.DataAccessLayer;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : AuthenticationDbContext(options), IDbContext, IDataProtectionKeyContext
 {
+	public DbSet<EventLog> EventLogs { get; set; }
 	public DbSet<ApplicationScopeGroup> ApplicationScopeGroups { get; set; }
 	public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
 	public DbSet<Tag> Tags { get; set; }

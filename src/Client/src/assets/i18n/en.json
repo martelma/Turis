@@ -54,7 +54,9 @@
     "Json": "Json",
     "Commission": "Commission",
     "Truncate": "Truncate",
-    "Dismiss": "Dismiss"
+    "Dismiss": "Dismiss",
+    "EventLogs": "Event Logs",
+    "LinkedServices": "Linked Services"
   },
   "Dashboard": {
     "WelcomeBack": "Welcome back"

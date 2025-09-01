@@ -369,7 +369,7 @@
 
                                 <div class="flex flex-col mt-4">
                                     <div class="grid grid-cols-12 gap-2 w-full">
-                                        <mat-form-field class="col-span-10">
+                                        <mat-form-field class="col-span-8">
                                             <mat-label for="status">Collaborator</mat-label>
                                             <input
                                                 type="text"
@@ -395,6 +395,27 @@
                                                 </mat-option>
                                             </mat-autocomplete>
                                         </mat-form-field>
+                                        <div class="col-span-2">
+                                            <mat-label for="commissionPercentage">Action</mat-label>
+                                            <button
+                                                mat-stroked-button
+                                                class="w-full text-left justify-start"
+                                                [matMenuTriggerFor]="rootMenu">
+                                                <mat-icon>arrow_drop_down</mat-icon>
+                                                <span>Notify</span>
+                                            </button>
+
+                                            <mat-menu #rootMenu="matMenu">
+                                                <button mat-menu-item (click)="notifyProposal()">
+                                                    <mat-icon>send</mat-icon>
+                                                    <span>Send Proposal</span>
+                                                </button>
+                                                <button mat-menu-item (click)="notifyReminder()">
+                                                    <mat-icon>send</mat-icon>
+                                                    <span>Send Reminder</span>
+                                                </button>
+                                            </mat-menu>
+                                        </div>
                                         <mat-form-field class="col-span-2">
                                             <mat-label for="status">Status</mat-label>
                                             <mat-select

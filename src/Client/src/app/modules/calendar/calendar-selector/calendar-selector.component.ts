@@ -119,9 +119,9 @@ export class CalendarSelectorComponent implements OnInit, AfterViewInit, OnDestr
 
     ngAfterViewInit() {
         // Ascolta i cambiamenti della vista del calendario
-        this.calendar.stateChanges.subscribe(() => {
-            setTimeout(() => this.addBadgesToCalendar(), 50);
-        });
+        // this.calendar.stateChanges.subscribe(() => {
+        //     setTimeout(() => this.addBadgesToCalendar(), 50);
+        // });
     }
 
     ngOnDestroy() {}
@@ -151,11 +151,12 @@ export class CalendarSelectorComponent implements OnInit, AfterViewInit, OnDestr
         this.date = newDate;
         // console.log('Data aggiornata:', this.date);
 
-        setTimeout(() => this.addBadgesToCalendar(), 50);
+        // setTimeout(() => this.addBadgesToCalendar(), 50);
 
         this.onDateChanged.emit(this.date);
     }
 
+    /*
     addBadgesToCalendar() {
         const cells = document.querySelectorAll('.mat-calendar-body-cell');
 
@@ -184,4 +185,5 @@ export class CalendarSelectorComponent implements OnInit, AfterViewInit, OnDestr
             }
         });
     }
+    */
 }
