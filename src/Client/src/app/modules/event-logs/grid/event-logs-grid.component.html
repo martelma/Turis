@@ -1,0 +1,139 @@
+<div class="w-full" style="display: block">
+    <div class="mt-2 flex flex-1 items-center">
+        <!-- Filter -->
+        <app-search-input class="mx-4 w-full" [placeholder]="'Filter...'" [formControl]="searchControl">
+        </app-search-input>
+    </div>
+
+    <div class="mb-2 w-full">
+        <table mat-table [dataSource]="dataSource" multiTemplateDataRows matSort #sort="matSort" class="mt-4">
+            <ng-container matColumnDef="user">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'EventLog.User' | transloco }}</th>
+                <td mat-cell *matCellDef="let element">
+                    {{ element.user?.fullName }}
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="timeStamp">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'EventLog.TimeStamp' | transloco }}</th>
+                <td mat-cell *matCellDef="let element">
+                    {{ element.timeStamp | date: userDateFormats.dateTime }}
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="entityKey">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'EventLog.EntityKey' | transloco }}</th>
+                <td mat-cell *matCellDef="let element">
+                    {{ element.entityKey }}
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="eventName">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'EventLog.EventName' | transloco }}</th>
+                <td mat-cell *matCellDef="let element">
+                    {{ element.eventName }}
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="additionalInfo">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'EventLog.AdditionalInfo' | transloco }}</th>
+                <td mat-cell *matCellDef="let element">
+                    {{ element.additionalInfo }}
+                </td>
+            </ng-container>
+
+            <!-- <ng-container matColumnDef="expandedDetail">
+                <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length" class="p-0">
+                    <div
+                        class="detail-element-container"
+                        [@detailExpand]="element === ecoExpandedElement ? 'expanded' : 'collapsed'">
+                        <div class="flex w-full flex-col gap-4">
+                            <div class="flex w-full flex-col items-center gap-2 sm:flex-row">
+                                <app-readonly-field class="w-full md:w-1/2" [label]="'Common.Title' | transloco">
+                                    {{ element.title }}
+                                </app-readonly-field>
+
+                                <app-readonly-field class="md:w-4/2 w-full" [label]="'Common.Company' | transloco">
+                                    {{ element.company }}
+                                </app-readonly-field>
+
+                                <app-readonly-field class="md:w-2/2 w-full" [label]="'Common.Season' | transloco">
+                                    {{ element.season }}
+                                </app-readonly-field>
+                            </div>
+
+                            <app-readonly-field class="w-full" [label]="'Common.Subtitle' | transloco">
+                                {{ element.subTitle }}
+                            </app-readonly-field>
+
+                            <app-readonly-field class="w-full" [label]="'Common.Description' | transloco">
+                                {{ element.description }}
+                            </app-readonly-field>
+
+                            <app-readonly-field class="w-full" [label]="'Common.Note' | transloco">
+                                {{ element.note }}
+                            </app-readonly-field>
+                        </div>
+
+                        <table class="mt-5 min-w-full table-auto divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr
+                                    class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    <th class="px-4 py-2" scope="col">{{ 'Common.WorkInProgress' | transloco }}</th>
+                                    <th class="px-4 py-2" scope="col">{{ 'Common.DrawCode' | transloco }}</th>
+                                    <th class="px-4 py-2" scope="col">{{ 'Common.DrawRevision' | transloco }}</th>
+                                    <th class="px-4 py-2" scope="col">{{ 'Common.DocumentId' | transloco }}</th>
+                                    <th class="px-4 py-2" scope="col">{{ 'Drawings.EcoCode' | transloco }}</th>
+                                    <th class="px-4 py-2" scope="col">{{ 'Drawings.EcoDescription' | transloco }}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr
+                                    *ngFor="let det of ecoDetail"
+                                    [ngClass]="{
+                                        'font-bold': det?.workInProgress,
+                                        'font-normal': !det?.workInProgress
+                                    }"
+                                    class="divide-y divide-gray-200">
+                                    <td class="px-4 py-2">
+                                        {{ det?.workInProgress }}
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        {{ det?.drawCode }}
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        {{ det?.drawRevision }}
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        {{ det?.documentId }}
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        {{ det?.ecoCode }}
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        {{ det?.ecoDescription }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+            </ng-container> -->
+
+            <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+            <tr
+                mat-row
+                *matRowDef="let element; columns: columnsToDisplay"
+                [ngClass]="{ 'active-row dark:dark-active-row': element === expandedElement }"
+                class="element-with-detail-row"
+                [class.example-expanded-row]="expandedElement === element"
+                (click)="drillDown(element)"></tr>
+            <!-- <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-element-row"></tr> -->
+        </table>
+        <mat-paginator
+            #matPaginator
+            [pageIndex]="pageIndex"
+            [pageSize]="pageSize"
+            [length]="totalCount"
+            [pageSizeOptions]="[10, 15, 20, 30]"
+            [showFirstLastButtons]="true"
+            aria-label="Select page of list"
+            (page)="onPageChanged($event)"></mat-paginator>
+    </div>
+</div>

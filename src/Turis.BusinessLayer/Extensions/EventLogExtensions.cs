@@ -11,7 +11,7 @@ public static class EventLogExtensions
 		{
             Id = item.Id,
             User = item.User.ToModel(),
-            TimeStampe = item.TimeStamp,
+            TimeStamp = item.TimeStamp,
             EntityName = item.EntityName,
             EntityKey = item.EntityKey,
             EventName = item.EventName,

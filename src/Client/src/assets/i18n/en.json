@@ -22,7 +22,8 @@
     "Contact": "Contact",
     "Document": "Document",
     "JournalEntry": "Journal Entry",
-    "Back": "Back"
+    "Back": "Back",
+    "Feedback": "Feedback"
   },
   "General": {
     "RemoveBookmark": "Remove Bookmark",
@@ -56,7 +57,9 @@
     "Truncate": "Truncate",
     "Dismiss": "Dismiss",
     "EventLogs": "Event Logs",
-    "LinkedServices": "Linked Services"
+    "LinkedServices": "Linked Services",
+    "Accept": "Accept",
+    "Reject": "Reject"
   },
   "Dashboard": {
     "WelcomeBack": "Welcome back"

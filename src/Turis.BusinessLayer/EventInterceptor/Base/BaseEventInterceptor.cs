@@ -4,20 +4,15 @@ using Turis.DataAccessLayer.Entities;
 
 namespace Turis.BusinessLayer.EventInterceptor.Base;
 
-public class BaseEventInterceptor
+public class BaseEventInterceptor(
+	IEventLogService eventLogService,
+	IUserService userService,
+	IHubContext<NotificationHub, INotificationHub> notificationHubContext)
 {
-	public IUserService UserService { get; }
-    protected readonly IHubContext<NotificationHub, INotificationHub> NotificationHubContext;
+	public IUserService UserService { get; } = userService;
+	protected readonly IHubContext<NotificationHub, INotificationHub> NotificationHubContext = notificationHubContext;
 
-    public BaseEventInterceptor(
-        IUserService userService,
-		IHubContext<NotificationHub, INotificationHub> notificationHubContext)
-    {
-	    UserService = userService;
-        NotificationHubContext = notificationHubContext;
-    }
-
-    /// <summary>
+	/// <summary>
     /// Save event into write model and update projection
     /// </summary>
     /// <param name="applicationEvent"></param>

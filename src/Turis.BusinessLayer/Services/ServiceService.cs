@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq.Dynamic.Core;
 using System.Linq.Dynamic.Core.Exceptions;
 using TinyHelpers.Extensions;
+using Turis.BusinessLayer.Events;
 using Turis.BusinessLayer.Extensions;
 using Turis.BusinessLayer.Parameters;
 using Turis.BusinessLayer.Parameters.Base;
@@ -14,13 +15,14 @@ using Turis.BusinessLayer.Services.Email;
 using Turis.BusinessLayer.Services.Interfaces;
 using Turis.Common.Enums;
 using Turis.Common.Models;
+using Turis.Common.Models.Responses;
 using Turis.DataAccessLayer;
 using Turis.DataAccessLayer.Entities;
 using Service = Turis.DataAccessLayer.Entities.Service;
 
 namespace Turis.BusinessLayer.Services;
 
-public class ServiceService(IDbContext dbContext
+public class ServiceService(ApplicationDbContext dbContext
 	, ILogger<ServiceService> logger
 	, IUserService userService
 	, IBookmarkService bookmarkService
@@ -28,6 +30,7 @@ public class ServiceService(IDbContext dbContext
 	, IEntityTagService entityTagService
 	, IContactService contactService
 	, IAvatarContactService avatarContactService
+	, IMediator mediator
 	, MailNotificationService mailNotificationService
 	, IEventLogService eventLogService
 	) : IServiceService
@@ -293,6 +296,36 @@ public class ServiceService(IDbContext dbContext
 		return result;
 	}
 
+	public async Task<Result<ServiceCheckDataInfo>> CheckDataInfoAsync(Guid serviceId)
+	{
+		var service = await dbContext.GetData<Service>()
+			.Include(x => x.PriceList)
+			.Include(x => x.Client)
+			.Include(x => x.Collaborator)
+			.FirstOrDefaultAsync();
+
+		var model = new ServiceCheckDataInfo
+		{
+			ServiceId = service.Id,
+			Code = service.Code,
+			Title = service.Title,
+			Date = service.Date,
+			DateText = service.Date.ToString("dd/MM/yyyy"),
+			ServiceType = service.ServiceType.ToString(),
+			DurationType = service.DurationType.ToString(),
+			Status = service.Status.ToString(),
+			Languages = service.Languages?.SplitCsv()?.ToArray(),
+			Location = service.Location,
+			People = service.People,
+			ClientId = service.ClientId,
+			Client = service.Client?.ToModel(),
+			CollaboratorId = service.CollaboratorId,
+			WorkflowCollaboratorStatus = service.WorkflowCollaboratorStatus.ToString(),
+		};
+
+		return model;
+	}
+
 	public Service GetRandom()
 	{
 		var randomService = dbContext
@@ -352,6 +385,85 @@ public class ServiceService(IDbContext dbContext
 
 		await eventLogService.SaveEventLogAsync(nameof(Service), serviceId.ToString(), "Proposal",
 			$"Proposal email sent at {DateTime.Now:dd/MM/yyyy HH:mm}", CancellationToken.None);
+
+		return Result.Ok();
+	}
+
+	public async Task<Result> AcceptServiceAsync(Guid serviceId)
+	{
+		var service = await dbContext.GetData<Service>(true)
+			.Include(x => x.Client)
+			.Include(x => x.Collaborator)
+			.FirstOrDefaultAsync(x => x.Id == serviceId);
+
+		var collaborator = service.Collaborator;
+		var userId = userService.GetUserId();
+
+		switch (service.WorkflowCollaboratorStatus)
+		{
+			case WorkflowCollaboratorStatus.ToBeCommunicated:
+				return Result.Fail(FailureReasons.ClientError, "Service is to be communicated");
+			case WorkflowCollaboratorStatus.Confirmed:
+				return Result.Fail(FailureReasons.ClientError, "Service already accepted");
+			case WorkflowCollaboratorStatus.Pending:
+				break;
+			default:
+				throw new ArgumentOutOfRangeException();
+		}
+
+#if !DEBUG
+		if (service.CollaboratorId != userId)
+		{
+			return Result.Fail(FailureReasons.ClientError, "The user does not correspond to the proposal's designated user.");
+		}
+#endif
+
+		service.WorkflowCollaboratorStatus = WorkflowCollaboratorStatus.Confirmed;
+		await dbContext.SaveChangesAsync();
+
+		await mailNotificationService.SendMailAcceptProposal(service, collaborator);
+		await mediator.Publish(new AcceptProposalEvent(service.Id, collaborator.Id));
+
+		await eventLogService.SaveEventLogAsync(nameof(Service), serviceId.ToString(), "Accept Proposal",
+			$"Accepted from {collaborator.FullName} at {DateTime.Now:dd/MM/yyyy HH:mm}", CancellationToken.None);
+
+		return Result.Ok();
+	}
+
+	public async Task<Result> RejectServiceAsync(Guid serviceId)
+	{
+		var service = await dbContext.GetData<Service>()
+			.Include(x => x.Client)
+			.Include(x => x.Collaborator)
+			.FirstOrDefaultAsync(x => x.Id == serviceId);
+
+		var collaborator = service.Collaborator;
+		var userId = userService.GetUserId();
+
+		switch (service.WorkflowCollaboratorStatus)
+		{
+			case WorkflowCollaboratorStatus.ToBeCommunicated:
+				return Result.Fail(FailureReasons.ClientError, "Service is to be communicated");
+			case WorkflowCollaboratorStatus.Confirmed:
+				return Result.Fail(FailureReasons.ClientError, "Service already accepted");
+			case WorkflowCollaboratorStatus.Pending:
+				break;
+			default:
+				throw new ArgumentOutOfRangeException();
+		}
+
+#if !DEBUG
+		if (service.CollaboratorId != userId)
+		{
+			return Result.Fail(FailureReasons.ClientError, "The user does not correspond to the proposal's designated user.");
+		}
+#endif
+
+		await mailNotificationService.SendMailRejectProposal(service, collaborator);
+		await mediator.Publish(new RejectProposalEvent(service.Id, collaborator.Id));
+
+		await eventLogService.SaveEventLogAsync(nameof(Service), serviceId.ToString(), "Reject Proposal",
+			$"Rejected from {collaborator.FullName} at {DateTime.Now:dd/MM/yyyy HH:mm}", CancellationToken.None);
 
 		return Result.Ok();
 	}

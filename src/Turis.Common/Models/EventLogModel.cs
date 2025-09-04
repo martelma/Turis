@@ -4,7 +4,7 @@ namespace Turis.Common.Models;
 
 public class EventLogModel : BaseModel
 {
-	public DateTimeOffset TimeStampe { get; set; }
+	public DateTimeOffset TimeStamp { get; set; }
 	public string EntityName { get; set; }
 	public string EntityKey { get; set; }
 	public string EventName { get; set; }

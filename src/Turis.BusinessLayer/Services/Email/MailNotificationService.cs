@@ -6,11 +6,10 @@ using Microsoft.Extensions.Options;
 using OperationResults;
 using System.Net;
 using TinyHelpers.Extensions;
-using Turis.Authentication.Entities;
+using Turis.BusinessLayer.Extensions;
 using Turis.BusinessLayer.Resources;
 using Turis.BusinessLayer.Services.Interfaces;
 using Turis.BusinessLayer.Settings;
-using Turis.Common.Mailing;
 using Turis.DataAccessLayer.Entities;
 using Service = Turis.DataAccessLayer.Entities.Service;
 
@@ -81,7 +80,7 @@ public class MailNotificationService(IFluentEmailFactory fluentEmailFactory
 
 			// Volendo si potrebbe rendere dinamico anche la scelta del layout della mail in base al tenant o a qualcos'altro
 			model.LayoutFullFileName = Path.Combine(notificationSettings.TemplatePath, "_EmailLayout.cshtml");
-			model.SupportEmail = notificationSettings.EMailSupport;
+			model.EMailSupport = notificationSettings.EMailSupport;
 
 			var email = fluentEmailFactory.Create()
 				.SetFrom(notificationSettings.SenderEmail, notificationSettings.SenderName)
@@ -91,6 +90,7 @@ public class MailNotificationService(IFluentEmailFactory fluentEmailFactory
 
 			if (notificationSettings.SaveToFile)
 			{
+				email.Data.Headers["template"] = templateName;
 				await fileSaveSender.SendAsync(email);
 			}
 			else
@@ -116,43 +116,26 @@ public class MailNotificationService(IFluentEmailFactory fluentEmailFactory
 		}
 	}
 
-	public async Task SendMailProposal(DataAccessLayer.Entities.Service service, ApplicationUser user)
-	{
-		var model = new ProposalEmailModel
-		{
-			FirstName = user.FirstName,
-			LastName = user.LastName,
-			FullName = user.FullName,
-			EMailSupport = notificationSettings.EMailSupport,
-			//CallbackUrl = callbackUrl
-
-			ServiceCode = service.Code,
-			ServiceTitle = service.Title,
-			ServiceDate = service.Date,
-			ServiceClientCode = service.Client.Code,
-			ServiceClientCompanyName = service.Client.CompanyName,
-		};
-
-		await SendEmailAsync(user.FullName, user.Email, "Proposal", user.Language, model);
-	}
-
 	public async Task SendMailProposal(Service service, Contact collaborator)
 	{
-		var model = new ProposalEmailModel
-		{
-			FirstName = collaborator.FirstName,
-			LastName = collaborator.LastName,
-			FullName = collaborator.FullName,
-			EMailSupport = notificationSettings.EMailSupport,
-			//CallbackUrl = callbackUrl
+		var model = await service.ToProposalEmailModelAsync();
 
-			ServiceCode = service.Code,
-			ServiceTitle = service.Title,
-			ServiceDate = service.Date,
-			ServiceClientCode = service.Client.Code,
-			ServiceClientCompanyName = service.Client.CompanyName,
-		};
+		model.FeedbackUrl = $"{notificationSettings.Url}/collaborator/feedback/{service.Id}";
 
 		await SendEmailAsync(collaborator.FullName, collaborator.EMail, "Proposal", null, model);
+	}
+
+	public async Task SendMailAcceptProposal(Service service, Contact collaborator)
+	{
+		var model = await service.ToProposalEmailModelAsync();
+
+		await SendEmailAsync(collaborator.FullName, collaborator.EMail, "Accept-Proposal", null, model);
+	}
+
+	public async Task SendMailRejectProposal(Service service, Contact collaborator)
+	{
+		var model = await service.ToProposalEmailModelAsync();
+
+		await SendEmailAsync(collaborator.FullName, collaborator.EMail, "Reject-Proposal", null, model);
 	}
 }

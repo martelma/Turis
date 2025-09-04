@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OperationResults;
+using TinyHelpers.Extensions;
 using Turis.BusinessLayer.Extensions;
+using Turis.BusinessLayer.Parameters;
+using Turis.BusinessLayer.Parameters.Base;
 using Turis.BusinessLayer.Services.Interfaces;
 using Turis.Common.Models;
 using Turis.DataAccessLayer;
@@ -10,26 +13,30 @@ namespace Turis.BusinessLayer.Services;
 
 public class EventLogService(ApplicationDbContext dbContext, IUserService userService) : IEventLogService
 {
-	private DbSet<EventLog> Context => dbContext.EventLogs;
-
-	private IQueryable<EventLog> Query()
+	public async Task<Result<PaginatedList<EventLogModel>>> ListAsync(EventLogSearchParameters parameters)
 	{
-		return Context
+		var paginator = new Paginator(parameters);
+
+		var query = dbContext.GetData<EventLog>()
 			.Include(x => x.User)
 			.AsQueryable();
-	}
 
-	public async Task<Result<IEnumerable<EventLogModel>>> ListAsync(string entityName, string entityKey)
-	{
-		var list = await Query()
-			.AsNoTracking()
-			.Where(x => x.EntityName == entityName && x.EntityKey == entityKey)
-			.OrderBy(x => x.TimeStamp)
-			.ToListAsync();
+		if (parameters.Pattern.HasValue())
+			query = query.Where(x => x.EventName.Contains(parameters.Pattern)
+			                         || x.AdditionalInfo.Contains(parameters.Pattern));
 
-		var model = list.ToModel();
+		var totalCount = await query.AsSplitQuery().CountAsync();
 
-		return Result<IEnumerable<EventLogModel>>.Ok(model);
+		query = query.OrderByDescending(x => x.TimeStamp);
+
+		var data = query
+			.Skip(paginator.PageIndex * paginator.PageSize).Take(paginator.PageSize + 1)
+			.ToList();
+
+		var model = data.ToModel();
+
+		var result = new PaginatedList<EventLogModel>(model, totalCount, data.Count > parameters.PageSize);
+		return result;
 	}
 
 	public async Task SaveEventLogAsync(string entityName, string entityKey, string eventName, string additionalInfo, CancellationToken cancellationToken)

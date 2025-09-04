@@ -1,4 +1,5 @@
 import { User } from 'app/core/user/user.types';
+import { BaseSearchParameters } from './types/shared.types';
 
 export class EventLog {
     id: string;
@@ -7,4 +8,10 @@ export class EventLog {
     timeStamp: Date;
     eventName: string;
     additionalInfo: string;
+}
+
+export class EventLogSearchParameters extends BaseSearchParameters {
+    entityName?: string;
+    entityKey?: string;
+    pattern?: string;
 }

@@ -8,6 +8,24 @@ export interface BaseSearchParameters {
     orderBy?: string;
 }
 
+export interface PaginatedParameters {
+    pageIndex?: number;
+    pageSize?: number;
+    orderKey?: string;
+}
+
+export interface SearchParameters {
+    pattern?: string;
+}
+
+export interface PaginatedSearchParameters extends PaginatedParameters, SearchParameters {
+    pageIndex?: number;
+    pageSize?: number;
+    orderKey?: string;
+    orderDirection?: string;
+    pattern?: string;
+}
+
 export interface PaginatedListResult<T> {
     items: T[];
 

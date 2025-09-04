@@ -259,6 +259,9 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 		config.RegisterServicesFromAssemblyContaining<BaseEventInterceptor>();
 	});
 
+	services.AddSingleton<NotificationHubManager>();
+	services.AddTransient<INotificationHubService, NotificationHubService>();
+
 	services.AddHangfire((provider, configuration) =>
 	{
 		configuration.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)

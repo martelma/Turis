@@ -6,6 +6,7 @@ import { BaseEntityService } from 'app/shared/services';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { AccountStatementParameters, Service, ServiceSearchParameters } from './service.types';
 import { ContactSummary, ServiceSummary } from '../admin/dashboard/dashboard.types';
+import { EventLog } from 'app/shared/event-log';
 
 @Injectable({ providedIn: 'root' })
 export class ServiceService extends BaseEntityService<Service> {
@@ -335,5 +336,17 @@ export class ServiceService extends BaseEntityService<Service> {
 
     notifyProposal(serviceId: string) {
         return this.apiPost(`notify-proposal/${serviceId}`, { serviceId: serviceId });
+    }
+
+    checkDataInfo(serviceId: string) {
+        return this.apiGet(`check-data-info/${serviceId}`);
+    }
+
+    acceptService(serviceId: string) {
+        return this.apiPost(`accept-service/${serviceId}`);
+    }
+
+    rejectService(serviceId: string) {
+        return this.apiPost(`reject-service/${serviceId}`);
     }
 }

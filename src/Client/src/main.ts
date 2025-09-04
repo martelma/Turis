@@ -1,15 +1,17 @@
-import { enableProdMode } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from 'app/app.component';
 import { appConfig } from 'app/app.config';
-import { environment } from 'environments/environment';
 import { registerLocaleData } from '@angular/common';
 import localeIt from '@angular/common/locales/it';
 
-if (environment.production || environment.staging) {
-    enableProdMode();
-}
+// Needed for the DatePipe
+registerLocaleData(localeIt, 'it');
 
-bootstrapApplication(AppComponent, appConfig).catch(err => console.error(err));
-
-registerLocaleData(localeIt);
+bootstrapApplication(AppComponent, appConfig)
+    .catch(err => console.error(err))
+    .then(() => {
+        console.log('Applicazione avviata con successo.');
+    })
+    .catch(err => {
+        console.error("Errore durante l'avvio:", err);
+    });

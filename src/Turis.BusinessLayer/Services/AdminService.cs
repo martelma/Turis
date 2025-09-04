@@ -1,4 +1,5 @@
 ﻿using JeMa.Shared;
+using JeMa.Shared.Extensions;
 using JeMa.Shared.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
@@ -9,11 +10,13 @@ using Turis.BusinessLayer.Services.Base;
 using Turis.BusinessLayer.Services.Email;
 using Turis.BusinessLayer.Services.Interfaces;
 using Turis.Common;
+using Turis.DataAccessLayer;
 
 namespace Turis.BusinessLayer.Services;
 
 public class AdminService(IConfiguration configuration
 	, UserManager<ApplicationUser> userManager
+	, ApplicationDbContext dbContext
 	, IServiceService serviceService
 	, MailNotificationService mailNotificationService
 	) : BaseService, IAdminService
@@ -49,13 +52,7 @@ public class AdminService(IConfiguration configuration
 
 	public async Task<Result> MailProposal()
 	{
-		var service = serviceService.GetRandom();
-
-		var user = userManager.Users
-			.OrderBy(s => Guid.NewGuid()) // Ordina casualmente usando un nuovo GUID
-			.FirstOrDefault();
-
-		await mailNotificationService.SendMailProposal(service, user);
+		await serviceService.NotifyProposalAsync("e5a8c96b-1cbb-4a27-ba67-00018d5f18fc".ToGuid());
 
 		return Result.Ok();
 	}

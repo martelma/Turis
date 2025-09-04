@@ -1,0 +1,6 @@
+<ng-container *ngIf="mode === 'grid'">
+    <app-event-logs-grid #eventLogsGrid [entityName]="entityName" [entityKey]="entityKey"></app-event-logs-grid>
+</ng-container>
+<ng-container *ngIf="mode === 'activities'">
+    <!-- <app-event-logs-list #eventLogsList [entityName]="entityName" [entityKey]="entityKey"></app-event-logs-list> -->
+</ng-container>

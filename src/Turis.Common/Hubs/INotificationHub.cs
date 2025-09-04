@@ -3,7 +3,8 @@
 public interface INotificationHub
 {
 	Task Progress(ProgressInfo progressInfo);
-	Task TaskComplete(TaskCompleteMessage taskCompleteMessage);
+	Task Message(Message message);
+	Task TaskCompleted(TaskCompletedMessage taskCompletedMessage);
 
 
 	Task DisplayMessage(string message);
@@ -14,6 +15,9 @@ public interface INotificationHub
 	Task ProgressMessage2(string message);
 
 	Task CompletedMessage(string message);
+
+	Task AcceptProposal(Guid serviceId);
+	Task RejectProposal(Guid serviceId);
 }
 
 public class ProgressInfo
@@ -78,11 +82,24 @@ public class ProgressInfo
 	public static double Percentage(int index, int steps) => (((double)index / (double)steps) * 100);
 }
 
-public class TaskCompleteMessage
+public record SignalRMessage
 {
+	public string UserName { get; set; }
 	public string CorrelationKey { get; set; }
 	public string CorrelationId { get; set; }
+}
+
+[Serializable]
+public record Message : SignalRMessage
+{
+	public string Content { get; set; }
+}
+
+[Serializable]
+public record TaskCompletedMessage : SignalRMessage
+{
 	public string Status { get; set; }
 	public string Message { get; set; }
 	public object Data { get; set; }
 }
+

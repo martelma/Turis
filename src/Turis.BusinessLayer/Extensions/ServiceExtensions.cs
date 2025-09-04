@@ -1,8 +1,10 @@
 ﻿using JeMa.Shared.Extensions;
 using TinyHelpers.Extensions;
 using Turis.BusinessLayer.Services.Interfaces;
+using Turis.Common.Mailing;
 using Turis.Common.Models;
 using Turis.DataAccessLayer.Entities;
+using Service = Turis.DataAccessLayer.Entities.Service;
 
 namespace Turis.BusinessLayer.Extensions;
 
@@ -36,12 +38,12 @@ public static class ServiceExtensions
 			OptionExpirationText = entity.OptionExpiration?.ToString("dd/MM/yyyy"),
 			Location = entity.Location,
 			MeetingPlace = entity.MeetingPlace,
-			People = entity.People ?? 0,
+			People = entity.People,
 			Checked = entity.Checked,
 			PriceListId = entity.PriceList?.Id,
 			PriceList = entity.PriceList?.ToModel(),
-			PriceCalculated = entity.PriceCalculated ?? 0,
-			Price = entity.Price ?? 0,
+			PriceCalculated = entity.PriceCalculated,
+			Price = entity.Price,
 			ClientId = entity.Client?.Id,
 			Client = entity.Client?.ToModel(),
 			WorkflowCollaboratorStatus = entity.WorkflowCollaboratorStatus.ToString(),
@@ -49,7 +51,7 @@ public static class ServiceExtensions
 			Collaborator = entity.Collaborator?.ToModel(),
 			CIGCode = entity.CIGCode,
 			CUPCode = entity.CUPCode,
-			CashedIn = entity.CashedIn ?? false,
+			CashedIn = entity.CashedIn,
 			CashedDate = entity.CashedDate ?? DateTimeOffset.MinValue,
 
 			CommissionPercentage = entity.CommissionPercentage,
@@ -105,12 +107,12 @@ public static class ServiceExtensions
 			OptionExpirationText = entity.OptionExpiration?.ToString("dd/MM/yyyy"),
 			Location = entity.Location,
 			MeetingPlace = entity.MeetingPlace,
-			People = entity.People ?? 0,
+			People = entity.People,
 			Checked = entity.Checked,
 			PriceListId = entity.PriceList?.Id,
 			PriceList = entity.PriceList?.ToModel(),
-			PriceCalculated = entity.PriceCalculated ?? 0,
-			Price = entity.Price ?? 0,
+			PriceCalculated = entity.PriceCalculated,
+			Price = entity.Price,
 			ClientId = entity.Client?.Id,
 			Client = entity.Client?.ToModel(),
 			WorkflowCollaboratorStatus = entity.WorkflowCollaboratorStatus.ToString(),
@@ -118,7 +120,7 @@ public static class ServiceExtensions
 			Collaborator = entity.Collaborator?.ToModel(),
 			CIGCode = entity.CIGCode,
 			CUPCode = entity.CUPCode,
-			CashedIn = entity.CashedIn ?? false,
+			CashedIn = entity.CashedIn,
 			CashedDate = entity.CashedDate ?? DateTimeOffset.MinValue,
 
 			CommissionPercentage = entity.CommissionPercentage,
@@ -127,6 +129,26 @@ public static class ServiceExtensions
 			CommissionNote = entity.CommissionNote,
 			CommissionPaid = entity.CommissionPaid,
 			CommissionPaymentDate = entity.CashedDate ?? DateTimeOffset.MinValue,
+		};
+
+		return Task.FromResult(model);
+	}
+
+	public static Task<ProposalEmailModel> ToProposalEmailModelAsync(this Service service)
+	{
+		var model = new ProposalEmailModel
+		{
+			FirstName = service.Collaborator.FirstName,
+			LastName = service.Collaborator.LastName,
+			FullName = service.Collaborator.FullName,
+
+			ServiceCode = service.Code,
+			ServiceTitle = service.Title,
+			ServiceDate = service.Date,
+			ServiceClientCode = service.Client.Code,
+			ServiceClientCompanyName = service.Client.CompanyName,
+			Languages = service.Languages,
+			People = service.People,
 		};
 
 		return Task.FromResult(model);

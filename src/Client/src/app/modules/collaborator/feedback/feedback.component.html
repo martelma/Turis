@@ -1,0 +1,173 @@
+<div class="bg-card flex min-w-0 flex-auto flex-col dark:bg-transparent sm:absolute sm:inset-0 sm:overflow-hidden">
+    <!-- Header -->
+    <div
+        class="relative flex flex-0 flex-col border-b px-6 py-8 sm:flex-row sm:items-center sm:justify-between md:px-8">
+        <!-- Loader -->
+        <div class="absolute inset-x-0 bottom-0" *ngIf="loading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+        <!-- Title -->
+        <div class="text-4xl font-extrabold tracking-tight">
+            {{ 'Navigation.Feedback' | transloco }}
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+        <!-- Scopes list -->
+        <div
+            class="p-6 flex flex-auto flex-col overflow-hidden sm:overflow-y-auto"
+            [ngClass]="{
+                'sm:mb-18': checkDataInfo
+            }">
+            <ng-container *ngIf="checkDataInfo; else noData">
+                <div class="flex flex-col flex-1 overflow-y-auto">
+                    <div class="flex flex-col">
+                        <div class="grid grid-cols-12 gap-2 w-full">
+                            <mat-form-field class="col-span-2">
+                                <mat-label>Code</mat-label>
+                                <input
+                                    matInput
+                                    type="text"
+                                    class="form-control font-bold"
+                                    [readonly]="true"
+                                    [value]="checkDataInfo?.code ? checkDataInfo.code : ''" />
+                            </mat-form-field>
+                            <mat-form-field class="col-span-10">
+                                <mat-label>Title</mat-label>
+                                <input
+                                    matInput
+                                    type="text"
+                                    class="font-bold"
+                                    [readonly]="true"
+                                    [value]="checkDataInfo?.title ? checkDataInfo.title : ''" />
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="flex flex-col">
+                        <div class="grid grid-cols-12 gap-2 w-full">
+                            <mat-form-field class="col-span-2">
+                                <mat-label>Date</mat-label>
+                                <input
+                                    matInput
+                                    type="text"
+                                    class="form-control font-bold"
+                                    [readonly]="true"
+                                    [value]="checkDataInfo?.dateText ? checkDataInfo.dateText : ''" />
+                            </mat-form-field>
+                            <mat-form-field class="col-span-2">
+                                <mat-label>Type</mat-label>
+                                <input
+                                    matInput
+                                    type="text"
+                                    class="font-bold"
+                                    [readonly]="true"
+                                    [value]="checkDataInfo?.serviceType ? checkDataInfo.serviceType : ''" />
+                            </mat-form-field>
+                            <mat-form-field class="col-span-2">
+                                <mat-label>Duration</mat-label>
+                                <input
+                                    matInput
+                                    type="text"
+                                    class="font-bold"
+                                    [readonly]="true"
+                                    [value]="checkDataInfo?.durationType ? checkDataInfo.durationType : ''" />
+                            </mat-form-field>
+                            <mat-form-field class="col-span-2">
+                                <mat-label>People</mat-label>
+                                <input
+                                    matInput
+                                    type="text"
+                                    class="font-bold"
+                                    [readonly]="true"
+                                    [value]="checkDataInfo?.people ? checkDataInfo.people : ''" />
+                            </mat-form-field>
+                            <mat-form-field class="col-span-2">
+                                <mat-label>Language</mat-label>
+                                <input
+                                    matInput
+                                    type="text"
+                                    class="font-bold"
+                                    [readonly]="true"
+                                    [value]="checkDataInfo?.languages ? checkDataInfo.languages : ''" />
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="flex flex-col">
+                        <div class="grid grid-cols-12 gap-2 w-full">
+                            <mat-form-field class="col-span-12">
+                                <mat-label>Location</mat-label>
+                                <input
+                                    matInput
+                                    type="text"
+                                    class="font-bold"
+                                    [readonly]="true"
+                                    [value]="checkDataInfo?.location ? checkDataInfo.location : ''" />
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <!-- <div class="flex flex-col">
+                        <div class="grid grid-cols-12 gap-2 w-full">
+                            <mat-form-field class="col-span-6">
+                                <mat-label>Meeting Place</mat-label>
+                                <input
+                                    matInput
+                                    type="text"
+                                    class="font-bold"
+                                    [readonly]="true"
+                                    [value]="checkDataInfo?.meetingPlace ? checkDataInfo.meetingPlace : ''" />
+                            </mat-form-field>
+                            <mat-form-field class="col-span-4">
+                                <mat-label>Referent</mat-label>
+                                <input
+                                    matInput
+                                    type="text"
+                                    class="font-bold"
+                                    [readonly]="true"
+                                    [value]="checkDataInfo?.referent ? checkDataInfo.referent : ''" />
+                            </mat-form-field>
+                            <mat-form-field class="col-span-2">
+                                <mat-label>Referent Phone</mat-label>
+                                <input
+                                    matInput
+                                    type="text"
+                                    class="font-bold"
+                                    [readonly]="true"
+                                    [value]="checkDataInfo?.referentPhone ? checkDataInfo.referentPhone : ''" />
+                            </mat-form-field>
+                        </div>
+                    </div> -->
+                </div>
+
+                <div class="flex flex-row flex-1 gap-3">
+                    <button
+                        class="flex space-x-2 w-100"
+                        mat-flat-button
+                        color="primary"
+                        (click)="acceptService(checkDataInfo.serviceId)">
+                        <mat-icon class="icon-size-5 mr-2" [svgIcon]="'feather:thumbs-up'"></mat-icon>
+                        <span>{{ 'General.Accept' | transloco }}</span>
+                    </button>
+                    <button
+                        class="flex space-x-2 w-100"
+                        mat-flat-button
+                        color="warn"
+                        (click)="rejectService(checkDataInfo.serviceId)">
+                        <mat-icon class="icon-size-5 mr-2" [svgIcon]="'feather:thumbs-down'"></mat-icon>
+                        <span>{{ 'General.Reject' | transloco }}</span>
+                    </button>
+                </div>
+            </ng-container>
+
+            <!-- No scopes -->
+            <ng-template #noData>
+                <div class="z-100 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+                    <!-- <mat-icon class="icon-size-24" [svgIcon]="'heroicons_outline:scope'"></mat-icon> -->
+                    <div class="text-secondary mt-4 text-2xl font-semibold tracking-tight">
+                        {{ 'Scopes.NoData' | transloco }}
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>

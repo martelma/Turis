@@ -82,6 +82,7 @@ export const appRoutes: Route[] = [
         },
         children: [
             { path: 'home', loadChildren: () => import('app/modules/admin/dashboard/dashboard.routes') },
+            { path: 'collaborator', loadChildren: () => import('app/modules/collaborator/collaborator.routes') },
             { path: 'calendar', loadChildren: () => import('app/modules/calendar/calendar.routes') },
             { path: 'service', loadChildren: () => import('app/modules/service/service.routes') },
             { path: 'contact', loadChildren: () => import('app/modules/contact/contact.routes') },

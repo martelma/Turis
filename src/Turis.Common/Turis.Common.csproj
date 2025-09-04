@@ -18,6 +18,7 @@
 
 	<ItemGroup>
 	  <Compile Remove="Helpers\SdiHelper.cs" />
+	  <Compile Remove="Hubs\UserIdProvider.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

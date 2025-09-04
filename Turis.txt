@@ -5,7 +5,7 @@ Gestione Utenti
 siamo d'accordo per 5+5 in questo anno e 5+5 nel prossimo quello dopo ancora riparte il solo canone
 
 
-ricroda di eliminare tutti gli .AllowAnonymous()
+ricorda di eliminare tutti gli .AllowAnonymous()
 
 
 Servizi	
@@ -46,3 +46,21 @@ dopo 90gg invio automatico di 1° sollecito
 dopo 120gg invio automatico di 2° sollecito
 
 TUTTO IL MONDO FATTURAZIONE!!!!!!!!!!!!!!!!!!!!!!!!!
+
+-----------------------------------------------------------------------------------------------------
+
+mercoledì
+
+	visualizzare event history
+
+	aggiornamento server
+		toolkit
+	versione Turis
+
+	finire giro di test della proposta
+		accept
+			notifica signalR
+		reject
+			notifica signalR
+
+	creare task serale per notificare remainds

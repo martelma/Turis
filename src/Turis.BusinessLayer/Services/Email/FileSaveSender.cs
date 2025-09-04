@@ -19,7 +19,8 @@ public class FileSaveSender(IOptions<NotificationSettings> notificationOptions) 
 	{
 		try
 		{
-			var fileName = $"email_{DateTime.Now:yyyyMMdd_HHmmss}_{Guid.NewGuid().ToString("N")[..8]}.html";
+			var template = email.Data.Headers["template"];
+			var fileName = $"email_{template}_{DateTime.Now:yyyyMMdd_HHmmss}_{Guid.NewGuid().ToString("N")[..8]}.html";
 			var filePath = Path.Combine(notificationSettings.MailDebugPath, fileName);
 
 			Directory.CreateDirectory(notificationSettings.MailDebugPath);

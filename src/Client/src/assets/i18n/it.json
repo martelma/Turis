@@ -22,7 +22,8 @@
     "Contact": "Contact",
     "Document": "Document",
     "JournalEntry": "Prima Nota",
-    "Back": "Indietro"
+    "Back": "Indietro",
+    "Feedback": "Feedback"
   },
   "General": {
     "RemoveBookmark": "Remove Bookmark",
@@ -56,7 +57,9 @@
     "Truncate": "Truncate",
     "Dismiss": "Chiudi",
     "EventLogs": "Event Logs",
-    "LinkedServices": "Linked Services"
+    "LinkedServices": "Linked Services",
+    "Accept": "Accept",
+    "Reject": "Reject"
   },
   "Dashboard": {
     "WelcomeBack": "Bentornato"

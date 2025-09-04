@@ -62,6 +62,19 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 
 		templateApiGroup.MapGet("account-statement", AccountStatement);
 
+		templateApiGroup.MapGet("check-data-info/{serviceId:guid}", CheckDataInfoAsync)
+			.Produces<ServiceModel>(StatusCodes.Status200OK)
+			.Produces(StatusCodes.Status404NotFound)
+			.WithOpenApi(operation =>
+			{
+				operation.Summary = "Retrieves the specified service";
+
+				operation.Response(StatusCodes.Status200OK).Description = "The service";
+				operation.Response(StatusCodes.Status404NotFound).Description = "service not found";
+
+				return operation;
+			});
+
 		templateApiGroup.MapPost(string.Empty, SaveAsync)
 			//.WithValidation<ServiceRequest>()
 			//.Produces<ServiceModel>(StatusCodes.Status200OK)
@@ -121,6 +134,34 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 
 				return operation;
 			});
+
+		templateApiGroup.MapPost("accept-service/{serviceId:guid}", AcceptServiceAsync)
+			.Produces(StatusCodes.Status204NoContent)
+			.Produces<ServiceError>(StatusCodes.Status404NotFound)
+			.ProducesValidationProblem()
+			.WithOpenApi(operation =>
+			{
+				operation.Summary = "Service accepted";
+
+				operation.Response(StatusCodes.Status400BadRequest).Description = "The Service could not be accept";
+				operation.Response(StatusCodes.Status404NotFound).Description = "service not found";
+
+				return operation;
+			});
+
+		templateApiGroup.MapPost("reject-service/{serviceId:guid}", RejectServiceAsync)
+			.Produces(StatusCodes.Status204NoContent)
+			.Produces<ServiceError>(StatusCodes.Status404NotFound)
+			.ProducesValidationProblem()
+			.WithOpenApi(operation =>
+			{
+				operation.Summary = "Service rejected";
+
+				operation.Response(StatusCodes.Status400BadRequest).Description = "The Service could not be reject";
+				operation.Response(StatusCodes.Status404NotFound).Description = "service not found";
+
+				return operation;
+			});
 	}
 
 	private static async Task<IResult> SummaryAsync(HttpContext httpContext, IServiceService service)
@@ -138,6 +179,9 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 	private static async Task<IResult> AccountStatement(HttpContext httpContext, IServiceService service, [AsParameters] AccountStatementParameters parameters)
 		=> (await service.AccountStatement(parameters)).ToResponse(httpContext);
 
+	private static async Task<IResult> CheckDataInfoAsync(HttpContext httpContext, IServiceService service, Guid serviceId)
+		=> (await service.CheckDataInfoAsync(serviceId)).ToResponse(httpContext);
+
 	private static async Task<IResult> SaveAsync(HttpContext httpContext, IServiceService service, ServiceRequest request)
 		=> (await service.SaveAsync(request)).ToResponse(httpContext);
 
@@ -146,4 +190,10 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 
 	private static async Task<IResult> NotifyProposalAsync(HttpContext httpContext, IServiceService service, Guid serviceId)
 		=> (await service.NotifyProposalAsync(serviceId)).ToResponse(httpContext);
+
+	private static async Task<IResult> AcceptServiceAsync(HttpContext httpContext, IServiceService service, Guid serviceId)
+		=> (await service.AcceptServiceAsync(serviceId)).ToResponse(httpContext);
+
+	private static async Task<IResult> RejectServiceAsync(HttpContext httpContext, IServiceService service, Guid serviceId)
+		=> (await service.RejectServiceAsync(serviceId)).ToResponse(httpContext);
 }

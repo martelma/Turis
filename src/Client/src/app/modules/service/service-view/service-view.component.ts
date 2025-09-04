@@ -22,7 +22,8 @@ import {
 } from 'app/constants';
 import { AttachmentsComponent } from 'app/shared/components/attachments/attachments.component';
 import { AttachmentService } from 'app/shared/components/attachments/attachment.service';
-import { ServiceEventLogComponent } from '../service-event-log/service-event-log.component';
+import { EventLogsGridComponent } from 'app/modules/event-logs/grid/event-logs-grid.component';
+import { EventLogsComponent } from 'app/modules/event-logs/event-logs/event-logs.component';
 
 @UntilDestroy()
 @Component({
@@ -49,7 +50,8 @@ import { ServiceEventLogComponent } from '../service-event-log/service-event-log
         FuseScrollResetDirective,
         TranslocoModule,
         AttachmentsComponent,
-        ServiceEventLogComponent,
+        EventLogsComponent,
+        EventLogsGridComponent,
     ],
 })
 export class ServiceViewComponent implements OnInit, OnChanges {
@@ -67,7 +69,7 @@ export class ServiceViewComponent implements OnInit, OnChanges {
     attachmentsCount = 0;
 
     @ViewChild(MatTabGroup) matTabGroup: MatTabGroup;
-    @ViewChild(ServiceEventLogComponent) eventLogs: ServiceEventLogComponent;
+    @ViewChild(EventLogsComponent) eventLogs: EventLogsComponent;
 
     form: UntypedFormGroup;
 
@@ -93,7 +95,7 @@ export class ServiceViewComponent implements OnInit, OnChanges {
 
     onSelectedTabChange(event: MatTabChangeEvent): void {
         if (event.index === 4) {
-            this.eventLogs?.loadData();
+            // this.eventLogs?.loadData();
         }
     }
 

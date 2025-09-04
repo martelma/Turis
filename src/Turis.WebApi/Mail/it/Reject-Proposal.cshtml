@@ -1,0 +1,49 @@
+﻿@{
+	Layout = @Model.LayoutFullFileName;
+}
+
+<table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto;">
+	<tr>
+		<td valign="middle" class="hero bg_white" style="padding: 2em 0 2em 0;">
+			<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+				<tr>
+					<td style="padding: 0 2.5em; text-align: left;">
+						<div class="text">
+							<h2>
+								Ciao @Model.FirstName,
+							</h2>
+							<p>il sistema ha registrato il tuo rifiuto per il seguente Servizio Guida</p>
+							<h2>
+								<strong>@Model.ServiceCode</strong>
+							</h2>
+							<h2>
+								<strong>@Model.ServiceTitle</strong>
+							</h2>
+
+
+							<p>
+								Date: <strong>@Model.ServiceDate.ToString("dd/MM/yyyy HH:mm")</strong>
+							</p>
+
+							<p>
+								Client: <strong>@Model.ServiceClientCode - @Model.ServiceClientCompanyName</strong>
+							</p>
+
+							<p>
+								Language: <strong>@Model.Languages</strong>
+							</p>
+
+							<p>
+								People: <strong>@Model.People</strong>
+							</p>
+
+							<p>
+								In caso di bisongo ti invitiamo a contattare il nostro servizio <a href="mailto:@Model.EMailSupport">Assistenza</a>
+							</p>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>

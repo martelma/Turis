@@ -86,7 +86,7 @@ public class EmailService(IFluentEmail fluentEmail
 
 			// Volendo si potrebbe rendere dinamico anche la scelta del layout della mail in base al tenant o a qualcos'altro
 			model.LayoutFullFileName ??= Path.Combine(templatePath, "_EmailLayout.cshtml");
-			model.SupportEmail ??= notificationSettings.EMailSupport;
+			model.EMailSupport ??= notificationSettings.EMailSupport;
 
 			//var sendResponse = await fluentEmail
 			//    .To(toEmail, toName)

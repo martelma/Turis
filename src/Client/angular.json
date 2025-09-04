@@ -6,6 +6,9 @@
         "fuse": {
             "projectType": "application",
             "schematics": {
+                "@schematics/angular:application": {
+                    "strict": true
+                },
                 "@schematics/angular:component": {
                     "style": "scss"
                 }
@@ -17,7 +20,7 @@
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
-                        "outputPath": "../../_deploy/production-app",
+                        "outputPath": "../../_deploy/app",
                         "index": "src/index.html",
                         "main": "src/main.ts",
                         "polyfills": [
@@ -38,7 +41,15 @@
                             "guid-typescript"
                         ],
                         "assets": [
+                            "src/favicon.ico",
+                            "src/application-config.json",
+                            "src/application-config.local.json",
                             "src/assets",
+                            {
+                                "glob": "**/*",
+                                "input": "node_modules/ngx-extended-pdf-viewer/assets/",
+                                "output": "/assets/"
+                            },
                             "src/web.config"
                         ],
                         "stylePreprocessorOptions": {

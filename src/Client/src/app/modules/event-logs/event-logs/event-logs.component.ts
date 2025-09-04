@@ -4,17 +4,30 @@ import { MatIconModule } from '@angular/material/icon';
 import { EventLogViewMode } from 'app/constants';
 import { UserService } from 'app/core/user/user.service';
 import { EventLog } from 'app/shared/event-log';
-import { EventLogService } from 'app/shared/services/event-log.service';
 import { userDateFormats } from 'app/shared/services/shared.types';
+import { EventLogsService } from '../event-logs.service';
+import { EventLogsGridComponent } from '../grid/event-logs-grid.component';
+import { EventLogsListComponent } from '../list/event-logs-list.component';
+import { TranslocoModule } from '@ngneat/transloco';
 
 @Component({
-    selector: 'app-service-event-log',
-    templateUrl: './service-event-log.component.html',
-    styleUrls: ['./service-event-log.component.scss'],
+    selector: 'app-event-logs',
+    templateUrl: './event-logs.component.html',
+    styleUrls: ['./event-logs.component.scss'],
     standalone: true,
-    imports: [NgFor, NgIf, NgClass, DatePipe, KeyValuePipe, MatIconModule],
+    imports: [
+        NgFor,
+        NgIf,
+        NgClass,
+        DatePipe,
+        KeyValuePipe,
+        MatIconModule,
+        TranslocoModule,
+        EventLogsGridComponent,
+        EventLogsListComponent,
+    ],
 })
-export class ServiceEventLogComponent implements OnInit, OnChanges {
+export class EventLogsComponent implements OnInit, OnChanges {
     @Input() entityName: string;
     @Input() entityKey: string;
 
@@ -28,24 +41,15 @@ export class ServiceEventLogComponent implements OnInit, OnChanges {
 
     constructor(
         protected userService: UserService,
-        private eventLogService: EventLogService,
+        private eventLogsService: EventLogsService,
     ) {}
 
-    ngOnInit(): void {
-        this.loadData();
-    }
+    ngOnInit(): void {}
 
     ngOnChanges(): void {
         this.groupedEventMap = this.eventLogs?.reduce(
             (entryMap, e) => entryMap.set(e.date, [...(entryMap.get(e.date) || []), e]),
             new Map(),
         );
-    }
-
-    public loadData(): void {
-        this.eventLogService.loadData(this.entityName, this.entityKey).subscribe(data => {
-            this.eventLogs = data;
-            console.log('Event logs loaded:', this.eventLogs);
-        });
     }
 }
