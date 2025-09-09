@@ -69,9 +69,9 @@ export class AttachmentsComponent implements OnInit, OnChanges, OnDestroy {
     @Input() entityName: string;
     @Input() entityKey: string;
     @Input() folder: string;
+    @Input() edit = false;
 
     @Output() onListChanged = new EventEmitter<Attachment[]>();
-    // @Output() onAttachmentsCountChange = new EventEmitter<number>();
 
     loading = false;
     waiting = false;

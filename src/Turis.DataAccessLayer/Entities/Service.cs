@@ -43,4 +43,10 @@ public class Service : BaseEntity
 	public string? CommissionNote{ get; set; }
 	public bool CommissionPaid { get; set; }
 	public DateTimeOffset? CommissionPaymentDate { get; set; }
+
+	// Navigazione verso i servizi collegati
+	public ICollection<ServiceRelation> RelatedServices { get; set; }
+
+	// Navigazione inversa (servizi che lo collegano)
+	public ICollection<ServiceRelation> LinkedFromServices { get; set; }
 }

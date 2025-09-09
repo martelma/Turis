@@ -223,5 +223,8 @@
   "Messages": {
     "MailProposalSuccessfullySent": "Mail di proposta inviata con successo",
     "ElmahSuccessfullyTruncated": "Elmah Table Truncated"
+  },
+  "LinkedService": {
+    "Empty": "Nessun Servizio collegato"
   }
 }

@@ -1,0 +1,185 @@
+<ng-container *ngIf="data?.sourceServices?.length + data?.targetServices?.length > 0; else emptyLinkedServices">
+    <div
+        class="relative flex flex-1 flex-col shrink-0 lg:shrink p-3 lg:overflow-y-auto bg-gray-100 dark:bg-transparent">
+        <div
+            *ngIf="data?.sourceServices"
+            class="bg-card flex flex-auto flex-col overflow-hidden rounded-2xl p-6 shadow sm:col-span-2 md:col-span-4">
+            <div class="flex flex-col items-start justify-between sm:flex-row">
+                <div class="truncate text-lg font-medium leading-6 tracking-tight">Source Service</div>
+            </div>
+        </div>
+        <div
+            *ngIf="data?.targetServices"
+            class="bg-card flex flex-auto flex-col overflow-hidden rounded-2xl p-6 shadow sm:col-span-2 md:col-span-4">
+            <div class="flex flex-col items-start justify-between sm:flex-row">
+                <div class="truncate text-lg font-medium leading-6 tracking-tight">Target Service</div>
+            </div>
+        </div>
+    </div>
+</ng-container>
+<ng-template #emptyLinkedServices>
+    <div class="flex flex-col flex-auto items-center justify-center bg-gray-100 dark:bg-transparent">
+        <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">
+            {{ 'LinkedService.Empty' | transloco }}
+        </div>
+    </div>
+</ng-template>
+
+<ng-container *ngIf="edit">
+    <div class="bg-card flex flex-1 flex-col overflow-hidden rounded-2xl p-6 shadow sm:col-span-2 md:col-span-4">
+        <div class="flex flex-col items-start justify-between sm:flex-row">
+            <app-search-input
+                #searchInput
+                class="m-4 flex-1"
+                [placeholder]="'Service.Filter'"
+                (callbackFn)="filter($event)">
+            </app-search-input>
+        </div>
+    </div>
+
+    <!-- No service template -->
+    <ng-template #noService>
+        <div class="z-100 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+            <mat-icon class="icon-size-24" [svgIcon]="'heroicons_outline:circle-stack'"></mat-icon>
+            <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">There are no service</div>
+        </div>
+    </ng-template>
+
+    <!-- Service list -->
+    <ng-container *ngIf="results?.items?.length > 0; else noService">
+        <div class="overflow-y-auto" #serviceList>
+            <ng-container *ngFor="let item of results?.items; let i = index; trackBy: trackByFn">
+                <div
+                    class="group relative flex border-t first:border-0 hover:bg-hover"
+                    [ngClass]="item.selected ? 'background-selected' : ''"
+                    tabindex="0"
+                    (keyup)="(null)">
+                    <div
+                        class="flex flex-col items-start justify-start w-full py-4 pr-4 pl-4 border-l-4 border-transparent">
+                        <!-- Service Info -->
+                        <div class="flex items-center w-full justify-between space-x-2 mb-2">
+                            <div class="flex items-center space-x-2">
+                                <button
+                                    *ngIf="enableAddTargetService()"
+                                    mat-flat-button
+                                    color="primary"
+                                    class="mr-2"
+                                    (click)="addTargetService(item?.id)">
+                                    <mat-icon [svgIcon]="'heroicons_outline:link'"></mat-icon>
+                                    <span>Add As Target Service</span>
+                                </button>
+
+                                <button
+                                    mat-flat-button
+                                    color="primary"
+                                    class="mr-2"
+                                    (click)="addSourceService(item?.id)">
+                                    <mat-icon [svgIcon]="'heroicons_outline:link'"></mat-icon>
+                                    <span>Add As Source Service</span>
+                                </button>
+
+                                <!-- Add/Remove bookmark -->
+                                <mat-icon
+                                    (click)="handleBookmark(item)"
+                                    class="icon-size-2"
+                                    [ngClass]="item.bookmarkId ? 'text-yellow-500' : ''"
+                                    [svgIcon]="item.bookmarkId ? 'heroicons_solid:star' : 'heroicons_outline:star'"
+                                    [matTooltip]="
+                                        (item.bookmarkId ? 'General.RemoveBookmark' : 'General.MarkAsBookmark')
+                                            | transloco
+                                    "></mat-icon>
+
+                                <mat-icon
+                                    (click)="handleCheck(item)"
+                                    class="icon-size-2"
+                                    [ngClass]="item.checked ? 'text-green-500' : ''"
+                                    [svgIcon]="
+                                        item.checked ? 'heroicons_solid:check-circle' : 'heroicons_outline:check-circle'
+                                    "
+                                    [matTooltip]="
+                                        (item.checked ? 'Service.Checked' : 'Service.ToBeCheck') | transloco
+                                    "></mat-icon>
+
+                                <span
+                                    [ngClass]="getStatusColorClass(item)"
+                                    class="color-box"
+                                    [matTooltip]="item.status"></span>
+
+                                <div class="mr-2 font-extrabold text-wrap">
+                                    {{ item.title }}
+                                </div>
+                            </div>
+
+                            <div class="flex space-x-2 items-center">
+                                <div class="ml-auto text-md text-right whitespace-nowrap text-hint">
+                                    {{ item.date | date: 'EEE dd MMM y' : '' : 'it-IT' | titlecase }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            class="flex items-center w-full justify-between mt-1 leading-normal line-clamp-2 text-secondary whitespace-pre-wrap">
+                            <div class="flex items-center space-x-2">
+                                <mat-icon
+                                    [svgIcon]="'heroicons_solid:map-pin'"
+                                    class="mr-2"
+                                    [matTooltip]="'Location'"></mat-icon>
+                                {{ item?.location }}
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div *ngFor="let lang of item.languages">
+                                    <span
+                                        [matTooltip]="lang"
+                                        [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-1 leading-normal line-clamp-2 text-secondary whitespace-pre-wrap">
+                            <mat-icon
+                                [svgIcon]="'heroicons_solid:user-circle'"
+                                class="mr-2"
+                                [matTooltip]="'Client'"></mat-icon>
+                            {{ item?.client?.fullName }}
+                        </div>
+
+                        <div class="mt-1 leading-normal line-clamp-2 text-secondary whitespace-pre-wrap">
+                            <mat-icon
+                                [svgIcon]="'heroicons_solid:user'"
+                                class="mr-2"
+                                [matTooltip]="'Collaborator'"></mat-icon>
+                            {{ item?.collaborator?.fullName }}
+                        </div>
+
+                        <div class="flex items-center w-full justify-between space-x-2 mt-2">
+                            <div class="flex items-center space-x-2">
+                                <tag-summary [tags]="item?.tags" [viewMode]="'mini'"></tag-summary>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <mat-icon
+                                    class="icon-size-5 mr-2"
+                                    [svgIcon]="'heroicons_outline:pencil-square'"
+                                    [ngClass]="{ 'red-icon': item?.note?.length > 0 }"></mat-icon>
+                                <mat-icon
+                                    class="icon-size-5 mr-2"
+                                    [svgIcon]="'heroicons_outline:paper-clip'"
+                                    [ngClass]="{ 'red-icon': item?.attachmentsCount > 0 }"></mat-icon>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </ng-container>
+
+    <!-- Paginator -->
+    <mat-paginator
+        class="mt-auto border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+        [ngClass]="{ 'pointer-events-none': itemsLoading }"
+        [length]="results?.totalCount ?? 0"
+        [pageSize]="serviceParameters?.pageSize ?? 10"
+        [pageIndex]="serviceParameters?.pageIndex ?? 0"
+        [pageSizeOptions]="[5, 10, 25, 100]"
+        (page)="handlePageEvent($event)"
+        [showFirstLastButtons]="true"></mat-paginator>
+</ng-container>

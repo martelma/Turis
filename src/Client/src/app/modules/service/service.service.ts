@@ -6,7 +6,7 @@ import { BaseEntityService } from 'app/shared/services';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { AccountStatementParameters, Service, ServiceSearchParameters } from './service.types';
 import { ContactSummary, ServiceSummary } from '../admin/dashboard/dashboard.types';
-import { EventLog } from 'app/shared/event-log';
+import { LinkedService } from './linkedService';
 
 @Injectable({ providedIn: 'root' })
 export class ServiceService extends BaseEntityService<Service> {
@@ -178,18 +178,12 @@ export class ServiceService extends BaseEntityService<Service> {
         httpParams = httpParams.append('note', params?.note ?? '');
         httpParams = httpParams.append('serviceType', params?.serviceType ?? '');
         httpParams = httpParams.append('durationType', params?.durationType ?? '');
-
+        httpParams = httpParams.append('status', params?.status ?? '');
+        httpParams = httpParams.append('dateFrom', params?.dateFrom ?? '');
+        httpParams = httpParams.append('dateTo', params?.dateTo ?? '');
         params?.languages?.forEach(x => {
             httpParams = httpParams.append('languages', x);
         });
-
-        httpParams = httpParams.append('status', params?.status ?? '');
-        // params?.statuses?.forEach(x => {
-        //     httpParams = httpParams.append('statuses', x);
-        // });
-
-        httpParams = httpParams.append('dateFrom', params?.dateFrom ?? '');
-        httpParams = httpParams.append('dateTo', params?.dateTo ?? '');
 
         const serviceString = httpParams.toString();
 
@@ -199,6 +193,48 @@ export class ServiceService extends BaseEntityService<Service> {
             map((data: PaginatedListResult<Service>) => {
                 this._list.next(data);
 
+                this._parameters.next({
+                    ...this._parameters,
+                    ...params,
+                    pageIndex: data.pageIndex,
+                    pageSize: data.pageSize,
+                });
+
+                return data;
+            }),
+            finalize(() => {
+                this._loading.next(false);
+            }),
+        );
+    }
+
+    filterEntities(params?: ServiceSearchParameters): Observable<PaginatedListResult<Service>> {
+        this._loading.next(true);
+
+        let httpParams = new HttpParams();
+        httpParams = httpParams.append('pageIndex', params?.pageIndex ?? 0);
+        httpParams = httpParams.append('pageSize', params?.pageSize ?? 10);
+        httpParams = httpParams.append('orderBy', params?.orderBy?.toString() ?? '');
+        httpParams = httpParams.append('pattern', params?.pattern ?? '');
+        httpParams = httpParams.append('onlyBookmarks', params?.onlyBookmarks ? 'true' : 'false');
+        httpParams = httpParams.append('code', params?.code ?? '');
+        httpParams = httpParams.append('title', params?.title ?? '');
+        httpParams = httpParams.append('note', params?.note ?? '');
+        httpParams = httpParams.append('serviceType', params?.serviceType ?? '');
+        httpParams = httpParams.append('durationType', params?.durationType ?? '');
+        httpParams = httpParams.append('status', params?.status ?? '');
+        httpParams = httpParams.append('dateFrom', params?.dateFrom ?? '');
+        httpParams = httpParams.append('dateTo', params?.dateTo ?? '');
+        params?.languages?.forEach(x => {
+            httpParams = httpParams.append('languages', x);
+        });
+
+        const serviceString = httpParams.toString();
+
+        const url = `?${serviceString}`;
+
+        return this.apiGet<PaginatedListResult<Service>>(url).pipe(
+            map((data: PaginatedListResult<Service>) => {
                 this._parameters.next({
                     ...this._parameters,
                     ...params,
@@ -348,5 +384,17 @@ export class ServiceService extends BaseEntityService<Service> {
 
     rejectService(serviceId: string) {
         return this.apiPost(`reject-service/${serviceId}`);
+    }
+
+    linkedServices(serviceId: string): Observable<LinkedService> {
+        return this.apiGet<LinkedService>(`linked-services/${serviceId}`);
+    }
+
+    addTargetService(serviceId: string, targetId: string): Observable<void> {
+        return this.apiPost<void>(`${serviceId}/add-target-service/${targetId}`);
+    }
+
+    addSourceService(serviceId: string, sourceId: string): Observable<void> {
+        return this.apiPost<void>(`${serviceId}/add-source-service/${sourceId}`);
     }
 }

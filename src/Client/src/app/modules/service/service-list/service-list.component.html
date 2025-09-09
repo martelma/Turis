@@ -45,9 +45,7 @@
         <!-- Service list -->
         <ng-container *ngIf="results?.items?.length > 0; else noService">
             <div class="overflow-y-auto" #serviceList>
-                <!-- Service loop -->
                 <ng-container *ngFor="let item of results?.items; let i = index; trackBy: trackByFn">
-                    <!-- Service -->
                     <div
                         class="group relative flex border-t first:border-0 hover:bg-hover cursor-pointer"
                         [ngClass]="item.selected ? 'background-selected' : ''"
@@ -56,7 +54,6 @@
                         (dblclick)="edit(item)"
                         tabindex="0"
                         (keyup)="(null)">
-                        <!-- Service content -->
                         <a
                             class="flex flex-col items-start justify-start w-full py-4 pr-4 pl-4 border-l-4 border-transparent">
                             <!-- Service Info -->
@@ -91,59 +88,17 @@
                                         class="color-box"
                                         [matTooltip]="item.status"></span>
 
-                                    <!-- Code & Title -->
                                     <div class="mr-2 font-extrabold text-wrap">
                                         {{ item.title }}
                                     </div>
                                 </div>
 
                                 <div class="flex space-x-2 items-center">
-                                    <!-- Date -->
                                     <div class="ml-auto text-md text-right whitespace-nowrap text-hint">
                                         {{ item.date | date: 'EEE dd MMM y' : '' : 'it-IT' | titlecase }}
                                     </div>
-
-                                    <!-- Actions Menu -->
-                                    <!-- <button
-                                        mat-icon-button
-                                        [matMenuTriggerFor]="roleMenu"
-                                        (click)="$event.stopPropagation()">
-                                        <mat-icon
-                                            class="icon-size-5"
-                                            [svgIcon]="'heroicons_mini:ellipsis-vertical'"></mat-icon>
-                                    </button>
-
-                                    <mat-menu #roleMenu="matMenu">
-                                        <button mat-menu-item (click)="copy(item)">
-                                            <span class="flex items-center">
-                                                <mat-icon
-                                                    class="icon-size-5 mr-3"
-                                                    [svgIcon]="'heroicons_outline:document-duplicate'"></mat-icon>
-                                                <span>{{ 'General.Copy' | transloco }}</span>
-                                            </span>
-                                        </button>
-                                        <button
-                                            mat-menu-item
-                                            color="warn"
-                                            (click)="$event.stopPropagation(); delete(item.id)">
-                                            <span class="flex items-center">
-                                                <mat-icon
-                                                    class="text-red-500 icon-size-5 mr-3"
-                                                    [svgIcon]="'heroicons_outline:trash'"></mat-icon>
-                                                <span>{{ 'General.Delete' | transloco }}</span>
-                                            </span>
-                                        </button>
-                                    </mat-menu> -->
                                 </div>
                             </div>
-
-                            <!-- <div class="mt-1 leading-normal line-clamp-2 text-secondary whitespace-pre-wrap">
-                                <mat-icon
-                                    [svgIcon]="'heroicons_solid:map-pin'"
-                                    class="mr-2"
-                                    [matTooltip]="'Location'"></mat-icon>
-                                {{ item?.location }}
-                            </div> -->
 
                             <div
                                 class="flex items-center w-full justify-between mt-1 leading-normal line-clamp-2 text-secondary whitespace-pre-wrap">
@@ -181,7 +136,6 @@
 
                             <div class="flex items-center w-full justify-between space-x-2 mt-2">
                                 <div class="flex items-center space-x-2">
-                                    <!--  Tags -->
                                     <tag-summary [tags]="item?.tags" [viewMode]="'mini'"></tag-summary>
                                 </div>
                                 <div class="flex items-center space-x-2">

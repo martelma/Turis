@@ -86,3 +86,56 @@ export class AccountStatementParameters extends BaseSearchParameters {
     dateFrom?: string;
     dateTo?: string;
 }
+
+export class ServiceEasy {
+    id: string;
+
+    code: string;
+    title: string;
+    date: Date;
+    dateText: string;
+    start: Date;
+    end: Date;
+    serviceType: string;
+    durationType: string;
+    referent: string;
+    referentPhone: string;
+    note: string;
+    // language: Language;
+    languages: string[] = [];
+    userId: string;
+    creationDate: Date;
+    status: string;
+    workflowCollaboratorStatus: string;
+    optionExpiration: Date;
+    optionExpirationText: string;
+    location: string;
+    meetingPlace: string;
+    people: number;
+    checked: boolean;
+    priceListId: string;
+    priceList: PriceList;
+    priceCalculated: number;
+    price: number;
+    clientId: string;
+    client: Contact;
+
+    collaboratorId: string;
+    collaborator: Collaborator;
+    cIGCode: string;
+    cUPCode: string;
+    cashedIn: boolean;
+    cashedDate: Date;
+
+    commissionPercentage: number;
+    commissionCalculated: number;
+    commission: number;
+    commissionNote: string;
+    commissionPaid: boolean;
+    commissionPaymentDate: Date;
+
+    billingStatus: string;
+    commissionStatus: string;
+
+    selected: boolean;
+}

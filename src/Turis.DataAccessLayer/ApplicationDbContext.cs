@@ -17,6 +17,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 	public DbSet<AliquotaIva> AliquoteIva { get; set; }
 	public DbSet<PriceList> PriceLists { get; set; }
 	public DbSet<Service> Services { get; set; }
+	public DbSet<ServiceRelation> ServiceRelations { get; set; }
 	public DbSet<Contact> Contacts { get; set; }
 	public DbSet<Document> Documents { get; set; }
 	public DbSet<DocumentItem> DocumentItems { get; set; }

@@ -222,5 +222,8 @@
   "Messages": {
     "MailProposalSuccessfullySent": "Mail Proposal Successfully Sent",
     "ElmahSuccessfullyTruncated": "Elmah Successfully Truncated"
+  },
+  "LinkedService": {
+    "Empty": "No linked service available"
   }
 }

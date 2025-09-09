@@ -54,4 +54,9 @@ export class SearchInputComponent implements OnInit {
     filter(): void {
         this.callbackFn.emit(this.searchInputControl.value);
     }
+
+    public reset(): void {
+        this.searchInputControl.setValue('');
+        // this.filter();
+    }
 }

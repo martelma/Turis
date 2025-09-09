@@ -75,6 +75,19 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 				return operation;
 			});
 
+		templateApiGroup.MapGet("linked-services/{serviceId:guid}", LinkedServicesAsync)
+			.Produces<IEnumerable<LinkedServiceModel>>(StatusCodes.Status200OK)
+			.Produces(StatusCodes.Status404NotFound)
+			.WithOpenApi(operation =>
+			{
+				operation.Summary = "Retrieves the linked services";
+
+				operation.Response(StatusCodes.Status200OK).Description = "The service";
+				operation.Response(StatusCodes.Status404NotFound).Description = "service not found";
+
+				return operation;
+			});
+
 		templateApiGroup.MapPost(string.Empty, SaveAsync)
 			//.WithValidation<ServiceRequest>()
 			//.Produces<ServiceModel>(StatusCodes.Status200OK)
@@ -162,6 +175,62 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 
 				return operation;
 			});
+
+		templateApiGroup.MapPost("{serviceId:guid}/add-target-service/{targetServiceId}", AddTargetServiceAsync)
+			.Produces(StatusCodes.Status204NoContent)
+			.Produces<ServiceError>(StatusCodes.Status404NotFound)
+			.ProducesValidationProblem()
+			.WithOpenApi(operation =>
+			{
+				operation.Summary = "Add target service";
+
+				operation.Response(StatusCodes.Status204NoContent).Description = "The Target Service has been successfully added";
+				operation.Response(StatusCodes.Status404NotFound).Description = "service not found";
+
+				return operation;
+			});
+
+		templateApiGroup.MapPost("{serviceId:guid}/remove-target-service/{targetServiceId}", RemoveTargetServiceAsync)
+			.Produces(StatusCodes.Status204NoContent)
+			.Produces<ServiceError>(StatusCodes.Status404NotFound)
+			.ProducesValidationProblem()
+			.WithOpenApi(operation =>
+			{
+				operation.Summary = "Remove target service";
+
+				operation.Response(StatusCodes.Status204NoContent).Description = "The Target Service has been successfully removed";
+				operation.Response(StatusCodes.Status404NotFound).Description = "service not found";
+
+				return operation;
+			});
+
+		templateApiGroup.MapPost("{serviceId:guid}/add-source-service/{sourceServiceId:guid}", AddSourceServiceAsync)
+			.Produces(StatusCodes.Status204NoContent)
+			.Produces<ServiceError>(StatusCodes.Status404NotFound)
+			.ProducesValidationProblem()
+			.WithOpenApi(operation =>
+			{
+				operation.Summary = "Add Source Service";
+
+				operation.Response(StatusCodes.Status400BadRequest).Description = "The Source Service could not be added";
+				operation.Response(StatusCodes.Status404NotFound).Description = "service not found";
+
+				return operation;
+			});
+
+		templateApiGroup.MapPost("{serviceId:guid}/remove-source-service/{sourceServiceId}", RemoveSourceServiceAsync)
+			.Produces(StatusCodes.Status204NoContent)
+			.Produces<ServiceError>(StatusCodes.Status404NotFound)
+			.ProducesValidationProblem()
+			.WithOpenApi(operation =>
+			{
+				operation.Summary = "Remove Source service";
+
+				operation.Response(StatusCodes.Status204NoContent).Description = "The Source Service has been successfully removed";
+				operation.Response(StatusCodes.Status404NotFound).Description = "service not found";
+
+				return operation;
+			});
 	}
 
 	private static async Task<IResult> SummaryAsync(HttpContext httpContext, IServiceService service)
@@ -182,6 +251,9 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 	private static async Task<IResult> CheckDataInfoAsync(HttpContext httpContext, IServiceService service, Guid serviceId)
 		=> (await service.CheckDataInfoAsync(serviceId)).ToResponse(httpContext);
 
+	private static async Task<IResult> LinkedServicesAsync(HttpContext httpContext, IServiceService service, Guid serviceId)
+		=> (await service.LinkedServicesAsync(serviceId)).ToResponse(httpContext);
+
 	private static async Task<IResult> SaveAsync(HttpContext httpContext, IServiceService service, ServiceRequest request)
 		=> (await service.SaveAsync(request)).ToResponse(httpContext);
 
@@ -196,4 +268,16 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 
 	private static async Task<IResult> RejectServiceAsync(HttpContext httpContext, IServiceService service, Guid serviceId)
 		=> (await service.RejectServiceAsync(serviceId)).ToResponse(httpContext);
+
+	private static async Task<IResult> AddTargetServiceAsync(HttpContext httpContext, IServiceService service, Guid serviceId, Guid targetServiceId)
+		=> (await service.AddTargetServiceAsync(serviceId, targetServiceId)).ToResponse(httpContext);
+
+	private static async Task<IResult> RemoveTargetServiceAsync(HttpContext httpContext, IServiceService service, Guid serviceId, Guid targetServiceId)
+		=> (await service.RemoveTargetServiceAsync(serviceId, targetServiceId)).ToResponse(httpContext);
+
+	private static async Task<IResult> AddSourceServiceAsync(HttpContext httpContext, IServiceService service, Guid serviceId, Guid sourceServiceId)
+		=> (await service.AddSourceServiceAsync(serviceId, sourceServiceId)).ToResponse(httpContext);
+
+	private static async Task<IResult> RemoveSourceServiceAsync(HttpContext httpContext, IServiceService service, Guid serviceId, Guid sourceServiceId)
+		=> (await service.RemoveSourceServiceAsync(serviceId, sourceServiceId)).ToResponse(httpContext);
 }

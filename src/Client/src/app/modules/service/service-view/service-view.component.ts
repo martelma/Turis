@@ -24,6 +24,7 @@ import { AttachmentsComponent } from 'app/shared/components/attachments/attachme
 import { AttachmentService } from 'app/shared/components/attachments/attachment.service';
 import { EventLogsGridComponent } from 'app/modules/event-logs/grid/event-logs-grid.component';
 import { EventLogsComponent } from 'app/modules/event-logs/event-logs/event-logs.component';
+import { LinkedServicesComponent } from '../linked-services/linked-services.component';
 
 @UntilDestroy()
 @Component({
@@ -52,6 +53,7 @@ import { EventLogsComponent } from 'app/modules/event-logs/event-logs/event-logs
         AttachmentsComponent,
         EventLogsComponent,
         EventLogsGridComponent,
+        LinkedServicesComponent,
     ],
 })
 export class ServiceViewComponent implements OnInit, OnChanges {

@@ -51,6 +51,9 @@ import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/mat
 import { Tag } from 'app/modules/configuration/tags/tag.types';
 import { TagFiltersComponent } from 'app/modules/configuration/tags/filters/tag-filters.component';
 import { ServiceService } from '../service.service';
+import { Attachment } from 'app/shared/components/attachments/attachment.types';
+import { AttachmentsComponent } from 'app/shared/components/attachments/attachments.component';
+import { LinkedServicesComponent } from '../linked-services/linked-services.component';
 
 @UntilDestroy()
 @Component({
@@ -94,6 +97,8 @@ import { ServiceService } from '../service.service';
         FuseScrollResetDirective,
         TranslocoModule,
         TagFiltersComponent,
+        AttachmentsComponent,
+        LinkedServicesComponent,
     ],
 })
 export class ServiceEditComponent implements OnInit {

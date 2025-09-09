@@ -121,14 +121,14 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
         this.activeLang = this._translocoService.getActiveLang();
 
         // Services
-        this._serviceService.list$.pipe(untilDestroyed(this)).subscribe((results: PaginatedListResult<Service>) => {
-            this.results = results;
-            this.list = results?.items;
+        // this._serviceService.list$.pipe(untilDestroyed(this)).subscribe((results: PaginatedListResult<Service>) => {
+        //     this.results = results;
+        //     this.list = results?.items;
 
-            this.list.forEach(item => {
-                item.languages = item.languages.map(lang => lang.toLowerCase());
-            });
-        });
+        //     this.list.forEach(item => {
+        //         item.languages = item.languages.map(lang => lang.toLowerCase());
+        //     });
+        // });
 
         // Services loading
         this._serviceService.loading$.pipe(untilDestroyed(this)).subscribe((servicesLoading: boolean) => {
@@ -265,10 +265,9 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
         this._serviceService
             .listEntities({ ...this.serviceParameters })
             .pipe(untilDestroyed(this))
-            .subscribe(items => {
-                // if (items?.items?.length > 0) {
-                //     this.navigateToItem(items.items[0]);
-                // }
+            .subscribe(results => {
+                this.results = results;
+                this.list = results?.items;
             });
     }
 

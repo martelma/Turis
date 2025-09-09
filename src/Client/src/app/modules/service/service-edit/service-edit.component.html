@@ -582,6 +582,40 @@
                     </div>
                 </ng-template>
             </mat-tab>
+
+            <!-- Attachments -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon
+                        class="icon-size-5 mr-2"
+                        [svgIcon]="'heroicons_outline:paper-clip'"
+                        [ngClass]="{ 'red-icon': item?.attachmentsCount > 0 }"></mat-icon>
+                    {{ 'General.Attachments' | transloco }}
+                </ng-template>
+                <ng-template matTabContent>
+                    <div class="flex flex-col flex-1 overflow-y-auto">
+                        <app-attachments
+                            [entityName]="'Service'"
+                            [entityKey]="item?.id"
+                            [edit]="true"></app-attachments>
+                    </div>
+                </ng-template>
+            </mat-tab>
+
+            <!-- Linked Services -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:link'"></mat-icon>
+                    {{ 'General.LinkedServices' | transloco }}
+                </ng-template>
+                <ng-template matTabContent>
+                    <app-linked-services
+                        #linkedServices
+                        [serviceId]="item?.id"
+                        [edit]="true"
+                        class="w-full"></app-linked-services>
+                </ng-template>
+            </mat-tab>
         </mat-tab-group>
     </div>
 </div>

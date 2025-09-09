@@ -1,8 +1,10 @@
 <div class="flex w-full justify-end">
-    <button *ngIf="!uploadMode" mat-flat-button color="primary" (click)="uploadMode = true">Add Atttachment</button>
+    <button *ngIf="edit && !uploadMode" mat-flat-button color="primary" (click)="uploadMode = true">
+        Add Atttachment
+    </button>
 </div>
 
-<ng-container *ngIf="dataSource; else emptyAttachments">
+<ng-container *ngIf="dataSource.data.length > 0; else emptyAttachments">
     <app-upload-files
         #appUploadFile
         *ngIf="uploadMode"

@@ -10,6 +10,67 @@ namespace Turis.BusinessLayer.Extensions;
 
 public static class ServiceExtensions
 {
+	public static async Task<ServiceEasyModel> ToModelEasyAsync(this Service entity, IAvatarContactService avatarContactService)
+	{
+		var model = new ServiceEasyModel
+		{
+			Id = entity.Id,
+			Code = entity.Code,
+			Title = entity.Title,
+			Date = entity.Date,
+			DateText = entity.Date.ToString("dd/MM/yyyy"),
+			ServiceType = entity.ServiceType.ToString(),
+			DurationType = entity.DurationType.ToString(),
+			Languages = entity.Languages?.SplitCsv()?.ToArray(),
+			Referent = entity.Referent,
+			ReferentPhone = entity.ReferentPhone,
+			Note = entity.Note,
+			UserId = entity.UserId,
+			CreationDate = entity.CreationDate,
+			Status = entity.Status.ToString(),
+			OptionExpiration = entity.OptionExpiration,
+			OptionExpirationText = entity.OptionExpiration?.ToString("dd/MM/yyyy"),
+			Location = entity.Location,
+			MeetingPlace = entity.MeetingPlace,
+			People = entity.People,
+			Checked = entity.Checked,
+			PriceListId = entity.PriceList?.Id,
+			PriceList = entity.PriceList?.ToModel(),
+			PriceCalculated = entity.PriceCalculated,
+			Price = entity.Price,
+			ClientId = entity.Client?.Id,
+			Client = entity.Client?.ToModel(),
+			WorkflowCollaboratorStatus = entity.WorkflowCollaboratorStatus.ToString(),
+			CollaboratorId = entity.Collaborator?.Id,
+			Collaborator = entity.Collaborator?.ToModel(),
+			CIGCode = entity.CIGCode,
+			CUPCode = entity.CUPCode,
+			CashedIn = entity.CashedIn,
+			CashedDate = entity.CashedDate ?? DateTimeOffset.MinValue,
+
+			CommissionPercentage = entity.CommissionPercentage,
+			CommissionCalculated = entity.CommissionCalculated,
+			Commission = entity.Commission > 0 ? entity.Commission : entity.CommissionCalculated,
+			CommissionNote = entity.CommissionNote,
+			CommissionPaid = entity.CommissionPaid,
+			CommissionPaymentDate = entity.CashedDate ?? DateTimeOffset.MinValue,
+		};
+
+		if (model.Collaborator != null)
+		{
+			model.Collaborator.Avatar = (await avatarContactService.GetAsync(model.Collaborator.Id))?.Content != null
+				? (await avatarContactService.GetAsync(model.Collaborator.Id))?.Content.Content.ConvertToBase64String()
+				: null;
+		}
+
+		return model;
+	}
+
+	public static Task<IEnumerable<ServiceEasyModel>> ToModelEasyAsync(this IEnumerable<Service> list, IAvatarContactService avatarContactService)
+	{
+		return list.SelectAsync(x => x.ToModelEasyAsync(avatarContactService));
+	}
+
 	public static async Task<ServiceModel> ToModelAsync(this Service entity,
 		IAvatarContactService avatarContactService,
 		List<Bookmark> bookmarks = null,

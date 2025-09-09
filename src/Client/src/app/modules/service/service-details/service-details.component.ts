@@ -24,6 +24,7 @@ import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
 import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summary.component';
 import { StatusTypes } from 'app/constants';
 import { ConfirmationDialogService } from 'app/shared/services/confirmation-dialog.service';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 
 @UntilDestroy()
 @Component({
@@ -54,6 +55,7 @@ import { ConfirmationDialogService } from 'app/shared/services/confirmation-dial
         ServiceEditComponent,
         SpinnerButtonComponent,
         TagSummaryComponent,
+        ClipboardModule,
     ],
 })
 export class ServiceDetailsComponent implements OnInit {
@@ -172,6 +174,10 @@ export class ServiceDetailsComponent implements OnInit {
                     });
                 }
             });
+    }
+
+    copyRif(service: Service) {
+        console.log('menuItem2', service);
     }
 
     menuItem2(service: Service) {

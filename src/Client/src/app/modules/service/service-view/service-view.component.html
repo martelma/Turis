@@ -377,7 +377,10 @@
                 </ng-template>
                 <ng-template matTabContent>
                     <div class="flex flex-col flex-1 overflow-y-auto">
-                        <app-attachments [entityName]="'Service'" [entityKey]="item?.id"></app-attachments>
+                        <app-attachments
+                            [entityName]="'Service'"
+                            [entityKey]="item?.id"
+                            [edit]="false"></app-attachments>
                     </div>
                 </ng-template>
             </mat-tab>
@@ -387,7 +390,12 @@
                     {{ 'General.LinkedServices' | transloco }}
                 </ng-template>
                 <ng-template matTabContent>
-                    <div class="flex flex-col flex-1 overflow-y-auto">To Do...</div>
+                    <!-- <div class="flex flex-col flex-1 overflow-y-auto">To Do...</div> -->
+                    <app-linked-services
+                        #linkedServices
+                        [serviceId]="item?.id"
+                        [edit]="false"
+                        class="w-full"></app-linked-services>
                 </ng-template>
             </mat-tab>
             <mat-tab>
