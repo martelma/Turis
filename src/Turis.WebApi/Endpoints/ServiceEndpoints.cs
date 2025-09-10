@@ -176,35 +176,7 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 				return operation;
 			});
 
-		templateApiGroup.MapPost("{serviceId:guid}/add-target-service/{targetServiceId}", AddTargetServiceAsync)
-			.Produces(StatusCodes.Status204NoContent)
-			.Produces<ServiceError>(StatusCodes.Status404NotFound)
-			.ProducesValidationProblem()
-			.WithOpenApi(operation =>
-			{
-				operation.Summary = "Add target service";
-
-				operation.Response(StatusCodes.Status204NoContent).Description = "The Target Service has been successfully added";
-				operation.Response(StatusCodes.Status404NotFound).Description = "service not found";
-
-				return operation;
-			});
-
-		templateApiGroup.MapPost("{serviceId:guid}/remove-target-service/{targetServiceId}", RemoveTargetServiceAsync)
-			.Produces(StatusCodes.Status204NoContent)
-			.Produces<ServiceError>(StatusCodes.Status404NotFound)
-			.ProducesValidationProblem()
-			.WithOpenApi(operation =>
-			{
-				operation.Summary = "Remove target service";
-
-				operation.Response(StatusCodes.Status204NoContent).Description = "The Target Service has been successfully removed";
-				operation.Response(StatusCodes.Status404NotFound).Description = "service not found";
-
-				return operation;
-			});
-
-		templateApiGroup.MapPost("{serviceId:guid}/add-source-service/{sourceServiceId:guid}", AddSourceServiceAsync)
+		templateApiGroup.MapPost("{targetServiceId:guid}/add-source-service/{sourceServiceId:guid}", AddServiceRelationAsync)
 			.Produces(StatusCodes.Status204NoContent)
 			.Produces<ServiceError>(StatusCodes.Status404NotFound)
 			.ProducesValidationProblem()
@@ -218,7 +190,7 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 				return operation;
 			});
 
-		templateApiGroup.MapPost("{serviceId:guid}/remove-source-service/{sourceServiceId}", RemoveSourceServiceAsync)
+		templateApiGroup.MapPost("{targetServiceId:guid}/remove-source-service/{sourceServiceId}", RemoveServiceRelationAsync)
 			.Produces(StatusCodes.Status204NoContent)
 			.Produces<ServiceError>(StatusCodes.Status404NotFound)
 			.ProducesValidationProblem()
@@ -227,6 +199,34 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 				operation.Summary = "Remove Source service";
 
 				operation.Response(StatusCodes.Status204NoContent).Description = "The Source Service has been successfully removed";
+				operation.Response(StatusCodes.Status404NotFound).Description = "service not found";
+
+				return operation;
+			});
+
+		templateApiGroup.MapPost("{sourceServiceId:guid}/add-target-service/{targetServiceId}", AddServiceRelationAsync)
+			.Produces(StatusCodes.Status204NoContent)
+			.Produces<ServiceError>(StatusCodes.Status404NotFound)
+			.ProducesValidationProblem()
+			.WithOpenApi(operation =>
+			{
+				operation.Summary = "Add target service";
+
+				operation.Response(StatusCodes.Status204NoContent).Description = "The Target Service has been successfully added";
+				operation.Response(StatusCodes.Status404NotFound).Description = "service not found";
+
+				return operation;
+			});
+
+		templateApiGroup.MapPost("{sourceServiceId:guid}/remove-target-service/{targetServiceId}", RemoveServiceRelationAsync)
+			.Produces(StatusCodes.Status204NoContent)
+			.Produces<ServiceError>(StatusCodes.Status404NotFound)
+			.ProducesValidationProblem()
+			.WithOpenApi(operation =>
+			{
+				operation.Summary = "Remove target service";
+
+				operation.Response(StatusCodes.Status204NoContent).Description = "The Target Service has been successfully removed";
 				operation.Response(StatusCodes.Status404NotFound).Description = "service not found";
 
 				return operation;
@@ -269,15 +269,9 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 	private static async Task<IResult> RejectServiceAsync(HttpContext httpContext, IServiceService service, Guid serviceId)
 		=> (await service.RejectServiceAsync(serviceId)).ToResponse(httpContext);
 
-	private static async Task<IResult> AddTargetServiceAsync(HttpContext httpContext, IServiceService service, Guid serviceId, Guid targetServiceId)
-		=> (await service.AddTargetServiceAsync(serviceId, targetServiceId)).ToResponse(httpContext);
+	private static async Task<IResult> AddServiceRelationAsync(HttpContext httpContext, IServiceService service, Guid sourceServiceId, Guid targetServiceId)
+		=> (await service.AddServiceRelationAsync(sourceServiceId, targetServiceId)).ToResponse(httpContext);
 
-	private static async Task<IResult> RemoveTargetServiceAsync(HttpContext httpContext, IServiceService service, Guid serviceId, Guid targetServiceId)
-		=> (await service.RemoveTargetServiceAsync(serviceId, targetServiceId)).ToResponse(httpContext);
-
-	private static async Task<IResult> AddSourceServiceAsync(HttpContext httpContext, IServiceService service, Guid serviceId, Guid sourceServiceId)
-		=> (await service.AddSourceServiceAsync(serviceId, sourceServiceId)).ToResponse(httpContext);
-
-	private static async Task<IResult> RemoveSourceServiceAsync(HttpContext httpContext, IServiceService service, Guid serviceId, Guid sourceServiceId)
-		=> (await service.RemoveSourceServiceAsync(serviceId, sourceServiceId)).ToResponse(httpContext);
+	private static async Task<IResult> RemoveServiceRelationAsync(HttpContext httpContext, IServiceService service, Guid sourceServiceId, Guid targetServiceId)
+		=> (await service.RemoveServiceRelationAsync(sourceServiceId, targetServiceId)).ToResponse(httpContext);
 }

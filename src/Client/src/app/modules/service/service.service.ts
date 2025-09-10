@@ -390,11 +390,19 @@ export class ServiceService extends BaseEntityService<Service> {
         return this.apiGet<LinkedService>(`linked-services/${serviceId}`);
     }
 
-    addTargetService(serviceId: string, targetId: string): Observable<void> {
-        return this.apiPost<void>(`${serviceId}/add-target-service/${targetId}`);
+    addSourceService(sourceId: string, targetId: string): Observable<void> {
+        return this.apiPost<void>(`${sourceId}/add-source-service/${targetId}`);
     }
 
-    addSourceService(serviceId: string, sourceId: string): Observable<void> {
-        return this.apiPost<void>(`${serviceId}/add-source-service/${sourceId}`);
+    removeSourceService(sourceId: string, targetId: string): Observable<void> {
+        return this.apiPost<void>(`${sourceId}/remove-source-service/${targetId}`);
+    }
+
+    addTargetService(sourceId: string, targetId: string): Observable<void> {
+        return this.apiPost<void>(`${targetId}/add-target-service/${sourceId}`);
+    }
+
+    removeTargetService(sourceId: string, targetId: string): Observable<void> {
+        return this.apiPost<void>(`${targetId}/remove-target-service/${sourceId}`);
     }
 }

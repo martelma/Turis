@@ -1,4 +1,13 @@
-import { AfterViewInit, Component, Input, OnChanges, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    Input,
+    OnChanges,
+    OnInit,
+    SimpleChanges,
+    ViewChild,
+    ViewEncapsulation,
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TranslocoModule } from '@ngneat/transloco';
@@ -25,6 +34,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { getStatusColorClass, getStatusText } from 'app/constants';
 import { trackByFn } from 'app/shared';
+import { FuseCardComponent } from '@fuse/components/card';
 
 @UntilDestroy()
 @Component({
@@ -58,6 +68,7 @@ import { trackByFn } from 'app/shared';
         EventLogsComponent,
         EventLogsGridComponent,
         SearchInputComponent,
+        FuseCardComponent,
     ],
 })
 export class LinkedServicesComponent implements OnInit, AfterViewInit, OnChanges {
@@ -86,7 +97,9 @@ export class LinkedServicesComponent implements OnInit, AfterViewInit, OnChanges
         private router: Router,
     ) {}
 
-    ngOnChanges(): void {}
+    ngOnChanges(changes: SimpleChanges): void {
+        this.loadData();
+    }
 
     ngOnInit(): void {}
 
@@ -132,8 +145,12 @@ export class LinkedServicesComponent implements OnInit, AfterViewInit, OnChanges
         this.filterServices();
     }
 
+    enableAddSourceService(): boolean {
+        return this.data?.sourceServices?.length === 0;
+    }
+
     enableAddTargetService(): boolean {
-        return !this.data?.targetServices;
+        return this.data?.targetServices?.length === 0;
     }
 
     addTargetService(targetId: string) {
@@ -146,10 +163,30 @@ export class LinkedServicesComponent implements OnInit, AfterViewInit, OnChanges
             });
     }
 
+    removeTargetService(targetId: string) {
+        console.log('Remove Target Service', this.serviceId, targetId);
+        this.serviceService
+            .removeTargetService(this.serviceId, targetId)
+            .pipe(untilDestroyed(this))
+            .subscribe(data => {
+                this.loadData();
+            });
+    }
+
     addSourceService(sourceId: string) {
         console.log('Add Source Service', this.serviceId, sourceId);
         this.serviceService
             .addSourceService(this.serviceId, sourceId)
+            .pipe(untilDestroyed(this))
+            .subscribe(data => {
+                this.loadData();
+            });
+    }
+
+    removeSourceService(sourceId: string) {
+        console.log('Remove Source Service', this.serviceId, sourceId);
+        this.serviceService
+            .removeSourceService(this.serviceId, sourceId)
             .pipe(untilDestroyed(this))
             .subscribe(data => {
                 this.loadData();

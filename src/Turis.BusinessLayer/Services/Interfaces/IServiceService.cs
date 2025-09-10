@@ -14,10 +14,8 @@ public interface IServiceService : IService
 	Task<Result<ServiceModel>> GetAsync(Guid serviceId);
 	Task<Result<ServiceModel>> SaveAsync(ServiceRequest model);
 	Task<Result> DeleteAsync(Guid serviceId);
-	Task<Result> AddTargetServiceAsync(Guid serviceId, Guid targetServiceId);
-	Task<Result> RemoveTargetServiceAsync(Guid serviceId, Guid targetServiceId);
-	Task<Result> AddSourceServiceAsync(Guid serviceId, Guid sourceServiceId);
-	Task<Result> RemoveSourceServiceAsync(Guid serviceId, Guid sourceServiceId);
+	Task<Result> RemoveServiceRelationAsync(Guid sourceServiceId, Guid targetServiceId);
+	Task<Result> AddServiceRelationAsync(Guid sourceServiceId, Guid targetServiceId);
 	Task<Result<PaginatedList<ServiceModel>>> AccountStatement(AccountStatementParameters parameters);
 	Task<Result<ServiceCheckDataInfo>> CheckDataInfoAsync(Guid serviceId);
 	Service GetRandom();

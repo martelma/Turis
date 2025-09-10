@@ -473,11 +473,20 @@ public class ServiceService(ApplicationDbContext dbContext
 		var model = new LinkedServiceModel();
 
 		model.SourceServices = await dbContext.GetData<ServiceRelation>()
-			.Where(x => x.SourceServiceId == serviceId)
+			.Include(x => x.SourceService)
+			.ThenInclude(x => x.Client)
+			.Include(x => x.SourceService)
+			.ThenInclude(x => x.Collaborator)
+			.Where(x => x.TargetServiceId == serviceId)
 			.Select(x => x.SourceService)
 			.ToModelEasyAsync(avatarContactService);
+
 		model.TargetServices = await dbContext.GetData<ServiceRelation>()
-			.Where(x => x.TargetServiceId == serviceId)
+			.Include(x => x.TargetService)
+			.ThenInclude(x => x.Client)
+			.Include(x => x.TargetService)
+			.ThenInclude(x => x.Collaborator)
+			.Where(x => x.SourceServiceId == serviceId)
 			.Select(x => x.TargetService)
 			.ToModelEasyAsync(avatarContactService);
 
@@ -575,12 +584,12 @@ public class ServiceService(ApplicationDbContext dbContext
 		return Result.Ok();
 	}
 
-	public async Task<Result> AddTargetServiceAsync(Guid serviceId, Guid targetServiceId)
+	public async Task<Result> AddServiceRelationAsync(Guid sourceServiceId, Guid targetServiceId)
 	{
 		var record = new ServiceRelation
 		{
 			Id = Guid.NewGuid(),
-			SourceServiceId = serviceId,
+			SourceServiceId = sourceServiceId,
 			TargetServiceId = targetServiceId
 		};
 
@@ -590,36 +599,10 @@ public class ServiceService(ApplicationDbContext dbContext
 		return Result.Ok();
 	}
 
-	public async Task<Result> RemoveTargetServiceAsync(Guid serviceId, Guid targetServiceId)
+	public async Task<Result> RemoveServiceRelationAsync(Guid sourceServiceId, Guid targetServiceId)
 	{
 		var record = dbContext.ServiceRelations
-			.FirstOrDefaultAsync(x => x.SourceServiceId == serviceId && x.TargetServiceId == targetServiceId);
-
-		dbContext.Remove(record);
-		await dbContext.SaveChangesAsync();
-
-		return Result.Ok();
-	}
-
-	public async Task<Result> AddSourceServiceAsync(Guid serviceId, Guid sourceServiceId)
-	{
-		var record = new ServiceRelation
-		{
-			Id = Guid.NewGuid(),
-			SourceServiceId = sourceServiceId,
-			TargetServiceId = serviceId
-		};
-
-		dbContext.ServiceRelations.Add(record);
-		await dbContext.SaveChangesAsync();
-
-		return Result.Ok();
-	}
-
-	public async Task<Result> RemoveSourceServiceAsync(Guid serviceId, Guid sourceServiceId)
-	{
-		var record = dbContext.ServiceRelations
-			.FirstOrDefaultAsync(x => x.SourceServiceId == sourceServiceId && x.TargetServiceId == serviceId);
+			.FirstOrDefaultAsync(x => x.SourceServiceId == sourceServiceId && x.TargetServiceId == targetServiceId);
 
 		dbContext.Remove(record);
 		await dbContext.SaveChangesAsync();
