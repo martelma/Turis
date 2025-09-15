@@ -22,8 +22,7 @@ public class UserSettingsEndpoints : IEndpointRouteHandlerBuilder
                 operation.Response(StatusCodes.Status404NotFound).Description = "User not found";
 
                 return operation;
-            })
-            .AllowAnonymous();
+            });
 
         usersApiGroup.MapGet(string.Empty, GetValueAsync)
             .Produces(StatusCodes.Status204NoContent)

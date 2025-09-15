@@ -51,7 +51,6 @@ import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/mat
 import { Tag } from 'app/modules/configuration/tags/tag.types';
 import { TagFiltersComponent } from 'app/modules/configuration/tags/filters/tag-filters.component';
 import { ServiceService } from '../service.service';
-import { Attachment } from 'app/shared/components/attachments/attachment.types';
 import { AttachmentsComponent } from 'app/shared/components/attachments/attachments.component';
 import { LinkedServicesComponent } from '../linked-services/linked-services.component';
 
@@ -114,7 +113,7 @@ export class ServiceEditComponent implements OnInit {
             this.service.durationType = DurationTypes[0].value;
             this.service.workflowCollaboratorStatus = WorkflowCollaboratorStatusTypes[0].value;
         }
-        console.log('item', this.item);
+        // console.log('item', this.item);
 
         this.clientControl.setValue(this.item.client?.companyName);
         this.collaboratorControl.setValue(this.item.collaborator?.fullName);

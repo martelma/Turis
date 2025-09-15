@@ -493,6 +493,20 @@ public class ServiceService(ApplicationDbContext dbContext
 		return model;
 	}
 
+	public async Task<Result<List<ServiceEasyModel>>> ToBeBilledAsync(Guid clientId)
+	{
+		var list = dbContext
+			.GetData<Service>()
+			.Where(x => x.ClientId == clientId)
+			//TODO: impostare condizione per estrarre solo i servizi da fatturare
+			//.Where(x=>x. == )
+			.ToList();
+
+		var model = await list.ToModelEasyAsync(avatarContactService);
+
+		return model.ToList();
+	}
+
 	public async Task<Result<ServiceModel>> SaveAsync(ServiceRequest service)
 	{
 		var dbService = await dbContext.GetData<Service>(true)

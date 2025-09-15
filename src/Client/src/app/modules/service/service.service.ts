@@ -287,6 +287,11 @@ export class ServiceService extends BaseEntityService<Service> {
         );
     }
 
+    listServicesToBeBilled(clientId: string): Observable<Service[]> {
+        const url = `to-be-billed/${clientId}`;
+        return this.apiGet<Service[]>(url);
+    }
+
     summary(): Observable<ServiceSummary> {
         this._loading.next(true);
 

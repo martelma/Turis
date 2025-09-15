@@ -1,10 +1,10 @@
 import { Document } from './../document.types';
 import { MatRippleModule } from '@angular/material/core';
 import { CommonModule, DatePipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle } from '@angular/common';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, AfterViewInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, Router, RouterLink } from '@angular/router';
 import { FuseScrollResetDirective } from '@fuse/directives/scroll-reset';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -21,6 +21,8 @@ import { DocumentComponent } from '../document.component';
 import { DocumentService } from '../document.service';
 import { trackByFn } from 'app/shared';
 import { DocumentViewComponent } from '../document-view/document-view.component';
+import { DocumentNewComponent } from '../document-new/document-new.component';
+import { DocumentEditComponent } from '../document-edit/document-edit.component';
 
 @UntilDestroy()
 @Component({
@@ -50,10 +52,13 @@ import { DocumentViewComponent } from '../document-view/document-view.component'
         TranslocoModule,
         SpinnerButtonComponent,
         DocumentViewComponent,
+        DocumentNewComponent,
+        DocumentEditComponent,
     ],
 })
-export class DocumentDetailsComponent implements OnInit {
+export class DocumentDetailsComponent implements OnInit, AfterViewInit {
     editMode = false;
+
     isCreate = false;
     isCopy = false;
     isDownloading = false;
@@ -78,7 +83,6 @@ export class DocumentDetailsComponent implements OnInit {
         private _bookmarkService: BookmarkService,
         private _documentService: DocumentService,
         public snackBar: MatSnackBar,
-
         public documentComponent: DocumentComponent,
     ) {}
 
@@ -88,13 +92,23 @@ export class DocumentDetailsComponent implements OnInit {
         this._subscribeDocumentEdited();
     }
 
+    ngAfterViewInit(): void {
+        console.log('document', this.document);
+    }
+
     private _subscribeDocument() {
         this._documentService.item$.pipe(untilDestroyed(this)).subscribe((document: Document) => {
             this.document = document;
 
-            // console.log('_subscribeDocument - document', this.document);
+            if (document === null) {
+                this.isCreate = true;
+            } else {
+                this.editMode = document?.id === undefined;
+            }
 
-            this.editMode = document?.id === undefined;
+            console.log('document', this.document);
+            console.log('isCreate', this.isCreate);
+            console.log('editMode', this.editMode);
         });
     }
 

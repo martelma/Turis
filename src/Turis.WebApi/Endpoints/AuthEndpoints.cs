@@ -14,8 +14,6 @@ public class AuthEndpoints : IEndpointRouteHandlerBuilder
 	{
 		var templateApiGroup = endpoints.MapGroup("/api/auth");
 
-		//templateApiGroup.MapGet("init-auth", InitAuth).AllowAnonymous();
-
 		templateApiGroup.MapGet("check", Check)
 			.WithOpenApi(operation =>
 			{

@@ -15,11 +15,11 @@ import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatSortModule } from '@angular/material/sort';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
@@ -30,8 +30,8 @@ import { SearchInputComponent } from 'app/shared/components/ui/search-input/sear
 import { Service, ServiceSearchParameters } from 'app/modules/service/service.types';
 import { ServiceService } from 'app/modules/service/service.service';
 import { MaterialModule } from 'app/modules/material.module';
-import { CalendarOptions, DateSelectArg, EventApi, EventClickArg } from '@fullcalendar/core';
-import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
+import { EventApi } from '@fullcalendar/core';
+import { FullCalendarModule } from '@fullcalendar/angular';
 import {
     AppSettings,
     DurationTypes,
@@ -44,10 +44,6 @@ import { ServiceSidebarComponent } from 'app/modules/service/service-sidebar/ser
 import { MatDrawer } from '@angular/material/sidenav';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ez } from '@fullcalendar/core/internal-common';
-import interactionPlugin from '@fullcalendar/interaction';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridWeekPlugin from '@fullcalendar/timegrid';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';

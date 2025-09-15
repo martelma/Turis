@@ -13,6 +13,7 @@ import { DocumentService } from './document.service';
 import { DocumentComponent } from './document.component';
 import { DocumentDetailsComponent } from './document-details/document-details.component';
 import { DocumentEmptyDetailsComponent } from './document-empty-details/document-empty-details.component';
+import { DocumentNewComponent } from './document-new/document-new.component';
 
 const documentRouteMatcher: (url: UrlSegment[]) => UrlMatchResult = (url: UrlSegment[]) => {
     // Prepare consumed url and positional parameters
@@ -66,7 +67,7 @@ export default [
         path: '',
         component: DocumentComponent,
         resolve: {
-            services: () => inject(DocumentService).listEntities(),
+            documents: () => inject(DocumentService).listEntities(),
         },
         children: [
             {
@@ -87,7 +88,7 @@ export default [
                     },
                     {
                         path: 'new',
-                        component: DocumentDetailsComponent,
+                        component: DocumentNewComponent,
                         resolve: {
                             service: documentResolver,
                         },

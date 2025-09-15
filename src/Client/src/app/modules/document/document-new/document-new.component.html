@@ -1,0 +1,139 @@
+<div
+    class="relative flex flex-col flex-auto shrink-0 lg:shrink p-3 lg:overflow-y-auto bg-gray-100 dark:bg-transparent"
+    fuseScrollReset>
+    <!-- Main -->
+    <div
+        class="absolute inset-0 flex flex-col flex-0 shadow rounded-2xl overflow-hidden bg-card dark:bg-black dark:bg-opacity-10">
+        <!-- Invoice -->
+        <div
+            class="min-w-240 p-8 rounded-2xl shadow bg-card print:w-auto print:p-0 print:rounded-none print:shadow-none print:bg-transparent overflow-y-auto">
+            <div class="flex items-start">
+                <div class="grid grid-cols-max w-8/12 place-items-start gap-y-2">
+                    <mat-form-field class="example-full-width w-full" appearance="fill">
+                        <mat-label for="status">Bill To</mat-label>
+                        <input
+                            type="text"
+                            class="form-control font-bold w-full"
+                            placeholder="Client"
+                            aria-label="Client"
+                            matInput
+                            [formControl]="clientControl"
+                            [matAutocomplete]="auto1" />
+                        <mat-autocomplete #auto1="matAutocomplete" (optionSelected)="onSelectedClient($event)">
+                            <mat-option
+                                class="form-control font-bold"
+                                *ngFor="let option of filteredClients | async"
+                                [value]="option">
+                                <div class="option-container">
+                                    <div class="option-name">{{ option.companyName }}</div>
+                                    <div class="option-email">{{ option.address }} {{ option.city }}</div>
+                                </div>
+                            </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+                    <!-- <div *ngIf="document.client" class="pl-5 border-l text-md">
+                        <div class="font-medium">{{ document.client?.displayName }}</div>
+                        <div>{{ document.client?.address }}</div>
+                        <div>
+                            {{ document.client?.cap }} {{ document.client?.city }} {{ document.client?.regionalCode }}
+                        </div>
+                        <div>CF: {{ document.client?.fiscalCode }}</div>
+                        <div>PIVA: {{ document.client?.taxCode }}</div>
+                        <div *ngIf="document.client?.sex === 'A'">
+                            IdDocumento: [{{ document?.cig }}] - CIG: [{{ document?.cig }}] - CUP: [{{ document?.cup }}]
+                        </div>
+                    </div> -->
+                </div>
+                <!-- <div class="grid grid-cols-max w-4/12 place-items-start gap-y-2">
+                    <div *ngIf="document.type !== 'NC'" class="justify-self-end text-4xl tracking-tight text-secondary">
+                        FATTURA
+                    </div>
+                    <div *ngIf="document.type === 'NC'" class="justify-self-end text-4xl tracking-tight text-secondary">
+                        NOTA DI CREDITO
+                    </div>
+                    <div class="text-4xl">{{ document?.sectional }}-{{ document?.number }}</div>
+                    <div class="justify-self-end font-medium tracking-tight text-secondary">DATA DOCUMENTO</div>
+                    <div class="font-medium">{{ document?.date | date: 'dd/MM/yyyy' }}</div>
+                    <div class="justify-self-end font-medium tracking-tight text-secondary">TOTALE DOCUMENTO</div>
+                    <div class="font-medium">€ {{ document?.amount | number: '2.2' }}</div>
+                </div> -->
+            </div>
+        </div>
+    </div>
+    <mat-drawer-container *ngIf="document.client" class="w-full h-full mt-50 rounded-2xl shadow-lg overflow-hidden">
+        <mat-drawer-content>
+            <!-- Pulsante icona per aprire/chiudere il drawer -->
+            <button mat-icon-button (click)="drawer.toggle()" class="absolute top-4 right-4 z-10">
+                <mat-icon>{{ drawer.opened ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+            </button>
+            <!-- Dettagli documento -->
+            <div class="p-8">
+                <h2 class="text-2xl font-bold mb-4">Bill To</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <div><span class="font-semibold">Cliente:</span> {{ document.client?.displayName }}</div>
+                        <div><span class="font-semibold">Indirizzo:</span> {{ document.client?.address }}</div>
+                        <div><span class="font-semibold">Città:</span> {{ document.client?.city }}</div>
+                        <div><span class="font-semibold">CF:</span> {{ document.client?.fiscalCode }}</div>
+                        <div><span class="font-semibold">PIVA:</span> {{ document.client?.taxCode }}</div>
+                    </div>
+                    <div>
+                        <div *ngIf="document.type !== 'NC'">FATTURA</div>
+                        <div *ngIf="document.type === 'NC'">NOTA DI CREDITO</div>
+                        <div>
+                            <span class="font-semibold">Numero:</span> {{ document?.sectional }}-{{ document?.number }}
+                        </div>
+                        <div><span class="font-semibold">Data:</span> {{ document?.date | date: 'dd/MM/yyyy' }}</div>
+                        <div><span class="font-semibold">Totale:</span> € {{ document?.amount | number: '2.2' }}</div>
+                    </div>
+                </div>
+            </div>
+        </mat-drawer-content>
+        <mat-drawer
+            #drawer
+            mode="side"
+            position="end"
+            [opened]="drawerOpened"
+            class="w-96 bg-white dark:bg-gray-900 p-6 border-l">
+            <h3 class="text-xl font-bold mb-4">Servizi Fatturabili</h3>
+
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <button mat-icon-button (click)="checkAll()" [matTooltip]="'Common.SelectAll' | transloco">
+                        <mat-icon [svgIcon]="'mat_outline:checklist'"></mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="uncheckAll()" [matTooltip]="'Common.UnselectAll' | transloco">
+                        <mat-icon [svgIcon]="'mat_outline:rule'"></mat-icon>
+                    </button>
+                </div>
+                <button
+                    mat-raised-button
+                    color="primary"
+                    class="ml-auto"
+                    (click)="onInsertSelectedServices()"
+                    [disabled]="!hasSelectedServices">
+                    Insert
+                </button>
+            </div>
+
+            <div *ngIf="servicesToBeBilled.length > 0; else noServices">
+                <ul class="space-y-2">
+                    <li
+                        *ngFor="let service of servicesToBeBilled; let i = index"
+                        class="p-2 rounded bg-gray-100 dark:bg-gray-800 flex items-center">
+                        <mat-checkbox [(ngModel)]="service.selected" class="mr-3"></mat-checkbox>
+                        <div class="flex-1">
+                            <div class="font-semibold">{{ service.code }}</div>
+                            <div class="font-semibold">{{ service.title }}</div>
+                            <div class="text-sm text-gray-600">{{ service.location }}</div>
+                            <div class="text-sm">Importo: € {{ service.priceCalculated | number: '2.2' }}</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <ng-template #noServices>
+                <div class="text-gray-500">Nessun servizio fatturabile per questo cliente.</div>
+            </ng-template>
+        </mat-drawer>
+    </mat-drawer-container>
+</div>

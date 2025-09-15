@@ -5,9 +5,6 @@ Gestione Utenti
 siamo d'accordo per 5+5 in questo anno e 5+5 nel prossimo quello dopo ancora riparte il solo canone
 
 
-ricorda di eliminare tutti gli .AllowAnonymous()
-
-
 Servizi	
 	gestire il menù con N opzioni nell'intestazione a dx
 	
@@ -35,8 +32,6 @@ proposta inviata > pallino giallo
 
 quando la guida risponde. arriva la mail. se la guida conferma, devo rientrare nel servizio, e mettere il pallino verde
 
-no suggerimenti !!!!!!!!!!!!!!!!!!!!
-
 la sera prima inviare notifica promemoria in automatico
 
 vedere di collegare 2 o più servizi, per poter dire a guida1 chi è la guida2
@@ -47,20 +42,19 @@ dopo 120gg invio automatico di 2° sollecito
 
 TUTTO IL MONDO FATTURAZIONE!!!!!!!!!!!!!!!!!!!!!!!!!
 
+al momento quando sono nell'estratto conto di un'agenzia, posso selezionare N servizi e quindi cliccare su passa a fatturazione
+
+adesso, oltre a questa modalità, voglio anche che, fatto ad documento, scelgo il cliente e nella spalla voglio vedere la lista dei servizi che devo ancora fatturare e quindi poterne importare 1 o N.
+
+in tutti e i due casi, deve essere possibile andare in edit su ogni singola riga.
+
+
+non funziona add di un contatto
 -----------------------------------------------------------------------------------------------------
 
-mercoledì
+PasswordExpiration
 
-	visualizzare event history
 
-	aggiornamento server
-		toolkit
-	versione Turis
 
-	finire giro di test della proposta
-		accept
-			notifica signalR
-		reject
-			notifica signalR
+Manca tutta la gestione dei pagamenti
 
-	creare task serale per notificare remainds

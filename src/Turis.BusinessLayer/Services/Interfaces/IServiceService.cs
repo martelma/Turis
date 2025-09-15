@@ -24,4 +24,5 @@ public interface IServiceService : IService
 	Task<Result> AcceptServiceAsync(Guid serviceId);
 	Task<Result> RejectServiceAsync(Guid serviceId);
 	Task<Result<LinkedServiceModel>> LinkedServicesAsync(Guid serviceId);
+	Task<Result<List<ServiceEasyModel>>> ToBeBilledAsync(Guid clientId);
 }

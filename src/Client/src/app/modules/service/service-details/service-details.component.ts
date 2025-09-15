@@ -22,7 +22,6 @@ import { ServiceViewComponent } from '../service-view/service-view.component';
 import { ServiceComponent } from '../service.component';
 import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
 import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summary.component';
-import { StatusTypes } from 'app/constants';
 import { ConfirmationDialogService } from 'app/shared/services/confirmation-dialog.service';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 

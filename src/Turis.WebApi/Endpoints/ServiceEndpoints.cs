@@ -25,6 +25,17 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 				return operation;
 			});
 
+		templateApiGroup.MapGet("to-be-billed/{clientId}", ToBeBilledAsync)
+			.Produces<IEnumerable<ServiceModel>>(StatusCodes.Status200OK)
+			.WithOpenApi(operation =>
+			{
+				operation.Summary = "Gets the services to be billed";
+
+				operation.Response(StatusCodes.Status200OK).Description = "The services to be billed";
+
+				return operation;
+			});
+
 		templateApiGroup.MapGet("contact-summary/{contactId:guid}", ContactSummaryAsync)
 			.Produces<PaginatedList<ServiceModel>>(StatusCodes.Status200OK)
 			.WithOpenApi(operation =>
@@ -235,6 +246,9 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 
 	private static async Task<IResult> SummaryAsync(HttpContext httpContext, IServiceService service)
 		=> (await service.SummaryAsync()).ToResponse(httpContext);
+
+	private static async Task<IResult> ToBeBilledAsync(HttpContext httpContext, IServiceService service, Guid clientId)
+		=> (await service.ToBeBilledAsync(clientId)).ToResponse(httpContext);
 
 	private static async Task<IResult> ContactSummaryAsync(HttpContext httpContext, IServiceService service, Guid contactId)
 		=> (await service.ContactSummaryAsync(contactId)).ToResponse(httpContext);

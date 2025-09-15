@@ -9,8 +9,29 @@
                     <mat-icon [svgIcon]="'heroicons_outline:arrow-long-left'"></mat-icon>
                 </a>
 
+                <!-- Create Mode -->
+                <ng-container *ngIf="isCreate"> </ng-container>
+
+                <!-- Edit Mode -->
+                <ng-container *ngIf="editMode">
+                    <!-- Cancel Edit Document -->
+                    <button mat-stroked-button (click)="cancel()">
+                        <span>{{ 'General.Cancel' | transloco }}</span>
+                    </button>
+
+                    <!-- Save Document -->
+                    <button
+                        *ngIf="userCanUpdateDocument"
+                        mat-flat-button
+                        color="primary"
+                        (click)="save()"
+                        [disabled]="!editDocument?.changed">
+                        <span>{{ 'General.Save' | transloco }}</span>
+                    </button>
+                </ng-container>
+
                 <!-- View Mode -->
-                <ng-container *ngIf="!editMode">
+                <ng-container *ngIf="!isCreate && !editMode">
                     <div class="flex flex-1 justify-between items-center">
                         <div class="flex space-x-2">
                             <!-- Edit Document -->
@@ -44,27 +65,9 @@
                         </mat-menu> -->
                     </div>
                 </ng-container>
-
-                <!-- Edit Mode -->
-                <ng-container *ngIf="editMode">
-                    <!-- Cancel Edit Document -->
-                    <button mat-stroked-button (click)="cancel()">
-                        <span>{{ 'General.Cancel' | transloco }}</span>
-                    </button>
-
-                    <!-- Save Document -->
-                    <button
-                        *ngIf="userCanUpdateDocument"
-                        mat-flat-button
-                        color="primary"
-                        (click)="save()"
-                        [disabled]="!editDocument?.changed">
-                        <span>{{ 'General.Save' | transloco }}</span>
-                    </button>
-                </ng-container>
             </div>
 
-            <ng-container *ngIf="!editMode">
+            <ng-container *ngIf="!isCreate && !editMode">
                 <!-- Document Info -->
                 <div class="flex flex-wrap items-center py-4 px-6">
                     <div class="relative flex flex-auto flex-col text-2xl">
@@ -91,16 +94,22 @@
             </ng-container>
         </div>
 
-        <!-- View Mode -->
-        <ng-container *ngIf="!editMode">
+        <!-- Create Mode -->
+        <ng-container *ngIf="isCreate">
             <!-- not edit mode -->
-            <app-document-view #viewDocument class="flex flex-1" [document]="document"></app-document-view>
+            <app-document-new #viewDocument class="flex flex-1"></app-document-new>
         </ng-container>
 
         <!-- Edit Mode -->
         <ng-container *ngIf="editMode">
             <!-- edit mode -->
             <app-document-edit #editDocument class="flex flex-1" [document]="document"></app-document-edit>
+        </ng-container>
+
+        <!-- View Mode -->
+        <ng-container *ngIf="!isCreate && !editMode">
+            <!-- not edit mode -->
+            <app-document-view #viewDocument class="flex flex-1" [document]="document"></app-document-view>
         </ng-container>
     </ng-container>
 
