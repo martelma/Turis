@@ -240,8 +240,7 @@ public class BullingService(ApplicationDbContext dbContext
 		foreach (var item in castellettoIva)
 		{
 			var imposta = Math.Round(item.Imposta, 2);
-			var esigibilitaIva = GetEsigibilitaIVA(item.CodiceEsigibilitaIVA);
-			if (esigibilitaIva == EsigibilitaIVAType.S)
+			if (item.CodiceEsigibilitaIVA == EsigibilitaIVAType.S)
 				ivaSplitPayment += imposta;
 
 			fatturaElettronicaBody.DatiBeniServizi.DatiRiepilogo[indexCastelletto] = new DatiRiepilogoType
@@ -249,7 +248,7 @@ public class BullingService(ApplicationDbContext dbContext
 				AliquotaIVA = Math.Round(item.AliquotaIva, 2),
 				ImponibileImporto = Math.Round(item.Imponibile, 2),
 				Imposta = imposta,
-				EsigibilitaIVA = esigibilitaIva,
+				EsigibilitaIVA = item.CodiceEsigibilitaIVA,
 				EsigibilitaIVASpecified = item.AliquotaIva > 0,
 
 				Natura = GetNaturaType(item.CodiceNatura),
@@ -345,7 +344,7 @@ public class BullingService(ApplicationDbContext dbContext
 			.Select(x => new CastellettoIva
 			{
 				CodiceNatura = x.Key.CodiceNatura,
-				CodiceEsigibilitaIVA = x.Key.CodiceEsigibilitaIVA,
+				CodiceEsigibilitaIVA = Enum.TryParse<EsigibilitaIVAType>(x.Key.CodiceEsigibilitaIVA, out var esigibilitaIva) ? esigibilitaIva : EsigibilitaIVAType.D,
 				RiferimentoNormativo = x.Key.RiferimentoNormativo,
 				AliquotaIva = x.Key.VatRate,
 				Imponibile = x.Sum(y => y.RowAmount),
@@ -750,7 +749,7 @@ public class FatturaElettronica
 public class CastellettoIva
 {
 	public string CodiceNatura { get; set; }
-	public int CodiceEsigibilitaIVA { get; set; }
+	public EsigibilitaIVAType CodiceEsigibilitaIVA { get; set; }
 	public string RiferimentoNormativo { get; set; }
 	public decimal AliquotaIva { get; set; }
 	public decimal Imponibile { get; set; }

@@ -33,6 +33,12 @@ export const WorkflowCollaboratorStatusTypes = [
     { value: 'Confirmed', text: 'Confirmed', colorClass: 'bg-green-500' },
 ];
 
+export const EsigibilitaIVATypes = [
+    { value: 'I', text: 'IVA ad esigibilità immediata' },
+    { value: 'D', text: 'IVA ad esigibilità differita' },
+    { value: 'S', text: 'Scissione dei pagamenti' },
+];
+
 export const BillingStatusTypes = [
     { value: 'CashedIn', text: 'Cashed In', colorClass: 'bg-green-500' },
     { value: 'ToBeCashed', text: 'To Be Cashed', colorClass: 'bg-yellow-500' },

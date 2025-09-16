@@ -497,6 +497,7 @@ public class ServiceService(ApplicationDbContext dbContext
 	{
 		var list = dbContext
 			.GetData<Service>()
+			.Include(x => x.Collaborator)
 			.Where(x => x.ClientId == clientId)
 			//TODO: impostare condizione per estrarre solo i servizi da fatturare
 			//.Where(x=>x. == )

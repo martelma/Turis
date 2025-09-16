@@ -28,7 +28,7 @@ public class DocumentItemModel : BaseModel
 		}
 	}
 
-	public int CodiceEsigibilitaIVA { get; set; }
+	public string CodiceEsigibilitaIVA { get; set; }
 	public decimal VatRate { get; set; }
 
 	public decimal Vat => RowAmount * VatRate / 100;

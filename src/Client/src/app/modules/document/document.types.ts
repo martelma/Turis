@@ -1,6 +1,7 @@
 import { Contact } from 'app/modules/contact/contact.types';
 import { BaseSearchParameters } from 'app/shared/types/shared.types';
 import { Service } from '../service/service.types';
+import { AliquotaIva } from '../configuration/aliquote-iva/aliquota-iva.types';
 
 export class Document {
     id: string;
@@ -57,6 +58,7 @@ export class DocumentSearchParameters extends BaseSearchParameters {
 }
 
 export class DocumentItem {
+    id: string;
     documentId: string;
     document: Document;
     serviceId: string;
@@ -71,6 +73,7 @@ export class DocumentItem {
     discountPercentage: number;
     rowAmount: number;
     codiceEsigibilitaIVA: number;
+    vat: AliquotaIva = null;
     vatRate: number;
-    vat: number;
+    vatAmount: number;
 }

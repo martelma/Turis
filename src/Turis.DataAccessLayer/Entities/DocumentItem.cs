@@ -13,9 +13,9 @@ public class DocumentItem : BaseEntity
 	public string Description { get; set; }
 	public string CodiceNatura { get; set; }
 	public string RiferimentoNormativo { get; set; }
+	public string CodiceEsigibilitaIVA { get; set; }
 	public decimal Quantity { get; set; }
 	public decimal Price { get; set; }
 	public decimal DiscountPercentage { get; set; }
 	public decimal VatRate { get; set; }
-	public int CodiceEsigibilitaIVA { get; set; }
 }

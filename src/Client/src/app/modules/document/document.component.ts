@@ -9,6 +9,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { AppSettings } from 'app/constants';
 import { DocumentSidebarComponent } from './document-sidebar/document-sidebar.component';
+import { NgTemplateOutlet } from '@angular/common';
 
 @UntilDestroy()
 @Component({
@@ -17,6 +18,7 @@ import { DocumentSidebarComponent } from './document-sidebar/document-sidebar.co
     encapsulation: ViewEncapsulation.None,
     standalone: true,
     imports: [
+        NgTemplateOutlet,
         MatSidenavModule,
         MatIconModule,
         MatButtonModule,

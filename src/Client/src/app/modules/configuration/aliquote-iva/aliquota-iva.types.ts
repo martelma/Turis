@@ -4,7 +4,7 @@ export interface AliquotaIva {
     id: string;
     code: string;
     name: string;
-    descrition: string;
+    description: string;
     aliquota: number;
     codiceNatura: string;
 }

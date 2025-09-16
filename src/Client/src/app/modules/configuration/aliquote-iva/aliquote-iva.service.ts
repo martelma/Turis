@@ -72,7 +72,7 @@ export class AliquotaIvaService extends BaseEntityService<AliquotaIva> {
                     id: emptyGuid,
                     code: '',
                     name: '',
-                    descrition: '',
+                    description: '',
                     aliquota: 0,
                     codiceNatura: '',
                 }).pipe(

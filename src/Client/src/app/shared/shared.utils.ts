@@ -58,6 +58,17 @@ export const pad = (num: number, size: number): string => {
     return s;
 };
 
+/**
+ * Genera un nuovo GUID (UUID v4)
+ */
+export function generateGuid(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        const r = (Math.random() * 16) | 0,
+            v = c === 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+    });
+}
+
 export const isProductionMode = environment.production;
 export const isStagingMode = environment.staging;
 export const isDevMode = environment.dev;
