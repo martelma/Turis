@@ -129,20 +129,18 @@ export class JournalEntryDetailsComponent implements OnInit {
     }
 
     private _subscribeJournalEntryEdited(): void {
-        this._journalEntryService.edited$
-            .pipe(untilDestroyed(this))
-            .subscribe((journalEntriesId: string) => {
-                if (journalEntriesId != null) {
-                    this._journalEntryService
-                        .getById(journalEntriesId)
-                        .pipe(untilDestroyed(this))
-                        .subscribe(() => {
-                            this.editMode = true;
-                        });
-                } else {
-                    this.editMode = this.journalEntry.id === undefined;
-                }
-            });
+        this._journalEntryService.edited$.pipe(untilDestroyed(this)).subscribe((journalEntriesId: string) => {
+            if (journalEntriesId != null) {
+                this._journalEntryService
+                    .getById(journalEntriesId)
+                    .pipe(untilDestroyed(this))
+                    .subscribe(() => {
+                        this.editMode = true;
+                    });
+            } else {
+                this.editMode = this.journalEntry.id === undefined;
+            }
+        });
     }
 
     edit(): void {

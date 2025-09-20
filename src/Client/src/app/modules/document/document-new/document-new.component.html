@@ -1,16 +1,16 @@
 <div
-    class="relative flex flex-col flex-auto shrink-0 lg:shrink p-3 lg:overflow-y-auto bg-gray-100 dark:bg-transparent"
+    class="relative flex flex-col flex-auto shrink-0 lg:shrink p-3 lg:overflow-y-auto bg-gray-100 dark:bg-transparent min-h-0"
     fuseScrollReset>
     <!-- Main -->
     <div
-        class="absolute inset-0 flex flex-col flex-0 shadow rounded-2xl overflow-hidden bg-card dark:bg-black dark:bg-opacity-10">
+        class="absolute inset-0 flex flex-col flex-0 shadow overflow-hidden bg-card dark:bg-black dark:bg-opacity-10 min-h-0">
         <!-- Invoice -->
         <div
-            class="min-w-240 p-8 rounded-2xl shadow bg-card print:w-auto print:p-0 print:rounded-none print:shadow-none print:bg-transparent overflow-y-auto">
+            class="min-w-240 p-3 shadow bg-card print:w-auto print:p-0 print:rounded-none print:shadow-none print:bg-transparent overflow-y-auto">
             <div class="flex items-start">
-                <div class="grid grid-cols-max w-8/12 place-items-start gap-y-2">
+                <div class="grid grid-cols-max w-6/12 place-items-start gap-y-2">
                     <mat-form-field class="example-full-width w-full" appearance="fill">
-                        <mat-label for="status" (click)="setBillTo()">Bill To</mat-label>
+                        <mat-label for="status" (click)="setBillTo()">Search Client</mat-label>
                         <input
                             type="text"
                             class="form-control font-bold w-full"
@@ -35,208 +35,248 @@
             </div>
         </div>
     </div>
-    <mat-drawer-container *ngIf="document.client" class="w-full h-full mt-50 rounded-2xl shadow-lg overflow-hidden">
-        <mat-drawer-content class="overflow-y-auto h-full">
+    <mat-drawer-container *ngIf="document.client" class="w-full h-full mt-30 rounded-2xl shadow-lg overflow-visible">
+        <mat-drawer-content class="h-full min-h-0">
             <!-- Pulsante icona per aprire/chiudere il drawer -->
             <button mat-icon-button (click)="drawer.toggle()" class="absolute top-4 right-4 z-10">
                 <mat-icon>{{ drawer.opened ? 'chevron_right' : 'chevron_left' }}</mat-icon>
             </button>
             <!-- Dettagli documento -->
-            <div class="p-8 overflow-y-auto h-full">
-                <h2 class="text-2xl font-bold mb-4">Bill To</h2>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
+            <div class="flex flex-col h-full">
+                <!-- Header fisso -->
+                <div class="flex-none p-8 bg-white dark:bg-gray-900 border-b">
+                    <h2 class="text-2xl font-bold mb-4">Bill To</h2>
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <span class="font-semibold">{{ document.client?.displayName }}</span>
+                            <div>
+                                <span class="font-semibold">{{ document.client?.displayName }}</span>
+                            </div>
+                            <div>
+                                <span class="font-semibold">{{ document.client?.address }}</span>
+                            </div>
+                            <div>
+                                <span class="font-semibold"
+                                    >{{ document.client?.cap }} - {{ document.client?.city }}</span
+                                >
+                            </div>
+                            <div>
+                                <span class="font-semibold">{{ document.client?.fiscalCode }}</span>
+                            </div>
+                            <div>
+                                <span class="font-semibold">{{ document.client?.taxCode }}</span>
+                            </div>
                         </div>
                         <div>
-                            <span class="font-semibold">{{ document.client?.address }}</span>
+                            <div *ngIf="document.type !== 'NC'">FATTURA</div>
+                            <div *ngIf="document.type === 'NC'">NOTA DI CREDITO</div>
+                            <div>
+                                <span class="font-semibold">Data:</span> {{ document?.date | date: 'dd/MM/yyyy' }}
+                            </div>
+                            <div><span class="font-semibold">Sezionale:</span> {{ document?.sectional }}</div>
+                            <div><span class="font-semibold">Numero:</span>{{ document?.number }}</div>
                         </div>
-                        <div>
-                            <span class="font-semibold">{{ document.client?.cap }} - {{ document.client?.city }}</span>
-                        </div>
-                        <div>
-                            <span class="font-semibold">{{ document.client?.fiscalCode }}</span>
-                        </div>
-                        <div>
-                            <span class="font-semibold">{{ document.client?.taxCode }}</span>
-                        </div>
-                    </div>
-                    <div>
-                        <div *ngIf="document.type !== 'NC'">FATTURA</div>
-                        <div *ngIf="document.type === 'NC'">NOTA DI CREDITO</div>
-                        <div><span class="font-semibold">Data:</span> {{ document?.date | date: 'dd/MM/yyyy' }}</div>
-                        <div><span class="font-semibold">Sezionale:</span> {{ document?.sectional }}</div>
-                        <div><span class="font-semibold">Numero:</span>{{ document?.number }}</div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-12 gap-x-1 mt-8 overflow-y-auto">
-                    <!-- Columns -->
-                    <div class="col-span-7 font-medium text-md text-secondary">SERVICE</div>
-                    <div class="col-span-1 font-medium text-md text-right text-secondary">QTY</div>
-                    <div class="col-span-1 font-medium text-md text-right text-secondary">PRICE</div>
-                    <div class="col-span-1 font-medium text-md text-right text-secondary">% DISC.</div>
-                    <div class="col-span-1 font-medium text-md text-right text-secondary">TOTAL</div>
-                    <div class="col-span-1 font-medium text-md text-right text-secondary">% VAT</div>
+                <!-- Intestazione colonne fissa -->
+                <div class="flex-none bg-gray-50 dark:bg-gray-800 border-b">
+                    <div class="grid grid-cols-12 gap-x-1 px-8 py-4">
+                        <div class="col-span-7 font-medium text-md text-secondary">SERVICE</div>
+                        <div class="col-span-1 font-medium text-md text-right text-secondary">QTY</div>
+                        <div class="col-span-1 font-medium text-md text-right text-secondary">PRICE</div>
+                        <div class="col-span-1 font-medium text-md text-right text-secondary">% DISC.</div>
+                        <div class="col-span-1 font-medium text-md text-right text-secondary">TOTAL</div>
+                        <div class="col-span-1 font-medium text-md text-right text-secondary">% VAT</div>
+                    </div>
+                </div>
 
-                    <ng-container *ngFor="let item of document?.items; trackBy: trackByFn">
-                        <!-- Divider -->
-                        <div class="col-span-12 my-4 border-b"></div>
-
-                        <!-- Item: ogni campo in una colonna -->
-                        <div class="col-span-7 flex items-center">
-                            <mat-button
-                                class="min-w-10 min-h-7 h-7 px-2 leading-6 mr-2"
-                                mat-stroked-button
-                                (click)="toggleDetails(item.id)">
-                                <mat-icon
-                                    *ngIf="selectedItem?.id !== item.id"
-                                    class="icon-size-5 mr-2"
-                                    [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
-                                <mat-icon
-                                    *ngIf="selectedItem?.id === item.id"
-                                    class="icon-size-5 mr-2"
-                                    [svgIcon]="'heroicons_outline:arrow-uturn-left'"></mat-icon>
-                            </mat-button>
-                            <span>{{ item.code }} - {{ item.description }}</span>
-                        </div>
-                        <div class="col-span-1 self-center text-right">{{ item.quantity }}</div>
-                        <div class="col-span-1 self-center text-right">€ {{ item.price | number: '2.2' }}</div>
-                        <div class="col-span-1 self-center text-right">
-                            {{ item.discountPercentage | number: '2.2' }} %
-                        </div>
-                        <div class="col-span-1 self-center text-right">€ {{ item.rowAmount | number: '2.2' }}</div>
-                        <div class="col-span-1 self-center text-right">{{ item.vatRate | number: '2.2' }} %</div>
-
-                        <div *ngIf="selectedItem && selectedItem.id === item.id" class="mt-3 mb-3 col-span-12">
-                            <ng-container>
-                                <div class="grid grid-cols-12 gap-2">
-                                    <!-- code -->
-                                    <mat-form-field class="col-span-2">
-                                        <mat-label>{{ 'DocumentItem.Code' | transloco }}</mat-label>
-                                        <input matInput [(ngModel)]="item.code" />
-                                    </mat-form-field>
-                                    <!-- title -->
-                                    <mat-form-field class="col-span-10">
-                                        <mat-label>{{ 'DocumentItem.Description' | transloco }}</mat-label>
-                                        <input matInput [(ngModel)]="item.description" />
-                                    </mat-form-field>
-                                </div>
-                                <div class="grid grid-cols-12 gap-2">
-                                    <!-- aliquotaIVA -->
-                                    <mat-form-field class="col-span-3">
-                                        <mat-label>{{ 'DocumentItem.AliquotaIVA' | transloco }}</mat-label>
-                                        <mat-select
-                                            [(ngModel)]="item.vat"
-                                            placeholder="Select IVA"
-                                            (selectionChange)="onAliquotaIVAChange(item)">
-                                            <mat-option *ngFor="let vat of aliquoteIva" [value]="vat">
-                                                {{ vat.name }}
-                                            </mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
-                                    <!-- codiceEsigibilitaIVA -->
-                                    <mat-form-field class="col-span-3">
-                                        <mat-label>{{ 'DocumentItem.CodiceEsigibilitaIVA' | transloco }}</mat-label>
-                                        <!-- <input matInput [(ngModel)]="item.codiceEsigibilitaIVA" /> -->
-                                        <mat-select
-                                            [(ngModel)]="item.codiceEsigibilitaIVA"
-                                            placeholder="Select Esigibilità IVA">
-                                            <mat-option *ngFor="let x of esigibilitaIVATypes" [value]="x.value">
-                                                {{ x.text }}
-                                            </mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
-                                    <!-- codiceNatura -->
-                                    <mat-form-field class="col-span-3">
-                                        <mat-label>{{ 'DocumentItem.CodiceNatura' | transloco }}</mat-label>
-                                        <input matInput disabled [(ngModel)]="item.codiceNatura" />
-                                    </mat-form-field>
-                                    <!-- riferimentoNormativo -->
-                                    <mat-form-field class="col-span-3">
-                                        <mat-label>{{ 'DocumentItem.RiferimentoNormativo' | transloco }}</mat-label>
-                                        <input matInput disabled [(ngModel)]="item.riferimentoNormativo" />
-                                    </mat-form-field>
-                                </div>
-                                <div class="grid grid-cols-12 gap-2">
-                                    <!-- quantity -->
-                                    <mat-form-field class="col-span-2">
-                                        <mat-label>{{ 'DocumentItem.Quantity' | transloco }}</mat-label>
-                                        <input matInput type="number" [(ngModel)]="item.quantity" />
-                                    </mat-form-field>
-                                    <!-- price -->
-                                    <mat-form-field class="col-span-2">
-                                        <mat-label>{{ 'DocumentItem.Price' | transloco }}</mat-label>
-                                        <input
-                                            matInput
-                                            type="number"
-                                            [(ngModel)]="item.price"
-                                            onchange="refreshAmounts(item)" />
-                                    </mat-form-field>
-                                    <!-- discountPercentage -->
-                                    <mat-form-field class="col-span-2">
-                                        <mat-label>{{ 'DocumentItem.DiscountPercentage' | transloco }}</mat-label>
-                                        <input
-                                            matInput
-                                            type="number"
-                                            [(ngModel)]="item.discountPercentage"
-                                            (ngModelChange)="refreshAmounts(item)" />
-                                    </mat-form-field>
-                                    <!-- rowAmount -->
-                                    <mat-form-field class="col-span-2">
-                                        <mat-label>{{ 'DocumentItem.RowAmount' | transloco }}</mat-label>
-                                        <input matInput type="number" [(ngModel)]="item.rowAmount" disabled />
-                                    </mat-form-field>
-                                </div>
-
-                                <div class="grid grid-cols-12 gap-2 mt-6 items-center">
-                                    <div class="col-span-10"></div>
-                                    <div class="col-span-2 flex justify-end">
-                                        <button
-                                            mat-raised-button
-                                            color="warn"
-                                            (click)="deleteSelectedItem()"
-                                            [matTooltip]="'Common.Delete' | transloco">
+                <!-- Area scrollabile con gli items -->
+                <div class="flex-1 overflow-y-auto min-h-0 relative">
+                    <div class="absolute inset-0 px-8 py-4 overflow-y-auto">
+                        <div
+                            cdkDropList
+                            [cdkDropListData]="document.items"
+                            (cdkDropListDropped)="dropDocumentItem($event)"
+                            class="w-full">
+                            <ng-container *ngFor="let item of document?.items; trackBy: trackByFn">
+                                <!-- Divider -->
+                                <div class="col-span-12 my-4 border-b"></div>
+                                <!-- Item: ogni campo in una colonna -->
+                                <div
+                                    cdkDrag
+                                    class="grid grid-cols-12 gap-x-1 items-center"
+                                    [class.font-bold]="selectedItem && selectedItem.id === item.id">
+                                    <div class="col-span-7 flex items-center">
+                                        <mat-button
+                                            class="min-w-10 min-h-7 h-7 px-2 leading-6 mr-2"
+                                            mat-stroked-button
+                                            (click)="toggleDetails(item.id)">
                                             <mat-icon
-                                                [svgIcon]="'heroicons_outline:trash'"
-                                                class="text-red-600 mr-5"></mat-icon>
-                                            Remove
-                                        </button>
+                                                *ngIf="selectedItem?.id !== item.id"
+                                                class="icon-size-5 mr-2"
+                                                [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
+                                            <mat-icon
+                                                *ngIf="selectedItem?.id === item.id"
+                                                class="icon-size-5 mr-2"
+                                                [svgIcon]="'heroicons_outline:arrow-uturn-left'"></mat-icon>
+                                        </mat-button>
+                                        <span>{{ item.code }} - {{ item.description }}</span>
+                                    </div>
+                                    <div class="col-span-1 self-center text-right">{{ item.quantity }}</div>
+                                    <div class="col-span-1 self-center text-right">
+                                        € {{ item.price | number: '2.2' }}
+                                    </div>
+                                    <div class="col-span-1 self-center text-right">
+                                        {{ item.discountPercentage | number: '2.2' }} %
+                                    </div>
+                                    <div class="col-span-1 self-center text-right">
+                                        € {{ item.rowAmount | number: '2.2' }}
+                                    </div>
+                                    <div class="col-span-1 self-center text-right">
+                                        {{ item.vatRate | number: '2.2' }} %
+                                    </div>
+
+                                    <div
+                                        *ngIf="selectedItem && selectedItem.id === item.id"
+                                        class="mt-3 mb-3 col-span-12 p-3 border rounded-lg bg-yellow-100">
+                                        <ng-container>
+                                            <div class="grid grid-cols-12 gap-2">
+                                                <!-- code -->
+                                                <mat-form-field class="col-span-2">
+                                                    <mat-label>{{ 'DocumentItem.Code' | transloco }}</mat-label>
+                                                    <input matInput [(ngModel)]="item.code" />
+                                                </mat-form-field>
+                                                <!-- title -->
+                                                <mat-form-field class="col-span-10">
+                                                    <mat-label>{{ 'DocumentItem.Description' | transloco }}</mat-label>
+                                                    <input matInput [(ngModel)]="item.description" />
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="grid grid-cols-12 gap-2">
+                                                <!-- aliquotaIVA -->
+                                                <mat-form-field class="col-span-3">
+                                                    <mat-label>{{ 'DocumentItem.AliquotaIVA' | transloco }}</mat-label>
+                                                    <mat-select
+                                                        [(ngModel)]="item.vat"
+                                                        placeholder="Select IVA"
+                                                        (selectionChange)="onAliquotaIVAChange(item)">
+                                                        <mat-option *ngFor="let vat of aliquoteIva" [value]="vat">
+                                                            {{ vat.name }}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                                <!-- codiceEsigibilitaIVA -->
+                                                <mat-form-field class="col-span-3">
+                                                    <mat-label>{{
+                                                        'DocumentItem.CodiceEsigibilitaIVA' | transloco
+                                                    }}</mat-label>
+                                                    <!-- <input matInput [(ngModel)]="item.codiceEsigibilitaIVA" /> -->
+                                                    <mat-select
+                                                        [(ngModel)]="item.codiceEsigibilitaIVA"
+                                                        placeholder="Select Esigibilità IVA">
+                                                        <mat-option
+                                                            *ngFor="let x of esigibilitaIVATypes"
+                                                            [value]="x.value">
+                                                            {{ x.text }}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                                <!-- codiceNatura -->
+                                                <mat-form-field class="col-span-3">
+                                                    <mat-label>{{ 'DocumentItem.CodiceNatura' | transloco }}</mat-label>
+                                                    <input matInput disabled [(ngModel)]="item.codiceNatura" />
+                                                </mat-form-field>
+                                                <!-- riferimentoNormativo -->
+                                                <mat-form-field class="col-span-3">
+                                                    <mat-label>{{
+                                                        'DocumentItem.RiferimentoNormativo' | transloco
+                                                    }}</mat-label>
+                                                    <input matInput disabled [(ngModel)]="item.riferimentoNormativo" />
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="grid grid-cols-12 gap-2">
+                                                <!-- quantity -->
+                                                <mat-form-field class="col-span-2">
+                                                    <mat-label>{{ 'DocumentItem.Quantity' | transloco }}</mat-label>
+                                                    <input matInput type="number" [(ngModel)]="item.quantity" />
+                                                </mat-form-field>
+                                                <!-- price -->
+                                                <mat-form-field class="col-span-2">
+                                                    <mat-label>{{ 'DocumentItem.Price' | transloco }}</mat-label>
+                                                    <input
+                                                        matInput
+                                                        type="number"
+                                                        [(ngModel)]="item.price"
+                                                        onchange="refreshAmounts(item)" />
+                                                </mat-form-field>
+                                                <!-- discountPercentage -->
+                                                <mat-form-field class="col-span-2">
+                                                    <mat-label>{{
+                                                        'DocumentItem.DiscountPercentage' | transloco
+                                                    }}</mat-label>
+                                                    <input
+                                                        matInput
+                                                        type="number"
+                                                        [(ngModel)]="item.discountPercentage"
+                                                        (ngModelChange)="refreshAmounts(item)" />
+                                                </mat-form-field>
+                                                <!-- rowAmount -->
+                                                <mat-form-field class="col-span-2">
+                                                    <mat-label>{{ 'DocumentItem.RowAmount' | transloco }}</mat-label>
+                                                    <input
+                                                        matInput
+                                                        type="number"
+                                                        [(ngModel)]="item.rowAmount"
+                                                        disabled />
+                                                </mat-form-field>
+
+                                                <div class="col-span-4 flex items-center justify-end">
+                                                    <button
+                                                        mat-raised-button
+                                                        color="warn"
+                                                        (click)="deleteSelectedItem()"
+                                                        [matTooltip]="'Common.Delete' | transloco">
+                                                        <mat-icon
+                                                            [svgIcon]="'heroicons_outline:trash'"
+                                                            class="text-red-600 mr-5"></mat-icon>
+                                                        Remove
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </ng-container>
                                     </div>
                                 </div>
                             </ng-container>
                         </div>
-                    </ng-container>
 
-                    <!-- Spacer -->
-                    <div class="col-span-12 mt-16"></div>
+                        <!-- Spacer -->
+                        <div class="col-span-12 mt-16"></div>
 
-                    <!-- Subtotal -->
-                    <div class="col-span-10 self-center font-medium tracking-tight text-secondary">IMPONIBILE</div>
-                    <div class="col-span-2 text-right text-lg">€ {{ document.amount | number: '2.2' }}</div>
-                    <div class="col-span-12 my-3 border-b"></div>
+                        <!-- Subtotal -->
+                        <div class="col-span-10 self-center font-medium tracking-tight text-secondary">IMPONIBILE</div>
+                        <div class="col-span-2 text-right text-lg">€ {{ document.amount | number: '2.2' }}</div>
+                        <div class="col-span-12 my-3 border-b"></div>
 
-                    <!-- Tax -->
-                    <div class="col-span-10 self-center font-medium tracking-tight text-secondary">IVA</div>
-                    <div class="col-span-2 text-right text-lg">€ {{ document.vat | number: '2.2' }}</div>
-                    <div class="col-span-12 my-3 border-b"></div>
+                        <!-- Tax -->
+                        <div class="col-span-10 self-center font-medium tracking-tight text-secondary">IVA</div>
+                        <div class="col-span-2 text-right text-lg">€ {{ document.vat | number: '2.2' }}</div>
+                        <div class="col-span-12 my-3 border-b"></div>
 
-                    <!-- Bollo -->
-                    <div class="col-span-10 self-center font-medium tracking-tight text-secondary">IMPORTO BOLLO</div>
-                    <div class="col-span-2 text-right text-lg">€ {{ document.importoBollo | number: '2.2' }}</div>
-                    <div class="col-span-12 my-3 border-b"></div>
+                        <!-- Bollo -->
+                        <div class="col-span-10 self-center font-medium tracking-tight text-secondary">
+                            IMPORTO BOLLO
+                        </div>
+                        <div class="col-span-2 text-right text-lg">€ {{ document.importoBollo | number: '2.2' }}</div>
+                        <div class="col-span-12 my-3 border-b"></div>
 
-                    <!-- Discount -->
-                    <!-- <div class="col-span-10 self-center font-medium tracking-tight text-secondary">DISCOUNT</div>
-                <div class="col-span-2 text-right text-lg">€ {{document.discount | number: '2.2'}}</div>
-                <div class="col-span-12 my-3 border-b"></div> -->
-
-                    <!-- Total -->
-                    <div class="col-span-10 self-center text-2xl font-medium tracking-tight text-secondary">
-                        Totale Documento
+                        <!-- Total -->
+                        <div class="col-span-10 self-center text-2xl font-medium tracking-tight text-secondary">
+                            Totale Documento
+                        </div>
+                        <div class="col-span-2 text-right text-2xl font-medium">
+                            € {{ document.total | number: '2.2' }}
+                        </div>
                     </div>
-                    <div class="col-span-2 text-right text-2xl font-medium">€ {{ document.total | number: '2.2' }}</div>
                 </div>
             </div>
         </mat-drawer-content>
@@ -245,53 +285,67 @@
             mode="side"
             position="end"
             [opened]="drawerOpened"
-            class="w-120 bg-white dark:bg-gray-900 p-6 border-l overflow-y-auto max-h-[600px]">
-            <h3 class="text-xl font-bold mb-4">Servizi Fatturabili</h3>
-
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <button mat-icon-button (click)="checkAll()" [matTooltip]="'Common.SelectAll' | transloco">
-                        <mat-icon [svgIcon]="'mat_outline:checklist'"></mat-icon>
-                    </button>
-                    <button mat-icon-button (click)="uncheckAll()" [matTooltip]="'Common.UnselectAll' | transloco">
-                        <mat-icon [svgIcon]="'mat_outline:rule'"></mat-icon>
-                    </button>
-                    <button
-                        mat-icon-button
-                        (click)="loadServicesToBeBuill()"
-                        [matTooltip]="'Common.Refresh' | transloco">
-                        <mat-icon [svgIcon]="'heroicons_outline:arrow-path'"></mat-icon>
-                    </button>
+            class="w-120 bg-white dark:bg-gray-900 p-0 border-l flex flex-col h-full min-h-0">
+            <!-- Sticky header: title on first row, actions on second row -->
+            <div class="sticky top-0 z-20 border-b bg-white dark:bg-gray-900">
+                <!-- Title row -->
+                <div class="p-3">
+                    <h3 class="text-xl font-bold mb-0 ml-2">Servizi Fatturabili</h3>
                 </div>
-                <button
-                    mat-raised-button
-                    color="primary"
-                    class="ml-auto"
-                    (click)="onInsertSelectedServices()"
-                    [disabled]="!hasSelectedServices">
-                    Insert
-                </button>
+
+                <!-- Actions row: icons left, Insert on the right -->
+                <div class="p-2 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <button mat-icon-button (click)="checkAll()" [matTooltip]="'Common.SelectAll' | transloco">
+                            <mat-icon [svgIcon]="'mat_outline:checklist'"></mat-icon>
+                        </button>
+
+                        <button mat-icon-button (click)="uncheckAll()" [matTooltip]="'Common.UnselectAll' | transloco">
+                            <mat-icon [svgIcon]="'mat_outline:rule'"></mat-icon>
+                        </button>
+
+                        <button
+                            mat-icon-button
+                            (click)="loadServicesToBeBuill()"
+                            [matTooltip]="'Common.Refresh' | transloco">
+                            <mat-icon [svgIcon]="'heroicons_outline:arrow-path'"></mat-icon>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center">
+                        <button
+                            mat-raised-button
+                            color="primary"
+                            (click)="onInsertSelectedServices()"
+                            [disabled]="!hasSelectedServices">
+                            Insert
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <div *ngIf="servicesToBeBilled.length > 0; else noServices" class="overflow-y-auto h-full">
-                <ul class="space-y-2">
-                    <li
-                        *ngFor="let service of servicesToBeBilled; let i = index"
-                        class="p-2 rounded bg-gray-100 dark:bg-gray-800 flex items-center">
-                        <mat-checkbox [(ngModel)]="service.selected" class="mr-3"></mat-checkbox>
-                        <div class="flex-1">
-                            <div class="font-semibold">{{ service.code }}</div>
-                            <div class="font-semibold">{{ service.title }}</div>
-                            <div class="font-semibold">{{ service.collaborator?.fullName }}</div>
-                            <div class="text-sm text-gray-600">{{ service.location }}</div>
-                            <div class="text-sm">Importo: € {{ service.priceCalculated | number: '2.2' }}</div>
-                        </div>
-                    </li>
-                </ul>
+            <!-- Scrollable list area -->
+            <div class="p-4 overflow-y-auto flex-1 h-full">
+                <div *ngIf="servicesToBeBilled.length > 0; else noServices" class="h-full">
+                    <ul class="space-y-2 h-full">
+                        <li
+                            *ngFor="let service of servicesToBeBilled; let i = index"
+                            class="p-2 rounded bg-gray-100 dark:bg-gray-800 flex items-center">
+                            <mat-checkbox [(ngModel)]="service.selected" class="mr-3"></mat-checkbox>
+                            <div class="flex-1">
+                                <div class="font-semibold">{{ service.code }}</div>
+                                <div class="font-semibold">{{ service.title }}</div>
+                                <div class="font-semibold">{{ service.collaborator?.fullName }}</div>
+                                <div class="text-sm text-gray-600">{{ service.location }}</div>
+                                <div class="text-sm">Importo: € {{ service.priceCalculated | number: '2.2' }}</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <ng-template #noServices>
+                    <div class="text-gray-500">Nessun servizio fatturabile per questo cliente.</div>
+                </ng-template>
             </div>
-            <ng-template #noServices>
-                <div class="text-gray-500">Nessun servizio fatturabile per questo cliente.</div>
-            </ng-template>
         </mat-drawer>
     </mat-drawer-container>
 </div>

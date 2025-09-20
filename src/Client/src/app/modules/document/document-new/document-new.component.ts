@@ -43,6 +43,7 @@ import { generateGuid } from 'app/shared/shared.utils';
 import { DocumentService } from '../document.service';
 import { AliquotaIvaService } from 'app/modules/configuration/aliquote-iva/aliquote-iva.service';
 import { AliquotaIva } from 'app/modules/configuration/aliquote-iva/aliquota-iva.types';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @UntilDestroy()
 @Component({
@@ -285,6 +286,14 @@ export class DocumentNewComponent implements OnInit {
             this.document.clientId = selectedClient.id;
             this.clientControl.setValue(selectedClient.companyName);
             this.loadServicesToBeBuill();
+        });
+    }
+
+    dropDocumentItem(event: CdkDragDrop<DocumentItem[]>) {
+        moveItemInArray(this.document.items, event.previousIndex, event.currentIndex);
+        // Aggiorna la property row per ogni item secondo il nuovo ordinamento
+        this.document.items.forEach((item, idx) => {
+            item.row = idx + 1;
         });
     }
 }
