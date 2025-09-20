@@ -30,7 +30,7 @@ public class ContactService(IDbContext dbContext
 {
 	private const string EntryName = nameof(Contact);
 
-	private async Task<List<Bookmark>> GetMyBookmarks() 
+	private async Task<List<Bookmark>> GetMyBookmarks()
 		=> await bookmarkService.ListAsync(userService.GetUserId(), EntryName);
 
 	public Task<Result<TeamSummaryModel>> TeamSummaryAsync()
@@ -52,7 +52,7 @@ public class ContactService(IDbContext dbContext
 	public async Task<Result<PaginatedList<ContactModel>>> ListAsync(ContactSearchParameters parameters)
 	{
 		var bookmarks = await GetMyBookmarks();
-	
+
 		var paginator = new Paginator(parameters);
 
 		var query = dbContext.GetData<Contact>()
@@ -198,7 +198,7 @@ public class ContactService(IDbContext dbContext
 		await entityTagService.UpdateTagsAsync(EntryName, record.Id, request.Tags);
 
 		await dbContext.SaveAsync();
-		
+
 		await trackingService.AddOrUpdate(EntryName, record.Id);
 
 		return record.ToModel();
@@ -240,4 +240,41 @@ public class ContactService(IDbContext dbContext
 
 		return Task.FromResult<Result<IEnumerable<ContactModel>>>(model);
 	}
+
+	public async Task<Result<List<ClientBillingSummaryModel>>> UnbilledSummaryAsync()
+	{
+		var list = (
+			from s in dbContext.GetData<DataAccessLayer.Entities.Service>()
+			join di in dbContext.GetData<DocumentItem>() on s.Id equals di.ServiceId into gj
+			from subDi in gj.DefaultIfEmpty()
+			where subDi == null && s.ClientId != null
+			group s by s.Client into g
+			select new
+			{
+				Client = g.Key,
+				ServiceCount = g.Count(),
+				TotalAmount = g.Sum(x => x.PriceCalculated)
+			}
+		).ToList();
+
+		var model = new List<ClientBillingSummaryModel>();
+		foreach (var item in list)
+		{
+			model.Add(new ClientBillingSummaryModel
+			{
+				Client = item.Client.ToModel(),
+				ServiceCount = item.ServiceCount,
+				TotalAmount = item.TotalAmount
+			});
+		}
+
+		return model;
+	}
+}
+
+public class ClientBillingSummaryModel
+{
+	public ContactModel Client { get; set; }
+	public int ServiceCount { get; set; }
+	public decimal TotalAmount { get; set; }
 }

@@ -32,6 +32,51 @@
                         </mat-autocomplete>
                     </mat-form-field>
                 </div>
+                <div class="grid grid-cols-max w-6/12 place-items-end gap-y-2">
+                    <div class="grid grid-cols-2 gap-x-4 text-right">
+                        <div class="text-gray-600">Clienti da fatturare:</div>
+                        <div class="font-semibold">{{ countClientsToBeBilled }}</div>
+                        <div class="text-gray-600">Totale servizi:</div>
+                        <div class="font-semibold">{{ totalServiceCount }}</div>
+                        <div class="text-gray-600">Totale da fatturare:</div>
+                        <div class="font-semibold">€ {{ totalBillingAmount | number: '2.2' }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="!document.client" class="w-full h-full mt-10 rounded-2xl shadow-lg overflow-visible">
+        <div class="flex flex-col h-full">
+            <mat-icon class="text-6xl text-gray-400 mb-4" [svgIcon]="'heroicons_outline:document-text'"></mat-icon>
+
+            <div class="flex flex-col h-full">
+                <!-- Intestazione colonne fissa -->
+                <div class="flex-none bg-gray-50 dark:bg-gray-800 border-b">
+                    <div class="grid grid-cols-12 gap-x-1 gap-y-1 px-2 py-2">
+                        <div class="col-span-9 font-medium text-md text-secondary">CLIENT</div>
+                        <div class="col-span-1 font-medium text-md text-right text-secondary">SERIVCES</div>
+                        <div class="col-span-2 font-medium text-md text-right text-secondary">TOTAL</div>
+                    </div>
+                </div>
+
+                <!-- Area scrollabile con gli items -->
+                <div class="flex-1 overflow-y-auto min-h-0 relative">
+                    <div class="absolute inset-0 px-2 py-2 overflow-y-auto">
+                        <ng-container *ngFor="let item of clientsToBeBilled; trackBy: trackByFn">
+                            <div
+                                (dblclick)="setClient(item.client)"
+                                class="grid grid-cols-12 gap-x-1 gap-y-2 items-center">
+                                <div class="col-span-9 flex items-start">
+                                    <span>{{ item.client.code }} - {{ item.client.fullName }}</span>
+                                </div>
+                                <div class="col-span-1 self-center text-right">{{ item.serviceCount }}</div>
+                                <div class="col-span-2 self-center text-right">
+                                    € {{ item.totalAmount | number: '2.2' }}
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -44,7 +89,7 @@
             <!-- Dettagli documento -->
             <div class="flex flex-col h-full">
                 <!-- Header fisso -->
-                <div class="flex-none p-8 bg-white dark:bg-gray-900 border-b">
+                <div class="flex-none p-3 bg-white dark:bg-gray-900 border-b">
                     <h2 class="text-2xl font-bold mb-4">Bill To</h2>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
@@ -249,32 +294,38 @@
                             </ng-container>
                         </div>
 
-                        <!-- Spacer -->
-                        <div class="col-span-12 mt-16"></div>
+                        <div class="grid grid-cols-12 gap-x-1 mt-16">
+                            <!-- Spacer -->
+                            <!-- <div class="col-span-12 mt-16"></div> -->
 
-                        <!-- Subtotal -->
-                        <div class="col-span-10 self-center font-medium tracking-tight text-secondary">IMPONIBILE</div>
-                        <div class="col-span-2 text-right text-lg">€ {{ document.amount | number: '2.2' }}</div>
-                        <div class="col-span-12 my-3 border-b"></div>
+                            <!-- Subtotal -->
+                            <div class="col-span-10 self-center font-medium tracking-tight text-secondary">
+                                IMPONIBILE
+                            </div>
+                            <div class="col-span-2 text-right text-lg">€ {{ document.amount | number: '2.2' }}</div>
+                            <div class="col-span-12 my-3 border-b"></div>
 
-                        <!-- Tax -->
-                        <div class="col-span-10 self-center font-medium tracking-tight text-secondary">IVA</div>
-                        <div class="col-span-2 text-right text-lg">€ {{ document.vat | number: '2.2' }}</div>
-                        <div class="col-span-12 my-3 border-b"></div>
+                            <!-- Tax -->
+                            <div class="col-span-10 self-center font-medium tracking-tight text-secondary">IVA</div>
+                            <div class="col-span-2 text-right text-lg">€ {{ document.vat | number: '2.2' }}</div>
+                            <div class="col-span-12 my-3 border-b"></div>
 
-                        <!-- Bollo -->
-                        <div class="col-span-10 self-center font-medium tracking-tight text-secondary">
-                            IMPORTO BOLLO
-                        </div>
-                        <div class="col-span-2 text-right text-lg">€ {{ document.importoBollo | number: '2.2' }}</div>
-                        <div class="col-span-12 my-3 border-b"></div>
+                            <!-- Bollo -->
+                            <div class="col-span-10 self-center font-medium tracking-tight text-secondary">
+                                IMPORTO BOLLO
+                            </div>
+                            <div class="col-span-2 text-right text-lg">
+                                € {{ document.importoBollo | number: '2.2' }}
+                            </div>
+                            <div class="col-span-12 my-3 border-b"></div>
 
-                        <!-- Total -->
-                        <div class="col-span-10 self-center text-2xl font-medium tracking-tight text-secondary">
-                            Totale Documento
-                        </div>
-                        <div class="col-span-2 text-right text-2xl font-medium">
-                            € {{ document.total | number: '2.2' }}
+                            <!-- Total -->
+                            <div class="col-span-10 self-center text-2xl font-medium tracking-tight text-secondary">
+                                Totale Documento
+                            </div>
+                            <div class="col-span-2 text-right text-2xl font-medium">
+                                € {{ document.total | number: '2.2' }}
+                            </div>
                         </div>
                     </div>
                 </div>

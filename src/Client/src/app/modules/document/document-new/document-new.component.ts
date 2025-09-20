@@ -33,7 +33,7 @@ import { Contact } from 'app/modules/contact/contact.types';
 import { ContactService } from 'app/modules/contact/contact.service';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { debounceTime, distinctUntilChanged, Observable, switchMap } from 'rxjs';
-import { Document, DocumentItem } from './../document.types';
+import { ClientBillingSummary, Document, DocumentItem } from './../document.types';
 import { ServiceService } from 'app/modules/service/service.service';
 import { Service } from 'app/modules/service/service.types';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
@@ -95,6 +95,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 export class DocumentNewComponent implements OnInit {
     document: Document = new Document();
     clientControl = new FormControl();
+    clientsToBeBilled: ClientBillingSummary[] = [];
     servicesToBeBilled: Service[] = [];
 
     aliquoteIva: AliquotaIva[] = [];
@@ -110,6 +111,10 @@ export class DocumentNewComponent implements OnInit {
     esigibilitaIVATypes = EsigibilitaIVATypes;
 
     generateGuid = generateGuid();
+
+    countClientsToBeBilled: number;
+    totalServiceCount = 0;
+    totalBillingAmount = 0;
 
     constructor(
         private _formBuilder: UntypedFormBuilder,
@@ -131,6 +136,8 @@ export class DocumentNewComponent implements OnInit {
             this.aliquoteIva = list.items;
             console.log('Aliquote IVA:', this.aliquoteIva);
         });
+
+        this.loadClientsToBeBill();
     }
 
     onDataChange(value: Contact) {}
@@ -141,14 +148,30 @@ export class DocumentNewComponent implements OnInit {
 
     onSelectedClient(event: any) {
         const selectedClient: Contact = event.option.value;
-        console.log('selectedClient', selectedClient);
+        // console.log('selectedClient', selectedClient);
         this.document.client = selectedClient;
         this.document.clientId = selectedClient.id;
         this.clientControl.setValue(selectedClient.companyName);
-        this.loadServicesToBeBuill();
+        this.loadServicesToBeBill();
     }
 
-    loadServicesToBeBuill() {
+    loadClientsToBeBill() {
+        this._contactService.listClientsToBeBilled().subscribe(data => {
+            this.clientsToBeBilled = data;
+            // console.log('clientsToBeBilled', this.clientsToBeBilled);
+            this.countClientsToBeBilled = this.clientsToBeBilled.length;
+            this.totalServiceCount = this.clientsToBeBilled.reduce(
+                (total, client) => total + (client.serviceCount || 0),
+                0,
+            );
+            this.totalBillingAmount = this.clientsToBeBilled.reduce(
+                (total, client) => total + (client.totalAmount || 0),
+                0,
+            );
+        });
+    }
+
+    loadServicesToBeBill() {
         this._serviceService.listServicesToBeBilled(this.document.clientId).subscribe(services => {
             this.servicesToBeBilled = services;
             console.log('servicesToBeBilled', this.servicesToBeBilled);
@@ -177,8 +200,7 @@ export class DocumentNewComponent implements OnInit {
 
     onInsertSelectedServices() {
         const selectedServices = this.servicesToBeBilled.filter(s => s.selected);
-        console.log('Servizi selezionati da inserire:', selectedServices);
-        // Esempio: this.document.items = [...(this.document.items || []), ...selectedServices];
+        // console.log('Servizi selezionati da inserire:', selectedServices);
 
         const newItems = selectedServices.map(service => {
             const newItem: DocumentItem = {
@@ -202,11 +224,9 @@ export class DocumentNewComponent implements OnInit {
                 rowAmount: 0,
             };
 
-            return this.refreshAmounts(newItem);
-        });
+            this.document.items.push(newItem);
 
-        forEach(newItems, (item, index) => {
-            this.document.items.push(item);
+            return this.refreshAmounts(newItem);
         });
     }
 
@@ -280,12 +300,7 @@ export class DocumentNewComponent implements OnInit {
 
     setBillTo() {
         this._contactService.getById('76ddf85d-259a-4bf0-9452-9757ecf7b072').subscribe(selectedClient => {
-            console.log('selectedClient', selectedClient);
-
-            this.document.client = selectedClient;
-            this.document.clientId = selectedClient.id;
-            this.clientControl.setValue(selectedClient.companyName);
-            this.loadServicesToBeBuill();
+            this.setClient(selectedClient);
         });
     }
 
@@ -295,5 +310,12 @@ export class DocumentNewComponent implements OnInit {
         this.document.items.forEach((item, idx) => {
             item.row = idx + 1;
         });
+    }
+
+    setClient(client: Contact) {
+        this.document.client = client;
+        this.document.clientId = client.id;
+        this.clientControl.setValue(client.companyName);
+        this.loadServicesToBeBill();
     }
 }

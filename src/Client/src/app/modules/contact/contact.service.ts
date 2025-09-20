@@ -20,6 +20,7 @@ import { BaseEntityService } from 'app/shared/services';
 import { environment } from 'environments/environment';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TeamSummary } from '../admin/dashboard/dashboard.types';
+import { ClientBillingSummary } from '../document/document.types';
 
 @Injectable({ providedIn: 'root' })
 export class ContactService extends BaseEntityService<Contact> {
@@ -97,6 +98,11 @@ export class ContactService extends BaseEntityService<Contact> {
                 return contact;
             }),
         );
+    }
+
+    listClientsToBeBilled(): Observable<ClientBillingSummary[]> {
+        const url = `unbilled-list`;
+        return this.apiGet<ClientBillingSummary[]>(url);
     }
 
     /**

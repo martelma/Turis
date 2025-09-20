@@ -77,3 +77,9 @@ export class DocumentItem {
     vatRate: number;
     vatAmount: number;
 }
+
+export class ClientBillingSummary {
+    client: Contact;
+    serviceCount: number;
+    totalAmount: number;
+}

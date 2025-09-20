@@ -19,6 +19,7 @@ public class ContactEndpoints : IEndpointRouteHandlerBuilder
 		templateApiGroup.MapGet(string.Empty, List);
 		templateApiGroup.MapGet("filter-clients/{pattern}", FilterClients);
 		templateApiGroup.MapGet("filter-collaborators/{pattern}", FilterCollaborators);
+		templateApiGroup.MapGet("unbilled-list", UnbilledSummaryAsync).AllowAnonymous();
 		templateApiGroup.MapPost(string.Empty, Save);
 		templateApiGroup.MapPut(string.Empty, Save);
 		templateApiGroup.MapDelete("{id:guid}", Delete);
@@ -123,4 +124,7 @@ public class ContactEndpoints : IEndpointRouteHandlerBuilder
 
 		return response;
 	}
+
+	private static async Task<IResult> UnbilledSummaryAsync(HttpContext httpContext, IContactService service)
+		=> (await service.UnbilledSummaryAsync()).ToResponse(httpContext);
 }

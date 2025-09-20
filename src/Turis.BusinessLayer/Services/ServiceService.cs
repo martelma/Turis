@@ -495,13 +495,21 @@ public class ServiceService(ApplicationDbContext dbContext
 
 	public async Task<Result<List<ServiceEasyModel>>> ToBeBilledAsync(Guid clientId)
 	{
-		var list = dbContext
-			.GetData<Service>()
-			.Include(x => x.Collaborator)
-			.Where(x => x.ClientId == clientId)
-			//TODO: impostare condizione per estrarre solo i servizi da fatturare
-			//.Where(x=>x. == )
-			.ToList();
+		var list = (
+			from s in dbContext.GetData<Service>()
+			join di in dbContext.GetData<DocumentItem>() on s.Id equals di.ServiceId into gj
+			from subDi in gj.DefaultIfEmpty()
+			where subDi == null && s.ClientId == clientId
+			select s
+		).ToList();
+
+		//var list = dbContext
+		//	.GetData<Service>()
+		//	.Include(x => x.Collaborator)
+		//	.Where(x => x.ClientId == clientId)
+		//	//TODO: impostare condizione per estrarre solo i servizi da fatturare
+		//	//.Where(x=>x. == )
+		//	.ToList();
 
 		var model = await list.ToModelEasyAsync(avatarContactService);
 
