@@ -148,11 +148,8 @@ export class DocumentNewComponent implements OnInit {
 
     onSelectedClient(event: any) {
         const selectedClient: Contact = event.option.value;
-        // console.log('selectedClient', selectedClient);
-        this.document.client = selectedClient;
-        this.document.clientId = selectedClient.id;
-        this.clientControl.setValue(selectedClient.companyName);
-        this.loadServicesToBeBill();
+
+        this.setClient(selectedClient);
     }
 
     loadClientsToBeBill() {
@@ -222,6 +219,7 @@ export class DocumentNewComponent implements OnInit {
                 vatRate: 0,
                 vatAmount: 0,
                 rowAmount: 0,
+                selected: false,
             };
 
             this.document.items.push(newItem);
@@ -315,7 +313,27 @@ export class DocumentNewComponent implements OnInit {
     setClient(client: Contact) {
         this.document.client = client;
         this.document.clientId = client.id;
+
+        this.document.date = new Date();
+        this.document.sectional = new Date().getFullYear().toString();
+
+        console.log('document', this.document);
+
         this.clientControl.setValue(client.companyName);
         this.loadServicesToBeBill();
+    }
+
+    resetClient() {
+        this.document.client = null;
+        this.document.clientId = null;
+        this.document.items = [];
+        this.servicesToBeBilled = [];
+        this.document.date = new Date();
+        this.document.sectional = new Date().getFullYear().toString();
+        this.clientControl.setValue('');
+    }
+
+    save() {
+        console.log('document to save', this.document);
     }
 }

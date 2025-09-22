@@ -42,12 +42,13 @@ dopo 120gg invio automatico di 2° sollecito
 
 TUTTO IL MONDO FATTURAZIONE!!!!!!!!!!!!!!!!!!!!!!!!!
 
-al momento quando sono nell'estratto conto di un'agenzia, posso selezionare N servizi e quindi cliccare su passa a fatturazione
+in new aggiungere lista dei clienti a cui è possibile fatturare e magari anche quanto
 
-adesso, oltre a questa modalità, voglio anche che, fatto ad documento, scelgo il cliente e nella spalla voglio vedere la lista dei servizi che devo ancora fatturare e quindi poterne importare 1 o N.
-
-in tutti e i due casi, deve essere possibile andare in edit su ogni singola riga.
-
+gestione delle condizioni
+	condizioni di pagamento
+	tipo pagamento
+	data scadenza
+	data incasso
 
 non funziona add di un contatto
 -----------------------------------------------------------------------------------------------------
@@ -57,4 +58,19 @@ PasswordExpiration
 
 
 Manca tutta la gestione dei pagamenti
+
+
+nella visualizzazione documento mettere i dati di Turis
+
+Nella view del doc aggiungere icona go per aprire il servizio associato al dettaglio documento
+
+Aggiornare script import dettagli documenti per riferimento a servizio
+
+Nel contatto di tipo collaborator aggiungere tab andamento in anno; quindi navigazione anni.
+Aggiungere anche tabella target mensili, target annuale assoluto e percentuale 
+
+In home admin aggiungere classifica provvigioni maturate (sia per anno che per mensilità)
+
+gestire la parte di edit di una fattura non ancora inviata
+gestire fase di invio allo SDI
 

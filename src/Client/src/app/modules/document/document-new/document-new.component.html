@@ -7,7 +7,7 @@
         <!-- Invoice -->
         <div
             class="min-w-240 p-3 shadow bg-card print:w-auto print:p-0 print:rounded-none print:shadow-none print:bg-transparent overflow-y-auto">
-            <div class="flex items-start">
+            <div *ngIf="!document.client" class="flex items-start">
                 <div class="grid grid-cols-max w-6/12 place-items-start gap-y-2">
                     <mat-form-field class="example-full-width w-full" appearance="fill">
                         <mat-label for="status" (click)="setBillTo()">Search Client</mat-label>
@@ -32,7 +32,7 @@
                         </mat-autocomplete>
                     </mat-form-field>
                 </div>
-                <div class="grid grid-cols-max w-6/12 place-items-end gap-y-2">
+                <div *ngIf="!document.client" class="grid grid-cols-max w-6/12 place-items-end gap-y-2">
                     <div class="grid grid-cols-2 gap-x-4 text-right">
                         <div class="text-gray-600">Clienti da fatturare:</div>
                         <div class="font-semibold">{{ countClientsToBeBilled }}</div>
@@ -62,10 +62,11 @@
                 <!-- Area scrollabile con gli items -->
                 <div class="flex-1 overflow-y-auto min-h-0 relative">
                     <div class="absolute inset-0 px-2 py-2 overflow-y-auto">
-                        <ng-container *ngFor="let item of clientsToBeBilled; trackBy: trackByFn">
+                        <ng-container *ngFor="let item of clientsToBeBilled; let i = index; trackBy: trackByFn">
                             <div
                                 (dblclick)="setClient(item.client)"
-                                class="grid grid-cols-12 gap-x-1 gap-y-2 items-center">
+                                [class]="i % 2 === 0 ? 'bg-white' : 'bg-gray-300'"
+                                class="grid grid-cols-12 gap-x-1 gap-y-2 items-center p-2 hover:bg-gray-500 hover:font-bold hover:text-white cursor-pointer">
                                 <div class="col-span-9 flex items-start">
                                     <span>{{ item.client.code }} - {{ item.client.fullName }}</span>
                                 </div>
@@ -80,7 +81,7 @@
             </div>
         </div>
     </div>
-    <mat-drawer-container *ngIf="document.client" class="w-full h-full mt-30 rounded-2xl shadow-lg overflow-visible">
+    <mat-drawer-container *ngIf="document.client" class="w-full h-full rounded-2xl shadow-lg overflow-visible">
         <mat-drawer-content class="h-full min-h-0">
             <!-- Pulsante icona per aprire/chiudere il drawer -->
             <button mat-icon-button (click)="drawer.toggle()" class="absolute top-4 right-4 z-10">
@@ -88,11 +89,23 @@
             </button>
             <!-- Dettagli documento -->
             <div class="flex flex-col h-full">
+                <!-- Azioni -->
+                <div class="flex items-start gap-2 bg-white w-full">
+                    <button class="flex space-x-2" mat-flat-button color="warn" (click)="resetClient()">
+                        <mat-icon class="icon-size-5 mr-2" [svgIcon]="'mat_solid:cancel'"></mat-icon>
+                        <span>{{ 'General.Abort' | transloco }}</span>
+                    </button>
+                    <button class="flex space-x-2" mat-flat-button color="primary" (click)="save()">
+                        <mat-icon class="icon-size-5 mr-2" [svgIcon]="'mat_solid:save'"></mat-icon>
+                        <span>{{ 'General.Save' | transloco }}</span>
+                    </button>
+                </div>
+
                 <!-- Header fisso -->
                 <div class="flex-none p-3 bg-white dark:bg-gray-900 border-b">
                     <h2 class="text-2xl font-bold mb-4">Bill To</h2>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
+                    <div class="flex gap-4 w-full">
+                        <div class="w-8/12">
                             <div>
                                 <span class="font-semibold">{{ document.client?.displayName }}</span>
                             </div>
@@ -111,14 +124,64 @@
                                 <span class="font-semibold">{{ document.client?.taxCode }}</span>
                             </div>
                         </div>
-                        <div>
+                        <!-- <div class="w-4/12">
                             <div *ngIf="document.type !== 'NC'">FATTURA</div>
                             <div *ngIf="document.type === 'NC'">NOTA DI CREDITO</div>
-                            <div>
-                                <span class="font-semibold">Data:</span> {{ document?.date | date: 'dd/MM/yyyy' }}
+                            <div class="grid grid-cols-2 gap-2 items-center">
+                                <span class="font-semibold text-left">Data:</span>
+                                <mat-form-field appearance="outline" class="w-full m-0">
+                                    <input matInput [matDatepicker]="picker" [(ngModel)]="document.date" />
+                                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker></mat-datepicker>
+                                </mat-form-field>
                             </div>
-                            <div><span class="font-semibold">Sezionale:</span> {{ document?.sectional }}</div>
-                            <div><span class="font-semibold">Numero:</span>{{ document?.number }}</div>
+                            <div class="grid grid-cols-2 gap-2 items-center">
+                                <span class="font-semibold text-left">Sezionale:</span>
+                                <mat-form-field appearance="outline" class="w-full m-0">
+                                    <input matInput [(ngModel)]="document.sectional" type="text" />
+                                </mat-form-field>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 items-center">
+                                <span class="font-semibold text-left">Numero:</span>
+                                <mat-form-field appearance="outline" class="w-full m-0">
+                                    <input matInput [(ngModel)]="document.number" type="text" />
+                                </mat-form-field>
+                            </div>
+                        </div> -->
+                    </div>
+                    <div class="w-full grid grid-cols-4 gap-4 mb-2 mt-4">
+                        <div class="flex flex-col">
+                            <span class="font-semibold text-left mb-2">Data:</span>
+                            <mat-form-field appearance="outline" class="w-full m-0">
+                                <input matInput [matDatepicker]="picker2" [(ngModel)]="document.date" />
+                                <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                                <mat-datepicker #picker2></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-semibold text-left mb-2">Sezionale:</span>
+                            <mat-form-field appearance="outline" class="w-full m-0">
+                                <input matInput [(ngModel)]="document.sectional" type="text" />
+                            </mat-form-field>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-semibold text-left mb-2">Numero:</span>
+                            <mat-form-field appearance="outline" class="w-full m-0">
+                                <input matInput [(ngModel)]="document.number" type="text" />
+                                <mat-hint class="m-0 p-0">Se vuoto, numerazione automatica</mat-hint>
+                            </mat-form-field>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-semibold text-left mb-2">Tipo:</span>
+                            <mat-form-field appearance="outline" class="w-full m-0">
+                                <input matInput *ngIf="document.type !== 'NC'" type="text" disabled value="FATTURA" />
+                                <input
+                                    matInput
+                                    *ngIf="document.type === 'NC'"
+                                    type="text"
+                                    disabled
+                                    value="NOTA DI CREDITO" />
+                            </mat-form-field>
                         </div>
                     </div>
                 </div>

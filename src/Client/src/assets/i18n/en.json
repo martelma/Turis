@@ -59,7 +59,8 @@
         "EventLogs": "Event Logs",
         "LinkedServices": "Linked Services",
         "Accept": "Accept",
-        "Reject": "Reject"
+        "Reject": "Reject",
+        "Abort": "Abort"
     },
     "Dashboard": {
         "WelcomeBack": "Welcome back"
@@ -100,6 +101,19 @@
     },
     "Document": {
         "SelectADocument": "Select a document"
+    },
+    "DocumentItem": {
+        "Code": "Code",
+        "Description": "Description",
+        "AliquotaIVA": "Aliquota IVA",
+        "CodiceEsigibilitaIVA": "Codice Esigibilità IVA",
+        "CodiceNatura": "Codice Natura",
+        "RiferimentoNormativo": "Riferimento Normativo",
+        "Quantity": "Quantity",
+        "Price": "Price",
+        "DiscountPercentage": "Discount %",
+        "RowAmount": "Row Amount",
+        "VatRate": "Vat Rate"
     },
     "Languages": {
         "Code": "Code",

@@ -1,5 +1,4 @@
-<div
-    class="relative flex flex-col flex-auto shrink-0 lg:shrink p-3 lg:overflow-y-auto bg-gray-100 dark:bg-transparent"
+<div class="relative flex flex-col flex-auto shrink-0 lg:shrink p-3 lg:overflow-y-auto bg-gray-100 dark:bg-transparent"
     fuseScrollReset>
 
     <!-- Main -->
@@ -66,7 +65,8 @@
                     <div class="col-span-12 my-4 border-b"></div>
 
                     <!-- Item -->
-                    <div class="col-span-7">
+                    <div class="col-span-7"
+                        (dblclick)="showDetail(item)">
                         <div class="text-lg font-medium">{{item.code}} - {{item.description}}</div>
                     </div>
                     <div class="self-center text-right">{{item.quantity}}</div>
@@ -74,6 +74,81 @@
                     <div class="self-center text-right">{{item.discountPercentage | number: '2.2'}} %</div>
                     <div class="self-center text-right">€ {{item.rowAmount | number: '2.2'}}</div>
                     <div class="self-center text-right">{{item.vatRate | number: '2.2'}} %</div>
+
+                    <div *ngIf="item.selected"
+                        class="col-span-12 mt-4 p-4 bg-yellow-100 rounded-lg border">
+                        <ng-container>
+                            <div class="grid grid-cols-12 gap-2">
+                                <mat-form-field class="col-span-2">
+                                    <mat-label>{{ 'DocumentItem.Code' | transloco }}</mat-label>
+                                    <input matInput disabled
+                                        [(ngModel)]="item.code" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-10">
+                                    <mat-label>{{ 'DocumentItem.Description' | transloco }}</mat-label>
+                                    <input matInput disabled
+                                        [(ngModel)]="item.description" />
+                                </mat-form-field>
+                            </div>
+                            <div class="grid grid-cols-12 gap-2">
+                                <mat-form-field class="col-span-3">
+                                    <mat-label>{{ 'DocumentItem.AliquotaIVA' | transloco }}</mat-label>
+                                    <input matInput disabled
+                                        [(ngModel)]="item.vat.name" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-3">
+                                    <mat-label>{{
+                                        'DocumentItem.CodiceEsigibilitaIVA' | transloco
+                                        }}</mat-label>
+                                        <input matInput disabled
+                                        [(ngModel)]="item.codiceEsigibilitaIVA.name" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-3">
+                                    <mat-label>{{ 'DocumentItem.CodiceNatura' | transloco }}</mat-label>
+                                    <input matInput disabled
+                                        [(ngModel)]="item.codiceNatura" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-3">
+                                    <mat-label>{{
+                                        'DocumentItem.RiferimentoNormativo' | transloco
+                                        }}</mat-label>
+                                    <input matInput disabled
+                                        [(ngModel)]="item.riferimentoNormativo" />
+                                </mat-form-field>
+                            </div>
+                            <div class="grid grid-cols-12 gap-2">
+                                <mat-form-field class="col-span-2">
+                                    <mat-label>{{ 'DocumentItem.Quantity' | transloco }}</mat-label>
+                                    <input matInput disabled
+                                        type="number"
+                                        [(ngModel)]="item.quantity" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label>{{ 'DocumentItem.Price' | transloco }}</mat-label>
+                                    <input matInput disabled
+                                        type="number"
+                                        [(ngModel)]="item.price"
+                                        onchange="refreshAmounts(item)" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label>{{
+                                        'DocumentItem.DiscountPercentage' | transloco
+                                        }}</mat-label>
+                                    <input matInput disabled
+                                        type="number"
+                                        [(ngModel)]="item.discountPercentage"
+                                        (ngModelChange)="refreshAmounts(item)" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label>{{ 'DocumentItem.RowAmount' | transloco }}</mat-label>
+                                    <input matInput disabled
+                                        type="number"
+                                        [(ngModel)]="item.rowAmount"
+                                        disabled />
+                                </mat-form-field>
+                            </div>
+                        </ng-container>
+                    </div>
                 </ng-container>
 
 

@@ -15,7 +15,7 @@ import { getStatusColorClass, getStatusText } from 'app/constants';
 import { AttachmentsComponent } from 'app/shared/components/attachments/attachments.component';
 import { AttachmentService } from 'app/shared/components/attachments/attachment.service';
 import { DocumentService } from '../document.service';
-import { Document } from '../document.types';
+import { Document, DocumentItem } from '../document.types';
 import { trackByFn } from 'app/shared';
 
 @UntilDestroy()
@@ -82,4 +82,16 @@ export class DocumentViewComponent implements OnInit, OnChanges {
     }
 
     onSelectedTabChange(): void {}
+
+    showDetail(item: DocumentItem) {
+        item.selected = !item.selected;
+        this.document.items.forEach(x => {
+            if (x.id !== item.id) {
+                x.selected = false;
+            }
+        });
+        this._changeDetectorRef.markForCheck();
+
+        console.log(item);
+    }
 }

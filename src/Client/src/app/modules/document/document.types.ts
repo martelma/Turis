@@ -76,6 +76,8 @@ export class DocumentItem {
     vat: AliquotaIva = null;
     vatRate: number;
     vatAmount: number;
+
+    selected: boolean;
 }
 
 export class ClientBillingSummary {
