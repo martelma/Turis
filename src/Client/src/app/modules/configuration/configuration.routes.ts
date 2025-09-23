@@ -28,12 +28,11 @@ export default [
         loadChildren: () => import('app/modules/configuration/aliquote-iva/aliquote-iva.routes'),
     },
 
-    //TODO: aggiungere la rotta per il modulo tipi pagamento
-    // { path: '', redirectTo: 'aliquote-iva', pathMatch: 'full' },
-    // {
-    //     path: 'aliquote-iva',
-    //     loadChildren: () => import('app/modules/configuration/aliquote-iva/aliquote-iva.routes'),
-    // },
+    { path: '', redirectTo: 'payment-types', pathMatch: 'full' },
+    {
+        path: 'payment-types',
+        loadChildren: () => import('app/modules/configuration/payment-types/payment-types.routes'),
+    },
 
     { path: '', redirectTo: 'price-list', pathMatch: 'full' },
     {

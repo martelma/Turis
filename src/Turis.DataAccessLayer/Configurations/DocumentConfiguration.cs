@@ -31,8 +31,8 @@ public class DocumentConfiguration : BaseEntityConfiguration<Entities.Document>
 			.WithMany()
 			.HasForeignKey(x => x.ClientId);
 
-		builder.Property(e => e.IdSdi).IsRequired().HasMaxLength(20);
-		builder.Property(e => e.Date).IsRequired();
+		builder.Property(e => e.IdSdi).HasMaxLength(20);
+		builder.Property(e => e.Date);
 		builder.Property(e => e.Sectional).HasMaxLength(6);
 		builder.Property(e => e.Number);
 		builder.Property(e => e.DiscountPercentage).IsRequired();
@@ -52,7 +52,8 @@ public class DocumentConfiguration : BaseEntityConfiguration<Entities.Document>
 
 		builder.HasOne(x => x.Collaborator)
 			.WithMany()
-			.HasForeignKey(x => x.CollaboratorId);
+			.HasForeignKey(x => x.CollaboratorId)
+			.IsRequired(false);
 
 		builder.Property(e => e.SdiCodiceTipoPagamento).HasMaxLength(4);
 		builder.Property(e => e.SdiValoreTipoPagamento).HasMaxLength(100);

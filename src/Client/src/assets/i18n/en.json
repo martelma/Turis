@@ -13,7 +13,6 @@
         "Scopes": "Scopes",
         "Console": "Console",
         "Configuration": "Configuration",
-        "TipiPagamenti": "Tipi Pagamenti",
         "Languages": "Lingue",
         "AliquoteIva": "Aliquote Iva",
         "PriceList": "Price List",
@@ -23,7 +22,8 @@
         "Document": "Document",
         "JournalEntry": "Journal Entry",
         "Back": "Back",
-        "Feedback": "Feedback"
+        "Feedback": "Feedback",
+        "PaymentTypes": "Payment Types"
     },
     "General": {
         "RemoveBookmark": "Remove Bookmark",
@@ -60,7 +60,8 @@
         "LinkedServices": "Linked Services",
         "Accept": "Accept",
         "Reject": "Reject",
-        "Abort": "Abort"
+        "Abort": "Abort",
+        "AddIncasso": "Add Incasso"
     },
     "Dashboard": {
         "WelcomeBack": "Welcome back"
@@ -235,9 +236,17 @@
     },
     "Messages": {
         "MailProposalSuccessfullySent": "Mail Proposal Successfully Sent",
-        "ElmahSuccessfullyTruncated": "Elmah Successfully Truncated"
+        "ElmahSuccessfullyTruncated": "Elmah Successfully Truncated",
+        "RecordSuccessfullySaved": "Record successfully saved"
     },
     "LinkedService": {
         "Empty": "No linked service available"
+    },
+    "PaymentType": {
+        "Code": "Code",
+        "Name": "Name",
+        "Note": "Note",
+        "SdiCode": "Sdi Code",
+        "SdiName": "Sdi Name"
     }
 }

@@ -35,8 +35,13 @@
                     <div class="flex flex-1 justify-between items-center">
                         <div class="flex space-x-2">
                             <!-- Edit Document -->
-                            <button *ngIf="userCanUpdateDocument" mat-flat-button color="primary" (click)="edit()">
-                                <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
+                            <button
+                                *ngIf="userCanUpdateDocument"
+                                mat-flat-button
+                                class="flex space-x-2"
+                                color="primary"
+                                (click)="edit()">
+                                <mat-icon [svgIcon]="'heroicons_outline:pencil-square'" class="mr-2"></mat-icon>
                                 <span>{{ 'General.Edit' | transloco }}</span>
                             </button>
                         </div>

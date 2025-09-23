@@ -94,4 +94,16 @@ export class DocumentViewComponent implements OnInit, OnChanges {
 
         console.log(item);
     }
+
+    openService(item: DocumentItem): void {
+        if (item && item.serviceId) {
+            console.log('Open service', item);
+            console.log('Open service', item.serviceId);
+            // this.router.navigate(['/service', item.serviceId]);
+        }
+    }
+
+    setIncasso() {
+        console.log('Set Incasso');
+    }
 }

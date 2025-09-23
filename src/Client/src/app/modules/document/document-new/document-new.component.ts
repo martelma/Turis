@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { FuseScrollResetDirective } from '@fuse/directives/scroll-reset';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -44,6 +44,10 @@ import { DocumentService } from '../document.service';
 import { AliquotaIvaService } from 'app/modules/configuration/aliquote-iva/aliquote-iva.service';
 import { AliquotaIva } from 'app/modules/configuration/aliquote-iva/aliquota-iva.types';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { ConfirmationDialogService } from 'app/shared/services/confirmation-dialog.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { PaymentTypeService } from 'app/modules/configuration/payment-types/payment-types.service';
+import { PaymentType } from 'app/modules/configuration/payment-types/payment-types.types';
 
 @UntilDestroy()
 @Component({
@@ -85,6 +89,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
         MatPaginatorModule,
         MatMenuModule,
         MatExpansionModule,
+        MatSnackBarModule,
         FuseScrollResetDirective,
         TranslocoModule,
         FuseDrawerComponent,
@@ -93,12 +98,14 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
     ],
 })
 export class DocumentNewComponent implements OnInit {
+    waiting = false;
     document: Document = new Document();
     clientControl = new FormControl();
     clientsToBeBilled: ClientBillingSummary[] = [];
     servicesToBeBilled: Service[] = [];
 
     aliquoteIva: AliquotaIva[] = [];
+    paymentTypes: PaymentType[] = [];
 
     filteredClients: Observable<Contact[]>;
 
@@ -122,7 +129,10 @@ export class DocumentNewComponent implements OnInit {
         private _contactService: ContactService,
         private _serviceService: ServiceService,
         private _aliquotaIvaService: AliquotaIvaService,
-        private _priceListService: PriceListService,
+        private _paymentTypeService: PaymentTypeService,
+        private _confirmationDialogService: ConfirmationDialogService,
+        private _translocoService: TranslocoService,
+        public snackBar: MatSnackBar,
     ) {}
 
     ngOnInit(): void {
@@ -134,7 +144,12 @@ export class DocumentNewComponent implements OnInit {
 
         this._aliquotaIvaService.list().subscribe(list => {
             this.aliquoteIva = list.items;
-            console.log('Aliquote IVA:', this.aliquoteIva);
+            // console.log('Aliquote IVA:', this.aliquoteIva);
+        });
+
+        this._paymentTypeService.list().subscribe(list => {
+            this.paymentTypes = list.items;
+            // console.log('paymentTypes:', this.paymentTypes);
         });
 
         this.loadClientsToBeBill();
@@ -171,12 +186,12 @@ export class DocumentNewComponent implements OnInit {
     loadServicesToBeBill() {
         this._serviceService.listServicesToBeBilled(this.document.clientId).subscribe(services => {
             this.servicesToBeBilled = services;
-            console.log('servicesToBeBilled', this.servicesToBeBilled);
+            // console.log('servicesToBeBilled', this.servicesToBeBilled);
         });
     }
 
     drawerOpenedChanged(event: Event) {
-        console.log('drawerOpenedChanged', event);
+        // console.log('drawerOpenedChanged', event);
     }
 
     checkAll() {
@@ -288,7 +303,7 @@ export class DocumentNewComponent implements OnInit {
     }
 
     onAliquotaIVAChange(item: DocumentItem): void {
-        console.log('onAliquotaIVAChange', item);
+        // console.log('onAliquotaIVAChange', item);
         item.codiceNatura = item.vat?.codiceNatura;
         item.riferimentoNormativo = item.vat?.description;
         item.vatRate = item.vat?.aliquota || 0;
@@ -335,5 +350,42 @@ export class DocumentNewComponent implements OnInit {
 
     save() {
         console.log('document to save', this.document);
+
+        this._confirmationDialogService
+            .showWarningMessage({
+                title: 'Are you sure?',
+                text: 'Confermi il salvataggio del documento corrente?',
+                showCancelButton: true,
+                confirmButtonText: 'Confirm',
+            })
+            .then(result => {
+                if (result.value) {
+                    this.waiting = true;
+                    this._documentService.updateEntity(this.document?.id, this.document).subscribe({
+                        next: () => {
+                            this.snackBar.open(
+                                this._translocoService.translate('Messages.RecordSuccessfullySaved'),
+                                this._translocoService.translate('General.Dismiss'),
+                                {
+                                    panelClass: ['success'],
+                                },
+                            );
+                        },
+                        error: error => {
+                            this.waiting = false;
+                            console.error(error);
+                            this.snackBar.open(error.message, this._translocoService.translate('General.Dismiss'), {
+                                panelClass: ['error'],
+                            });
+                        },
+                    });
+                }
+            });
+    }
+
+    onPaymentTypeChange(event: any) {
+        // console.log('Selected payment type:', event.value);
+        this.document.sdiCodiceTipoPagamento = event.value.sdiCode;
+        this.document.sdiValoreTipoPagamento = event.value.sdiName;
     }
 }

@@ -8,18 +8,18 @@
         </div>
         <!-- Title -->
         <div class="text-4xl font-extrabold tracking-tight">
-            {{ 'Navigation.AliquoteIva' | transloco }}
+            {{ 'Navigation.PaymentType' | transloco }}
         </div>
         <!-- Actions -->
         <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
             <!-- Search -->
             <app-search-input
                 class="min-w-90"
-                [placeholder]="'AliquoteIva.FilterAliquoteIva'"
+                [placeholder]="'PaymentType.FilterPaymentType'"
                 (callbackFn)="filter($event)">
             </app-search-input>
 
-            <!-- Add aliquotaIva button -->
+            <!-- Add paymentType button -->
             <button class="ml-4" mat-flat-button [color]="'primary'" (click)="create()">
                 <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
                 <span class="ml-2 mr-1">{{ 'General.Add' | transloco }}</span>
@@ -29,41 +29,41 @@
 
     <!-- Main -->
     <div class="flex flex-auto overflow-hidden">
-        <!-- AliquotaIvas list -->
+        <!-- PaymentType list -->
         <div
             class="flex flex-col flex-auto overflow-hidden sm:overflow-y-auto"
             [ngClass]="{
                 'sm:mb-18': results?.items?.length > 0
             }">
-            <ng-container *ngIf="results?.items?.length > 0; else noAliquotaIvas">
+            <ng-container *ngIf="results?.items?.length > 0; else noPaymentType">
                 <div class="grid">
                     <!-- Header -->
                     <div
                         class="list-grid z-10 sticky top-0 grid gap-4 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
                         <div class="hidden md:block"></div>
-                        <div class="hidden md:block">{{ 'AliquotaIvas.Code' | transloco }}</div>
-                        <div class="hidden sm:block">{{ 'AliquotaIvas.Name' | transloco }}</div>
-                        <div class="hidden lg:block">{{ 'AliquotaIvas.Description' | transloco }}</div>
-                        <div class="hidden lg:block">{{ 'AliquotaIvas.Aliquota' | transloco }}</div>
-                        <div class="hidden lg:block">{{ 'AliquotaIvas.CodiceNatura' | transloco }}</div>
+                        <div class="hidden md:block">{{ 'PaymentType.Code' | transloco }}</div>
+                        <div class="hidden sm:block">{{ 'PaymentType.Name' | transloco }}</div>
+                        <div class="hidden lg:block">{{ 'PaymentType.Note' | transloco }}</div>
+                        <div class="hidden lg:block">{{ 'PaymentType.SdiCode' | transloco }}</div>
+                        <div class="hidden lg:block">{{ 'PaymentType.SdiName' | transloco }}</div>
                     </div>
                     <!-- Rows -->
                     <ng-container *ngIf="list">
-                        <ng-container *ngFor="let aliquotaIva of results?.items; trackBy: trackByFn">
+                        <ng-container *ngFor="let paymentType of results?.items; trackBy: trackByFn">
                             <div class="list-grid grid items-center gap-4 py-3 px-6 md:px-8 border-b">
                                 <!-- Details button -->
                                 <div>
                                     <button
                                         class="min-w-10 min-h-7 h-7 px-2 leading-6"
                                         mat-stroked-button
-                                        (click)="toggleDetails(aliquotaIva.id)">
+                                        (click)="toggleDetails(paymentType.id)">
                                         <mat-icon
-                                            *ngIf="selectedItem?.id !== aliquotaIva.id"
+                                            *ngIf="selectedItem?.id !== paymentType.id"
                                             class="icon-size-5 mr-2"
                                             [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
 
                                         <mat-icon
-                                            *ngIf="selectedItem?.id === aliquotaIva.id"
+                                            *ngIf="selectedItem?.id === paymentType.id"
                                             class="icon-size-5 mr-2"
                                             [svgIcon]="'heroicons_outline:arrow-uturn-left'"></mat-icon>
                                     </button>
@@ -71,36 +71,36 @@
 
                                 <!-- Code -->
                                 <div class="sm:block whitespace-pre-wrap">
-                                    {{ aliquotaIva?.code }}
+                                    {{ paymentType?.code }}
                                 </div>
 
                                 <!-- Name -->
                                 <div class="truncate">
-                                    {{ aliquotaIva.name }}
+                                    {{ paymentType.name }}
                                 </div>
 
-                                <!-- Description -->
+                                <!-- Note -->
                                 <div class="truncate">
-                                    {{ aliquotaIva?.description }}
+                                    {{ paymentType?.note }}
                                 </div>
 
-                                <!-- Aliquota -->
+                                <!-- sdiCode -->
                                 <div class="sm:block whitespace-pre-wrap">
-                                    {{ aliquotaIva?.aliquota }}
+                                    {{ paymentType?.sdiCode }}
                                 </div>
 
-                                <!-- CodiceNatura -->
+                                <!-- sdiName -->
                                 <div class="sm:block whitespace-pre-wrap">
-                                    {{ aliquotaIva?.codiceNatura }}
+                                    {{ paymentType?.sdiName }}
                                 </div>
                             </div>
                             <!-- Selected Item -->
                             <div class="grid">
-                                <ng-container *ngIf="selectedItem?.id === aliquotaIva.id">
+                                <ng-container *ngIf="selectedItem?.id === paymentType.id">
                                     <ng-container
                                         *ngTemplateOutlet="
                                             rowDetailsTemplate;
-                                            context: { $implicit: aliquotaIva }
+                                            context: { $implicit: paymentType }
                                         "></ng-container>
                                 </ng-container>
                             </div>
@@ -111,7 +111,7 @@
                 <!-- Paginator -->
                 <mat-paginator
                     class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
-                    [ngClass]="{ 'pointer-events-none': aliquotaIvasLoading }"
+                    [ngClass]="{ 'pointer-events-none': paymentTypeLoading }"
                     [length]="results?.totalCount ?? 0"
                     [pageIndex]="queryParameters?.pageIndex ?? 0"
                     [pageSize]="queryParameters?.pageSize ?? 10"
@@ -120,7 +120,7 @@
                     [showFirstLastButtons]="true"></mat-paginator>
             </ng-container>
 
-            <ng-template #rowDetailsTemplate let-aliquotaIva>
+            <ng-template #rowDetailsTemplate let-paymentType>
                 <div class="shadow-lg overflow-hidden">
                     <div class="flex border-b">
                         <form class="flex flex-col w-full" [formGroup]="selectedItemForm">
@@ -130,33 +130,34 @@
                                         <div class="grid grid-cols-12 gap-2 w-full">
                                             <!-- Code -->
                                             <mat-form-field class="col-span-2">
-                                                <mat-label>{{ 'AliquotaIvas.Code' | transloco }}</mat-label>
+                                                <mat-label>{{ 'PaymentType.Code' | transloco }}</mat-label>
                                                 <input matInput [formControlName]="'code'" />
                                             </mat-form-field>
 
                                             <!-- Name -->
-                                            <mat-form-field class="col-span-6">
-                                                <mat-label>{{ 'AliquotaIvas.Name' | transloco }}</mat-label>
-                                                <input matInput [formControlName]="'name'" />
-                                            </mat-form-field>
-
-                                            <!-- Aliquota -->
-                                            <mat-form-field class="col-span-2">
-                                                <mat-label>{{ 'AliquotaIvas.Aliquota' | transloco }}</mat-label>
-                                                <input matInput [formControlName]="'aliquota'" />
-                                            </mat-form-field>
-
-                                            <!-- CodiceNatura -->
-                                            <mat-form-field class="col-span-2">
-                                                <mat-label>{{ 'AliquotaIvas.CodiceNatura' | transloco }}</mat-label>
-                                                <input matInput [formControlName]="'codiceNatura'" />
+                                            <mat-form-field class="col-span-10">
+                                                <mat-label>{{ 'PaymentType.Name' | transloco }}</mat-label>
+                                                <!-- <input matInput [formControlName]="'name'" /> -->
+                                                <textarea matInput [formControlName]="'name'" rows="5"></textarea>
                                             </mat-form-field>
                                         </div>
                                         <div class="grid grid-cols-12 gap-2 w-full">
-                                            <!-- Description -->
+                                            <!-- Note -->
                                             <mat-form-field class="col-span-12">
-                                                <mat-label>{{ 'AliquotaIvas.Description' | transloco }}</mat-label>
-                                                <input matInput [formControlName]="'description'" />
+                                                <mat-label>{{ 'PaymentType.Note' | transloco }}</mat-label>
+                                                <input matInput [formControlName]="'note'" />
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="grid grid-cols-12 gap-2 w-full">
+                                            <!-- SdiCode -->
+                                            <mat-form-field class="col-span-2">
+                                                <mat-label>{{ 'PaymentType.SdiCode' | transloco }}</mat-label>
+                                                <input matInput [formControlName]="'sdiCode'" />
+                                            </mat-form-field>
+                                            <!-- SdiName -->
+                                            <mat-form-field class="col-span-10">
+                                                <mat-label>{{ 'PaymentType.SdiName' | transloco }}</mat-label>
+                                                <input matInput [formControlName]="'sdiName'" />
                                             </mat-form-field>
                                         </div>
                                     </div>
@@ -176,7 +177,7 @@
                                             <mat-icon
                                                 class="text-green-500"
                                                 [svgIcon]="'heroicons_outline:check'"></mat-icon>
-                                            <span class="ml-2">AliquotaIva updated</span>
+                                            <span class="ml-2">PaymentType updated</span>
                                         </ng-container>
                                         <ng-container *ngIf="flashMessage === 'error'">
                                             <mat-icon
@@ -197,12 +198,12 @@
                 </div>
             </ng-template>
 
-            <!-- No aliquotaIvas -->
-            <ng-template #noAliquotaIvas>
+            <!-- No paymentType -->
+            <ng-template #noPaymentType>
                 <div class="z-100 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
-                    <!-- <mat-icon class="icon-size-24" [svgIcon]="'heroicons_outline:aliquotaIva'"></mat-icon> -->
+                    <!-- <mat-icon class="icon-size-24" [svgIcon]="'heroicons_outline:paymentType'"></mat-icon> -->
                     <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">
-                        {{ 'AliquotaIvas.NoAliquotaIvas' | transloco }}
+                        {{ 'PaymentType.NoPaymentType' | transloco }}
                     </div>
                 </div>
             </ng-template>

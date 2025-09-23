@@ -21,13 +21,9 @@ public static class DocumentItemExtensions
 			DiscountPercentage = entity.DiscountPercentage,
 			VatRate = entity.VatRate,
 			CodiceEsigibilitaIVA = entity.CodiceEsigibilitaIVA,
+			Document = entity.Document?.ToModelInfo(),
+			Service = await entity.Service?.ToModelInfoAsync()
 		};
-
-		if (entity.Document != null)
-			model.Document = entity.Document.ToModelInfo();
-
-		if (entity.Service != null)
-			model.Service = await entity.Service.ToModelInfoAsync();
 
 		return model;
 	}

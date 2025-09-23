@@ -39,38 +39,30 @@ vedere di collegare 2 o più servizi, per poter dire a guida1 chi è la guida2
 
 dopo 90gg invio automatico di 1° sollecito
 dopo 120gg invio automatico di 2° sollecito
-
-TUTTO IL MONDO FATTURAZIONE!!!!!!!!!!!!!!!!!!!!!!!!!
-
-in new aggiungere lista dei clienti a cui è possibile fatturare e magari anche quanto
-
-gestione delle condizioni
-	condizioni di pagamento
-	tipo pagamento
-	data scadenza
-	data incasso
-
 non funziona add di un contatto
 -----------------------------------------------------------------------------------------------------
 
 PasswordExpiration
 
 
-
-Manca tutta la gestione dei pagamenti
-
-
-nella visualizzazione documento mettere i dati di Turis
-
-Nella view del doc aggiungere icona go per aprire il servizio associato al dettaglio documento
-
 Aggiornare script import dettagli documenti per riferimento a servizio
+Nella view del doc aggiungere icona go per aprire il servizio associato al dettaglio documento
+mi sa che il riferimento DocumentItem.ServiceId è sbagliato!!!!!!!!!!!!!!!!!!!!!!
+ricontrollare tutto l'import dei documents
+
+
+
+gestire la parte di edit di una fattura non ancora inviata
+gestire fase di invio allo SDI
+se un documento è già stato inviato allo SDI, dare evidenza del codice univoco e della data e ora di invio
+
+
 
 Nel contatto di tipo collaborator aggiungere tab andamento in anno; quindi navigazione anni.
 Aggiungere anche tabella target mensili, target annuale assoluto e percentuale 
 
 In home admin aggiungere classifica provvigioni maturate (sia per anno che per mensilità)
 
-gestire la parte di edit di una fattura non ancora inviata
-gestire fase di invio allo SDI
+
+
 

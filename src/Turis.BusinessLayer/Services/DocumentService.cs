@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
 using OperationResults;
+using System.Data.SqlTypes;
 using System.Globalization;
 using TinyHelpers.Extensions;
 using Turis.BusinessLayer.Extensions;
@@ -140,7 +141,7 @@ public class DocumentService(ApplicationDbContext dbContext
 		else
 			query = query.OrderByDescending(x => x.Sectional)
 				.ThenByDescending(x => x.Number);
-
+		
 		try
 		{
 			var page = query

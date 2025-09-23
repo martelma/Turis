@@ -71,6 +71,14 @@ export default [
         },
         children: [
             {
+                path: 'new',
+                pathMatch: 'full',
+                component: DocumentNewComponent,
+                // resolve: {
+                //     service: documentResolver,
+                // },
+            },
+            {
                 component: DocumentListComponent,
                 matcher: documentRouteMatcher,
                 children: [
@@ -82,13 +90,6 @@ export default [
                     {
                         path: ':id',
                         component: DocumentDetailsComponent,
-                        resolve: {
-                            service: documentResolver,
-                        },
-                    },
-                    {
-                        path: 'new',
-                        component: DocumentNewComponent,
                         resolve: {
                             service: documentResolver,
                         },

@@ -173,12 +173,12 @@ export class NavigationService {
                             moduleName: 'AliquoteIva',
                         },
                         {
-                            id: 'TipiPagamenti',
-                            title: 'Navigation.TipiPagamenti',
+                            id: 'PaymentTypes',
+                            title: 'Navigation.PaymentTypes',
                             type: 'basic',
                             icon: 'heroicons_outline:banknotes',
-                            link: '/configuration/tipi-pagamenti',
-                            moduleName: 'TipiPagamenti',
+                            link: '/configuration/payment-types',
+                            moduleName: 'PaymentTypes',
                         },
                         {
                             id: 'PriceList',

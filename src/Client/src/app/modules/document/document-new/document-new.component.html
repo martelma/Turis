@@ -184,6 +184,55 @@
                             </mat-form-field>
                         </div>
                     </div>
+
+                    <div class="w-full grid grid-cols-4 gap-4 mb-2 mt-4">
+                        <div class="flex flex-col">
+                            <span class="font-semibold text-left mb-2">Condizioni di Pagamento:</span>
+                            <mat-form-field appearance="outline" class="w-full m-0">
+                                <mat-select [(ngModel)]="document.SdiCodiceCondizionePagamento">
+                                    <mat-option value="TP01">Pagamento a rate</mat-option>
+                                    <mat-option value="TP02">Pagamento completo</mat-option>
+                                    <mat-option value="TP03">Anticipo</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-semibold text-left mb-2">Tipo Pagamento:</span>
+                            <mat-form-field appearance="outline" class="w-full m-0">
+                                <mat-select
+                                    [(ngModel)]="document.paymentType"
+                                    (selectionChange)="onPaymentTypeChange($event)">
+                                    <mat-option *ngFor="let item of paymentTypes" [value]="item">{{
+                                        item.code
+                                    }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-semibold text-left mb-2">Data di Scadenza:</span>
+                            <mat-form-field appearance="outline" class="w-full m-0">
+                                <input
+                                    matInput
+                                    [matDatepicker]="pickerDataScadenzaPagamento"
+                                    [(ngModel)]="document.DataScadenzaPagamento" />
+                                <mat-datepicker-toggle
+                                    matSuffix
+                                    [for]="pickerDataScadenzaPagamento"></mat-datepicker-toggle>
+                                <mat-datepicker #pickerDataScadenzaPagamento></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-semibold text-left mb-2">Data Incasso:</span>
+                            <mat-form-field appearance="outline" class="w-full m-0">
+                                <input
+                                    matInput
+                                    [matDatepicker]="pickerDataIncasso"
+                                    [(ngModel)]="document.DataIncasso" />
+                                <mat-datepicker-toggle matSuffix [for]="pickerDataIncasso"></mat-datepicker-toggle>
+                                <mat-datepicker #pickerDataIncasso></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Intestazione colonne fissa -->
