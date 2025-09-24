@@ -97,9 +97,11 @@ export class DocumentViewComponent implements OnInit, OnChanges {
 
     openService(item: DocumentItem): void {
         if (item && item.serviceId) {
-            console.log('Open service', item);
-            console.log('Open service', item.serviceId);
-            // this.router.navigate(['/service', item.serviceId]);
+            // console.log('Open service', item);
+            // console.log('Open service', item.serviceId);
+
+            const url = this.router.serializeUrl(this.router.createUrlTree(['/service', item.serviceId]));
+            window.open(url, '_blank');
         }
     }
 

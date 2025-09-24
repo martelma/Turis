@@ -1,4 +1,14 @@
-import { CurrencyPipe, DatePipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
+import {
+    CurrencyPipe,
+    DatePipe,
+    JsonPipe,
+    LowerCasePipe,
+    NgClass,
+    NgFor,
+    NgIf,
+    NgStyle,
+    NgTemplateOutlet,
+} from '@angular/common';
 import {
     AfterViewInit,
     ChangeDetectorRef,
@@ -51,6 +61,7 @@ import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summa
         NgTemplateOutlet,
         CurrencyPipe,
         DatePipe,
+        LowerCasePipe,
         JsonPipe,
         FormsModule,
         ReactiveFormsModule,

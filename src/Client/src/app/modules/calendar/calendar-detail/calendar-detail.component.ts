@@ -1,6 +1,5 @@
 import { CommonModule, CurrencyPipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
 import {
-    AfterViewInit,
     ChangeDetectorRef,
     Component,
     EventEmitter,
@@ -17,7 +16,7 @@ import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -25,17 +24,15 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { toUtcString, trackByFn } from 'app/shared';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { trackByFn } from 'app/shared';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { SearchInputComponent } from 'app/shared/components/ui/search-input/search-input.component';
 import { Service, ServiceSearchParameters } from 'app/modules/service/service.types';
 import { ServiceService } from 'app/modules/service/service.service';
 import { MaterialModule } from 'app/modules/material.module';
-import { CalendarOptions, DateSelectArg, EventApi, EventClickArg } from '@fullcalendar/core';
-import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
+import { FullCalendarModule } from '@fullcalendar/angular';
 import {
-    AppSettings,
     DurationTypes,
     getBillingStatusColorClass,
     getCommissionStatusColorClass,
@@ -46,16 +43,10 @@ import { ServiceSidebarComponent } from 'app/modules/service/service-sidebar/ser
 import { MatDrawer } from '@angular/material/sidenav';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ez } from '@fullcalendar/core/internal-common';
-import interactionPlugin from '@fullcalendar/interaction';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridWeekPlugin from '@fullcalendar/timegrid';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { CalendarViewGridComponent } from '../calendar-view-grid/calendar-view-grid.component';
-
-declare let $: any;
 
 @UntilDestroy()
 @Component({

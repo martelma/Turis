@@ -1,5 +1,5 @@
 import { MatRippleModule } from '@angular/material/core';
-import { DatePipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle } from '@angular/common';
+import { DatePipe, JsonPipe, LowerCasePipe, NgClass, NgFor, NgIf, NgStyle } from '@angular/common';
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -45,6 +45,7 @@ import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summa
         NgClass,
         NgStyle,
         DatePipe,
+        LowerCasePipe,
         JsonPipe,
         RouterLink,
         MatButtonModule,
