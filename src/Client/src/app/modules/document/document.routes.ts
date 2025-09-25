@@ -74,9 +74,6 @@ export default [
                 path: 'new',
                 pathMatch: 'full',
                 component: DocumentNewComponent,
-                // resolve: {
-                //     service: documentResolver,
-                // },
             },
             {
                 component: DocumentListComponent,

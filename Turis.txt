@@ -45,13 +45,6 @@ non funziona add di un contatto
 PasswordExpiration
 
 
-Aggiornare script import dettagli documenti per riferimento a servizio
-Nella view del doc aggiungere icona go per aprire il servizio associato al dettaglio documento
-mi sa che il riferimento DocumentItem.ServiceId è sbagliato!!!!!!!!!!!!!!!!!!!!!!
-ricontrollare tutto l'import dei documents
-
-
-
 gestire la parte di edit di una fattura non ancora inviata
 gestire fase di invio allo SDI
 se un documento è già stato inviato allo SDI, dare evidenza del codice univoco e della data e ora di invio

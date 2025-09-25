@@ -54,6 +54,7 @@ import { DocumentService } from '../document.service';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { DocumentComponent } from '../document.component';
 import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summary.component';
+import { ViewStateService } from '../view-state.service';
 
 @UntilDestroy()
 @Component({
@@ -124,6 +125,8 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
     getStatusText = getStatusText;
     getDocumentStatusColorClass = getDocumentStatusColorClass;
 
+    viewList = true;
+
     constructor(
         private _router: Router,
         private _activatedRoute: ActivatedRoute,
@@ -133,9 +136,14 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
         private _bookmarkService: BookmarkService,
         private _translocoService: TranslocoService,
         private _userSettingsService: UserSettingsService,
+        private viewStateService: ViewStateService,
 
         public documentComponent: DocumentComponent,
-    ) {}
+    ) {
+        this.viewStateService.viewList$.subscribe(value => {
+            this.viewList = value;
+        });
+    }
 
     ngOnInit(): void {
         this.activeLang = this._translocoService.getActiveLang();

@@ -17,6 +17,7 @@ import { AttachmentService } from 'app/shared/components/attachments/attachment.
 import { DocumentService } from '../document.service';
 import { Document, DocumentItem } from '../document.types';
 import { trackByFn } from 'app/shared';
+import { ViewStateService } from '../view-state.service';
 
 @UntilDestroy()
 @Component({
@@ -70,8 +71,9 @@ export class DocumentViewComponent implements OnInit, OnChanges {
         private _formBuilder: UntypedFormBuilder,
         private _documentService: DocumentService,
         private _attachmentService: AttachmentService,
-        private router: Router,
         private _changeDetectorRef: ChangeDetectorRef,
+        private router: Router,
+        private viewStateService: ViewStateService,
     ) {}
 
     ngOnChanges(): void {}
@@ -79,6 +81,14 @@ export class DocumentViewComponent implements OnInit, OnChanges {
     ngOnInit(): void {
         // Create the form
         this.form = this._formBuilder.group({});
+    }
+
+    hideList(): void {
+        this.viewStateService.setViewList(false);
+    }
+
+    showList(): void {
+        this.viewStateService.setViewList(true);
     }
 
     onSelectedTabChange(): void {}

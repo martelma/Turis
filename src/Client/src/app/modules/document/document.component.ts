@@ -10,6 +10,7 @@ import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { AppSettings } from 'app/constants';
 import { DocumentSidebarComponent } from './document-sidebar/document-sidebar.component';
 import { NgIf, NgTemplateOutlet } from '@angular/common';
+import { ViewStateService } from './view-state.service';
 
 @UntilDestroy()
 @Component({
@@ -39,6 +40,7 @@ export class DocumentComponent implements OnInit, AfterViewInit {
         private _activatedRoute: ActivatedRoute,
         private _router: Router,
         private _userSettingsService: UserSettingsService,
+        private viewStateService: ViewStateService,
     ) {
         const snapshot = this._activatedRoute.snapshot;
         const params = { ...snapshot.queryParams };
@@ -64,5 +66,9 @@ export class DocumentComponent implements OnInit, AfterViewInit {
 
         const value = this.drawerFilterOpened ? 'true' : 'false';
         await this._userSettingsService.setValue(`${AppSettings.Document}:toggleFilter`, value);
+    }
+
+    changeView(): void {
+        this.viewStateService.toggleViewList();
     }
 }
