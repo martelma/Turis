@@ -51,7 +51,8 @@ public static class ContactExtensions
 			PercentageAccompagnamento = entity.PercentageAccompagnamento,
 			BookmarkId = bookmarkId.HasValue() ? bookmarkId.ToString() : string.Empty,
 			AttachmentsCount = attachments?.Where(x => x.EntityKey == entity.Id).Count() ?? 0,
-			Tags = tags?.Where(x => x.EntityKey == entity.Id).Select(x => x.Tag).ToModel()?.ToList()
+			Tags = tags?.Where(x => x.EntityKey == entity.Id).Select(x => x.Tag).ToModel()?.ToList(),
+			MonitorStat = entity.MonitorStat
 		};
 	}
 

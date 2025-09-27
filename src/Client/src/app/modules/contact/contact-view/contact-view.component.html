@@ -259,7 +259,7 @@
                                         [readonly]="true"
                                         [value]="item?.contactType ? item.contactType : ''" />
                                 </mat-form-field>
-                                <mat-form-field class="col-span-2">
+                                <mat-form-field *ngIf="item.contactType === 'Collaborator'" class="col-span-2">
                                     <mat-label>Guida %</mat-label>
                                     <input
                                         matInput
@@ -268,7 +268,7 @@
                                         [readonly]="true"
                                         [value]="item?.percentageGuida ? item.percentageGuida : ''" />
                                 </mat-form-field>
-                                <mat-form-field class="col-span-2">
+                                <mat-form-field *ngIf="item.contactType === 'Collaborator'" class="col-span-2">
                                     <mat-label>Accompagnamento %</mat-label>
                                     <input
                                         matInput
@@ -279,7 +279,7 @@
                                             item?.percentageAccompagnamento ? item.percentageAccompagnamento : ''
                                         " />
                                 </mat-form-field>
-                                <mat-form-field class="col-span-2">
+                                <mat-form-field *ngIf="item.contactType === 'Client'" class="col-span-2">
                                     <mat-label>Sdi Code</mat-label>
                                     <input
                                         matInput

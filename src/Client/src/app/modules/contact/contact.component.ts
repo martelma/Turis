@@ -10,6 +10,7 @@ import { ContactSidebarComponent } from './contact-sidebar/contact-sidebar.compo
 import { ContactListComponent } from './contact-list/contact-list.component';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { AppSettings } from 'app/constants';
+import { ContactService } from './contact.service';
 
 @UntilDestroy()
 @Component({
@@ -38,6 +39,7 @@ export class ContactComponent implements OnInit, AfterViewInit {
         private _activatedRoute: ActivatedRoute,
         private _router: Router,
         private _userSettingsService: UserSettingsService,
+        private _contactService: ContactService,
     ) {
         const snapshot = this._activatedRoute.snapshot;
         const params = { ...snapshot.queryParams };
@@ -64,5 +66,9 @@ export class ContactComponent implements OnInit, AfterViewInit {
 
         const value = this.drawerFilterOpened ? 'true' : 'false';
         await this._userSettingsService.setValue(`${AppSettings.Contact}:toggleFilter`, value);
+    }
+
+    changeView(): void {
+        this._contactService.toggleViewList();
     }
 }

@@ -12,8 +12,6 @@ public class Contact : BaseEntity
 	public string Title { get; set; }
 	public string Sex { get; set; }
 	public string? Languages { get; set; }
-	//public Guid? LanguageId { get; set; }
-	//public Language? Language { get; set; }
 	public string FirstName { get; set; }
 	public string LastName { get; set; }
 	public string FiscalCode { get; set; }
@@ -40,6 +38,7 @@ public class Contact : BaseEntity
 	public decimal PercentageGuida { get; set; }
 	public decimal PercentageAccompagnamento { get; set; }
 	public string AvatarUrl { get; set; }
+	public bool MonitorStat { get; set; }
 
 	[NotMapped] public string FullName => $"{FirstName} {LastName}";
 

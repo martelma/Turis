@@ -181,6 +181,7 @@ public class ContactService(IDbContext dbContext
 		record.Pec = request.Pec;
 		record.SdiCode = request.SdiCode;
 		record.Note = request.Note;
+		record.MonitorStat = request.MonitorStat;
 
 		if (request.DocumentType.IsNullOrEmpty())
 			record.DocumentType = DocumentType.Undefined;

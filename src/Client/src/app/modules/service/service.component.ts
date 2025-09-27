@@ -10,6 +10,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { AppSettings } from 'app/constants';
 import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summary.component';
+import { ServiceService } from './service.service';
 
 @UntilDestroy()
 @Component({
@@ -38,6 +39,7 @@ export class ServiceComponent implements OnInit, AfterViewInit {
         private _activatedRoute: ActivatedRoute,
         private _router: Router,
         private _userSettingsService: UserSettingsService,
+        private _serviceService: ServiceService,
     ) {
         const snapshot = this._activatedRoute.snapshot;
         const params = { ...snapshot.queryParams };
@@ -64,5 +66,9 @@ export class ServiceComponent implements OnInit, AfterViewInit {
 
         const value = this.drawerFilterOpened ? 'true' : 'false';
         await this._userSettingsService.setValue(`${AppSettings.Service}:toggleFilter`, value);
+    }
+
+    changeView(): void {
+        this._serviceService.toggleViewList();
     }
 }

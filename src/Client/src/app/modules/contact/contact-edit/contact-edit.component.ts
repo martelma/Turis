@@ -37,6 +37,7 @@ import { ContactService } from 'app/modules/contact/contact.service';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { Tag } from 'app/modules/configuration/tags/tag.types';
 import { TagFiltersComponent } from 'app/modules/configuration/tags/filters/tag-filters.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @UntilDestroy()
 @Component({
@@ -75,6 +76,7 @@ import { TagFiltersComponent } from 'app/modules/configuration/tags/filters/tag-
         MatTooltipModule,
         MatPaginatorModule,
         MatMenuModule,
+        MatSlideToggleModule,
         MatExpansionModule,
         FuseScrollResetDirective,
         TranslocoModule,

@@ -106,6 +106,8 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
     getStatusColorClass = getStatusColorClass;
     getStatusText = getStatusText;
 
+    viewList = true;
+
     constructor(
         private _router: Router,
         private _activatedRoute: ActivatedRoute,
@@ -115,7 +117,11 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
         private _translocoService: TranslocoService,
 
         public serviceComponent: ServiceComponent,
-    ) {}
+    ) {
+        this._serviceService.viewList$.subscribe(value => {
+            this.viewList = value;
+        });
+    }
 
     ngOnInit(): void {
         this.activeLang = this._translocoService.getActiveLang();

@@ -36,4 +36,5 @@ public class ContactRequest : BaseRequest
 	public decimal PercentageGuida { get; set; }
 	public decimal PercentageAccompagnamento { get; set; }
 	public List<TagRequest> Tags { get; set; } = [];
+	public bool MonitorStat { get; set; }
 }

@@ -10,7 +10,7 @@ import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { AppSettings } from 'app/constants';
 import { DocumentSidebarComponent } from './document-sidebar/document-sidebar.component';
 import { NgIf, NgTemplateOutlet } from '@angular/common';
-import { ViewStateService } from './view-state.service';
+import { DocumentService } from './document.service';
 
 @UntilDestroy()
 @Component({
@@ -40,7 +40,7 @@ export class DocumentComponent implements OnInit, AfterViewInit {
         private _activatedRoute: ActivatedRoute,
         private _router: Router,
         private _userSettingsService: UserSettingsService,
-        private viewStateService: ViewStateService,
+        private _documentService: DocumentService,
     ) {
         const snapshot = this._activatedRoute.snapshot;
         const params = { ...snapshot.queryParams };
@@ -69,6 +69,6 @@ export class DocumentComponent implements OnInit, AfterViewInit {
     }
 
     changeView(): void {
-        this.viewStateService.toggleViewList();
+        this._documentService.toggleViewList();
     }
 }

@@ -8,7 +8,6 @@ export class Contact {
     externalCode: string;
     title: string;
     sex: string;
-    // language: Language;
     languages: string[] = [];
     firstName: string;
     lastName: string;
@@ -41,6 +40,7 @@ export class Contact {
     avatar?: string;
     avatarUrl?: SafeUrl;
     avatarUrl2?: SafeUrl;
+    monitorStat: boolean;
 
     tags: Tag[] = [];
 

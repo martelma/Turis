@@ -1,13 +1,28 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { BaseService } from './base.service';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { PaginatedList } from '../../types/shared.types';
 
 @Injectable({ providedIn: 'root' })
 export class BaseEntityService<T> extends BaseService {
     constructor(protected http: HttpClient) {
         super(http);
+    }
+
+    private viewListSubject = new BehaviorSubject<boolean>(true);
+    public viewList$ = this.viewListSubject.asObservable();
+
+    setViewList(value: boolean): void {
+        this.viewListSubject.next(value);
+    }
+
+    getViewList(): boolean {
+        return this.viewListSubject.value;
+    }
+
+    toggleViewList(): void {
+        this.viewListSubject.next(!this.viewListSubject.value);
     }
 
     getSingle(

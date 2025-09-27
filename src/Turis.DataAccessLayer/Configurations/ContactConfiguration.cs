@@ -59,5 +59,6 @@ public class ContactConfiguration : BaseEntityConfiguration<Entities.Contact>
 		builder.Property(x => x.PercentageAccompagnamento);
 		builder.Property(x => x.Note);
 		builder.Property(x => x.AvatarUrl);
+		builder.Property(x => x.MonitorStat);
 	}
 }

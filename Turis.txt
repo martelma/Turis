@@ -45,9 +45,11 @@ non funziona add di un contatto
 PasswordExpiration
 
 
+
 gestire la parte di edit di una fattura non ancora inviata
 gestire fase di invio allo SDI
 se un documento è già stato inviato allo SDI, dare evidenza del codice univoco e della data e ora di invio
+
 
 
 
@@ -55,6 +57,24 @@ Nel contatto di tipo collaborator aggiungere tab andamento in anno; quindi navig
 Aggiungere anche tabella target mensili, target annuale assoluto e percentuale 
 
 In home admin aggiungere classifica provvigioni maturate (sia per anno che per mensilità)
+
+
+
+
+
+USE [Turis]
+GO
+
+DECLARE @Year			int
+DECLARE @Month			int
+DECLARE @CollaboratorId uniqueidentifier 
+
+SET @Year = 2022
+--SET @Month = 11
+--SET @CollaboratorId = 'CCFEA166-286C-49B5-AAB6-9AA87BEC05C1'
+
+EXECUTE [dbo].[CommissionStats] @Year, @Month, @CollaboratorId 
+
 
 
 

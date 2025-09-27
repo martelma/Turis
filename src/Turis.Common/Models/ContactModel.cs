@@ -41,6 +41,7 @@ public class ContactModel : BaseModel
 	public string BookmarkId { get; set; }
 	public int AttachmentsCount { get; set; }
 	public List<TagModel> Tags { get; set; } = [];
+	public bool MonitorStat { get; set; }
 
 	public string FullName
 	{

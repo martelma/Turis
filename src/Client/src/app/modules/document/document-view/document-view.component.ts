@@ -17,7 +17,6 @@ import { AttachmentService } from 'app/shared/components/attachments/attachment.
 import { DocumentService } from '../document.service';
 import { Document, DocumentItem } from '../document.types';
 import { trackByFn } from 'app/shared';
-import { ViewStateService } from '../view-state.service';
 
 @UntilDestroy()
 @Component({
@@ -73,7 +72,6 @@ export class DocumentViewComponent implements OnInit, OnChanges {
         private _attachmentService: AttachmentService,
         private _changeDetectorRef: ChangeDetectorRef,
         private router: Router,
-        private viewStateService: ViewStateService,
     ) {}
 
     ngOnChanges(): void {}
@@ -84,11 +82,11 @@ export class DocumentViewComponent implements OnInit, OnChanges {
     }
 
     hideList(): void {
-        this.viewStateService.setViewList(false);
+        this._documentService.setViewList(false);
     }
 
     showList(): void {
-        this.viewStateService.setViewList(true);
+        this._documentService.setViewList(true);
     }
 
     onSelectedTabChange(): void {}

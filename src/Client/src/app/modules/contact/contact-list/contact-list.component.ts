@@ -45,6 +45,7 @@ import { ContactService } from '../contact.service';
 import { ContactComponent } from '../contact.component';
 import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
 import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summary.component';
+import { DocumentService } from 'app/modules/document/document.service';
 
 @UntilDestroy()
 @Component({
@@ -106,6 +107,8 @@ export class ContactListComponent implements OnInit, AfterViewInit {
 
     trackByFn = trackByFn;
 
+    viewList = true;
+
     constructor(
         private _router: Router,
         private _activatedRoute: ActivatedRoute,
@@ -117,7 +120,11 @@ export class ContactListComponent implements OnInit, AfterViewInit {
         private _translocoService: TranslocoService,
 
         public contactComponent: ContactComponent,
-    ) {}
+    ) {
+        this._contactService.viewList$.subscribe(value => {
+            this.viewList = value;
+        });
+    }
 
     ngOnInit(): void {
         this.activeLang = this._translocoService.getActiveLang();
