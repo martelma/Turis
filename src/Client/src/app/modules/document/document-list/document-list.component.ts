@@ -35,13 +35,14 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { trackByFn } from 'app/shared';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
-import { SearchInputComponent } from 'app/shared/components/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
 import { Document, DocumentSearchParameters } from '../document.types';
 import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
 import {
+    AppSettings,
     DurationTypes,
     getDocumentStatusColorClass,
     getStatusColorClass,
@@ -173,7 +174,9 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
         this._subscribeDocumentParameters();
     }
 
-    ngAfterViewInit(): void {
+    async ngAfterViewInit(): Promise<void> {
+        this.viewList = await this._userSettingsService.getBooleanValue(`${AppSettings.Document}:viewList`);
+
         if (this._sort && this._paginator) {
             // Set the initial sort
             this._sort.sort({

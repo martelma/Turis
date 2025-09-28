@@ -1,0 +1,170 @@
+import { CdkDrag, CdkDragPlaceholder, CdkDropList } from '@angular/cdk/drag-drop';
+import { DecimalPipe, NgClass, NgFor, NgIf, SlicePipe } from '@angular/common';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { FormsModule, ReactiveFormsModule, UntypedFormControl } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
+import { FuseAlertComponent } from '@fuse/components/alert';
+import { FuseCardComponent } from '@fuse/components/card';
+import { TranslocoModule } from '@ngneat/transloco';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { SearchPipe } from 'app/pipes';
+import { detailExpand } from 'app/shared/animations/detail-expand';
+import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
+import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
+import { NgxDropzoneModule } from 'ngx-dropzone';
+import { MatDialog } from '@angular/material/dialog';
+import {
+    FuseConfirmationDialogComponent,
+    FuseConfirmationResult,
+    FuseConfirmationType,
+} from '@fuse/components/confirmation-dialog/confirmation-dialog.component';
+import { debounceTime } from 'rxjs';
+import { TargetService } from '../target/target.service';
+import { TargetSearchParameters, Target } from '../target/target.types';
+
+@UntilDestroy()
+@Component({
+    selector: 'app-commission-stats',
+    templateUrl: './commission-stats.component.html',
+    animations: [detailExpand],
+    standalone: true,
+    imports: [
+        NgIf,
+        NgFor,
+        NgClass,
+        FormsModule,
+        ReactiveFormsModule,
+        SlicePipe,
+        DecimalPipe,
+        SearchPipe,
+        MatTabsModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatMenuModule,
+        MatTableModule,
+        MatPaginatorModule,
+        MatButtonToggleModule,
+        MatExpansionModule,
+        MatDividerModule,
+        MatSortModule,
+        MatCheckboxModule,
+        MatProgressSpinnerModule,
+        KeyboardShortcutsModule,
+        CdkDrag,
+        CdkDropList,
+        CdkDragPlaceholder,
+        NgxDropzoneModule,
+        SearchPipe,
+        FuseCardComponent,
+        FuseAlertComponent,
+        SearchInputComponent,
+        TranslocoModule,
+    ],
+})
+export class CommissionStatsComponent implements OnInit, AfterViewInit {
+    @Input() collaboratorId: string;
+    @Input() year = new Date().getFullYear();
+
+    targetParameters: TargetSearchParameters = new TargetSearchParameters();
+    targets: Target[] = [];
+
+    currentPageTitle = 'Commission Stats';
+    loading = false;
+    changed = false;
+    createMode = false;
+    updateMode = false;
+    id: string;
+    newId = 0;
+    item: Target = new Target();
+    originalItem: Target = null;
+    editItem: Target;
+    columns: string[] = [
+        // 'row',
+        'year',
+        'month',
+        'amountMin',
+        'amountMax',
+        'percentageMin',
+        'percentageMax',
+        'commission',
+        'total',
+        'percentage',
+    ];
+    dataSource!: MatTableDataSource<Target>;
+    @ViewChild('paginator') paginator!: MatPaginator;
+    expandedElement: Target = null;
+
+    searchControl = new UntypedFormControl();
+
+    years: number[] = [];
+    @ViewChild('summarySelector') summarySelector: MatButtonToggleGroup;
+
+    constructor(
+        private _targetService: TargetService,
+        private _dialog: MatDialog,
+    ) {}
+
+    ngOnInit(): void {
+        const nextYear = new Date().getFullYear() + 1;
+        const startYear = nextYear - 9; // 10 anni fa rispetto al prossimo anno
+        this.years = [];
+
+        for (let i = 0; i < 10; i++) {
+            this.years.push(startYear + i);
+        }
+    }
+
+    ngAfterViewInit(): void {
+        this.summarySelector.value = this.year;
+        this.paginator.pageSize = 12;
+        this.loadData();
+    }
+
+    onToggleChange(event: MatButtonToggleChange): void {
+        this.year = event.value;
+        this.loadData();
+    }
+
+    applyFilter(searchText: string): void {
+        const tableFilters = [];
+        tableFilters.push({
+            id: 'code',
+            value: searchText,
+        });
+
+        this.dataSource.filter = JSON.stringify(tableFilters);
+        if (this.dataSource.paginator) {
+            this.dataSource.paginator.firstPage();
+        }
+    }
+
+    loadData(): void {
+        this.targetParameters.collaboratorId = this.collaboratorId;
+        this.targetParameters.year = this.year;
+        this.targetParameters.pageSize = this.paginator?.pageSize ?? 12;
+
+        this._targetService
+            .commissionStats(this.targetParameters)
+            .pipe(untilDestroyed(this))
+            .subscribe(response => {
+                this.targets = response.items;
+                this.dataSource = new MatTableDataSource(this.targets ?? []);
+                setTimeout(() => (this.dataSource.paginator = this.paginator));
+            });
+    }
+}

@@ -20,7 +20,7 @@ import { trackByFn } from 'app/shared';
 import { PriceList, PriceListSearchParameters } from '../price-list.types';
 import { PriceListService } from '../price-list.service';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
-import { SearchInputComponent } from 'app/shared/components/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
 import { DurationTypes, ServiceTypes } from 'app/constants';
 
 @UntilDestroy()

@@ -30,7 +30,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslocoModule } from '@ngneat/transloco';
-import { SearchInputComponent } from 'app/shared/components/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
 import { Tag } from '../tag.types';
 import { TagService } from '../tag.service';
 import { untilDestroyed } from '@ngneat/until-destroy';

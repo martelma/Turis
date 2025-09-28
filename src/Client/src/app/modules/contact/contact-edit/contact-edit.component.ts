@@ -38,6 +38,7 @@ import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/mat
 import { Tag } from 'app/modules/configuration/tags/tag.types';
 import { TagFiltersComponent } from 'app/modules/configuration/tags/filters/tag-filters.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { TargetComponent } from 'app/modules/collaborator/target/target.component';
 
 @UntilDestroy()
 @Component({
@@ -81,6 +82,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
         FuseScrollResetDirective,
         TranslocoModule,
         TagFiltersComponent,
+        TargetComponent,
     ],
 })
 export class ContactEditComponent implements OnInit {

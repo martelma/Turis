@@ -36,7 +36,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { trackByFn } from 'app/shared';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
-import { SearchInputComponent } from 'app/shared/components/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
 import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
@@ -46,6 +46,8 @@ import { ContactComponent } from '../contact.component';
 import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
 import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summary.component';
 import { DocumentService } from 'app/modules/document/document.service';
+import { AppSettings } from 'app/constants';
+import { UserSettingsService } from 'app/shared/services/user-setting.service';
 
 @UntilDestroy()
 @Component({
@@ -118,6 +120,7 @@ export class ContactListComponent implements OnInit, AfterViewInit {
         private _contactService: ContactService,
         private _bookmarkService: BookmarkService,
         private _translocoService: TranslocoService,
+        private _userSettingsService: UserSettingsService,
 
         public contactComponent: ContactComponent,
     ) {
@@ -165,7 +168,9 @@ export class ContactListComponent implements OnInit, AfterViewInit {
         this._subscribeContactParameters();
     }
 
-    ngAfterViewInit(): void {
+    async ngAfterViewInit(): Promise<void> {
+        this.viewList = await this._userSettingsService.getBooleanValue(`${AppSettings.Contact}:viewList`);
+
         if (this._sort && this._paginator) {
             // Set the initial sort
             this._sort.sort({

@@ -11,7 +11,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { DatePipe, JsonPipe, NgFor, NgIf, NgClass, DecimalPipe } from '@angular/common';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Router, RouterLink } from '@angular/router';
-import { getStatusColorClass, getStatusText } from 'app/constants';
+import { AppSettings, getStatusColorClass, getStatusText } from 'app/constants';
 import { AttachmentsComponent } from 'app/shared/components/attachments/attachments.component';
 import { AttachmentService } from 'app/shared/components/attachments/attachment.service';
 import { DocumentService } from '../document.service';
@@ -81,13 +81,13 @@ export class DocumentViewComponent implements OnInit, OnChanges {
         this.form = this._formBuilder.group({});
     }
 
-    hideList(): void {
-        this._documentService.setViewList(false);
-    }
+    // hideList(): void {
+    //     this._documentService.setViewList(false);
+    // }
 
-    showList(): void {
-        this._documentService.setViewList(true);
-    }
+    // showList(): void {
+    //     this._documentService.setViewList(true);
+    // }
 
     onSelectedTabChange(): void {}
 

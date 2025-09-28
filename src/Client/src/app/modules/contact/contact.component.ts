@@ -68,7 +68,11 @@ export class ContactComponent implements OnInit, AfterViewInit {
         await this._userSettingsService.setValue(`${AppSettings.Contact}:toggleFilter`, value);
     }
 
-    changeView(): void {
+    async changeView(): Promise<void> {
         this._contactService.toggleViewList();
+        await this._userSettingsService.setBooleanValue(
+            `${AppSettings.Contact}:viewList`,
+            this._contactService.getViewList(),
+        );
     }
 }

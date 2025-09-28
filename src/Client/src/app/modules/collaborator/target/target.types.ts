@@ -13,8 +13,14 @@ export class Target {
     amountMax: number;
     percentageMin: number;
     percentageMax: number;
+
+    edit = false;
+    new = false;
 }
 
-export interface TargetSearchParameters extends BaseSearchParameters {
+export class TargetSearchParameters extends BaseSearchParameters {
+    collaboratorId?: string;
+    year?: number;
+    month?: number;
     pattern?: string;
 }

@@ -68,7 +68,11 @@ export class DocumentComponent implements OnInit, AfterViewInit {
         await this._userSettingsService.setValue(`${AppSettings.Document}:toggleFilter`, value);
     }
 
-    changeView(): void {
+    async changeView(): Promise<void> {
         this._documentService.toggleViewList();
+        await this._userSettingsService.setBooleanValue(
+            `${AppSettings.Document}:viewList`,
+            this._documentService.getViewList(),
+        );
     }
 }

@@ -6,9 +6,9 @@ namespace Turis.BusinessLayer.Parameters;
 public class TargetSearchParameters : BaseSearchParameters
 {
 	[FromQuery]
-	public Guid CollaboratorId { get; set; }
+	public Guid? CollaboratorId { get; set; }
 	[FromQuery]
-	public int Year { get; set; }
+	public int? Year { get; set; }
 	[FromQuery]
-	public int Month { get; set; }
+	public int? Month { get; set; }
 }

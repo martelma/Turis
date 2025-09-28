@@ -36,7 +36,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { trackByFn } from 'app/shared';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
-import { SearchInputComponent } from 'app/shared/components/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
 import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';

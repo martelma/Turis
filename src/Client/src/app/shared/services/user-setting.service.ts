@@ -31,17 +31,12 @@ export class UserSettingsService extends BaseService {
         return await lastValueFrom(this.http.get<string>(url));
     }
 
-    // getValue(key: string) : any {
-    //     const url = this.prepareUrl(`?key=${key}`);
-    //     this.http.get<string>(url)
-    //         .subscribe({
-    //             next: (data: string) => {
-    //                 return data;
-    //             },
-    //             error: error => {
-    //             },
-    //         })
-    //         .add(() => {
-    //         });
-    // }
+    setBooleanValue(key: string, value: boolean) {
+        this.setValue(key, value ? 'true' : 'false');
+    }
+
+    async getBooleanValue(key: string): Promise<boolean> {
+        const value = await this.getValue(key);
+        return value === 'true';
+    }
 }

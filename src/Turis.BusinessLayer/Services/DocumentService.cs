@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
 using OperationResults;
-using System.Data.SqlTypes;
 using System.Globalization;
 using TinyHelpers.Extensions;
 using Turis.BusinessLayer.Extensions;

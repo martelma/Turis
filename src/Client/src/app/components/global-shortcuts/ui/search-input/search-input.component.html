@@ -1,13 +1,20 @@
 <!-- Filter -->
-<mat-form-field class="fuse-mat-dense w-full mb-2" [subscriptSizing]="'dynamic'">
+<mat-form-field
+    cdkTrapFocus
+    [cdkTrapFocusAutoCapture]="true"
+    [ngClass]="inputClass"
+    [appearance]="appearance"
+    [floatLabel]="floatLabel"
+    [subscriptSizing]="subscriptingSizing">
     <mat-label *ngIf="label">{{ label | transloco }}</mat-label>
     <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_outline:magnifying-glass'"></mat-icon>
 
     <input
+        cdkFocusInitial
         matInput
+        #searchInput
         [formControl]="searchInputControl"
-        [autocomplete]="'off'"
-        (keyup.enter)="filter()"
+        [autocomplete]="autocomplete"
         [placeholder]="placeholder | transloco" />
 
     <button
@@ -17,6 +24,6 @@
         mat-icon-button
         aria-label="Clear"
         (click)="searchInputControl.setValue('')">
-        <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+        <mat-icon [svgIcon]="'heroicons_solid:x-circle'"></mat-icon>
     </button>
 </mat-form-field>

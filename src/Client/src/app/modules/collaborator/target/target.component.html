@@ -1,0 +1,168 @@
+<div class="p-4">
+    <div class="mb-6 flex items-center gap-2">
+        <div>
+            <button mat-icon-button type="button" (click)="prevYear()">
+                <mat-icon [svgIcon]="'heroicons_outline:chevron-left'"></mat-icon>
+            </button>
+            <span class="text-lg font-bold">
+                {{ currentYear }}
+            </span>
+            <button mat-icon-button type="button" (click)="nextYear()">
+                <mat-icon [svgIcon]="'heroicons_outline:chevron-right'"></mat-icon>
+            </button>
+        </div>
+
+        <!-- Filter -->
+        <app-search-input
+            *ngIf="!readOnly"
+            class="w-full sm:w-1/3"
+            [searchInputControl]="searchControl"></app-search-input>
+
+        <button *ngIf="!readOnly" mat-icon-button type="button" (click)="add()">
+            <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+        </button>
+    </div>
+
+    <table mat-table [dataSource]="dataSource" multiTemplateDataRows>
+        <ng-container matColumnDef="row">
+            <th mat-header-cell *matHeaderCellDef>{{ 'Common.Row' | transloco }}</th>
+            <td mat-cell *matCellDef="let element; let i = dataIndex">
+                {{ paginator.pageIndex === 0 ? i + 1 : 1 + i + paginator.pageIndex * paginator.pageSize }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="year">
+            <th mat-header-cell *matHeaderCellDef>{{ 'Target.Year' | transloco }}</th>
+            <td mat-cell *matCellDef="let element" [ngClass]="{ 'font-bold': element.selected }">
+                {{ element.year }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="month">
+            <th mat-header-cell *matHeaderCellDef>{{ 'Target.Month' | transloco }}</th>
+            <td mat-cell *matCellDef="let element" [ngClass]="{ 'font-bold': element.selected }">
+                {{ element.month }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="amountMin">
+            <th mat-header-cell *matHeaderCellDef>Amount Min</th>
+            <td mat-cell *matCellDef="let element" [ngClass]="{ 'font-bold': element.selected }">
+                {{ element.amountMin }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="amountMax">
+            <th mat-header-cell *matHeaderCellDef>Amount Max</th>
+            <td mat-cell *matCellDef="let element" [ngClass]="{ 'font-bold': element.selected }">
+                {{ element.amountMax }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="percentageMin">
+            <th mat-header-cell *matHeaderCellDef>Percentage Min</th>
+            <td mat-cell *matCellDef="let element" [ngClass]="{ 'font-bold': element.selected }">
+                {{ element.percentageMin }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="percentageMax">
+            <th mat-header-cell *matHeaderCellDef>Percentage Max</th>
+            <td mat-cell *matCellDef="let element" [ngClass]="{ 'font-bold': element.selected }">
+                {{ element.percentageMax }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="tools">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let element">
+                <button mat-icon-button [matMenuTriggerFor]="menu">
+                    <mat-icon [svgIcon]="'heroicons_outline:ellipsis-vertical'"> </mat-icon>
+                </button>
+
+                <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="edit(element)">
+                        <span class="flex items-center gap-2">
+                            <mat-icon
+                                class="text-blue-500 icon-size-6"
+                                [svgIcon]="'heroicons_outline:pencil-square'"></mat-icon>
+                            <span> {{ 'Common.Edit' | transloco }} </span>
+                        </span>
+                    </button>
+                    <button mat-menu-item (click)="delete(element)">
+                        <span class="flex items-center gap-2">
+                            <mat-icon class="text-red-500 icon-size-6" [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                            <span> {{ 'Common.Remove' | transloco }} </span>
+                        </span>
+                    </button>
+                </mat-menu>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="expandedDetail">
+            <td mat-cell *matCellDef="let element; let i = dataIndex" [attr.colspan]="columns.length">
+                <div class="detail-element-container" [@detailExpand]="element.edit ? 'expanded' : 'collapsed'">
+                    <div *ngIf="element.edit" class="flex items-start gap-4 pt-4">
+                        <div>
+                            {{ paginator.pageIndex === 0 ? i + 1 : 1 + i + paginator.pageIndex * paginator.pageSize }}
+                        </div>
+                        <div class="flex flex-1 flex-col gap-4">
+                            <div class="flex w-full flex-col gap-2 sm:flex-row">
+                                <mat-form-field class="w-full bg-white sm:w-3/12" subscriptSizing="dynamic">
+                                    <mat-label>{{ 'Target.Year' | transloco }}</mat-label>
+                                    <input
+                                        matInput
+                                        type="number"
+                                        #name="ngModel"
+                                        [(ngModel)]="editItem.year"
+                                        [placeholder]="'Target.Year' | transloco" />
+                                </mat-form-field>
+
+                                <mat-form-field class="w-full bg-white sm:w-5/12" subscriptSizing="dynamic">
+                                    <mat-label>{{ 'Target.Month' | transloco }}</mat-label>
+                                    <input
+                                        matInput
+                                        type="number"
+                                        #name="ngModel"
+                                        [(ngModel)]="editItem.month"
+                                        [placeholder]="'Target.Month' | transloco" />
+                                </mat-form-field>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center">
+                            <button mat-icon-button type="button" (click)="confirmEdit()">
+                                <mat-icon
+                                    class="text-green-500 icon-size-6"
+                                    [svgIcon]="'heroicons_outline:check-circle'"></mat-icon>
+                            </button>
+
+                            <button mat-icon-button type="button" (click)="discardEdit()">
+                                <mat-icon
+                                    class="text-red-500 icon-size-6"
+                                    [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+
+        <tr
+            mat-row
+            *matRowDef="let element; columns: columns"
+            class="element-with-detail-row"
+            [class.example-expanded-row]="element.edit"
+            (dblclick)="edit(element)"></tr>
+
+        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-element-row"></tr>
+    </table>
+
+    <mat-paginator
+        #paginator
+        [pageSizeOptions]="[10, 20, 30]"
+        showFirstLastButtons="true"
+        aria-label="Select page of cart phases"></mat-paginator>
+</div>

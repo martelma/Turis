@@ -38,7 +38,7 @@ import { ServiceSidebarComponent } from 'app/modules/service/service-sidebar/ser
 import { ServiceService } from 'app/modules/service/service.service';
 import { Service, ServiceSearchParameters } from 'app/modules/service/service.types';
 import { trackByFn } from 'app/shared';
-import { SearchInputComponent } from 'app/shared/components/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { CalendarSelectorComponent } from '../calendar-selector/calendar-selector.component';

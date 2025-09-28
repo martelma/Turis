@@ -15,7 +15,7 @@ import { Observable, of, tap, switchMap, catchError, throwError, finalize, debou
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { SearchInputComponent } from 'app/shared/components/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
 import { UserDateFormats } from 'app/constants';
 
 @UntilDestroy()

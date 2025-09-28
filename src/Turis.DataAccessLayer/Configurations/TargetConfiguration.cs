@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Turis.Common.Enums;
 using Turis.DataAccessLayer.Configurations.Base;
 
 namespace Turis.DataAccessLayer.Configurations;

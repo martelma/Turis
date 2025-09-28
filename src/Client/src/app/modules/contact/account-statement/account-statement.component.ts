@@ -1,6 +1,16 @@
 import { AccountStatementParameters, Service } from 'app/modules/service/service.types';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
-import { DatePipe, DecimalPipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
+import {
+    DatePipe,
+    DecimalPipe,
+    JsonPipe,
+    LowerCasePipe,
+    NgClass,
+    NgFor,
+    NgIf,
+    NgStyle,
+    NgTemplateOutlet,
+} from '@angular/common';
 import {
     AfterViewInit,
     ChangeDetectorRef,
@@ -41,12 +51,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
-import {
-    getBillingStatusColorClass,
-    getCommissionStatusColorClass,
-    getStatusColorClass,
-    ContactTypes,
-} from 'app/constants';
+import { getBillingStatusColorClass, getCommissionStatusColorClass, getStatusColorClass } from 'app/constants';
 import { UntypedFormGroup } from '@angular/forms';
 
 @UntilDestroy()
@@ -71,6 +76,7 @@ import { UntypedFormGroup } from '@angular/forms';
         NgStyle,
         DatePipe,
         DecimalPipe,
+        LowerCasePipe,
         JsonPipe,
         RouterLink,
         MatProgressBarModule,
@@ -127,14 +133,7 @@ export class AccountStatementComponent implements OnInit, AfterViewInit, OnChang
     getCommissionStatusColorClass = getCommissionStatusColorClass;
 
     constructor(
-        private _activatedRoute: ActivatedRoute,
-        private _router: Router,
-        private _contactService: ContactService,
         private _serviceService: ServiceService,
-        private _fuseConfirmationService: FuseConfirmationService,
-        private _translocoService: TranslocoService,
-        private _bookmarkService: BookmarkService,
-        private _matDialog: MatDialog,
         private _changeDetectorRef: ChangeDetectorRef,
         public snackBar: MatSnackBar,
     ) {}

@@ -16,7 +16,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { fuseAnimations } from '@fuse/animations';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { SearchInputComponent } from 'app/shared/components/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
 import { MaterialModule } from 'app/modules/material.module';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { ServiceSidebarComponent } from 'app/modules/service/service-sidebar/service-sidebar.component';

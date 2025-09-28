@@ -1,25 +1,16 @@
-﻿using System.Globalization;
-using System.Linq.Dynamic.Core;
-using System.Linq.Dynamic.Core.Exceptions;
-using JeMa.Shared.Extensions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OperationResults;
 using TinyHelpers.Extensions;
-using Turis.BusinessLayer.Events;
 using Turis.BusinessLayer.Extensions;
 using Turis.BusinessLayer.Parameters;
 using Turis.BusinessLayer.Parameters.Base;
-using Turis.BusinessLayer.Resources;
-using Turis.BusinessLayer.Services.Email;
 using Turis.BusinessLayer.Services.Interfaces;
-using Turis.Common.Enums;
 using Turis.Common.Models;
+using Turis.Common.Models.Keyless;
 using Turis.Common.Models.Requests;
-using Turis.Common.Models.Responses;
 using Turis.DataAccessLayer;
 using Turis.DataAccessLayer.Entities;
-using Service = Turis.DataAccessLayer.Entities.Service;
 
 namespace Turis.BusinessLayer.Services;
 
@@ -53,23 +44,15 @@ public class TargetService(ApplicationDbContext dbContext
 
 		var query = dbContext.GetData<Target>()
 			.Include(x => x.Collaborator)
+			.WhereIf(parameters.CollaboratorId.HasValue(), x => x.CollaboratorId == parameters.CollaboratorId)
+			.WhereIf(parameters.Year is > 0, x => x.Year == parameters.Year)
+			.WhereIf(parameters.Month is > 0, x => x.Month == parameters.Month)
 			.AsNoTracking()
 			.AsQueryable();
 
 		var totalCount = await query.AsSplitQuery().CountAsync();
 
-		if (parameters.OrderBy.HasValue())
-		{
-			try
-			{
-				query = query.OrderBy(parameters.OrderBy);
-			}
-			catch (ParseException ex)
-			{
-				logger.LogError(ex, Errors.OrderByLoggerError, parameters.OrderBy);
-				return Result.Fail(FailureReasons.ClientError, string.Format(Errors.OrderByError, parameters.OrderBy));
-			}
-		}
+		query = query.OrderByDescending(x => x.Year).ThenBy(x => x.Month);
 
 		// Prova a prendere un elemento in più di quelli richiesti per controllare se ci sono pagine successive.
 		var data = query
@@ -79,6 +62,31 @@ public class TargetService(ApplicationDbContext dbContext
 		var model = await data.ToModelAsync(avatarContactService);
 
 		var result = new PaginatedList<TargetModel>(model, totalCount, data.Count > parameters.PageSize);
+		return result;
+	}
+
+	public async Task<Result<PaginatedList<CommissionStat>>> CommissionStatsAsync(TargetSearchParameters parameters)
+	{
+		var paginator = new Paginator(parameters);
+
+		var list = await dbContext.Set<CommissionStat>()
+			.FromSqlRaw("EXEC CommissionStats @Year = {0}, @Month = {1}, @CollaboratorId = {2}"
+				, parameters.Year is > 0 ? parameters.Year.Value : DBNull.Value
+				, parameters.Month is > 0 ? parameters.Month.Value : DBNull.Value
+				, parameters.CollaboratorId.HasValue() ? parameters.CollaboratorId.Value : DBNull.Value
+				)
+			.ToListAsync();
+
+		var totalCount = list.Count;
+
+		list = list.OrderByDescending(x => x.Year).ThenBy(x => x.Month).ToList();
+
+		// Prova a prendere un elemento in più di quelli richiesti per controllare se ci sono pagine successive.
+		var data = list
+			.Skip(paginator.PageIndex * paginator.PageSize).Take(paginator.PageSize + 1)
+			.ToList();
+
+		var result = new PaginatedList<CommissionStat>(data, totalCount, data.Count > parameters.PageSize);
 		return result;
 	}
 

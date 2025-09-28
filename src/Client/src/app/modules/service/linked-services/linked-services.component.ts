@@ -27,7 +27,6 @@ import { AttachmentsComponent } from 'app/shared/components/attachments/attachme
 import { EventLogsGridComponent } from 'app/modules/event-logs/grid/event-logs-grid.component';
 import { EventLogsComponent } from 'app/modules/event-logs/event-logs/event-logs.component';
 import { LinkedService } from '../linkedService';
-import { SearchInputComponent } from 'app/shared/components/ui/search-input/search-input.component';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -35,6 +34,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { getStatusColorClass, getStatusText } from 'app/constants';
 import { trackByFn } from 'app/shared';
 import { FuseCardComponent } from '@fuse/components/card';
+import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
 
 @UntilDestroy()
 @Component({
@@ -112,7 +112,7 @@ export class LinkedServicesComponent implements OnInit, AfterViewInit, OnChanges
             this.data = linkedServices;
             console.log(linkedServices);
 
-            this.searchInput?.reset();
+            this.searchInput?.focusOnSearch();
             this.results = null;
         });
     }

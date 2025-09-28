@@ -54,7 +54,6 @@ export class ServiceComponent implements OnInit, AfterViewInit {
     async ngAfterViewInit(): Promise<void> {
         const toggleFilterValue = await this._userSettingsService.getValue(`${AppSettings.Service}:toggleFilter`);
         this.drawerFilterOpened = toggleFilterValue === '' ? false : toggleFilterValue === 'true';
-        // console.log('drawerFilterOpened', this.drawerFilterOpened)
     }
 
     createService(): void {
@@ -68,7 +67,11 @@ export class ServiceComponent implements OnInit, AfterViewInit {
         await this._userSettingsService.setValue(`${AppSettings.Service}:toggleFilter`, value);
     }
 
-    changeView(): void {
+    async changeView(): Promise<void> {
         this._serviceService.toggleViewList();
+        await this._userSettingsService.setBooleanValue(
+            `${AppSettings.Service}:viewList`,
+            this._serviceService.getViewList(),
+        );
     }
 }

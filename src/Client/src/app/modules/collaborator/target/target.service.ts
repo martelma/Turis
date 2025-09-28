@@ -67,8 +67,8 @@ export class TargetService extends BaseEntityService<Target> {
     createEntity(): Observable<Target> {
         return this.targets$.pipe(
             take(1),
-            switchMap(targets =>
-                of({
+            switchMap(targets => {
+                return of({
                     id: emptyGuid,
                     collaboratorId: '',
                     collaborator: null,
@@ -78,6 +78,8 @@ export class TargetService extends BaseEntityService<Target> {
                     amountMax: 0,
                     percentageMin: 0,
                     percentageMax: 0,
+                    edit: true,
+                    new: true,
                 }).pipe(
                     map(newTarget => {
                         // Update the targets with the new target
@@ -86,8 +88,8 @@ export class TargetService extends BaseEntityService<Target> {
                         // Return the new target
                         return newTarget;
                     }),
-                ),
-            ),
+                );
+            }),
         );
     }
 
@@ -145,9 +147,54 @@ export class TargetService extends BaseEntityService<Target> {
         httpParams = httpParams.append('pageSize', params?.pageSize ?? 10);
         httpParams = httpParams.append('orderBy', params?.orderBy?.toString() ?? '');
         httpParams = httpParams.append('pattern', params?.pattern ?? '');
+
+        httpParams = httpParams.append('collaboratorId', params?.collaboratorId ?? '');
+        httpParams = httpParams.append('year', params?.year > 0 ? params.year.toString() : '0');
+        httpParams = httpParams.append('month', params?.month > 0 ? params.month.toString() : '0');
+
         const queryString = httpParams.toString();
 
         const url = `?${queryString}`;
+
+        return this.apiGet<PaginatedListResult<Target>>(url).pipe(
+            map((list: PaginatedListResult<Target>) => {
+                this._targets.next(list);
+
+                this._queryParameters.next({
+                    ...this._queryParameters,
+                    ...params,
+                    pageIndex: list.pageIndex,
+                    pageSize: list.pageSize,
+                });
+
+                return list;
+            }),
+            finalize(() => {
+                this._targetsLoading.next(false);
+            }),
+        );
+    }
+
+    /**
+     * Gets all targets
+     * @returns
+     */
+    commissionStats(params?: TargetSearchParameters): Observable<PaginatedListResult<Target>> {
+        this._targetsLoading.next(true);
+
+        let httpParams = new HttpParams();
+        httpParams = httpParams.append('pageIndex', params?.pageIndex ?? 0);
+        httpParams = httpParams.append('pageSize', params?.pageSize ?? 10);
+        httpParams = httpParams.append('orderBy', params?.orderBy?.toString() ?? '');
+        httpParams = httpParams.append('pattern', params?.pattern ?? '');
+
+        httpParams = httpParams.append('collaboratorId', params?.collaboratorId ?? '');
+        httpParams = httpParams.append('year', params?.year > 0 ? params.year.toString() : '0');
+        httpParams = httpParams.append('month', params?.month > 0 ? params.month.toString() : '0');
+
+        const queryString = httpParams.toString();
+
+        const url = `commission-stats?${queryString}`;
 
         return this.apiGet<PaginatedListResult<Target>>(url).pipe(
             map((list: PaginatedListResult<Target>) => {

@@ -3,6 +3,7 @@ using EntityFramework.Exceptions.SqlServer;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Turis.Authentication;
 using Turis.Authentication.Entities;
+using Turis.Common.Models.Keyless;
 using Turis.DataAccessLayer.Entities;
 
 namespace Turis.DataAccessLayer;
@@ -27,6 +28,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 	public DbSet<JournalEntry> JournalEntries { get; set; }
 	public DbSet<Proposal> Proposals { get; set; }
 	public DbSet<PaymentType> PaymentTypes { get; set; }
+	public DbSet<Target> Targets { get; set; }
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
@@ -41,6 +43,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
 		modelBuilder.Entity<JournalEntry>()
 			.ToTable(tb => tb.HasTrigger("trg_Balance"));
+
+		// Configura il DTO come keyless entity per le stored procedure
+		modelBuilder.Entity<CommissionStat>().HasNoKey();
 	}
 
 

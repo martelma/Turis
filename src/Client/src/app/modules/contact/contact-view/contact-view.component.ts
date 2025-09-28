@@ -17,6 +17,8 @@ import { AttachmentsComponent } from 'app/shared/components/attachments/attachme
 import { AttachmentService } from 'app/shared/components/attachments/attachment.service';
 import { ClientSummaryComponent } from '../client-summary/client-summary.component';
 import { CollaboratorSummaryComponent } from '../collaborator-summary/collaborator-summary.component';
+import { TargetComponent } from 'app/modules/collaborator/target/target.component';
+import { CommissionStatsComponent } from 'app/modules/collaborator/commission-stats/commission-stats.component';
 
 @UntilDestroy()
 @Component({
@@ -45,6 +47,7 @@ import { CollaboratorSummaryComponent } from '../collaborator-summary/collaborat
         ClientSummaryComponent,
         CollaboratorSummaryComponent,
         AttachmentsComponent,
+        CommissionStatsComponent,
     ],
 })
 export class ContactViewComponent implements OnInit {

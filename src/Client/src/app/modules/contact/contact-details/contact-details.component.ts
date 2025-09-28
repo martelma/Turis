@@ -172,10 +172,6 @@ export class ContactDetailsComponent implements OnInit {
     }
 
     save(): void {
-        // if (this.isCopy) {
-        //     newValue.id = emptyGuid;
-        // }
-
         this._contactService
             .update(this.contact)
             .pipe(untilDestroyed(this))
@@ -281,8 +277,6 @@ export class ContactDetailsComponent implements OnInit {
             .pipe(untilDestroyed(this))
             .subscribe(() => {
                 this._fuseConfirmationService.open(getSuccessModal());
-
-                // this._userService.me().pipe(untilDestroyed(this)).subscribe();
             });
     };
 
@@ -297,8 +291,6 @@ export class ContactDetailsComponent implements OnInit {
             .pipe(untilDestroyed(this))
             .subscribe(() => {
                 this._fuseConfirmationService.open(getSuccessModal());
-
-                // this._userService.me().pipe(untilDestroyed(this)).subscribe();
             });
     }
 

@@ -17,7 +17,7 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { trackByFn } from 'app/shared';
-import { SearchInputComponent } from 'app/shared/components/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { PaginatedList } from 'app/shared/types/shared.types';
 import { ApplicationScopeGroupService } from '../../scope-groups/scope-group.service';

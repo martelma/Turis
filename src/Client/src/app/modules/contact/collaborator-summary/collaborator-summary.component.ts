@@ -1,4 +1,3 @@
-import { AccountStatementParameters, Service } from 'app/modules/service/service.types';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import {
     CurrencyPipe,
@@ -44,21 +43,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { FuseCardComponent } from '@fuse/components/card';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { ServiceService } from 'app/modules/service/service.service';
-import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
-import {
-    getBillingStatusColorClass,
-    getCommissionStatusColorClass,
-    getStatusColorClass,
-    ContactTypes,
-} from 'app/constants';
-import { UntypedFormGroup } from '@angular/forms';
+import { getBillingStatusColorClass, getCommissionStatusColorClass, getStatusColorClass } from 'app/constants';
 import { ContactSummary, ContactSummaryData } from 'app/modules/admin/dashboard/dashboard.types';
 import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggleModule } from '@angular/material/button-toggle';
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
@@ -141,14 +133,7 @@ export class CollaboratorSummaryComponent implements OnInit, AfterViewInit, OnCh
     @ViewChild('summarySelector') summarySelector: MatButtonToggleGroup;
 
     constructor(
-        private _activatedRoute: ActivatedRoute,
-        private _router: Router,
-        private _contactService: ContactService,
         private _serviceService: ServiceService,
-        private _fuseConfirmationService: FuseConfirmationService,
-        private _translocoService: TranslocoService,
-        private _bookmarkService: BookmarkService,
-        private _matDialog: MatDialog,
         private _changeDetectorRef: ChangeDetectorRef,
         public snackBar: MatSnackBar,
     ) {}
@@ -160,8 +145,8 @@ export class CollaboratorSummaryComponent implements OnInit, AfterViewInit, OnCh
 
             this._changeDetectorRef.detectChanges();
 
-            if (this.summarySelector?.value) {
-                this.summarySelector.value = '2024'; // Imposta un valore iniziale selezionato
+            if (!this.summarySelector?.value) {
+                this.summarySelector.value = new Date().getFullYear().toString(); // Imposta un valore iniziale selezionato
             }
         });
 

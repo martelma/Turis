@@ -28,7 +28,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { toUtcString, trackByFn } from 'app/shared';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
-import { SearchInputComponent } from 'app/shared/components/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
 import { Service, ServiceSearchParameters } from 'app/modules/service/service.types';
 import { ServiceService } from 'app/modules/service/service.service';
 import { MaterialModule } from 'app/modules/material.module';

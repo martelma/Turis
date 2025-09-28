@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } fro
 import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ServiceService } from '../service.service';
-import { SearchInputComponent } from 'app/shared/components/ui/search-input/search-input.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -29,6 +28,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Language } from 'app/modules/configuration/languages/language.types';
 import { LanguageService } from 'app/modules/configuration/languages/language.service';
+import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
 
 @UntilDestroy()
 @Component({

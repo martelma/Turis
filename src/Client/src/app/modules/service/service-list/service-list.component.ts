@@ -1,3 +1,4 @@
+import { Service } from './../service.types';
 import { TagSummaryComponent } from './../../../shared/components/tag-summary/tag-summary.component';
 import { CurrencyPipe, DatePipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
 import {
@@ -26,17 +27,25 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { trackByFn } from 'app/shared';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
-import { SearchInputComponent } from 'app/shared/components/ui/search-input/search-input.component';
-import { Service, ServiceSearchParameters } from '../service.types';
+import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
+import { ServiceSearchParameters } from '../service.types';
 import { ServiceService } from '../service.service';
 import { ServiceComponent } from '../service.component';
 import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
-import { DurationTypes, getStatusColorClass, getStatusText, ServiceTypes, StatusTypes } from 'app/constants';
+import {
+    AppSettings,
+    DurationTypes,
+    getStatusColorClass,
+    getStatusText,
+    ServiceTypes,
+    StatusTypes,
+} from 'app/constants';
 import { ServiceViewComponent } from '../service-view/service-view.component';
 import { TitleCasePipe } from '@angular/common';
+import { UserSettingsService } from 'app/shared/services/user-setting.service';
 
 @UntilDestroy()
 @Component({
@@ -115,6 +124,7 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
         private _serviceService: ServiceService,
         private _bookmarkService: BookmarkService,
         private _translocoService: TranslocoService,
+        private _userSettingsService: UserSettingsService,
 
         public serviceComponent: ServiceComponent,
     ) {
@@ -125,16 +135,6 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.activeLang = this._translocoService.getActiveLang();
-
-        // Services
-        // this._serviceService.list$.pipe(untilDestroyed(this)).subscribe((results: PaginatedListResult<Service>) => {
-        //     this.results = results;
-        //     this.list = results?.items;
-
-        //     this.list.forEach(item => {
-        //         item.languages = item.languages.map(lang => lang.toLowerCase());
-        //     });
-        // });
 
         // Services loading
         this._serviceService.loading$.pipe(untilDestroyed(this)).subscribe((servicesLoading: boolean) => {
@@ -157,7 +157,9 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
         this._subscribeServiceParameters();
     }
 
-    ngAfterViewInit(): void {
+    async ngAfterViewInit(): Promise<void> {
+        this.viewList = await this._userSettingsService.getBooleanValue(`${AppSettings.Service}:viewList`);
+
         if (this._sort && this._paginator) {
             // Set the initial sort
             this._sort.sort({
