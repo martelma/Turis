@@ -13,6 +13,7 @@ public static class TargetExtensions
 		var model = new TargetModel
 		{
 			Id = entity.Id,
+			CollaboratorId = entity.CollaboratorId,
 			Collaborator = entity.Collaborator?.ToModel(),
 			Year = entity.Year,
 			Month = entity.Month,

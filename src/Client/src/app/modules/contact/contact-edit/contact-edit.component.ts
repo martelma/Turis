@@ -38,7 +38,8 @@ import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/mat
 import { Tag } from 'app/modules/configuration/tags/tag.types';
 import { TagFiltersComponent } from 'app/modules/configuration/tags/filters/tag-filters.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { TargetComponent } from 'app/modules/collaborator/target/target.component';
+import { TargetComponent, TargetsChanged } from 'app/modules/collaborator/target/target.component';
+import { AttachmentsComponent } from 'app/shared/components/attachments/attachments.component';
 
 @UntilDestroy()
 @Component({
@@ -82,6 +83,7 @@ import { TargetComponent } from 'app/modules/collaborator/target/target.componen
         FuseScrollResetDirective,
         TranslocoModule,
         TagFiltersComponent,
+        AttachmentsComponent,
         TargetComponent,
     ],
 })
@@ -117,12 +119,7 @@ export class ContactEditComponent implements OnInit {
     contactTypes = ContactTypes;
     documentTypes = DocumentTypes;
 
-    constructor(
-        private _formBuilder: UntypedFormBuilder,
-        private _contactService: ContactService,
-        private _priceListService: PriceListService,
-        private _languageService: LanguageService,
-    ) {}
+    constructor(private _languageService: LanguageService) {}
 
     ngOnInit(): void {
         this.loadLanguages();
@@ -155,6 +152,12 @@ export class ContactEditComponent implements OnInit {
 
     onTagsSelectionChange(tags: Tag[]): void {
         this.contact.tags = tags;
+        this.checkChanged();
+    }
+
+    targetChanged(event: TargetsChanged): void {
+        // console.log('onTargetDataChanged', event);
+        this.contact.targets = event.details;
         this.checkChanged();
     }
 }

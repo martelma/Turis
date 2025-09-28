@@ -86,7 +86,6 @@
                         <div class="flex flex-col">
                             <div class="grid grid-cols-12 gap-2 h-full w-full">
                                 <mat-form-field class="col-span-12">
-                                    <!-- <mat-label>Note</mat-label> -->
                                     <textarea
                                         matInput
                                         cdkTextareaAutosize
@@ -100,6 +99,25 @@
                                 </mat-form-field>
                             </div>
                         </div>
+                    </div>
+                </ng-template>
+            </mat-tab>
+
+            <!-- Attachments -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon
+                        class="icon-size-5 mr-2"
+                        [svgIcon]="'heroicons_outline:paper-clip'"
+                        [ngClass]="{ 'red-icon': item?.attachmentsCount > 0 }"></mat-icon>
+                    {{ 'General.Attachments' | transloco }}
+                </ng-template>
+                <ng-template matTabContent>
+                    <div class="flex flex-col flex-1 overflow-y-auto">
+                        <app-attachments
+                            [entityName]="'JournalEntry'"
+                            [entityKey]="item?.id"
+                            [edit]="true"></app-attachments>
                     </div>
                 </ng-template>
             </mat-tab>

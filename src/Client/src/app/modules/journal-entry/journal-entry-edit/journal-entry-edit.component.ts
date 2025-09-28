@@ -35,6 +35,7 @@ import { DocumentTypes, MY_DATE_FORMATS, Sexs } from 'app/constants';
 import { JournalEntry } from '../journal-entry.types';
 import { TagFiltersComponent } from 'app/modules/configuration/tags/filters/tag-filters.component';
 import { Tag } from 'app/modules/configuration/tags/tag.types';
+import { AttachmentsComponent } from 'app/shared/components/attachments/attachments.component';
 
 @UntilDestroy()
 @Component({
@@ -77,6 +78,7 @@ import { Tag } from 'app/modules/configuration/tags/tag.types';
         FuseScrollResetDirective,
         TranslocoModule,
         TagFiltersComponent,
+        AttachmentsComponent,
     ],
 })
 export class JournalEntryEditComponent implements OnInit {

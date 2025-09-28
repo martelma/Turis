@@ -94,7 +94,6 @@ export class CommissionStatsComponent implements OnInit, AfterViewInit {
     originalItem: Target = null;
     editItem: Target;
     columns: string[] = [
-        // 'row',
         'year',
         'month',
         'amountMin',
@@ -138,19 +137,6 @@ export class CommissionStatsComponent implements OnInit, AfterViewInit {
     onToggleChange(event: MatButtonToggleChange): void {
         this.year = event.value;
         this.loadData();
-    }
-
-    applyFilter(searchText: string): void {
-        const tableFilters = [];
-        tableFilters.push({
-            id: 'code',
-            value: searchText,
-        });
-
-        this.dataSource.filter = JSON.stringify(tableFilters);
-        if (this.dataSource.paginator) {
-            this.dataSource.paginator.firstPage();
-        }
     }
 
     loadData(): void {

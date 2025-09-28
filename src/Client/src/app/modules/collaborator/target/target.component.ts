@@ -1,9 +1,9 @@
 import { CdkDrag, CdkDragPlaceholder, CdkDropList } from '@angular/cdk/drag-drop';
 import { DecimalPipe, NgClass, NgFor, NgIf, SlicePipe } from '@angular/common';
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, AfterViewInit, EventEmitter, Output } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormControl } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -32,8 +32,11 @@ import {
     FuseConfirmationResult,
     FuseConfirmationType,
 } from '@fuse/components/confirmation-dialog/confirmation-dialog.component';
-import { debounceTime } from 'rxjs';
 import { TargetService } from './target.service';
+
+export interface TargetsChanged {
+    details: Target[];
+}
 
 @UntilDestroy()
 @Component({
@@ -76,31 +79,21 @@ import { TargetService } from './target.service';
         TranslocoModule,
     ],
 })
-export class TargetComponent implements OnInit {
-    _collaboratorId: string;
+export class TargetComponent implements OnInit, AfterViewInit {
+    @Input() collaboratorId: string;
+    @Input() year = new Date().getFullYear();
 
-    @Input()
-    set collaboratorId(val: string) {
-        setTimeout(() => {
-            this._collaboratorId = val;
-            this.targetParameters.collaboratorId = this.collaboratorId;
-            this.loadData();
-        });
-    }
-    get collaboratorId(): string {
-        return this._collaboratorId;
-    }
+    @Output() dataChanged = new EventEmitter<TargetsChanged>();
 
-    @Input() readOnly = true;
-    @Input() debounce = 500;
-    @Input() currentYear = new Date().getFullYear();
+    years: number[] = [];
+    @ViewChild('summarySelector') summarySelector: MatButtonToggleGroup;
 
     targetParameters: TargetSearchParameters = new TargetSearchParameters();
     targets: Target[] = [];
 
     currentPageTitle = 'Target';
     loading = false;
-    changed = false;
+    // changed = false;
     createMode = false;
     updateMode = false;
     id: string;
@@ -108,7 +101,7 @@ export class TargetComponent implements OnInit {
     item: Target = new Target();
     originalItem: Target = null;
     editItem: Target;
-    columns: string[] = ['row', 'year', 'month', 'amountMin', 'amountMax', 'percentageMin', 'percentageMax', 'tools'];
+    columns: string[] = ['year', 'month', 'amountMin', 'amountMax', 'percentageMin', 'percentageMax', 'tools'];
     dataSource!: MatTableDataSource<Target>;
     @ViewChild('paginator') paginator!: MatPaginator;
     expandedElement: Target = null;
@@ -121,32 +114,29 @@ export class TargetComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        // Subscribe to search control changes
-        this.searchControl.valueChanges.pipe(debounceTime(this.debounce), untilDestroyed(this)).subscribe(value => {
-            if (value !== null) {
-                this.applyFilter(value);
-            }
-        });
-    }
+        const nextYear = new Date().getFullYear() + 1;
+        const startYear = nextYear - 9; // 10 anni fa rispetto al prossimo anno
+        this.years = [];
 
-    applyFilter(searchText: string): void {
-        const tableFilters = [];
-        tableFilters.push({
-            id: 'code',
-            value: searchText,
-        });
-
-        this.dataSource.filter = JSON.stringify(tableFilters);
-        if (this.dataSource.paginator) {
-            this.dataSource.paginator.firstPage();
+        for (let i = 0; i < 10; i++) {
+            this.years.push(startYear + i);
         }
     }
 
-    loadData(): void {
-        //commissionStats
+    ngAfterViewInit(): void {
+        this.summarySelector.value = this.year;
+        this.paginator.pageSize = 12;
+        this.loadData();
+    }
 
+    onToggleChange(event: MatButtonToggleChange): void {
+        this.year = event.value;
+        this.loadData();
+    }
+
+    loadData(): void {
         this.targetParameters.collaboratorId = this.collaboratorId;
-        this.targetParameters.year = this.currentYear;
+        this.targetParameters.year = this.year;
         this._targetService
             .listEntities(this.targetParameters)
             .pipe(untilDestroyed(this))
@@ -162,6 +152,9 @@ export class TargetComponent implements OnInit {
         this.editItem = new Target();
         this.editItem.edit = true;
         this.editItem.new = true;
+
+        this.editItem.collaboratorId = this.collaboratorId;
+        this.editItem.year = this.year;
 
         this.targets.push(this.editItem);
         this.dataSource = new MatTableDataSource(this.targets ?? []);
@@ -191,7 +184,10 @@ export class TargetComponent implements OnInit {
                 this.dataSource = new MatTableDataSource(this.targets ?? []);
                 setTimeout(() => (this.dataSource.paginator = this.paginator));
 
-                this.changed = true;
+                this._targetService.deleteEntity(item.id).subscribe(() => {
+                    this._closeAllEdit();
+                    this.loadData();
+                });
             }
         });
     }
@@ -202,6 +198,7 @@ export class TargetComponent implements OnInit {
         this._closeAllEdit();
 
         item.edit = true;
+
         this.editItem = JSON.parse(JSON.stringify(item));
     }
 
@@ -223,9 +220,11 @@ export class TargetComponent implements OnInit {
         this.dataSource = new MatTableDataSource(this.targets ?? []);
         setTimeout(() => (this.dataSource.paginator = this.paginator));
 
-        this.editItem = null;
-        this._closeAllEdit();
-        this.changed = true;
+        this._targetService.updateEntity(this.editItem.id, this.editItem).subscribe(() => {
+            this.editItem = null;
+            this._closeAllEdit();
+            this.loadData();
+        });
     }
 
     discardEdit(): void {
@@ -242,15 +241,5 @@ export class TargetComponent implements OnInit {
 
         this.editItem = null;
         this.expandedElement = null;
-    }
-
-    prevYear(): void {
-        this.currentYear--;
-        this.loadData();
-    }
-
-    nextYear(): void {
-        this.currentYear++;
-        this.loadData();
     }
 }

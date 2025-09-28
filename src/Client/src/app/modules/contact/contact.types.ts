@@ -1,6 +1,7 @@
 import { BaseSearchParameters } from 'app/shared/types/shared.types';
 import { SafeUrl } from '@angular/platform-browser';
 import { Tag } from '../configuration/tags/tag.types';
+import { Target } from '../collaborator/target/target.types';
 
 export class Contact {
     id: string;
@@ -43,6 +44,8 @@ export class Contact {
     monitorStat: boolean;
 
     tags: Tag[] = [];
+
+    targets: Target[] = [];
 
     bookmarkId: string;
 
