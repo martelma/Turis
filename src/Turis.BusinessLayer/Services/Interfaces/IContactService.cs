@@ -8,7 +8,7 @@ namespace Turis.BusinessLayer.Services.Interfaces;
 
 public interface IContactService : IService
 {
-	Task<Result<TeamSummaryModel>> TeamSummaryAsync();
+	Task<Result<TeamSummaryModel>> TeamSummaryAsync(int? year);
 	Task<Result<PaginatedList<ContactModel>>> ListAsync(ContactSearchParameters parameters);
 	Task<Result<ContactModel>> GetAsync(Guid serviceId);
 	Task<Result<ContactModel>> SaveAsync(ContactRequest model);

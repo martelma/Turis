@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -8,6 +8,7 @@ import { User } from 'app/core/user/user.types';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ServiceSummary } from '../dashboard.types';
 import { ServiceService } from 'app/modules/service/service.service';
+import { HoverDirective } from 'app/shared/components/directives/hover-directive';
 
 @UntilDestroy()
 @Component({
@@ -15,9 +16,11 @@ import { ServiceService } from 'app/modules/service/service.service';
     standalone: true,
     templateUrl: './service-summary.component.html',
     encapsulation: ViewEncapsulation.None,
-    imports: [CommonModule, FormsModule, MaterialModule, TranslocoModule],
+    imports: [CommonModule, FormsModule, MaterialModule, TranslocoModule, HoverDirective],
 })
 export class ServiceSummaryComponent implements OnInit {
+    @Output() dillDownOn = new EventEmitter<string>();
+
     public user: User;
     public isScreenSmall: boolean;
 
@@ -44,5 +47,10 @@ export class ServiceSummaryComponent implements OnInit {
             .subscribe(items => {
                 this.serviceSummary = items;
             });
+    }
+
+    show(type: string) {
+        console.log('show', type);
+        this.dillDownOn.emit(type);
     }
 }

@@ -36,21 +36,18 @@ export class JournalEntrySummaryComponent implements OnInit, AfterViewInit {
     ) {}
 
     ngOnInit(): void {
-        this._journalEntryService.journalEntrySummary$
-            .pipe(untilDestroyed(this))
-            .subscribe((data: JournalEntrySummary) => {
-                this.journalEntrySummary = data;
-            });
+        // this._journalEntryService.journalEntrySummary$
+        //     .pipe(untilDestroyed(this))
+        //     .subscribe((data: JournalEntrySummary) => {
+        //         this.journalEntrySummary = data;
+        //         console.log('ngOnInit summary', this.journalEntrySummary);
+        //         this.prepareChartData();
+        //     });
         this.loadData();
     }
 
     ngAfterViewInit() {
-        // if (!this.summarySelector.value) {
-        //     this.summarySelector.value = 'monthData'; // Imposta un valore predefinito
-        // }
-        // console.log('Valore inizializzato:', this.summarySelector.value);
-
-        this.loadData();
+        // this.loadData();
     }
 
     onToggleChange(event: MatButtonToggleChange): void {
@@ -64,7 +61,7 @@ export class JournalEntrySummaryComponent implements OnInit, AfterViewInit {
             .pipe(untilDestroyed(this))
             .subscribe(items => {
                 this.journalEntrySummary = items;
-                // console.log('summary', this.journalEntrySummary);
+                console.log('loadData summary', this.journalEntrySummary);
                 this.prepareChartData();
             });
     }

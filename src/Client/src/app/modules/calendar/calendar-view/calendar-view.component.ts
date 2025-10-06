@@ -148,8 +148,6 @@ export class CalendarViewComponent implements OnInit, OnDestroy, AfterViewInit {
 
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
-        private _fuseConfirmationService: FuseConfirmationService,
-        private _formBuilder: UntypedFormBuilder,
         private _serviceService: ServiceService,
         private _translocoService: TranslocoService,
         private _sanitizer: DomSanitizer,

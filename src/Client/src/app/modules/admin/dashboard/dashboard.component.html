@@ -1,4 +1,4 @@
-<div class="flex flex-col flex-auto min-w-0">
+<div class="flex flex-col flex-auto min-w-0 h-full">
     <!-- Header -->
     <div class="bg-card">
         <div class="flex flex-col w-full max-w-screen-xl mx-auto px-6 sm:px-8">
@@ -23,94 +23,143 @@
                                 {{ t('Dashboard.WelcomeBack') }}, {{ user?.fullName }}!
                             </div>
                         </ng-container>
-                        <!--<div class="flex items-center">
-                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bell'"></mat-icon>
-                            <div class="ml-1.5 leading-6 truncate text-secondary">
-                                You have 2 new messages and 15 new tasks
-                            </div>
-                        </div>-->
                     </div>
                 </div>
-                <!-- Actions -->
-                <!--<div class="flex items-center mt-6 sm:mt-0 sm:ml-2 space-x-3">
-                    <button
-                        class="bg-accent"
-                        mat-flat-button
-                        [color]="'accent'">
-                        <mat-icon
-                            class="icon-size-5"
-                            [svgIcon]="'heroicons_solid:envelope'"></mat-icon>
-                        <span class="ml-2">Messages</span>
-                    </button>
-                    <button
-                        mat-flat-button
-                        [color]="'primary'">
-                        <mat-icon
-                            class="icon-size-5"
-                            [svgIcon]="'heroicons_solid:cog-8-tooth'"></mat-icon>
-                        <span class="ml-2">Settings</span>
-                    </button>
-                </div>-->
             </div>
-            <!-- Project selector -->
-            <!--<div
-                class="relative flex self-start pt-2 pb-1 pl-5 pr-4 cursor-pointer overflow-hidden rounded-t-xl border border-b-0 bg-default"
-                matRipple
-                [matMenuTriggerFor]="projectsMenu">
-                <div class="flex items-center">
-                    <div class="overflow-hidden">
-                        <div class="font-medium leading-6 truncate">{{selectedProject}}</div>
-                    </div>
-                    <div class="flex items-center justify-center pl-2">
-                        <mat-icon
-                            class="icon-size-5"
-                            [svgIcon]="'heroicons_mini:chevron-down'"></mat-icon>
-                    </div>
-                </div>
-                <mat-menu
-                    #projectsMenu="matMenu"
-                    [xPosition]="'before'">
-                    <button
-                        mat-menu-item
-                        (click)="selectedProject='ACME Corp. Backend App'">ACME Corp. Backend App
-                    </button>
-                    <button
-                        mat-menu-item
-                        (click)="selectedProject='ACME Corp. Frontend App'">ACME Corp. Frontend App
-                    </button>
-                    <button
-                        mat-menu-item
-                        (click)="selectedProject='Creapond'">Creapond
-                    </button>
-                    <button
-                        mat-menu-item
-                        (click)="selectedProject='Withinpixels'">Withinpixels
-                    </button>
-                </mat-menu>
-            </div>-->
         </div>
     </div>
 
     <!-- Main -->
-    <div class="flex-auto border-t -mt-px pt-4 sm:pt-6">
-        <div class="w-full max-w-screen-xl mx-auto">
+    <div class="flex-auto border-t -mt-px pt-4 sm:pt-6 h-full">
+        <div class="w-full h-full">
             <!-- Tabs -->
-            <mat-tab-group class="sm:px-2" mat-stretch-tabs="false" [animationDuration]="'0'">
+            <mat-tab-group
+                class="sm:px-2 h-full"
+                mat-stretch-tabs="false"
+                [animationDuration]="'0'"
+                [selectedIndex]="selectedTabIndex"
+                (selectedIndexChange)="onTabChanged($event)">
                 <!-- Applications -->
-                <mat-tab label="My Home"> </mat-tab>
-                <mat-tab label="Admin">
+                <mat-tab label="My Home" class="h-full"> </mat-tab>
+                <mat-tab label="Admin" class="h-full">
                     <ng-template matTabContent>
-                        <div class="flex flex-col w-full gap-4">
-                            <div class="flex-1 w-full">
-                                <app-service-summary></app-service-summary>
-                            </div>
-                            <div class="flex-1 w-full">
-                                <app-journal-entry-summary></app-journal-entry-summary>
-                            </div>
+                        <div class="h-full">
+                            <mat-drawer-container class="flex-auto h-full overflow-hidden">
+                                <!-- Drawer content -->
+                                <mat-drawer-content class="flex flex-col h-full overflow-hidden">
+                                    <mat-drawer-container class="flex-auto h-full">
+                                        <mat-drawer-content class="flex flex-col h-full">
+                                            <!-- Main -->
+                                            <div class="flex flex-col w-full h-full gap-4">
+                                                <div class="flex-1 w-full">
+                                                    <app-service-summary
+                                                        (dillDownOn)="
+                                                            serviceSummaryDetails($event)
+                                                        "></app-service-summary>
+                                                </div>
+                                                <div class="flex-1 w-full">
+                                                    <app-journal-entry-summary></app-journal-entry-summary>
+                                                </div>
+                                            </div>
+                                        </mat-drawer-content>
+
+                                        <mat-drawer
+                                            #serviceSummaryDrawer
+                                            mode="over"
+                                            position="end"
+                                            [opened]="drawerOpened"
+                                            (openedChange)="drawerDetailsChanged($event)"
+                                            class="w-1/3 bg-white dark:bg-gray-900 p-0 border-l flex flex-col h-full min-h-0">
+                                            <!-- Sticky header: title on first row, actions on second row -->
+                                            <div class="sticky top-0 z-20 border-b bg-white dark:bg-gray-900">
+                                                <!-- Title row -->
+                                                <div class="p-3">
+                                                    <h3
+                                                        class="text-xl font-bold mb-0 ml-2 inline-flex items-center gap-3">
+                                                        Servizi
+                                                        <span
+                                                            *ngIf="services?.length"
+                                                            class="px-3 py-1 text-sm font-semibold rounded-full bg-warn text-white">
+                                                            {{ services.length }}
+                                                        </span>
+                                                    </h3>
+                                                </div>
+                                                <!-- Actions row: icons left, Insert on the right -->
+                                                <div class="p-2 flex items-center justify-between">
+                                                    <div class="flex items-center gap-2">
+                                                        <button
+                                                            mat-icon-button
+                                                            (click)="checkAll()"
+                                                            [matTooltip]="'Common.SelectAll' | transloco">
+                                                            <mat-icon [svgIcon]="'mat_outline:checklist'"></mat-icon>
+                                                        </button>
+
+                                                        <button
+                                                            mat-icon-button
+                                                            (click)="uncheckAll()"
+                                                            [matTooltip]="'Common.UnselectAll' | transloco">
+                                                            <mat-icon [svgIcon]="'mat_outline:rule'"></mat-icon>
+                                                        </button>
+
+                                                        <button
+                                                            mat-icon-button
+                                                            (click)="loadServicesToBeBuill()"
+                                                            [matTooltip]="'Common.Refresh' | transloco">
+                                                            <mat-icon
+                                                                [svgIcon]="'heroicons_outline:arrow-path'"></mat-icon>
+                                                        </button>
+                                                    </div>
+
+                                                    <!-- <div class="flex items-center">
+                                                        <button mat-raised-button
+                                                            color="primary"
+                                                            (click)="onInsertSelectedServices()"
+                                                            [disabled]="!hasSelectedServices">
+                                                            Insert
+                                                        </button>
+                                                    </div> -->
+                                                </div>
+                                            </div>
+
+                                            <!-- Scrollable list area -->
+                                            <div class="p-4 overflow-y-auto flex-1">
+                                                <div *ngIf="services.length > 0; else noServices">
+                                                    <ul class="space-y-2">
+                                                        <li
+                                                            *ngFor="let service of services; let i = index"
+                                                            class="p-2 rounded bg-gray-100 dark:bg-gray-800 flex items-center">
+                                                            <mat-checkbox
+                                                                [(ngModel)]="service.selected"
+                                                                class="mr-3"></mat-checkbox>
+                                                            <div class="flex-1">
+                                                                <div class="font-semibold">{{ service.code }}</div>
+                                                                <div class="font-semibold">{{ service.title }}</div>
+                                                                <div class="font-semibold">
+                                                                    {{ service.collaborator?.fullName }}
+                                                                </div>
+                                                                <div class="text-sm text-gray-600">
+                                                                    {{ service.location }}
+                                                                </div>
+                                                                <div class="text-sm">
+                                                                    Importo: €
+                                                                    {{ service.priceCalculated | number: '2.2' }}
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <ng-template #noServices>
+                                                    <!-- <div class="text-gray-500">Nessun servizio fatturabile per questo cliente.</div> -->
+                                                </ng-template>
+                                            </div>
+                                        </mat-drawer>
+                                    </mat-drawer-container>
+                                </mat-drawer-content>
+                            </mat-drawer-container>
                         </div>
                     </ng-template>
                 </mat-tab>
-                <mat-tab>
+                <mat-tab label="Team" class="h-full">
                     <ng-template mat-tab-label>
                         <span class="inline-flex items-center space-x-2">
                             <span class="">Team</span>

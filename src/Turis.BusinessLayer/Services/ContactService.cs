@@ -12,13 +12,14 @@ using Turis.BusinessLayer.Resources;
 using Turis.BusinessLayer.Services.Interfaces;
 using Turis.Common.Enums;
 using Turis.Common.Models;
+using Turis.Common.Models.Keyless;
 using Turis.Common.Models.Requests;
 using Turis.DataAccessLayer;
 using Turis.DataAccessLayer.Entities;
 
 namespace Turis.BusinessLayer.Services;
 
-public class ContactService(IDbContext dbContext
+public class ContactService(ApplicationDbContext dbContext
 	, ILogger<ContactService> logger
 	, IUserService userService
 	, IBookmarkService bookmarkService
@@ -33,20 +34,31 @@ public class ContactService(IDbContext dbContext
 	private async Task<List<Bookmark>> GetMyBookmarks()
 		=> await bookmarkService.ListAsync(userService.GetUserId(), EntryName);
 
-	public Task<Result<TeamSummaryModel>> TeamSummaryAsync()
+	public async Task<Result<TeamSummaryModel>> TeamSummaryAsync(int? year)
 	{
-		var query = dbContext.GetData<Contact>()
-				.Where(x => x.ContactType == ContactType.Collaborator)
-				.OrderBy(x => x.FirstName)
-				.ThenBy(x => x.LastName)
-			;
+		var list = await dbContext.Set<CommissionStat>()
+			.FromSqlRaw("EXEC CommissionStats @Year = {0}, @Month = {1}"
+				, year.HasValue ? year : DateTime.Now.Year
+				, DBNull.Value
+			)
+			.ToListAsync();
 
-		var model = new TeamSummaryModel
+		var contacts = dbContext.GetData<Contact>()
+			.Where(x => list.Select(y => y.CollaboratorId).Distinct().Contains(x.Id))
+			.ToModel()
+			.ToList();
+
+		var model = new TeamSummaryModel();
+		foreach (var contact in contacts)
 		{
-			Members = query.ToTeamMemberModel()
-		};
+			model.Members.Add(new TeamMemberModel
+			{
+				Collaborator = contact,
+				CommissionStat = list.Where(x=>x.CollaboratorId == contact.Id).ToList()
+			});
+		}
 
-		return Task.FromResult<Result<TeamSummaryModel>>(model);
+		return await Task.FromResult<Result<TeamSummaryModel>>(model);
 	}
 
 	public async Task<Result<PaginatedList<ContactModel>>> ListAsync(ContactSearchParameters parameters)

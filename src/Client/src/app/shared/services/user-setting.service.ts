@@ -31,6 +31,15 @@ export class UserSettingsService extends BaseService {
         return await lastValueFrom(this.http.get<string>(url));
     }
 
+    setNumberValue(key: string, value: number) {
+        this.setValue(key, value.toString());
+    }
+
+    async getNumberValue(key: string): Promise<number> {
+        const value = await this.getValue(key);
+        return parseInt(value);
+    }
+
     setBooleanValue(key: string, value: boolean) {
         this.setValue(key, value ? 'true' : 'false');
     }

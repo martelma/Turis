@@ -68,41 +68,52 @@ public class ServiceService(ApplicationDbContext dbContext
 			.Include(x => x.Collaborator)
 			.Where(x => x.Date.Year == DateTime.Now.Year);
 
-		var startOfWeek = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek);
-		var endOfWeek = startOfWeek.AddDays(7).AddTicks(-1);
+		var startWeek = DateTime.Now.StartWeek();
+		var endWeek = DateTime.Now.EndWeek();
 
 		var model = new ServiceSummaryModel
 		{
+			//Proposte
 			Proposals = query
 				.Count(x => !x.Checked),
 
+			//Proposte della settimana
 			WeekProposals = query
-				.Where(x => x.Date >= startOfWeek && x.Date <= endOfWeek)
+				.Where(x => x.Date >= startWeek && x.Date <= endWeek)
 				.Count(x => !x.Checked),
 
+			//Confermate
 			Checked = query
 				.Count(x => x.Checked),
 
+			//Confermate da assegnare
 			CheckedToAssign = query
 				.Where(x => x.CollaboratorId == null)
 				.Count(x => x.Checked),
 
+			//To Do = Confermate ed assegnate
 			ToDo = query
 				.Where(x => x.Checked)
-				.Count(x => x.Status == ServiceStatus.Closed),
+				.Where(x => x.CollaboratorId != null)
+				.Where(x => x.Date > DateTime.Now)
+				.Count(x => x.Status != ServiceStatus.Closed),
 
 			WeekToDo = query
 				.Where(x => x.Checked)
-				.Where(x => x.Date >= startOfWeek && x.Date <= endOfWeek)
-				.Count(x => x.Status == ServiceStatus.Closed),
+				.Where(x => x.CollaboratorId != null)
+				.Where(x => x.Date > DateTime.Now)
+				.Where(x => x.Date >= startWeek && x.Date <= endWeek)
+				.Count(x => x.Status != ServiceStatus.Closed),
 
 			Done = query
 				.Where(x => x.Checked)
+				.Where(x => x.CollaboratorId != null)
 				.Count(x => x.Status == ServiceStatus.Closed),
 
 			WeekDone = query
 				.Where(x => x.Checked)
-				.Where(x => x.Date >= startOfWeek && x.Date <= endOfWeek)
+				.Where(x => x.CollaboratorId != null)
+				.Where(x => x.Date >= startWeek && x.Date <= endWeek)
 				.Count(x => x.Status == ServiceStatus.Closed),
 
 			ToBeCommunicated = query
@@ -119,6 +130,59 @@ public class ServiceService(ApplicationDbContext dbContext
 		};
 
 		return Task.FromResult<Result<ServiceSummaryModel>>(model);
+	}
+
+	public async Task<Result<List<ServiceModel>>> SummaryDetailsProposalsAsync()
+	{
+		var query = dbContext
+			.GetData<Service>()
+			.Include(x => x.Collaborator)
+			.Where(x => x.Date.Year == DateTime.Now.Year)
+			.Where(x => !x.Checked);
+
+		var model = await query.ToModel(avatarContactService);
+		return model.ToList();
+	}
+
+	public async Task<Result<List<ServiceModel>>> SummaryDetailsCheckedAsync()
+	{
+		var query = dbContext
+			.GetData<Service>()
+			.Include(x => x.Collaborator)
+			.Where(x => x.Date.Year == DateTime.Now.Year)
+			.Where(x => x.Checked);
+
+		var model = await query.ToModel(avatarContactService);
+		return model.ToList();
+	}
+
+	public async Task<Result<List<ServiceModel>>> SummaryDetailsToDoAsync()
+	{
+		var query = dbContext
+			.GetData<Service>()
+			.Include(x => x.Collaborator)
+			.Where(x => x.Date.Year == DateTime.Now.Year)
+			.Where(x => x.Checked)
+			.Where(x => x.CollaboratorId != null)
+			.Where(x => x.Date > DateTime.Now)
+			.Where(x => x.Status != ServiceStatus.Closed);
+
+		var model = await query.ToModel(avatarContactService);
+		return model.ToList();
+	}
+
+	public async Task<Result<List<ServiceModel>>> SummaryDetailsDoneAsync()
+	{
+		var query = dbContext
+			.GetData<Service>()
+			.Include(x => x.Collaborator)
+			.Where(x => x.Date.Year == DateTime.Now.Year)
+			.Where(x => x.Checked)
+			.Where(x => x.CollaboratorId != null)
+			.Where(x => x.Status == ServiceStatus.Closed);
+
+		var model = await query.ToModel(avatarContactService);
+		return model.ToList();
 	}
 
 	public async Task<Result<PaginatedList<ServiceModel>>> ListAsync(ServiceSearchParameters parameters)

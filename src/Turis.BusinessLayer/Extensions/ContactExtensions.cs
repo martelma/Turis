@@ -72,25 +72,25 @@ public static class ContactExtensions
 		return list.Select(x => x.ToModel(bookmarks, attachments, tags));
 	}
 
-	public static TeamMemberModel ToTeamMemberModel(this Contact entity,
-		List<Bookmark> bookmarks = null,
-		List<Attachment> attachments = null,
-		List<EntityTag> tags = null)
-	{
-		var bookmarkId = bookmarks?.FirstOrDefault(x => x.EntityId == entity.Id)?.Id;
+	//public static TeamMemberModel ToTeamMemberModel(this Contact entity,
+	//	List<Bookmark> bookmarks = null,
+	//	List<Attachment> attachments = null,
+	//	List<EntityTag> tags = null)
+	//{
+	//	var bookmarkId = bookmarks?.FirstOrDefault(x => x.EntityId == entity.Id)?.Id;
 
-		return new TeamMemberModel
-		{
-			Id = entity.Id,
-			Collaborator = entity.ToModel()
-		};
-	}
+	//	return new TeamMemberModel
+	//	{
+	//		Id = entity.Id,
+	//		Collaborator = entity.ToModel()
+	//	};
+	//}
 
-	public static IEnumerable<TeamMemberModel> ToTeamMemberModel(this IEnumerable<Contact> list,
-		List<Bookmark> bookmarks = null,
-		List<Attachment> attachments = null,
-		List<EntityTag> tags = null)
-	{
-		return list.Select(x => x.ToTeamMemberModel(bookmarks, attachments, tags));
-	}
+	//public static IEnumerable<TeamMemberModel> ToTeamMemberModel(this IEnumerable<Contact> list,
+	//	List<Bookmark> bookmarks = null,
+	//	List<Attachment> attachments = null,
+	//	List<EntityTag> tags = null)
+	//{
+	//	return list.Select(x => x.ToTeamMemberModel(bookmarks, attachments, tags));
+	//}
 }

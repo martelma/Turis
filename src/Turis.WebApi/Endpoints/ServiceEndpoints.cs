@@ -25,6 +25,11 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 				return operation;
 			});
 
+		templateApiGroup.MapGet("summary-details-proposals", SummaryDetailsProposalsAsync);
+		templateApiGroup.MapGet("summary-details-checked", SummaryDetailsCheckedAsync);
+		templateApiGroup.MapGet("summary-details-todo", SummaryDetailsToDoAsync);
+		templateApiGroup.MapGet("summary-details-done", SummaryDetailsDoneAsync);
+
 		templateApiGroup.MapGet("to-be-billed/{clientId}", ToBeBilledAsync)
 			.Produces<IEnumerable<ServiceModel>>(StatusCodes.Status200OK)
 			.WithOpenApi(operation =>
@@ -246,6 +251,18 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 
 	private static async Task<IResult> SummaryAsync(HttpContext httpContext, IServiceService service)
 		=> (await service.SummaryAsync()).ToResponse(httpContext);
+
+	private static async Task<IResult> SummaryDetailsProposalsAsync(HttpContext httpContext, IServiceService service)
+		=> (await service.SummaryDetailsProposalsAsync()).ToResponse(httpContext);
+
+	private static async Task<IResult> SummaryDetailsCheckedAsync(HttpContext httpContext, IServiceService service)
+		=> (await service.SummaryDetailsCheckedAsync()).ToResponse(httpContext);
+
+	private static async Task<IResult> SummaryDetailsToDoAsync(HttpContext httpContext, IServiceService service)
+		=> (await service.SummaryDetailsToDoAsync()).ToResponse(httpContext);
+
+	private static async Task<IResult> SummaryDetailsDoneAsync(HttpContext httpContext, IServiceService service)
+		=> (await service.SummaryDetailsDoneAsync()).ToResponse(httpContext);
 
 	private static async Task<IResult> ToBeBilledAsync(HttpContext httpContext, IServiceService service, Guid clientId)
 		=> (await service.ToBeBilledAsync(clientId)).ToResponse(httpContext);

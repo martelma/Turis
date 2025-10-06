@@ -51,15 +51,10 @@ gestire fase di invio allo SDI
 se un documento è già stato inviato allo SDI, dare evidenza del codice univoco e della data e ora di invio
 
 
-
-
-Nel contatto di tipo collaborator aggiungere tab andamento in anno; quindi navigazione anni.
-Aggiungere anche tabella target mensili, target annuale assoluto e percentuale 
-
-In home admin aggiungere classifica provvigioni maturate (sia per anno che per mensilità)
-
-
-
+In home admin 
+	drill down per ciascun raggruppamento
+		utilizzare lista già usata in calendar (a cui però dobbiamo aggiungere client e collaborator)
+	aggiungere classifica provvigioni maturate (sia per anno che per mensilità)
 
 
 USE [Turis]

@@ -83,6 +83,7 @@ export const ServiceTypesColor = {
 };
 
 export const AppSettings = {
+    HomePage: 'HomePage',
     Calendar: 'Calendar',
     Contact: 'Contact',
     Service: 'Service',

@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AuthService } from 'app/core/auth/auth.service';
@@ -14,6 +13,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ServiceSummaryComponent } from './service-summary/service-summary.component';
 import { TeamSummaryComponent } from './team-summary/team-summary.component';
 import { JournalEntrySummaryComponent } from './journal-entry-summary/journal-entry-summary.component';
+import { FuseDrawerComponent, FuseDrawerService } from '@fuse/components/drawer';
+import { Service } from 'app/modules/service/service.types';
+import { ServiceService } from 'app/modules/service/service.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatBadgeModule } from '@angular/material/badge';
+import { UserSettingsService } from 'app/shared/services/user-setting.service';
+import { AppSettings } from 'app/constants';
 
 @UntilDestroy()
 @Component({
@@ -26,22 +33,36 @@ import { JournalEntrySummaryComponent } from './journal-entry-summary/journal-en
         FormsModule,
         ReactiveFormsModule,
         MaterialModule,
+        MatButtonModule,
+        MatBadgeModule,
+        MatCheckboxModule,
+        FuseDrawerComponent,
         TranslocoModule,
         ServiceSummaryComponent,
         TeamSummaryComponent,
         JournalEntrySummaryComponent,
     ],
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, AfterViewInit {
     public user: User;
     public isScreenSmall: boolean;
 
+    selectedTabIndex = 0;
+
+    drawerMode: 'over' | 'side' = 'side';
+    drawerOpened = false;
+
+    serviceSummaryType: string;
+    services: Service[] = [];
+
     constructor(
-        private _fuseMediaWatcherService: FuseMediaWatcherService,
+        private _changeDetectorRef: ChangeDetectorRef,
+        private _userSettingsService: UserSettingsService,
         private _authService: AuthService,
         private _userService: UserService,
         private _activatedRoute: ActivatedRoute,
         private _router: Router,
+        private _serviceService: ServiceService,
     ) {
         const snapshot = this._activatedRoute.snapshot;
         const params = { ...snapshot.queryParams };
@@ -55,6 +76,18 @@ export class DashboardComponent implements OnInit {
         this._loadUser();
     }
 
+    async ngAfterViewInit(): Promise<void> {
+        this.selectedTabIndex = await this._userSettingsService.getNumberValue(
+            `${AppSettings.HomePage}:selectedTabIndex`,
+        );
+        this._changeDetectorRef.detectChanges();
+    }
+
+    onTabChanged(index: number): void {
+        this.selectedTabIndex = index;
+        this._userSettingsService.setNumberValue(`${AppSettings.HomePage}:selectedTabIndex`, index);
+    }
+
     private _loadUser(): void {
         this._userService
             .me()
@@ -66,5 +99,68 @@ export class DashboardComponent implements OnInit {
 
     private _getSiteOtp(): Observable<Otp> {
         return this._authService.generateOtp();
+    }
+
+    serviceSummaryDetails(event: any): void {
+        this.drawerOpened = !this.drawerOpened;
+        if (!this.drawerOpened) {
+            return;
+        }
+
+        this.serviceSummaryType = event;
+        this.loadServiceSummaryDetails();
+
+        /*
+        // Attendi che il drawer sia completamente inizializzato
+        setTimeout(() => {
+            const drawer = this._fuseDrawerService.getComponent('serviceSummaryDrawer');
+            if (drawer) {
+                drawer.open(); // Usa open() invece di toggle()
+            } else {
+                // console.warn('Drawer non trovato nel servizio');
+            }
+        }, 100);
+        */
+    }
+
+    closeDrawer(): void {
+        this.drawerOpened = false;
+        this._changeDetectorRef.detectChanges();
+    }
+
+    async drawerDetailsChanged(opened: boolean): Promise<void> {
+        if (!opened) {
+            this.drawerOpened = false;
+            this.services = [];
+            this._changeDetectorRef.detectChanges();
+        }
+    }
+
+    loadServiceSummaryDetails(): void {
+        this.services = [];
+
+        this._serviceService
+            .summaryDetails(this.serviceSummaryType)
+            .pipe(untilDestroyed(this))
+            .subscribe(items => {
+                this.services = items;
+                console.log('loadServiceSummaryDetails', items);
+            });
+    }
+
+    checkAll() {
+        if (this.services) {
+            this.services.forEach(service => {
+                service.selected = true;
+            });
+        }
+    }
+
+    uncheckAll() {
+        if (this.services) {
+            this.services.forEach(service => {
+                service.selected = false;
+            });
+        }
     }
 }

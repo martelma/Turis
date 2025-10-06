@@ -10,6 +10,10 @@ namespace Turis.BusinessLayer.Services.Interfaces;
 public interface IServiceService : IService
 {
 	Task<Result<ServiceSummaryModel>> SummaryAsync();
+	Task<Result<List<ServiceModel>>> SummaryDetailsProposalsAsync();
+	Task<Result<List<ServiceModel>>> SummaryDetailsCheckedAsync();
+	Task<Result<List<ServiceModel>>> SummaryDetailsToDoAsync();
+	Task<Result<List<ServiceModel>>> SummaryDetailsDoneAsync();
 	Task<Result<PaginatedList<ServiceModel>>> ListAsync(ServiceSearchParameters parameters);
 	Task<Result<ServiceModel>> GetAsync(Guid serviceId);
 	Task<Result<ServiceModel>> SaveAsync(ServiceRequest model);

@@ -1,20 +1,12 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full min-w-0">
     <!-- Proposte -->
-    <div class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+    <div
+        appHover
+        hoverBgColor="bg-yellow-200"
+        (hoverClick)="show('proposals')"
+        class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
         <div class="flex items-start justify-between">
             <div class="text-lg font-medium tracking-tight leading-6 truncate">Proposte</div>
-            <!-- <div class="ml-2 -mt-2 -mr-3">
-                <button mat-icon-button [matMenuTriggerFor]="issuesMenu">
-                    <mat-icon
-                        class="icon-size-5"
-                        [svgIcon]="'heroicons_mini:ellipsis-vertical'"></mat-icon>
-                </button>
-                <mat-menu #issuesMenu="matMenu">
-                    <button mat-menu-item>Yesterday</button>
-                    <button mat-menu-item>2 days ago</button>
-                    <button mat-menu-item>3 days ago</button>
-                </mat-menu>
-            </div> -->
         </div>
         <div class="flex flex-col items-center mt-2">
             <div class="text-7xl sm:text-8xl font-bold tracking-tight leading-none text-amber-500">
@@ -27,22 +19,14 @@
             </div>
         </div>
     </div>
-    <!-- Total -->
-    <div class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+    <!-- Checked -->
+    <div
+        appHover
+        hoverBgColor="bg-yellow-200"
+        (hoverClick)="show('checked')"
+        class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
         <div class="flex items-start justify-between">
-            <div class="text-lg font-medium tracking-tight leading-6 truncate">Totali</div>
-            <!-- <div class="ml-2 -mt-2 -mr-3">
-                <button mat-icon-button [matMenuTriggerFor]="summaryMenu">
-                    <mat-icon
-                        class="icon-size-5"
-                        [svgIcon]="'heroicons_mini:ellipsis-vertical'"></mat-icon>
-                </button>
-                <mat-menu #summaryMenu="matMenu">
-                    <button mat-menu-item>Yesterday</button>
-                    <button mat-menu-item>2 days ago</button>
-                    <button mat-menu-item>3 days ago</button>
-                </mat-menu>
-            </div> -->
+            <div class="text-lg font-medium tracking-tight leading-6 truncate">Confermati</div>
         </div>
         <div class="flex flex-col items-center mt-2">
             <div class="text-7xl sm:text-8xl font-bold tracking-tight leading-none text-blue-500">
@@ -51,26 +35,20 @@
             <div class="text-lg font-medium text-blue-600 dark:text-blue-500">Checked</div>
             <div class="flex items-baseline justify-center w-full mt-5 text-secondary">
                 <div class="text-md font-medium truncate">Da assegnare:</div>
-                <div class="ml-1.5 text-lg font-semibold">{{ serviceSummary?.checkedToAssign }}</div>
+                <div class="ml-1.5 text-lg font-semibold">
+                    {{ serviceSummary?.checkedToAssign }}
+                </div>
             </div>
         </div>
     </div>
     <!-- To Do -->
-    <div class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+    <div
+        appHover
+        hoverBgColor="bg-yellow-200"
+        (hoverClick)="show('todo')"
+        class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
         <div class="flex items-start justify-between">
             <div class="text-lg font-medium tracking-tight leading-6 truncate">To Do</div>
-            <!-- <div class="ml-2 -mt-2 -mr-3">
-                <button mat-icon-button [matMenuTriggerFor]="overdueMenu">
-                    <mat-icon
-                        class="icon-size-5"
-                        [svgIcon]="'heroicons_mini:ellipsis-vertical'"></mat-icon>
-                </button>
-                <mat-menu #overdueMenu="matMenu">
-                    <button mat-menu-item>Yesterday</button>
-                    <button mat-menu-item>2 days ago</button>
-                    <button mat-menu-item>3 days ago</button>
-                </mat-menu>
-            </div> -->
         </div>
         <div class="flex flex-col items-center mt-2">
             <div class="text-7xl sm:text-8xl font-bold tracking-tight leading-none text-red-500">
@@ -84,21 +62,13 @@
         </div>
     </div>
     <!-- Done -->
-    <div class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+    <div
+        appHover
+        hoverBgColor="bg-yellow-200"
+        (hoverClick)="show('done')"
+        class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
         <div class="flex items-start justify-between">
             <div class="text-lg font-medium tracking-tight leading-6 truncate">Done</div>
-            <!-- <div class="ml-2 -mt-2 -mr-3">
-                <button mat-icon-button [matMenuTriggerFor]="featuresMenu">
-                    <mat-icon
-                        class="icon-size-5"
-                        [svgIcon]="'heroicons_mini:ellipsis-vertical'"></mat-icon>
-                </button>
-                <mat-menu #featuresMenu="matMenu">
-                    <button mat-menu-item>Yesterday</button>
-                    <button mat-menu-item>2 days ago</button>
-                    <button mat-menu-item>3 days ago</button>
-                </mat-menu>
-            </div> -->
         </div>
         <div class="flex flex-col items-center mt-2">
             <div class="text-7xl sm:text-8xl font-bold tracking-tight leading-none text-green-500">

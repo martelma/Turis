@@ -26,7 +26,7 @@ public class ContactEndpoints : IEndpointRouteHandlerBuilder
 
 		var avatarsApiGroup = endpoints.MapGroup("/api/contact/{id:guid}/avatar");
 
-		templateApiGroup.MapGet("team-summary", TeamSummaryAsync)
+		templateApiGroup.MapGet("team-summary/{year:int?}", TeamSummaryAsync)
 			.Produces<PaginatedList<TeamSummaryModel>>(StatusCodes.Status200OK)
 			.WithOpenApi(operation =>
 			{
@@ -79,8 +79,8 @@ public class ContactEndpoints : IEndpointRouteHandlerBuilder
 			});
 	}
 
-	private static async Task<IResult> TeamSummaryAsync(HttpContext httpContext, IContactService service)
-		=> (await service.TeamSummaryAsync()).ToResponse(httpContext);
+	private static async Task<IResult> TeamSummaryAsync(HttpContext httpContext, IContactService service, int? year)
+		=> (await service.TeamSummaryAsync(year)).ToResponse(httpContext);
 
 	private static async Task<IResult> Get(HttpContext httpContext, IContactService service, Guid id)
 		=> (await service.GetAsync(id)).ToResponse(httpContext);

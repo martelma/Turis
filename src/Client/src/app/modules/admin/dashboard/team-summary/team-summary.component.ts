@@ -5,9 +5,8 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { MaterialModule } from 'app/modules/material.module';
 import { User } from 'app/core/user/user.types';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { TeamSummary } from '../dashboard.types';
-import { ServiceService } from 'app/modules/service/service.service';
 import { ContactService } from 'app/modules/contact/contact.service';
 import { log } from 'app/shared/shared.utils';
 import { Contact } from 'app/modules/contact/contact.types';
@@ -29,7 +28,6 @@ export class TeamSummaryComponent implements OnInit {
     log = log;
 
     constructor(
-        private _activatedRoute: ActivatedRoute,
         private _contactService: ContactService,
         private router: Router,
     ) {}
@@ -48,6 +46,7 @@ export class TeamSummaryComponent implements OnInit {
             .pipe(untilDestroyed(this))
             .subscribe(data => {
                 this.teamSummary = data;
+                console.log('Team summary', this.teamSummary);
             });
     }
 

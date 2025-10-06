@@ -309,6 +309,37 @@ export class ServiceService extends BaseEntityService<Service> {
         );
     }
 
+    summaryDetails(type: string): Observable<Service[]> {
+        this._loading.next(true);
+
+        let url = '';
+
+        if (type === 'proposals') {
+            url = `summary-details-proposals`;
+        }
+
+        if (type === 'checked') {
+            url = `summary-details-checked`;
+        }
+
+        if (type === 'todo') {
+            url = `summary-details-todo`;
+        }
+
+        if (type === 'done') {
+            url = `summary-details-done`;
+        }
+
+        return this.apiGet<Service[]>(url).pipe(
+            map((data: Service[]) => {
+                return data;
+            }),
+            finalize(() => {
+                this._loading.next(false);
+            }),
+        );
+    }
+
     listContactSummary(contactId: string): Observable<ContactSummary> {
         this._loading.next(true);
 
