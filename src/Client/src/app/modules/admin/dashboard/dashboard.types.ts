@@ -52,9 +52,30 @@ export class ServiceSummary {
 }
 
 export class TeamSummary {
+    forEach(arg0: (item: any) => void) {
+        throw new Error('Method not implemented.');
+    }
     members: TeamMember[] = [];
+}
+
+export class CommissionStat {
+    collaboratorId: string;
+    firstName: string;
+    lastName: string;
+    year: number;
+    month: number;
+    amountMin: number;
+    amountMax: number;
+    percentageMin: number;
+    percentageMax: number;
+    commission: number;
+    total: number;
+    percentage: number;
 }
 
 export class TeamMember {
     collaborator: Collaborator;
+    commissionStat: CommissionStat[] = [];
+    percentage: number;
+    chartOptions: any;
 }

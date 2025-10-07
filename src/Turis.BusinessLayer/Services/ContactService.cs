@@ -51,6 +51,10 @@ public class ContactService(ApplicationDbContext dbContext
 		var model = new TeamSummaryModel();
 		foreach (var contact in contacts)
 		{
+			contact.Avatar = (await avatarContactService.GetAsync(contact.Id))?.Content != null
+				? (await avatarContactService.GetAsync(contact.Id))?.Content.Content.ConvertToBase64String()
+				: null;
+
 			model.Members.Add(new TeamMemberModel
 			{
 				Collaborator = contact,

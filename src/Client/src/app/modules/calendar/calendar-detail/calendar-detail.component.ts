@@ -91,8 +91,6 @@ import { CalendarViewGridComponent } from '../calendar-view-grid/calendar-view-g
     ],
 })
 export class CalendarDetailComponent implements OnInit {
-    @ViewChild(MatPaginator) private _paginator: MatPaginator;
-    @ViewChild(MatSort) private _sort: MatSort;
     @ViewChild('detailsDrawer') detailsDrawer: MatDrawer;
 
     @Input() service: Service;
@@ -125,17 +123,7 @@ export class CalendarDetailComponent implements OnInit {
 
     trackByFn = trackByFn;
 
-    constructor(
-        private _changeDetectorRef: ChangeDetectorRef,
-        private _fuseConfirmationService: FuseConfirmationService,
-        private _formBuilder: UntypedFormBuilder,
-        private _serviceService: ServiceService,
-        private _translocoService: TranslocoService,
-        private _sanitizer: DomSanitizer,
-        private _userSettingsService: UserSettingsService,
-        private _router: Router,
-        private _activatedRoute: ActivatedRoute,
-    ) {}
+    constructor(private _translocoService: TranslocoService) {}
 
     async ngOnInit(): Promise<void> {
         this.activeLang = this._translocoService.getActiveLang();
