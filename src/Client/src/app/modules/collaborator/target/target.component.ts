@@ -115,10 +115,10 @@ export class TargetComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         const nextYear = new Date().getFullYear() + 1;
-        const startYear = nextYear - 9; // 10 anni fa rispetto al prossimo anno
+        const startYear = nextYear - 5;
         this.years = [];
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 5; i++) {
             this.years.push(startYear + i);
         }
     }

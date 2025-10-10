@@ -3,25 +3,171 @@
         <div
             class="flex flex-col flex-auto items-center bg-card shadow rounded-2xl overflow-hidden"
             (dblclick)="log(member)">
-            <!-- Avatar & Info -->
             <div class="flex flex-row flex-auto w-full p-8">
-                <div class="flex flex-col flex-auto w-1/6 p-8 text-center">
-                    <div class="w-32 h-32 mx-auto rounded-full overflow-hidden">
+                <!-- Avatar & Info -->
+                <div class="flex flex-col flex-auto w-1/6 p-2 text-center">
+                    <div
+                        class="w-32 h-32 mx-auto rounded-full overflow-hidden cursor-pointer"
+                        (click)="openContact(member.collaborator)">
                         <img class="w-full h-full object-cover" [src]="member.collaborator.avatarUrl" />
                     </div>
                     <div class="mt-6 font-medium">{{ member.collaborator.fullName }}</div>
-                    <div class="text-secondary">{{ member.collaborator.eMail }}</div>
-                    <div>{{ member.percentage | number: '1.1-2' }}%</div>
+                    <!-- <div class="text-secondary">{{ member.collaborator.eMail }}</div> -->
+
+                    <div class="mt-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-auto cursor-pointer">
+                                <div class="leading-6 font-medium text-left">Total</div>
+                            </div>
+                            <div class="text-right">{{ member.total | number: '2.2' }} €</div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div class="flex-auto cursor-pointer">
+                                <div class="leading-6 font-medium text-left">Commission</div>
+                            </div>
+                            <div class="text-right">{{ member.commission | number: '2.2' }} €</div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div class="flex-auto cursor-pointer">
+                                <div class="leading-6 font-medium text-left">Percentage</div>
+                            </div>
+                            <div class="text-right">{{ member.percentage | number: '1.1-2' }} %</div>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="chart" class="flex flex-col flex-auto w-5/6 p-8">
                     <apx-chart
+                        *ngIf="viewMode !== 'data'"
                         [series]="member.chartOptions.series"
                         [chart]="member.chartOptions.chart"
                         [xaxis]="member.chartOptions.xaxis"
                         [stroke]="member.chartOptions.stroke"
                         [tooltip]="member.chartOptions.tooltip"
                         [dataLabels]="member.chartOptions.dataLabels"></apx-chart>
+
+                    <div *ngIf="viewMode === 'data'" class="flex flex-col overflow-x-auto">
+                        <div class="flex items-center justify-between">
+                            <!-- Filter -->
+                            <!-- <app-search-input
+                                class="md:1/2 w-full sm:w-1/3"
+                                [searchInputControl]="machineProgramsSearchControl">
+                            </app-search-input>
+
+                            <button mat-flat-button color="primary" (click)="download()">
+                                <span class="flex items-center gap-2">
+                                    <mat-icon [svgIcon]="'heroicons_outline:document-excel'"></mat-icon>
+                                    <span>{{ 'Common.Download' | transloco }}</span>
+                                </span>
+                            </button> -->
+                        </div>
+
+                        <table mat-table [dataSource]="member?.dataSource" class="mt-4">
+                            <ng-container matColumnDef="month">
+                                <th mat-header-cell *matHeaderCellDef>
+                                    {{ 'Common.Month' | transloco }}
+                                </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{ element.month }}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="amountMin">
+                                <th mat-header-cell *matHeaderCellDef>
+                                    {{ 'Common.AmountMin' | transloco }}
+                                </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{ element.amountMin | number: '2.2' }}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="amountMax">
+                                <th mat-header-cell *matHeaderCellDef>
+                                    {{ 'Monitoring.AmountMax' | transloco }}
+                                </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{ element.amountMax | number: '2.2' }}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="percentageMin">
+                                <th mat-header-cell *matHeaderCellDef>
+                                    {{ 'Monitoring.PercentageMin' | transloco }}
+                                </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{ element.percentageMin | number: '1.1-2' }} %
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="percentageMax">
+                                <th mat-header-cell *matHeaderCellDef>
+                                    {{ 'Monitoring.PercentageMax' | transloco }}
+                                </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{ element.percentageMax | number: '1.1-2' }} %
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="commission">
+                                <th mat-header-cell *matHeaderCellDef>
+                                    {{ 'Monitoring.Commission' | transloco }}
+                                </th>
+                                <td
+                                    mat-cell
+                                    *matCellDef="let element"
+                                    [ngClass]="{
+                                        'bg-red-500': element.commission < element.amountMin,
+                                        'bg-green-200':
+                                            element.commission >= element.amountMin &&
+                                            element.commission <= element.amountMax,
+                                        'bg-green-600': element.commission > element.amountMax
+                                    }">
+                                    {{ element.commission | number: '2.2' }}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="total">
+                                <th mat-header-cell *matHeaderCellDef>
+                                    {{ 'Monitoring.Total' | transloco }}
+                                </th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{ element.total | number: '2.2' }}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="percentage">
+                                <th mat-header-cell *matHeaderCellDef>
+                                    {{ 'Monitoring.Percentage' | transloco }}
+                                </th>
+                                <td
+                                    mat-cell
+                                    *matCellDef="let element"
+                                    [ngClass]="{
+                                        'bg-red-500': element.percentage < element.percentageMin,
+                                        'bg-green-200':
+                                            element.percentage >= element.percentageMin &&
+                                            element.percentage <= element.percentageMax,
+                                        'bg-green-600': element.percentage > element.percentageMax
+                                    }">
+                                    {{ element.percentage | number: '1.1-2' }} %
+                                </td>
+                            </ng-container>
+
+                            <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+
+                            <tr
+                                mat-row
+                                *matRowDef="let element; columns: columnsToDisplay"
+                                class="element-with-detail-row"></tr>
+                        </table>
+
+                        <!-- <mat-paginator
+                            #machineProgramsPaginator
+                            [pageSizeOptions]="[15, 25, 50]"
+                            showFirstLastButtons></mat-paginator> -->
+                    </div>
                 </div>
             </div>
         </div>

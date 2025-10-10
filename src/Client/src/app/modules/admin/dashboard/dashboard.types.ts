@@ -76,6 +76,9 @@ export class CommissionStat {
 export class TeamMember {
     collaborator: Collaborator;
     commissionStat: CommissionStat[] = [];
+    commission: number;
+    total: number;
     percentage: number;
     chartOptions: any;
+    dataSource: any;
 }

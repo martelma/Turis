@@ -113,7 +113,6 @@ export class CollaboratorSummaryComponent implements OnInit, AfterViewInit, OnCh
     set contactId(val: string) {
         setTimeout(() => {
             this._contactId = val;
-            // console.log('_contactId', this._contactId);
             this.loadData();
         });
     }
@@ -141,7 +140,6 @@ export class CollaboratorSummaryComponent implements OnInit, AfterViewInit, OnCh
     ngOnInit(): void {
         this._serviceService.contactSummary$.pipe(untilDestroyed(this)).subscribe((data: ContactSummary) => {
             this.data = data;
-            // console.log('data', this.data);
 
             this._changeDetectorRef.detectChanges();
 
@@ -179,7 +177,6 @@ export class CollaboratorSummaryComponent implements OnInit, AfterViewInit, OnCh
 
     private prepareChartData(): void {
         this.currentData = this.data.years.filter(x => x.label === this.summarySelector?.value)[0];
-        // console.log('currentData', this.currentData);
 
         this.chartData = {
             chart: {

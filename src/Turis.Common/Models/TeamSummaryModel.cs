@@ -14,14 +14,7 @@ public class TeamMemberModel : BaseModel
 {
 	public ContactModel Collaborator { get; set; }
 	public List<CommissionStat> CommissionStat { get; set; } = [];
-	public double Percentage
-	{
-		get
-		{
-			var commission = CommissionStat.Sum(x => x.Commission);
-			var total = CommissionStat.Sum(x => x.Total);
-			
-			return (double)commission / (double)total * 100;
-		}
-	}
+	public decimal Commission => CommissionStat.Sum(x => x.Commission);
+	public decimal Total => CommissionStat.Sum(x => x.Total);
+	public double Percentage => (double)Commission / (double)Total * 100;
 }
