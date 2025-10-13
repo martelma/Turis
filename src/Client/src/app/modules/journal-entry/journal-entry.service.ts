@@ -4,13 +4,13 @@ import { JournalEntry, JournalEntrySearchParameters } from '../journal-entry/jou
 import { BaseEntityService } from 'app/shared/services';
 import { BehaviorSubject, filter, finalize, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
 import { emptyGuid, PaginatedListResult } from 'app/shared/services/shared.types';
-import { JournalEntrySummary } from '../admin/dashboard/dashboard.types';
+import { JournalEntrySummary, SummaryData } from '../admin/dashboard/dashboard.types';
 
 @Injectable({ providedIn: 'root' })
 export class JournalEntryService extends BaseEntityService<JournalEntry> {
     private _edited: BehaviorSubject<string> = new BehaviorSubject(null);
 
-    private _journalEntrySummary: BehaviorSubject<JournalEntrySummary> = new BehaviorSubject(null);
+    private _journalEntrySummary: BehaviorSubject<SummaryData> = new BehaviorSubject(null);
 
     private _list: BehaviorSubject<PaginatedListResult<JournalEntry>> = new BehaviorSubject(null);
     private _item: BehaviorSubject<JournalEntry> = new BehaviorSubject(null);
@@ -26,7 +26,7 @@ export class JournalEntryService extends BaseEntityService<JournalEntry> {
         this.defaultApiController = 'journal-entry';
     }
 
-    get journalEntrySummary$(): Observable<JournalEntrySummary> {
+    get journalEntrySummary$(): Observable<SummaryData> {
         return this._journalEntrySummary.asObservable();
     }
 
@@ -184,13 +184,13 @@ export class JournalEntryService extends BaseEntityService<JournalEntry> {
         this._edited.next(id);
     }
 
-    summary(): Observable<JournalEntrySummary> {
+    yearSummary(year: number): Observable<SummaryData> {
         this._loading.next(true);
 
-        const url = `summary`;
+        const url = `year-summary/${year}`;
 
-        return this.apiGet<JournalEntrySummary>(url).pipe(
-            map((data: JournalEntrySummary) => {
+        return this.apiGet<SummaryData>(url).pipe(
+            map((data: SummaryData) => {
                 this._journalEntrySummary.next(data);
 
                 return data;
@@ -200,4 +200,38 @@ export class JournalEntryService extends BaseEntityService<JournalEntry> {
             }),
         );
     }
+
+    periodSummary(period: string): Observable<SummaryData> {
+        this._loading.next(true);
+
+        const url = `period-summary/${period}`;
+
+        return this.apiGet<SummaryData>(url).pipe(
+            map((data: SummaryData) => {
+                this._journalEntrySummary.next(data);
+
+                return data;
+            }),
+            finalize(() => {
+                this._loading.next(false);
+            }),
+        );
+    }
+
+    // summary(): Observable<JournalEntrySummary> {
+    //     this._loading.next(true);
+
+    //     const url = `summary`;
+
+    //     return this.apiGet<JournalEntrySummary>(url).pipe(
+    //         map((data: JournalEntrySummary) => {
+    //             this._journalEntrySummary.next(data);
+
+    //             return data;
+    //         }),
+    //         finalize(() => {
+    //             this._loading.next(false);
+    //         }),
+    //     );
+    // }
 }

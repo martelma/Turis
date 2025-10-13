@@ -1,4 +1,5 @@
-﻿using JeMa.Shared.Extensions;
+﻿using FatturaElettronicaAttiva;
+using JeMa.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OperationResults;
@@ -61,18 +62,116 @@ public class ServiceService(ApplicationDbContext dbContext
 		return service;
 	}
 
-	public Task<Result<ServiceSummaryModel>> SummaryAsync()
+	public async Task<Result<ServiceSummaryModel>> SummaryAsync(int year)
 	{
 		var query = dbContext
 			.GetData<Service>()
 			.Include(x => x.Collaborator)
-			.Where(x => x.Date.Year == DateTime.Now.Year);
-
+			.Where(x => x.Date.Year == year);
+		
+		var currentYear = DateTime.Now.Year;
 		var startWeek = DateTime.Now.StartWeek();
 		var endWeek = DateTime.Now.EndWeek();
 
+		var annualStats = dbContext
+			.GetData<Service>()
+			.Where(x => x.Checked)
+			.Where(x => x.Date.Year >= currentYear - 10)
+			.GroupBy(x => x.Date.Year)
+			.Select(g => new AnnualStat
+			{
+				Year = g.Key,
+				Total = g.Sum(s => s.Commission > 0 ? s.Commission : s.CommissionCalculated)
+			})
+			.OrderByDescending(x => x.Year)
+			.ToList();
+
+		var languageStats = await dbContext.Database
+			.SqlQuery<LanguageStat>($@"
+		        SELECT 
+		            TRIM(value) AS LanguageCode,
+		            COUNT(*) AS Count
+		        FROM [Services]
+		        CROSS APPLY STRING_SPLIT([Languages], ',')
+		        WHERE TRIM(value) IS NOT NULL 
+		          AND TRIM(value) != ''
+				  AND YEAR(DATE) = {year}
+		        GROUP BY TRIM(value)
+		        ORDER BY COUNT(*) DESC
+		    ")
+			.ToListAsync();
+
+		var typeStats = await dbContext.Database
+			.SqlQuery<TypeStat>($@"
+				;WITH cteServiceTypes as
+				(
+				    SELECT 'Guida' as [ServiceType]
+				         , 'FullDay' as [DurationType]
+				    UNION ALL
+				    SELECT 'Guida' as [ServiceType]
+				         , 'HalfDay' as [DurationType]
+				    UNION ALL
+				    SELECT 'Accompagnamento' as [ServiceType]
+				         , 'FullDay' as [DurationType]
+				    UNION ALL
+				    SELECT 'Accompagnamento' as [ServiceType]
+				         , 'HalfDay' as [DurationType]
+				)
+				SELECT cte.[ServiceType]
+				      ,cte.[DurationType]
+				      , COUNT(*) as [Count]
+				  FROM cteServiceTypes cte
+				    LEFT OUTER JOIN [Services] s
+				        ON cte.[ServiceType] = s.[ServiceType]
+				            AND cte.[DurationType] = s.[DurationType]
+				  WHERE YEAR(DATE) = {year}
+				GROUP BY cte.[ServiceType]
+				      ,cte.[DurationType]
+				ORDER BY cte.[ServiceType]
+				      ,cte.[DurationType]
+			")
+			.ToListAsync();
+
+		var tagStats = dbContext
+			.GetData<Service>()
+			.Where(x => x.Date.Year == year && x.Checked)
+			.GroupJoin(
+				dbContext.EntityTags
+					.Where(et => et.EntityName == nameof(Service)),
+				s => s.Id,
+				et => et.EntityKey,
+				(s, etGroup) => new { Service = s, EntityTags = etGroup }
+			)
+			.SelectMany(
+				x => x.EntityTags.DefaultIfEmpty(),
+				(x, et) => new { x.Service, EntityTag = et }
+			)
+			.GroupJoin(
+				dbContext.Tags,
+				x => x.EntityTag.TagId,
+				t => t.Id,
+				(x, tagGroup) => new { x.Service, x.EntityTag, Tags = tagGroup }
+			)
+			.SelectMany(
+				x => x.Tags.DefaultIfEmpty(),
+				(x, t) => new { x.Service, x.EntityTag, Tag = t }
+			)
+			.GroupBy(x => x.Tag.Name)
+			.AsEnumerable() // Porta i dati in memoria PRIMA del Select con ToString
+			.Select(g => new TagStat
+			{
+				TagName = g.Key != null ? g.Key.ToString() : "no tags",
+				Count = g.Count()
+			})
+			.ToList();
+
 		var model = new ServiceSummaryModel
 		{
+			AnnualStats = annualStats,
+			LanguageStats = languageStats,
+			TypeStats = typeStats,
+			TagStats = tagStats,
+
 			//Proposte
 			Proposals = query
 				.Count(x => !x.Checked),
@@ -129,7 +228,7 @@ public class ServiceService(ApplicationDbContext dbContext
 				.Count(x => x.WorkflowCollaboratorStatus == WorkflowCollaboratorStatus.Confirmed),
 		};
 
-		return Task.FromResult<Result<ServiceSummaryModel>>(model);
+		return model;
 	}
 
 	public async Task<Result<List<ServiceModel>>> SummaryDetailsProposalsAsync()
@@ -231,7 +330,7 @@ public class ServiceService(ApplicationDbContext dbContext
 
 		if (parameters.ServiceType.HasValue())
 		{
-			var serviceType = (ServiceType)Enum.Parse(typeof(ServiceType), parameters.ServiceType);
+			var serviceType = (Common.Enums.ServiceType)Enum.Parse(typeof(Common.Enums.ServiceType), parameters.ServiceType);
 			query = query.Where(x => x.ServiceType == serviceType);
 		}
 
@@ -319,7 +418,7 @@ public class ServiceService(ApplicationDbContext dbContext
 
 		if (parameters.ServiceType.HasValue())
 		{
-			var serviceType = (ServiceType)Enum.Parse(typeof(ServiceType), parameters.ServiceType);
+			var serviceType = (Common.Enums.ServiceType)Enum.Parse(typeof(Common.Enums.ServiceType), parameters.ServiceType);
 			query = query.Where(x => x.ServiceType == serviceType);
 		}
 
@@ -601,7 +700,7 @@ public class ServiceService(ApplicationDbContext dbContext
 		dbService.Code = service.Code;
 		dbService.Title = service.Title;
 
-		dbService.ServiceType = (ServiceType)Enum.Parse(typeof(ServiceType), service.ServiceType);
+		dbService.ServiceType = (Common.Enums.ServiceType)Enum.Parse(typeof(Common.Enums.ServiceType), service.ServiceType);
 		dbService.DurationType = (DurationType)Enum.Parse(typeof(DurationType), service.DurationType);
 		dbService.People = service.People;
 		dbService.PriceListId = service.PriceListId;

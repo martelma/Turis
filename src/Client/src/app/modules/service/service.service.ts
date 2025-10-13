@@ -292,10 +292,10 @@ export class ServiceService extends BaseEntityService<Service> {
         return this.apiGet<Service[]>(url);
     }
 
-    summary(): Observable<ServiceSummary> {
+    summary(year: number): Observable<ServiceSummary> {
         this._loading.next(true);
 
-        const url = `summary`;
+        const url = `summary/${year}`;
 
         return this.apiGet<ServiceSummary>(url).pipe(
             map((data: ServiceSummary) => {

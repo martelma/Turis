@@ -11,7 +11,7 @@ public class EntityTagConfiguration : BaseEntityConfiguration<EntityTag>
 		base.Configure(builder);
 
 		builder.Property(e => e.EntityKey).IsRequired();
-		builder.Property(e => e.EntityName).IsRequired().HasMaxLength(100);
+		builder.Property(e => e.EntityName).IsRequired().HasMaxLength(25);
 		builder.Property(e => e.UserId).IsRequired();
 		builder.Property(e => e.TimeStamp).IsRequired();
 		builder.Property(e => e.TagId).IsRequired();

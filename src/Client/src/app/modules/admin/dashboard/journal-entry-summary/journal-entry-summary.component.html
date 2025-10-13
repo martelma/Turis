@@ -3,10 +3,13 @@
         <div class="text-lg font-medium tracking-tight leading-6 truncate">Prima Nota Summary</div>
         <div class="mt-3 sm:mt-0 sm:ml-2">
             <mat-button-toggle-group
-                value="monthData"
+                [value]="summarySelector"
                 #summarySelector="matButtonToggleGroup"
                 (change)="onToggleChange($event)">
-                <mat-button-toggle value="yearData">This Year</mat-button-toggle>
+                <mat-button-toggle *ngFor="let year of years" [value]="'year_' + year">
+                    {{ year }}
+                </mat-button-toggle>
+                <!-- <mat-button-toggle value="yearData">This Year</mat-button-toggle> -->
                 <mat-button-toggle value="monthData">This Month</mat-button-toggle>
                 <mat-button-toggle value="weekData">This Week</mat-button-toggle>
             </mat-button-toggle-group>
@@ -39,14 +42,14 @@
                 <div
                     class="col-span-2 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-green-50 text-green-800 dark:bg-white dark:bg-opacity-5 dark:text-green-500">
                     <div class="text-5xl sm:text-7xl font-semibold leading-none tracking-tight">
-                        {{ journalEntrySummary[summarySelector?.value]?.totalIncome | currency: 'EUR' }}
+                        {{ journalEntrySummary?.totalIncome ?? 0 | currency: 'EUR' }}
                     </div>
                     <div class="mt-3 text-sm sm:text-lg font-medium">Entrate</div>
                 </div>
                 <div
                     class="col-span-2 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-red-50 text-red-800 dark:bg-white dark:bg-opacity-5 dark:text-red-500">
                     <div class="text-5xl sm:text-7xl font-semibold leading-none tracking-tight">
-                        {{ journalEntrySummary[summarySelector?.value]?.totalExpense | currency: 'EUR' }}
+                        {{ journalEntrySummary?.totalExpense ?? 0 | currency: 'EUR' }}
                     </div>
                     <div class="mt-3 text-sm sm:text-lg font-medium">Uscite</div>
                 </div>
@@ -54,12 +57,12 @@
                     class="col-span-4 flex flex-col items-center justify-center py-8 px-1 rounded-2xl"
                     [ngClass]="{
                         'bg-green-50 text-green-800 dark:bg-white dark:bg-opacity-5 dark:text-green-500':
-                            journalEntrySummary[summarySelector?.value]?.balance > 0,
+                            journalEntrySummary?.balance > 0,
                         'bg-red-50 text-red-800 dark:bg-white dark:bg-opacity-5 dark:text-red-500':
-                            journalEntrySummary[summarySelector?.value]?.balance <= 0
+                            journalEntrySummary?.balance <= 0
                     }">
                     <div class="text-5xl font-semibold leading-none tracking-tight">
-                        {{ journalEntrySummary[summarySelector?.value]?.balance | currency: 'EUR' }}
+                        {{ journalEntrySummary?.balance ?? 0 | currency: 'EUR' }}
                     </div>
                     <div class="mt-1 text-sm font-medium text-center">Saldo</div>
                 </div>

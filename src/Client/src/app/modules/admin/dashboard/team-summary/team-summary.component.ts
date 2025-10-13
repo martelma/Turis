@@ -1,9 +1,7 @@
-import { CommonModule, DatePipe, DecimalPipe, NgClass, NgIf } from '@angular/common';
-import { Component, OnInit, ViewEncapsulation, ViewChild, Input } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { CommonModule, DatePipe, NgClass, NgIf } from '@angular/common';
+import { Component, OnInit, ViewEncapsulation, ViewChild, Input, AfterViewInit } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { MaterialModule } from 'app/modules/material.module';
 import { User } from 'app/core/user/user.types';
 import { Router } from '@angular/router';
 import { CommissionStat, TeamSummary } from '../dashboard.types';
@@ -35,6 +33,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTabsModule } from '@angular/material/tabs';
 import { UploadFilesComponent } from 'app/shared/components/upload-files/upload-files.component';
+import { UserSettingsService } from 'app/shared/services/user-setting.service';
+import { AppSettings } from 'app/constants';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonToggleChange } from '@angular/material/button-toggle';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { FuseDrawerComponent } from '@fuse/components/drawer';
+import { MaterialModule } from 'app/modules/material.module';
 
 export type ChartOptions = {
     series: ApexAxisChartSeries;
@@ -54,12 +60,12 @@ export type ChartOptions = {
     imports: [
         NgIf,
         NgClass,
+        FormsModule,
         NgApexchartsModule,
         DatePipe,
         CommonModule,
         MatIconModule,
         MatProgressBarModule,
-        MatButtonModule,
         MatTabsModule,
         MatTableModule,
         MatButtonModule,
@@ -71,30 +77,18 @@ export type ChartOptions = {
         MatProgressSpinnerModule,
         UploadFilesComponent,
         TranslocoModule,
+        ReactiveFormsModule,
+        MaterialModule,
+        MatBadgeModule,
+        MatCheckboxModule,
+        FuseDrawerComponent,
     ],
 })
-export class TeamSummaryComponent implements OnInit {
-    private _year: number;
-    @Input()
-    get year(): number {
-        return this._year;
-    }
-    set year(value: number) {
-        this._year = value;
-
-        this.loadData();
-    }
-
-    private _viewMode: string;
-    @Input()
-    get viewMode(): string {
-        return this._viewMode;
-    }
-    set viewMode(value: string) {
-        this._viewMode = value;
-
-        this.changeViewMode();
-    }
+export class TeamSummaryComponent implements OnInit, AfterViewInit {
+    years: number[] = [];
+    year: number;
+    viewMode = 'total';
+    searchFilter: string;
 
     public user: User;
     public isScreenSmall: boolean;
@@ -104,7 +98,6 @@ export class TeamSummaryComponent implements OnInit {
     log = log;
 
     @ViewChild('chart') chart: ChartComponent;
-    public chartTotalOptions: Partial<ChartOptions>;
 
     columnsToDisplay: string[] = [
         'month',
@@ -122,6 +115,7 @@ export class TeamSummaryComponent implements OnInit {
     constructor(
         private _contactService: ContactService,
         private _sanitizer: DomSanitizer,
+        private _userSettingsService: UserSettingsService,
         private router: Router,
     ) {}
 
@@ -129,6 +123,20 @@ export class TeamSummaryComponent implements OnInit {
         this._contactService.teamSummary$.pipe(untilDestroyed(this)).subscribe((data: TeamSummary) => {
             this.teamSummary = data;
         });
+
+        const currentYear = new Date().getFullYear();
+        this.year = currentYear;
+        this.years = Array.from({ length: 5 }, (_, i) => currentYear - i);
+    }
+
+    async ngAfterViewInit(): Promise<void> {
+        this.year = await this._userSettingsService.getNumberValue(`${AppSettings.HomePage}:team-summary-current-year`);
+
+        setTimeout(async () => {
+            this.viewMode = await this._userSettingsService.getValue(`${AppSettings.HomePage}:team-summary-view-mode`);
+        }, 0);
+
+        this.loadData();
     }
 
     loadData(): void {
@@ -170,6 +178,28 @@ export class TeamSummaryComponent implements OnInit {
                 }, 0);
             });
         }
+    }
+
+    onYearChange(event: MatButtonToggleChange): void {
+        this.year = event.value;
+        this._userSettingsService.setNumberValue(`${AppSettings.HomePage}:team-summary-current-year`, this.year);
+        this.loadData();
+    }
+
+    onViewModeChange(event: MatButtonToggleChange): void {
+        this.viewMode = event.value;
+        this._userSettingsService.setValue(`${AppSettings.HomePage}:team-summary-view-mode`, this.viewMode);
+        this.changeViewMode();
+    }
+
+    onSortChange(event: any): void {
+        console.log('onSortChange', event.value);
+    }
+
+    onInputChange(event: any): void {
+        console.log('onInputChange', event.value);
+        this.searchFilter = event;
+        console.log('onInputChange', this.searchFilter);
     }
 
     prepareChartTotal(collaborator: Collaborator, commissionStat: CommissionStat[]): any {

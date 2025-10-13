@@ -1,3 +1,4 @@
+import { expandCollapse } from '@fuse/animations/expand-collapse';
 import { Collaborator } from 'app/modules/service/service.types';
 
 export class JournalEntrySummary {
@@ -40,6 +41,27 @@ export class ContactDataItem {
     balance: number;
 }
 
+export class AnnualStat {
+    year: number;
+    total: number;
+}
+
+export class LanguageStat {
+    languageCode: string;
+    count: number;
+}
+
+export class TypeStat {
+    serviceType: string;
+    durationType: string;
+    count: number;
+}
+
+export class TagStat {
+    tagName: string;
+    count: number;
+}
+
 export class ServiceSummary {
     proposals: number;
     weekProposals: number;
@@ -49,6 +71,11 @@ export class ServiceSummary {
     weekToDo: number;
     done: number;
     weekDone: number;
+
+    annualStats: AnnualStat[] = [];
+    languageStats: LanguageStat[] = [];
+    typeStats: TypeStat[] = [];
+    tagStats: TagStat[] = [];
 }
 
 export class TeamSummary {

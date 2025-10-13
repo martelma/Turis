@@ -14,7 +14,7 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 	{
 		var templateApiGroup = endpoints.MapGroup("/api/service");
 
-		templateApiGroup.MapGet("summary", SummaryAsync)
+		templateApiGroup.MapGet("summary/{year}", SummaryAsync)
 			.Produces<PaginatedList<ServiceModel>>(StatusCodes.Status200OK)
 			.WithOpenApi(operation =>
 			{
@@ -249,8 +249,8 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 			});
 	}
 
-	private static async Task<IResult> SummaryAsync(HttpContext httpContext, IServiceService service)
-		=> (await service.SummaryAsync()).ToResponse(httpContext);
+	private static async Task<IResult> SummaryAsync(HttpContext httpContext, IServiceService service, int year)
+		=> (await service.SummaryAsync(year)).ToResponse(httpContext);
 
 	private static async Task<IResult> SummaryDetailsProposalsAsync(HttpContext httpContext, IServiceService service)
 		=> (await service.SummaryDetailsProposalsAsync()).ToResponse(httpContext);

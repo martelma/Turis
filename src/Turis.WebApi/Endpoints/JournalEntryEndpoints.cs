@@ -10,7 +10,9 @@ public class JournalEntryEndpoints : IEndpointRouteHandlerBuilder
 	{
 		var templateApiGroup = endpoints.MapGroup("/api/journal-entry");
 
-		templateApiGroup.MapGet("summary", Summary);
+		//templateApiGroup.MapGet("summary", Summary);
+		templateApiGroup.MapGet("year-summary/{year}", YearSummary);
+		templateApiGroup.MapGet("period-summary/{period}", PeriodSummary);
 		templateApiGroup.MapGet("{id:guid}", Get);
 		templateApiGroup.MapGet(string.Empty, List);
 		templateApiGroup.MapPost(string.Empty, Save);
@@ -18,8 +20,14 @@ public class JournalEntryEndpoints : IEndpointRouteHandlerBuilder
 		templateApiGroup.MapDelete("{id:guid}", Delete);
 	}
 
-	private static async Task<IResult> Summary(HttpContext httpContext, IJournalEntryService service)
-		=> (await service.Summary()).ToResponse(httpContext);
+	//private static async Task<IResult> Summary(HttpContext httpContext, IJournalEntryService service)
+	//	=> (await service.Summary()).ToResponse(httpContext);
+
+	private static async Task<IResult> YearSummary(HttpContext httpContext, IJournalEntryService service, int year)
+		=> (await service.YearSummary(year)).ToResponse(httpContext);
+
+	private static async Task<IResult> PeriodSummary(HttpContext httpContext, IJournalEntryService service, string period)
+		=> (await service.PeriodSummary(period)).ToResponse(httpContext);
 
 	private static async Task<IResult> Get(HttpContext httpContext, IJournalEntryService service, Guid id)
 		=> (await service.GetAsync(id)).ToResponse(httpContext);

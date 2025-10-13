@@ -56,13 +56,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     serviceSummaryType: string;
     services: Service[] = [];
 
-    years: number[] = [];
-    currentYear: number;
-
-    viewMode = 'total';
-
-    searchFilter: string;
-
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
         private _userSettingsService: UserSettingsService,
@@ -81,22 +74,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
-        this.viewMode = 'total';
         this._loadUser();
-
-        const currentYear = new Date().getFullYear();
-        this.years = Array.from({ length: 5 }, (_, i) => currentYear - i);
     }
 
     async ngAfterViewInit(): Promise<void> {
-        this.currentYear = await this._userSettingsService.getNumberValue(
-            `${AppSettings.HomePage}:team-summary-current-year`,
-        );
-
-        setTimeout(async () => {
-            this.viewMode = await this._userSettingsService.getValue(`${AppSettings.HomePage}:team-summary-view-mode`);
-        }, 0);
-
         this.selectedTabIndex = await this._userSettingsService.getNumberValue(
             `${AppSettings.HomePage}:selectedTabIndex`,
         );
@@ -171,25 +152,5 @@ export class DashboardComponent implements OnInit, AfterViewInit {
                 service.selected = false;
             });
         }
-    }
-
-    onYearChange(event: MatButtonToggleChange): void {
-        this.currentYear = event.value;
-        this._userSettingsService.setNumberValue(`${AppSettings.HomePage}:team-summary-current-year`, this.currentYear);
-    }
-
-    onViewModeChange(event: MatButtonToggleChange): void {
-        this.viewMode = event.value;
-        this._userSettingsService.setValue(`${AppSettings.HomePage}:team-summary-view-mode`, this.viewMode);
-    }
-
-    onSortChange(event: any): void {
-        console.log('onSortChange', event.value);
-    }
-
-    onInputChange(event: any): void {
-        console.log('onInputChange', event.value);
-        this.searchFilter = event;
-        console.log('onInputChange', this.searchFilter);
     }
 }

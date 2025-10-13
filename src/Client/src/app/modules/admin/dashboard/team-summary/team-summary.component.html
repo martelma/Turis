@@ -1,4 +1,61 @@
 <div class="grid grid-cols-1 gap-6 w-full min-w-0">
+    <div class="mt-3 mb-3 sm:mt-0 sm:ml-2 flex items-center justify-between">
+        <mat-button-toggle-group
+            *ngIf="years.length > 0"
+            #summarySelector="matButtonToggleGroup"
+            name="year"
+            #name="ngModel"
+            [(ngModel)]="year"
+            (change)="onYearChange($event)">
+            <mat-button-toggle *ngFor="let year of years" [value]="year">
+                {{ year }}
+            </mat-button-toggle>
+        </mat-button-toggle-group>
+
+        <!-- TODO:introdurre un autocomplete -->
+        <!-- <mat-form-field class="w-100">
+                                <mat-label>{{ 'PriceLists.ServiceType' | transloco }}</mat-label>
+                                <input
+                                    matInput
+                                    name="searchFilter"
+                                    #name="ngModel"
+                                    [(ngModel)]="searchFilter"
+                                    placeholder="Enter value"
+                                    (change)="onInputChange($event)" />
+                            </mat-form-field> -->
+
+        <mat-form-field class="w-100">
+            <mat-label>{{ 'PriceLists.ServiceType' | transloco }}</mat-label>
+            <mat-select (selectionChange)="onSortChange($event)">
+                <mat-option [value]="'Contact'"> Contact </mat-option>
+                <mat-option [value]="'Commission Asc'"> Commission Asc </mat-option>
+                <mat-option [value]="'Commission Desc'"> Commission Desc </mat-option>
+                <mat-option [value]="'Percentage Asc'"> Percentage Asc </mat-option>
+                <mat-option [value]="'Percentage Desc'"> Percentage Desc </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-button-toggle-group
+            #summarySelector="matButtonToggleGroup"
+            name="viewMode"
+            #name="ngModel"
+            [(ngModel)]="viewMode"
+            (change)="onViewModeChange($event)">
+            <mat-button-toggle [value]="'total'" [matTooltip]="'VieModeSelector.Total' | transloco">
+                <mat-icon svgIcon="stacked_line_chart"></mat-icon>
+            </mat-button-toggle>
+            <mat-button-toggle [value]="'amount'" [matTooltip]="'VieModeSelector.Amount' | transloco">
+                <mat-icon svgIcon="stacked_bar_chart"></mat-icon>
+            </mat-button-toggle>
+            <mat-button-toggle [value]="'percentage'" [matTooltip]="'VieModeSelector.Percentage' | transloco">
+                <mat-icon svgIcon="feather:percent"></mat-icon>
+            </mat-button-toggle>
+            <mat-button-toggle [value]="'data'" [matTooltip]="'VieModeSelector.Data' | transloco">
+                <mat-icon [svgIcon]="'heroicons_outline:table-cells'"></mat-icon>
+            </mat-button-toggle>
+        </mat-button-toggle-group>
+    </div>
+
     <ng-container *ngFor="let member of teamSummary?.members">
         <div
             class="flex flex-col flex-auto items-center bg-card shadow rounded-2xl overflow-hidden"

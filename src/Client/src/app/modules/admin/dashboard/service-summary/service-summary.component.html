@@ -1,3 +1,18 @@
+<div class="grid grid-cols-1 gap-6 w-full min-w-0">
+    <div class="mt-3 mb-3 sm:mt-0 sm:ml-2 flex items-center justify-between">
+        <mat-button-toggle-group
+            *ngIf="years.length > 0"
+            #summarySelector="matButtonToggleGroup"
+            name="year"
+            #name="ngModel"
+            [(ngModel)]="year"
+            (change)="onYearChange($event)">
+            <mat-button-toggle *ngFor="let year of years" [value]="year">
+                {{ year }}
+            </mat-button-toggle>
+        </mat-button-toggle-group>
+    </div>
+</div>
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full min-w-0">
     <!-- Proposte -->
     <div
@@ -81,4 +96,79 @@
             </div>
         </div>
     </div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-5 gap-6 w-full min-w-0 mt-3">
+    <div class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+        <apx-chart
+            id="chart1"
+            *ngIf="chart1Options"
+            [title]="chart1Options.title"
+            [subtitle]="chart1Options.subtitle"
+            [series]="chart1Options.series"
+            [chart]="chart1Options.chart"
+            [dataLabels]="chart1Options.dataLabels"
+            [stroke]="chart1Options.stroke"
+            [colors]="chart1Options.colors"
+            [plotOptions]="chart1Options.plotOptions"
+            [yaxis]="chart1Options.yaxis"
+            [xaxis]="chart1Options.xaxis"
+            [tooltip]="chart1Options.tooltip"></apx-chart>
+    </div>
+    <div class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden text-center">
+        <apx-chart
+            id="chart2"
+            *ngIf="chart2Options"
+            [title]="chart2Options.title"
+            [subtitle]="chart2Options.subtitle"
+            [series]="chart2Options.series"
+            [legend]="chart2Options.legend"
+            [chart]="chart2Options.chart"
+            [labels]="chart2Options.labels"
+            [responsive]="chart2Options.responsive"></apx-chart>
+    </div>
+    <div class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden text-center">
+        <apx-chart
+            id="chart3"
+            style="width: 100%"
+            *ngIf="chart2Options"
+            [title]="chart3Options.title"
+            [subtitle]="chart3Options.subtitle"
+            [series]="chart3Options.series"
+            [legend]="chart3Options.legend"
+            [chart]="chart3Options.chart"
+            [labels]="chart3Options.labels"
+            [responsive]="chart3Options.responsive"></apx-chart>
+    </div>
+    <div class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden text-center">
+        <apx-chart
+            id="chart4"
+            style="width: 100%"
+            *ngIf="chart4Options"
+            [title]="chart4Options.title"
+            [subtitle]="chart4Options.subtitle"
+            [series]="chart4Options.series"
+            [chart]="chart4Options.chart"
+            [labels]="chart4Options.labels"
+            [legend]="chart4Options.legend"
+            [grid]="chart4Options.grid"
+            [plotOptions]="chart4Options.plotOptions"
+            [responsive]="chart4Options.responsive"></apx-chart>
+    </div>
+    <div class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden text-center">
+        <apx-chart
+            id="chart5"
+            style="width: 100%"
+            *ngIf="chart5Options"
+            class="w-full"
+            [title]="chart5Options.title"
+            [subtitle]="chart5Options.subtitle"
+            [series]="chart5Options.series"
+            [chart]="chart5Options.chart"
+            [labels]="chart5Options.labels"
+            [legend]="chart5Options.legend"
+            [grid]="chart5Options.grid"
+            [plotOptions]="chart5Options.plotOptions"
+            [responsive]="chart5Options.responsive"></apx-chart>
+    </div>
+    <div></div>
 </div>

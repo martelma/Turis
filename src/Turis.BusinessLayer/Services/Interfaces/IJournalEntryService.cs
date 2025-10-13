@@ -8,7 +8,8 @@ namespace Turis.BusinessLayer.Services.Interfaces;
 
 public interface IJournalEntryService : IService
 {
-	Task<Result<JournalEntrySummaryModel>> Summary();
+	Task<Result<SummaryData>> YearSummary(int year);
+	Task<Result<SummaryData>> PeriodSummary(string period);
 	Task<Result<JournalEntryModel>> GetAsync(Guid id);
 	Task<Result<PaginatedList<JournalEntryModel>>> ListAsync(JournalEntrySearchParameters parameters);
 	Task<Result> SaveAsync(JournalEntryRequest model);

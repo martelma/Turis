@@ -36,115 +36,214 @@ public class JournalEntryService(ApplicationDbContext dbContext
 		return context.Include(x => x.User);
 	}
 
-	public async Task<Result<JournalEntrySummaryModel>> Summary()
+	//public async Task<Result<JournalEntrySummaryModel>> Summary()
+	//{
+	//	var startYear = DateTime.Now.StartYear();
+	//	var startMonth = DateTime.Now.StartMonth();
+
+	//	var startWeek = DateTime.Now.StartWeek();
+
+	//	var yearData = await dbContext
+	//		.GetData<JournalEntry>()
+	//		.Where(x => x.Date.Date <= DateTime.UtcNow)
+	//		.Where(x => x.Date.Date >= startYear)
+	//		.ToListAsync();
+	//	var monthData = yearData.Where(x => x.Date.Date >= startMonth).ToList();
+	//	var weekData = yearData.Where(x => x.Date.Date >= startWeek).ToList();
+
+
+	//	var yearDataSymmary = yearData
+	//		.GroupBy(x => x.Date.Month)
+	//		.Select(group => new DataItem
+	//		{
+	//			ViewOrder = group.Key,
+	//			Label = group.Key.ToMonthLabel(),
+	//			Income = group.Where(e => e.Amount > 0).Sum(e => e.Amount), // Totale delle entrate
+	//			Expense = group.Where(e => e.Amount < 0).Sum(e => e.Amount), // Totale delle uscite
+	//			Balance = group.MaxBy(e => e.Date)?.Balance ?? 0 // Saldo di fine periodo
+	//		})
+	//		.OrderBy(x => x.ViewOrder)
+	//		.ToList();
+
+	//	var monthDataSummary = monthData
+	//		.GroupJoin(
+	//			yearData,
+	//			day => day.Date.FirstDayOfMonth(), // Chiave di join (la data completa generata)
+	//			entry => entry.Date.FirstDayOfMonth(), // Chiave di join dei dati originali
+	//			(day, entries) => new DataItem
+	//			{
+	//				ViewOrder = day.Date.Month,
+	//				Label = day.Date.ToString("MM"),
+	//				Income = entries.Where(e => e.Amount > 0).Sum(e => e.Amount), // Entrate
+	//				Expense = entries.Where(e => e.Amount < 0).Sum(e => e.Amount), // Uscite
+	//				Balance = entries.Any()
+	//					? entries.MaxBy(e => e.Date.FirstDayOfMonth())?.Balance ?? 0
+	//					: 0 // Saldo
+	//			}
+	//		)
+	//		.OrderBy(x => x.ViewOrder)
+	//		.ToList();
+
+	//	var weekDataSummary = weekData
+	//		.GroupBy(x => x.Date.DayOfWeek)
+	//		.Select(group => new DataItem
+	//		{
+	//			ViewOrder = (int)group.Key,
+	//			Label = group.Key.ToDayLabel(),
+	//			Income = group.Where(e => e.Amount > 0).Sum(e => e.Amount), // Totale delle entrate
+	//			Expense = group.Where(e => e.Amount < 0).Sum(e => e.Amount), // Totale delle uscite
+	//			Balance = group.MaxBy(e => e.Date)?.Balance ?? 0 // Saldo di fine periodo
+	//		})
+	//		.OrderBy(x => x.ViewOrder)
+	//		.ToList();
+	//	var model = new JournalEntrySummaryModel
+	//	{
+	//		YearData = new SummaryData
+	//		{
+	//			Data = yearDataSymmary
+	//		},
+	//		MonthData = new SummaryData
+	//		{
+	//			Data = monthDataSummary
+	//		},
+	//		WeekData = new SummaryData
+	//		{
+	//			Data = weekDataSummary
+	//		}
+	//	};
+
+	//	return await Task.FromResult(model);
+	//}
+
+	public async Task<Result<SummaryData>> YearSummary(int year)
+	{
+		var yearData = await dbContext
+			.GetData<JournalEntry>()
+			.Where(x => x.Date.Year == year)
+			.ToListAsync();
+
+		//var yearDataSymmary = yearData
+		//	.GroupBy(x => x.Date.Month)
+		//	.Select(group => new DataItem
+		//	{
+		//		ViewOrder = group.Key,
+		//		Label = group.Key.ToMonthLabel(),
+		//		Income = group.Where(e => e.Amount > 0).Sum(e => e.Amount), // Totale delle entrate
+		//		Expense = group.Where(e => e.Amount < 0).Sum(e => e.Amount), // Totale delle uscite
+		//		Balance = group.MaxBy(e => e.Date)?.Balance ?? 0 // Saldo di fine periodo
+		//	})
+		//	.OrderBy(x => x.ViewOrder)
+		//	.ToList();
+
+
+		var yearDataSymmary = await dbContext.Database
+			.SqlQuery<DataItem>($@"
+		        WITH AllMonths AS (
+		            SELECT 1 AS ViewOrder UNION ALL
+		            SELECT 2 UNION ALL
+		            SELECT 3 UNION ALL
+		            SELECT 4 UNION ALL
+		            SELECT 5 UNION ALL
+		            SELECT 6 UNION ALL
+		            SELECT 7 UNION ALL
+		            SELECT 8 UNION ALL
+		            SELECT 9 UNION ALL
+		            SELECT 10 UNION ALL
+		            SELECT 11 UNION ALL
+		            SELECT 12
+		        ),
+		        MonthlyData AS (
+		            SELECT 
+		                MONTH(yd.[Date]) AS ViewOrder,
+		                SUM(CASE WHEN yd.Amount > 0 THEN yd.Amount ELSE 0 END) AS Income,
+		                SUM(CASE WHEN yd.Amount < 0 THEN yd.Amount ELSE 0 END) AS Expense,
+		                (SELECT TOP 1 yd2.Balance 
+		                 FROM JournalEntries yd2 
+		                 WHERE MONTH(yd2.[Date]) = MONTH(yd.[Date]) 
+		                   AND YEAR(yd2.[Date]) = {year}
+		                 ORDER BY yd2.[Date] DESC) AS Balance
+		            FROM JournalEntries yd
+		            WHERE YEAR(yd.[Date]) = {year}
+		            GROUP BY MONTH(yd.[Date])
+		        )
+		        SELECT 
+		            am.ViewOrder,
+		            DATENAME(MONTH, DATEFROMPARTS({year}, am.ViewOrder, 1)) AS Label,
+		            COALESCE(md.Income, 0) AS Income,
+		            COALESCE(md.Expense, 0) AS Expense,
+		            COALESCE(md.Balance, 0) AS Balance
+		        FROM AllMonths am
+		        LEFT JOIN MonthlyData md ON am.ViewOrder = md.ViewOrder
+		        ORDER BY am.ViewOrder
+		    ")
+			.ToListAsync();
+
+		var model = new SummaryData
+		{
+			Data = yearDataSymmary
+		};
+
+		return await Task.FromResult(model);
+	}
+
+	public async Task<Result<SummaryData>> PeriodSummary(string period)
 	{
 		var startYear = DateTime.Now.StartYear();
-
 		var startMonth = DateTime.Now.StartMonth();
-		var endMonth = DateTime.Now.EndMonth();
-		var allYearMonths = startYear.GenerateMonthsRange(DateTime.Now);
-		var allMonthDays = startMonth.GenerateDaysRange(endMonth);
 
 		var startWeek = DateTime.Now.StartWeek();
 
-		var yearData = await Query()
+		var yearData = await dbContext
+			.GetData<JournalEntry>()
 			.Where(x => x.Date.Date <= DateTime.UtcNow)
 			.Where(x => x.Date.Date >= startYear)
 			.ToListAsync();
 		var monthData = yearData.Where(x => x.Date.Date >= startMonth).ToList();
 		var weekData = yearData.Where(x => x.Date.Date >= startWeek).ToList();
 
+		var model = new SummaryData();
 
-		var yearDataSymmary = yearData
-			.GroupBy(x => x.Date.Month)
-			.Select(group => new DataItem
-			{
-				ViewOrder = group.Key,
-				Label = group.Key.ToMonthLabel(),
-				Income = group.Where(e => e.Amount > 0).Sum(e => e.Amount), // Totale delle entrate
-				Expense = group.Where(e => e.Amount < 0).Sum(e => e.Amount), // Totale delle uscite
-				Balance = group.MaxBy(e => e.Date)?.Balance ?? 0 // Saldo di fine periodo
-			})
-			.OrderBy(x => x.ViewOrder)
-			.ToList();
-
-		var monthDataSummary = monthData
-			.GroupJoin(
-				yearData,
-				day => day.Date.FirstDayOfMonth(), // Chiave di join (la data completa generata)
-				entry => entry.Date.FirstDayOfMonth(), // Chiave di join dei dati originali
-				(day, entries) => new DataItem
-				{
-					ViewOrder = day.Date.Month,
-					Label = day.Date.ToString("MM"),
-					Income = entries.Where(e => e.Amount > 0).Sum(e => e.Amount), // Entrate
-					Expense = entries.Where(e => e.Amount < 0).Sum(e => e.Amount), // Uscite
-					Balance = entries.Any()
-						? entries.MaxBy(e => e.Date.FirstDayOfMonth())?.Balance ?? 0
-						: 0 // Saldo
-				}
-			)
-			.OrderBy(x => x.ViewOrder)
-			.ToList();
-
-		var weekDataSummary = weekData
-			.GroupBy(x => x.Date.DayOfWeek)
-			.Select(group => new DataItem
-			{
-				ViewOrder = (int)group.Key,
-				Label = group.Key.ToDayLabel(),
-				Income = group.Where(e => e.Amount > 0).Sum(e => e.Amount), // Totale delle entrate
-				Expense = group.Where(e => e.Amount < 0).Sum(e => e.Amount), // Totale delle uscite
-				Balance = group.MaxBy(e => e.Date)?.Balance ?? 0 // Saldo di fine periodo
-			})
-			.OrderBy(x => x.ViewOrder)
-			.ToList();
-		var model = new JournalEntrySummaryModel
+		if (period == "monthData")
 		{
-			YearData = new SummaryData
-			{
-				Data = yearDataSymmary
-			},
-			MonthData = new SummaryData
-			{
-				Data = monthDataSummary
-				/*
-				Data = monthData
-					.GroupBy(x => x.Date.Day)
-					.Select(group => new DataItem
+			var monthDataSummary = monthData
+				.GroupJoin(
+					yearData,
+					day => day.Date.FirstDayOfMonth(), // Chiave di join (la data completa generata)
+					entry => entry.Date.FirstDayOfMonth(), // Chiave di join dei dati originali
+					(day, entries) => new DataItem
 					{
-						ViewOrder = group.Key,
-						Label = group.Key.ToString(),
-						Income = group.Where(e => e.Amount > 0).Sum(e => e.Amount), // Totale delle entrate
-						Expense = group.Where(e => e.Amount < 0).Sum(e => e.Amount), // Totale delle uscite
-						Balance = group.MaxBy(e => e.Date)?.Balance ?? 0// Saldo di fine periodo
-					})
-					.OrderBy(x => x.ViewOrder)
-					.ToList()
-				/*
-				Data = allMonthDays
-					.GroupJoin(
-						yearData,
-						day => day, // Chiave di join (la data completa generata)
-						entry => entry.Date.Date, // Chiave di join dei dati originali
-						(day, entries) => new DataItem
-						{
-							ViewOrder = day.Day,
-							Label = day.ToString("dd"),
-							Income = entries.Where(e => e.Amount > 0).Sum(e => e.Amount), // Entrate
-							Expense = entries.Where(e => e.Amount < 0).Sum(e => e.Amount), // Uscite
-							Balance = entries.Any() ? entries.MaxBy(e => e.Date)?.Balance ?? 0 : 0 // Saldo
-						}
-					)
-					.OrderBy(x => x.ViewOrder)
-					.ToList()
-				*/
-			},
-			WeekData = new SummaryData
-			{
-				Data = weekDataSummary
-			}
-		};
+						ViewOrder = day.Date.Month,
+						Label = day.Date.ToString("MM"),
+						Income = entries.Where(e => e.Amount > 0).Sum(e => e.Amount), // Entrate
+						Expense = entries.Where(e => e.Amount < 0).Sum(e => e.Amount), // Uscite
+						Balance = entries.Any()
+							? entries.MaxBy(e => e.Date.FirstDayOfMonth())?.Balance ?? 0
+							: 0 // Saldo
+					}
+				)
+				.OrderBy(x => x.ViewOrder)
+				.ToList();
+
+			model.Data = monthDataSummary;
+		}
+		else if (period == "weekData")
+		{
+			var weekDataSummary = weekData
+				.GroupBy(x => x.Date.DayOfWeek)
+				.Select(group => new DataItem
+				{
+					ViewOrder = (int)group.Key,
+					Label = group.Key.ToDayLabel(),
+					Income = group.Where(e => e.Amount > 0).Sum(e => e.Amount), // Totale delle entrate
+					Expense = group.Where(e => e.Amount < 0).Sum(e => e.Amount), // Totale delle uscite
+					Balance = group.MaxBy(e => e.Date)?.Balance ?? 0 // Saldo di fine periodo
+				})
+				.OrderBy(x => x.ViewOrder)
+				.ToList();
+
+			model.Data = weekDataSummary;
+		}
+
 
 		return await Task.FromResult(model);
 	}

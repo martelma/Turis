@@ -45,32 +45,19 @@ non funziona add di un contatto
 PasswordExpiration
 
 
-
 gestire la parte di edit di una fattura non ancora inviata
 gestire fase di invio allo SDI
 se un documento è già stato inviato allo SDI, dare evidenza del codice univoco e della data e ora di invio
 
 
-In home admin 
-	drill down per ciascun raggruppamento
-		utilizzare lista già usata in calendar (a cui però dobbiamo aggiungere client e collaborator)
-	aggiungere classifica provvigioni maturate (sia per anno che per mensilità)
+In home 
+	admin 
+		nel drill down per ciascun raggruppamento, utilizzare lista già usata in calendar (a cui però dobbiamo aggiungere client e collaborator)
+		introdurre filtro autocomplete sul nominativo dell guida
+		introdurre criteri di ordinamento (potrebbero variare in base al tipo di visualizzazione total,amount,percentage, griglia oppure ci metto tutto che si fa prima e forse anche meglio )
 
-
-USE [Turis]
-GO
-
-DECLARE @Year			int
-DECLARE @Month			int
-DECLARE @CollaboratorId uniqueidentifier 
-
-SET @Year = 2022
---SET @Month = 11
---SET @CollaboratorId = 'CCFEA166-286C-49B5-AAB6-9AA87BEC05C1'
-
-EXECUTE [dbo].[CommissionStats] @Year, @Month, @CollaboratorId 
-
-
+		
+		
 
 
 
