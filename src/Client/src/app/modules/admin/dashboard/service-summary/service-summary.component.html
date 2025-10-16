@@ -97,7 +97,7 @@
         </div>
     </div>
 </div>
-<div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-5 gap-6 w-full min-w-0 mt-3">
+<div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 gap-6 w-full min-w-0 mt-3">
     <div class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
         <apx-chart
             id="chart1"
@@ -139,19 +139,19 @@
             [labels]="chart3Options.labels"
             [responsive]="chart3Options.responsive"></apx-chart>
     </div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 gap-6 w-full min-w-0 mt-3">
     <div class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden text-center">
         <apx-chart
             id="chart4"
             style="width: 100%"
             *ngIf="chart4Options"
-            [title]="chart4Options.title"
-            [subtitle]="chart4Options.subtitle"
             [series]="chart4Options.series"
             [chart]="chart4Options.chart"
+            [plotOptions]="chart4Options.plotOptions"
             [labels]="chart4Options.labels"
             [legend]="chart4Options.legend"
-            [grid]="chart4Options.grid"
-            [plotOptions]="chart4Options.plotOptions"
+            [colors]="chart4Options.colors"
             [responsive]="chart4Options.responsive"></apx-chart>
     </div>
     <div class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden text-center">
@@ -170,5 +170,19 @@
             [plotOptions]="chart5Options.plotOptions"
             [responsive]="chart5Options.responsive"></apx-chart>
     </div>
-    <div></div>
+    <div class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden text-center">
+        <apx-chart
+            id="chart6"
+            style="width: 100%"
+            *ngIf="chart6Options"
+            [title]="chart6Options.title"
+            [subtitle]="chart6Options.subtitle"
+            [series]="chart6Options.series"
+            [chart]="chart6Options.chart"
+            [labels]="chart6Options.labels"
+            [legend]="chart6Options.legend"
+            [grid]="chart6Options.grid"
+            [plotOptions]="chart6Options.plotOptions"
+            [responsive]="chart6Options.responsive"></apx-chart>
+    </div>
 </div>

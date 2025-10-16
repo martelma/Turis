@@ -258,6 +258,19 @@ public class ContactService(ApplicationDbContext dbContext
 		return Task.FromResult<Result<IEnumerable<ContactModel>>>(model);
 	}
 
+	public Task<Result<IEnumerable<ContactModel>>> CollaboratorsWithMonitor()
+	{
+		var query = dbContext.GetData<Contact>()
+			.Where(x => x.ContactType == ContactType.Collaborator)
+			.Where(x => x.MonitorStat)
+			.OrderBy(x => x.FirstName)
+			.ThenBy(x => x.LastName)
+			;
+		var model = query.ToModel().ToList();
+
+		return Task.FromResult<Result<IEnumerable<ContactModel>>>(model);
+	}
+
 	public async Task<Result<List<ClientBillingSummaryModel>>> UnbilledSummaryAsync()
 	{
 		var list = (

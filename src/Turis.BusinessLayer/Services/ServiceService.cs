@@ -76,7 +76,7 @@ public class ServiceService(ApplicationDbContext dbContext
 		var annualStats = dbContext
 			.GetData<Service>()
 			.Where(x => x.Checked)
-			.Where(x => x.Date.Year >= currentYear - 10)
+			.Where(x => x.Date.Year > currentYear - 5)
 			.GroupBy(x => x.Date.Year)
 			.Select(g => new AnnualStat
 			{
@@ -165,10 +165,23 @@ public class ServiceService(ApplicationDbContext dbContext
 			})
 			.ToList();
 
+		var serviceTypeStats = dbContext
+			.GetData<Service>()
+			.Where(x => x.Date.Year == year && x.Checked)
+			.GroupBy(x => x.ServiceType)
+			.AsEnumerable() // Porta i dati in memoria PRIMA del Select con ToString
+			.Select(g => new ServiceTypeStat
+			{
+				ServiceType = g.Key != null ? g.Key.ToString() : "no tags",
+				Count = g.Count()
+			})
+			.ToList();
+
 		var model = new ServiceSummaryModel
 		{
 			AnnualStats = annualStats,
 			LanguageStats = languageStats,
+			ServiceTypeStats = serviceTypeStats,
 			TypeStats = typeStats,
 			TagStats = tagStats,
 

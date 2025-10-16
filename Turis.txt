@@ -57,7 +57,8 @@ In home
 		introdurre criteri di ordinamento (potrebbero variare in base al tipo di visualizzazione total,amount,percentage, griglia oppure ci metto tutto che si fa prima e forse anche meglio )
 
 		
-		
+gestione incassi
+
 
 
 

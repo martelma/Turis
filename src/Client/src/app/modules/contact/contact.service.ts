@@ -105,6 +105,11 @@ export class ContactService extends BaseEntityService<Contact> {
         return this.apiGet<ClientBillingSummary[]>(url);
     }
 
+    collaboratorsWithMonitor(): Observable<Collaborator[]> {
+        const url = `collaborators-with-monitor`;
+        return this.apiGet<Collaborator[]>(url);
+    }
+
     /**
      * Create a dummy contact
      */

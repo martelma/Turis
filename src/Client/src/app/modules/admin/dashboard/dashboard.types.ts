@@ -51,6 +51,11 @@ export class LanguageStat {
     count: number;
 }
 
+export class ServiceTypeStat {
+    serviceType: string;
+    count: number;
+}
+
 export class TypeStat {
     serviceType: string;
     durationType: string;
@@ -74,6 +79,7 @@ export class ServiceSummary {
 
     annualStats: AnnualStat[] = [];
     languageStats: LanguageStat[] = [];
+    serviceTypeStats: ServiceTypeStat[] = [];
     typeStats: TypeStat[] = [];
     tagStats: TagStat[] = [];
 }

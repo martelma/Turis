@@ -15,5 +15,6 @@ public interface IContactService : IService
 	Task<Result> DeleteAsync(Guid id);
 	Task<Result<IEnumerable<ContactModel>>> FilterClients(string pattern);
 	Task<Result<IEnumerable<ContactModel>>> FilterCollaborators(string pattern);
+	Task<Result<IEnumerable<ContactModel>>> CollaboratorsWithMonitor();
 	Task<Result<List<ClientBillingSummaryModel>>> UnbilledSummaryAsync();
 }

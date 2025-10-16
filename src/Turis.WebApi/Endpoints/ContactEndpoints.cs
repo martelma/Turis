@@ -19,6 +19,7 @@ public class ContactEndpoints : IEndpointRouteHandlerBuilder
 		templateApiGroup.MapGet(string.Empty, List);
 		templateApiGroup.MapGet("filter-clients/{pattern}", FilterClients);
 		templateApiGroup.MapGet("filter-collaborators/{pattern}", FilterCollaborators);
+		templateApiGroup.MapGet("collaborators-with-monitor", CollaboratorsWithMonitor);
 		templateApiGroup.MapGet("unbilled-list", UnbilledSummaryAsync).AllowAnonymous();
 		templateApiGroup.MapPost(string.Empty, Save);
 		templateApiGroup.MapPut(string.Empty, Save);
@@ -93,6 +94,9 @@ public class ContactEndpoints : IEndpointRouteHandlerBuilder
 
 	private static async Task<IResult> FilterCollaborators(HttpContext httpContext, IContactService service, string pattern)
 		=> (await service.FilterCollaborators(pattern)).ToResponse(httpContext);
+
+	private static async Task<IResult> CollaboratorsWithMonitor(HttpContext httpContext, IContactService service)
+		=> (await service.CollaboratorsWithMonitor()).ToResponse(httpContext);
 
 	private static async Task<IResult> Save(HttpContext httpContext, IContactService service, ContactRequest model)
 		=> (await service.SaveAsync(model)).ToResponse(httpContext);

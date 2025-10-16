@@ -20,6 +20,7 @@ public class ServiceSummaryModel : BaseModel
 
 	public List<AnnualStat> AnnualStats { get; set; } = [];
 	public List<LanguageStat> LanguageStats { get; set; } = [];
+	public List<ServiceTypeStat> ServiceTypeStats { get; set; } = [];
 	public List<TypeStat> TypeStats { get; set; } = [];
 	public List<TagStat> TagStats { get; set; } = [];
 }
@@ -46,5 +47,11 @@ public class TypeStat
 public class TagStat
 {
 	public string TagName { get; set; }
+	public int Count { get; set; }
+}
+
+public class ServiceTypeStat
+{
+	public string ServiceType { get; set; }
 	public int Count { get; set; }
 }

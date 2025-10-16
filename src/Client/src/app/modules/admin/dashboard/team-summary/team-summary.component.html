@@ -12,19 +12,17 @@
             </mat-button-toggle>
         </mat-button-toggle-group>
 
-        <!-- TODO:introdurre un autocomplete -->
-        <!-- <mat-form-field class="w-100">
-                                <mat-label>{{ 'PriceLists.ServiceType' | transloco }}</mat-label>
-                                <input
-                                    matInput
-                                    name="searchFilter"
-                                    #name="ngModel"
-                                    [(ngModel)]="searchFilter"
-                                    placeholder="Enter value"
-                                    (change)="onInputChange($event)" />
-                            </mat-form-field> -->
+        <mat-form-field class="w-80">
+            <mat-label>Collaborator</mat-label>
+            <input matInput [matAutocomplete]="auto" [formControl]="collaboratorControl" placeholder="Search..." />
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onSelected($event)">
+                <mat-option *ngFor="let collaborator of collaborators" [value]="collaborator">
+                    {{ collaborator.fullName }}
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
 
-        <mat-form-field class="w-100">
+        <mat-form-field class="w-80">
             <mat-label>{{ 'PriceLists.ServiceType' | transloco }}</mat-label>
             <mat-select (selectionChange)="onSortChange($event)">
                 <mat-option [value]="'Contact'"> Contact </mat-option>

@@ -10,6 +10,8 @@ import { JournalEntryService } from 'app/modules/journal-entry/journal-entry.ser
 import { JournalEntrySummary, SummaryData } from '../dashboard.types';
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
 import { MatButtonToggleChange, MatButtonToggleGroup } from '@angular/material/button-toggle';
+import { UserSettingsService } from 'app/shared/services/user-setting.service';
+import { AppSettings } from 'app/constants';
 
 @UntilDestroy()
 @Component({
@@ -24,7 +26,7 @@ export class JournalEntrySummaryComponent implements OnInit, AfterViewInit {
     public isScreenSmall: boolean;
 
     years: number[] = [];
-    year: number;
+    period: string;
 
     journalEntrySummary: SummaryData = new SummaryData();
 
@@ -33,12 +35,11 @@ export class JournalEntrySummaryComponent implements OnInit, AfterViewInit {
     @ViewChild('summarySelector') summarySelector: MatButtonToggleGroup;
 
     constructor(
-        private _activatedRoute: ActivatedRoute,
+        private _userSettingsService: UserSettingsService,
         private _journalEntryService: JournalEntryService,
-        private _router: Router,
     ) {
         const currentYear = new Date().getFullYear();
-        this.year = currentYear;
+        this.period = `'year_${currentYear}`;
         this.years = Array.from({ length: 5 }, (_, i) => currentYear - i);
     }
 
@@ -46,22 +47,30 @@ export class JournalEntrySummaryComponent implements OnInit, AfterViewInit {
         // this.loadData();
     }
 
-    ngAfterViewInit() {}
+    async ngAfterViewInit() {
+        this.period = await this._userSettingsService.getValue(
+            `${AppSettings.HomePage}:journal-entry-summary-current-period`,
+        );
+        this.changePeriod();
+    }
 
     onToggleChange(event: MatButtonToggleChange): void {
-        // this.prepareChartData();
+        this.period = event.value;
+        this._userSettingsService.setValue(`${AppSettings.HomePage}:journal-entry-summary-current-period`, this.period);
 
-        const value = event.value;
+        this.changePeriod();
+    }
 
-        if (value.startsWith('year_')) {
-            const year = parseInt(value.split('_')[1]);
+    changePeriod(): void {
+        if (this.period.startsWith('year_')) {
+            const year = parseInt(this.period.split('_')[1]);
             this.loadYearData(year);
-        } else if (value === 'monthData') {
+        } else if (this.period === 'monthData') {
             // console.log('Selected month');
-            this.loadPeriodData(value);
-        } else if (value === 'weekData') {
+            this.loadPeriodData(this.period);
+        } else if (this.period === 'weekData') {
             // console.log('Selected week');
-            this.loadPeriodData(value);
+            this.loadPeriodData(this.period);
         }
     }
 
@@ -72,8 +81,6 @@ export class JournalEntrySummaryComponent implements OnInit, AfterViewInit {
             .subscribe(items => {
                 this.journalEntrySummary = items;
 
-                // const summaryData = this.journalEntrySummary[`year_${year}`];
-                // console.log('summaryData', summaryData);
                 this.prepareChartData();
             });
     }
@@ -86,8 +93,6 @@ export class JournalEntrySummaryComponent implements OnInit, AfterViewInit {
             .subscribe(items => {
                 this.journalEntrySummary = items;
 
-                // const summaryData = this.journalEntrySummary[period];
-                // console.log('summaryData', summaryData);
                 this.prepareChartData();
             });
     }

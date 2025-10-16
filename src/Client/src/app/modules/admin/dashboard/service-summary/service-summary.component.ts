@@ -77,11 +77,13 @@ export class ServiceSummaryComponent implements OnInit, AfterViewInit {
     @ViewChild('chart3') chart3: ChartComponent;
     @ViewChild('chart4') chart4: ChartComponent;
     @ViewChild('chart5') chart5: ChartComponent;
+    @ViewChild('chart6') chart6: ChartComponent;
     public chart1Options: any;
     public chart2Options: any;
     public chart3Options: any;
     public chart4Options: any;
     public chart5Options: any;
+    public chart6Options: any;
 
     constructor(
         private _serviceService: ServiceService,
@@ -298,11 +300,72 @@ export class ServiceSummaryComponent implements OnInit, AfterViewInit {
             ],
         };
 
-        const series4 = this.serviceSummary.typeStats.filter(x => x.serviceType === 'Guida').map(x => x.count);
-        const labels4 = this.serviceSummary.typeStats.filter(x => x.serviceType === 'Guida').map(x => x.durationType);
+        const serviceTypes = this.serviceSummary.serviceTypeStats.map(x => x.serviceType);
+        const serviceTypeCounts = this.serviceSummary.serviceTypeStats.map(x => x.count);
 
         this.chart4Options = {
-            series: series4,
+            series: serviceTypeCounts,
+            chart: {
+                height: 390,
+                type: 'radialBar',
+            },
+            plotOptions: {
+                radialBar: {
+                    offsetY: 0,
+                    startAngle: 0,
+                    endAngle: 270,
+                    hollow: {
+                        margin: 5,
+                        size: '30%',
+                        background: 'transparent',
+                        image: undefined,
+                    },
+                    dataLabels: {
+                        name: {
+                            show: false,
+                        },
+                        value: {
+                            show: false,
+                        },
+                    },
+                },
+            },
+            colors: ['#1ab7ea', '#0084ff', '#39539E', '#0077B5'],
+            labels: serviceTypes,
+            legend: {
+                show: true,
+                floating: true,
+                fontSize: '16px',
+                position: 'left',
+                offsetX: 50,
+                offsetY: 10,
+                labels: {
+                    useSeriesColors: true,
+                },
+                formatter: function (seriesName, opts) {
+                    return seriesName + ':  ' + opts.w.globals.series[opts.seriesIndex];
+                },
+                itemMargin: {
+                    horizontal: 3,
+                },
+            },
+            responsive: [
+                {
+                    breakpoint: 480,
+                    options: {
+                        legend: {
+                            show: false,
+                        },
+                    },
+                },
+            ],
+        };
+
+        const series5 = this.serviceSummary.typeStats.filter(x => x.serviceType === 'Guida').map(x => x.count);
+        const labels5 = this.serviceSummary.typeStats.filter(x => x.serviceType === 'Guida').map(x => x.durationType);
+
+        this.chart5Options = {
+            series: series5,
             chart: {
                 width: '100%',
                 type: 'donut',
@@ -310,7 +373,7 @@ export class ServiceSummaryComponent implements OnInit, AfterViewInit {
                     enabled: false,
                 },
             },
-            labels: labels4,
+            labels: labels5,
             title: {
                 text: 'Guide',
                 align: 'center',
@@ -356,20 +419,20 @@ export class ServiceSummaryComponent implements OnInit, AfterViewInit {
             // ],
         };
 
-        const series5 = this.serviceSummary.typeStats
+        const series6 = this.serviceSummary.typeStats
             .filter(x => x.serviceType === 'Accompagnamento')
             .map(x => x.count);
-        const labels5 = this.serviceSummary.typeStats
+        const labels6 = this.serviceSummary.typeStats
             .filter(x => x.serviceType === 'Accompagnamento')
             .map(x => x.durationType);
 
-        this.chart5Options = {
-            series: series5,
+        this.chart6Options = {
+            series: series6,
             chart: {
                 width: '100%',
                 type: 'donut',
             },
-            labels: labels5,
+            labels: labels6,
             title: {
                 text: 'Accompagnamento',
                 align: 'center',

@@ -35,12 +35,13 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { UploadFilesComponent } from 'app/shared/components/upload-files/upload-files.component';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { AppSettings } from 'app/constants';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
 import { MaterialModule } from 'app/modules/material.module';
+import { map, Observable, startWith } from 'rxjs';
 
 export type ChartOptions = {
     series: ApexAxisChartSeries;
@@ -93,6 +94,9 @@ export class TeamSummaryComponent implements OnInit, AfterViewInit {
     public user: User;
     public isScreenSmall: boolean;
 
+    collaboratorControl = new FormControl('');
+    collaborators: Collaborator[] = [];
+
     teamSummary: TeamSummary;
 
     log = log;
@@ -120,6 +124,10 @@ export class TeamSummaryComponent implements OnInit, AfterViewInit {
     ) {}
 
     ngOnInit(): void {
+        this._contactService.collaboratorsWithMonitor().subscribe(items => {
+            this.collaborators = items;
+        });
+
         this._contactService.teamSummary$.pipe(untilDestroyed(this)).subscribe((data: TeamSummary) => {
             this.teamSummary = data;
         });
@@ -137,6 +145,15 @@ export class TeamSummaryComponent implements OnInit, AfterViewInit {
         }, 0);
 
         this.loadData();
+    }
+
+    filterCollaborators(value: string) {
+        const filterValue = value.toLowerCase();
+        return this.collaborators.filter(collaborator => collaborator.fullName.toLowerCase().includes(filterValue));
+    }
+
+    onSelected(event: any) {
+        console.log('Selected:', event.option.value);
     }
 
     loadData(): void {
