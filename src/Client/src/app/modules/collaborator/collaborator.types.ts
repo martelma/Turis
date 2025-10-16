@@ -15,3 +15,18 @@ export interface CheckDataInfo {
     collaborator: Contact;
     workflowCollaboratorStatus?: string;
 }
+
+export class CollaboratorSearchParameters {
+    pattern: string;
+    pageIndex: number;
+    pageSize: number;
+    orderBy: string;
+}
+
+export class TeamSummaryParameters {
+    year: number;
+    pattern: string;
+    pageIndex: number;
+    pageSize: number;
+    orderBy: string;
+}

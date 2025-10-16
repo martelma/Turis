@@ -35,13 +35,16 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { UploadFilesComponent } from 'app/shared/components/upload-files/upload-files.component';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { AppSettings } from 'app/constants';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormControl } from '@angular/forms';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
 import { MaterialModule } from 'app/modules/material.module';
-import { map, Observable, startWith } from 'rxjs';
+import { debounceTime, map, Observable, startWith } from 'rxjs';
+import { BaseSearchParameters } from 'app/shared/types/shared.types';
+import { PaginatedSearchParameters } from 'app/shared/services/shared.types';
+import { CollaboratorSearchParameters } from 'app/modules/collaborator/collaborator.types';
 
 export type ChartOptions = {
     series: ApexAxisChartSeries;
@@ -86,6 +89,9 @@ export type ChartOptions = {
     ],
 })
 export class TeamSummaryComponent implements OnInit, AfterViewInit {
+    @Input() debounce = 300;
+    @Input() minLength = 2;
+
     years: number[] = [];
     year: number;
     viewMode = 'total';
@@ -116,6 +122,17 @@ export class TeamSummaryComponent implements OnInit, AfterViewInit {
 
     dataSource: any = new MatTableDataSource(null);
 
+    searchInputControl: UntypedFormControl = new UntypedFormControl();
+
+    get queryParameters(): CollaboratorSearchParameters {
+        return {
+            pattern: this.searchInputControl.value,
+            pageIndex: 1,
+            pageSize: 100,
+            orderBy: null,
+        };
+    }
+
     constructor(
         private _contactService: ContactService,
         private _sanitizer: DomSanitizer,
@@ -124,7 +141,9 @@ export class TeamSummaryComponent implements OnInit, AfterViewInit {
     ) {}
 
     ngOnInit(): void {
-        this._contactService.collaboratorsWithMonitor().subscribe(items => {
+        this._subscribeSearchInputControlValueChanges();
+
+        this._contactService.collaboratorsWithMonitor(this.queryParameters).subscribe(items => {
             this.collaborators = items;
         });
 
@@ -147,18 +166,30 @@ export class TeamSummaryComponent implements OnInit, AfterViewInit {
         this.loadData();
     }
 
-    filterCollaborators(value: string) {
-        const filterValue = value.toLowerCase();
-        return this.collaborators.filter(collaborator => collaborator.fullName.toLowerCase().includes(filterValue));
-    }
+    private _subscribeSearchInputControlValueChanges(): void {
+        this.searchInputControl.valueChanges
+            .pipe(
+                debounceTime(this.debounce),
+                map(value => value),
+                untilDestroyed(this),
+            )
+            .subscribe(value => {
+                this.queryParameters.pattern = this.searchInputControl.value;
+                this._contactService
+                    .collaboratorsWithMonitor(this.queryParameters)
+                    .pipe(untilDestroyed(this))
+                    .subscribe(items => {
+                        this.collaborators = items;
+                        console.log('collaborators', this.collaborators);
 
-    onSelected(event: any) {
-        console.log('Selected:', event.option.value);
+                        this.loadData();
+                    });
+            });
     }
 
     loadData(): void {
         this._contactService
-            .teamSummary(this.year)
+            .teamSummary(this.year, this.queryParameters.pattern)
             .pipe(untilDestroyed(this))
             .subscribe(data => {
                 this.teamSummary = data;
@@ -211,6 +242,22 @@ export class TeamSummaryComponent implements OnInit, AfterViewInit {
 
     onSortChange(event: any): void {
         console.log('onSortChange', event.value);
+
+        this.teamSummary.members.sort((a, b) => {
+            if (event.value === 'Contact') {
+                return a.collaborator.fullName.localeCompare(b.collaborator.fullName);
+            } else if (event.value === 'Commission Asc') {
+                return b.commission - a.commission;
+            } else if (event.value === 'Commission Desc') {
+                return a.total - b.total;
+            } else if (event.value === 'Percentage Asc') {
+                return b.percentage - a.percentage;
+            } else if (event.value === 'Percentage Desc') {
+                return a.percentage - b.percentage;
+            } else {
+                return 0;
+            }
+        });
     }
 
     onInputChange(event: any): void {

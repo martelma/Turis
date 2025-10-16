@@ -27,7 +27,7 @@ public class ContactEndpoints : IEndpointRouteHandlerBuilder
 
 		var avatarsApiGroup = endpoints.MapGroup("/api/contact/{id:guid}/avatar");
 
-		templateApiGroup.MapGet("team-summary/{year:int?}", TeamSummaryAsync)
+		templateApiGroup.MapGet("team-summary", TeamSummaryAsync)
 			.Produces<PaginatedList<TeamSummaryModel>>(StatusCodes.Status200OK)
 			.WithOpenApi(operation =>
 			{
@@ -80,8 +80,8 @@ public class ContactEndpoints : IEndpointRouteHandlerBuilder
 			});
 	}
 
-	private static async Task<IResult> TeamSummaryAsync(HttpContext httpContext, IContactService service, int? year)
-		=> (await service.TeamSummaryAsync(year)).ToResponse(httpContext);
+	private static async Task<IResult> TeamSummaryAsync(HttpContext httpContext, IContactService service, [AsParameters] TeamSummaryParameters parameters)
+		=> (await service.TeamSummaryAsync(parameters)).ToResponse(httpContext);
 
 	private static async Task<IResult> Get(HttpContext httpContext, IContactService service, Guid id)
 		=> (await service.GetAsync(id)).ToResponse(httpContext);
@@ -95,8 +95,8 @@ public class ContactEndpoints : IEndpointRouteHandlerBuilder
 	private static async Task<IResult> FilterCollaborators(HttpContext httpContext, IContactService service, string pattern)
 		=> (await service.FilterCollaborators(pattern)).ToResponse(httpContext);
 
-	private static async Task<IResult> CollaboratorsWithMonitor(HttpContext httpContext, IContactService service)
-		=> (await service.CollaboratorsWithMonitor()).ToResponse(httpContext);
+	private static async Task<IResult> CollaboratorsWithMonitor(HttpContext httpContext, IContactService service, [AsParameters] CollaboratorSearchParameters parameters)
+		=> (await service.CollaboratorsWithMonitor(parameters)).ToResponse(httpContext);
 
 	private static async Task<IResult> Save(HttpContext httpContext, IContactService service, ContactRequest model)
 		=> (await service.SaveAsync(model)).ToResponse(httpContext);

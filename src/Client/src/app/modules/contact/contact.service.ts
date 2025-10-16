@@ -21,6 +21,7 @@ import { environment } from 'environments/environment';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TeamSummary } from '../admin/dashboard/dashboard.types';
 import { ClientBillingSummary } from '../document/document.types';
+import { CollaboratorSearchParameters } from '../collaborator/collaborator.types';
 
 @Injectable({ providedIn: 'root' })
 export class ContactService extends BaseEntityService<Contact> {
@@ -105,8 +106,15 @@ export class ContactService extends BaseEntityService<Contact> {
         return this.apiGet<ClientBillingSummary[]>(url);
     }
 
-    collaboratorsWithMonitor(): Observable<Collaborator[]> {
-        const url = `collaborators-with-monitor`;
+    collaboratorsWithMonitor(params: CollaboratorSearchParameters): Observable<Collaborator[]> {
+        let httpParams = new HttpParams();
+        httpParams = httpParams.append('pageIndex', params?.pageIndex ?? 0);
+        httpParams = httpParams.append('pageSize', params?.pageSize ?? 10);
+        httpParams = httpParams.append('pattern', params?.pattern ?? '');
+        const queryString = httpParams.toString();
+
+        const url = `collaborators-with-monitor?${queryString}`;
+
         return this.apiGet<Collaborator[]>(url);
     }
 
@@ -175,10 +183,15 @@ export class ContactService extends BaseEntityService<Contact> {
         );
     }
 
-    teamSummary(year: number): Observable<TeamSummary> {
+    teamSummary(year: number, pattern: string): Observable<TeamSummary> {
         this._contactsLoading.next(true);
 
-        const url = `team-summary/${year}`;
+        let httpParams = new HttpParams();
+        httpParams = httpParams.append('year', year);
+        httpParams = httpParams.append('pattern', pattern ?? '');
+        const queryString = httpParams.toString();
+
+        const url = `team-summary?${queryString}`;
 
         return this.apiGet<TeamSummary>(url).pipe(
             map((data: TeamSummary) => {

@@ -34,17 +34,18 @@ public class ContactService(ApplicationDbContext dbContext
 	private async Task<List<Bookmark>> GetMyBookmarks()
 		=> await bookmarkService.ListAsync(userService.GetUserId(), EntryName);
 
-	public async Task<Result<TeamSummaryModel>> TeamSummaryAsync(int? year)
+	public async Task<Result<TeamSummaryModel>> TeamSummaryAsync(TeamSummaryParameters parameters)
 	{
 		var list = await dbContext.Set<CommissionStat>()
 			.FromSqlRaw("EXEC CommissionStats @Year = {0}, @Month = {1}"
-				, year.HasValue ? year : DateTime.Now.Year
+				, parameters.Year > 0 ? parameters.Year : DateTime.Now.Year
 				, DBNull.Value
 			)
 			.ToListAsync();
 
 		var contacts = dbContext.GetData<Contact>()
 			.Where(x => list.Select(y => y.CollaboratorId).Distinct().Contains(x.Id))
+			.WhereIf(parameters.Pattern.HasValue(), x => x.FirstName.Contains(parameters.Pattern) || x.LastName.Contains(parameters.Pattern))
 			.ToModel()
 			.ToList();
 
@@ -58,7 +59,7 @@ public class ContactService(ApplicationDbContext dbContext
 			model.Members.Add(new TeamMemberModel
 			{
 				Collaborator = contact,
-				CommissionStat = list.Where(x=>x.CollaboratorId == contact.Id).ToList()
+				CommissionStat = list.Where(x => x.CollaboratorId == contact.Id).ToList()
 			});
 		}
 
@@ -258,11 +259,12 @@ public class ContactService(ApplicationDbContext dbContext
 		return Task.FromResult<Result<IEnumerable<ContactModel>>>(model);
 	}
 
-	public Task<Result<IEnumerable<ContactModel>>> CollaboratorsWithMonitor()
+	public Task<Result<IEnumerable<ContactModel>>> CollaboratorsWithMonitor(CollaboratorSearchParameters parameters)
 	{
 		var query = dbContext.GetData<Contact>()
 			.Where(x => x.ContactType == ContactType.Collaborator)
 			.Where(x => x.MonitorStat)
+			.WhereIf(parameters.Pattern.HasValue(), x => x.FirstName.Contains(parameters.Pattern) || x.LastName.Contains(parameters.Pattern))
 			.OrderBy(x => x.FirstName)
 			.ThenBy(x => x.LastName)
 			;
