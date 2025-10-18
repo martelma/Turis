@@ -3,8 +3,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { JournalEntry, JournalEntrySearchParameters } from '../journal-entry/journal-entry.types';
 import { BaseEntityService } from 'app/shared/services';
 import { BehaviorSubject, filter, finalize, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
-import { emptyGuid, PaginatedListResult } from 'app/shared/services/shared.types';
-import { JournalEntrySummary, SummaryData } from '../admin/dashboard/dashboard.types';
+import { PaginatedListResult } from 'app/shared/services/shared.types';
+import { SummaryData } from '../admin/dashboard/dashboard.types';
 
 @Injectable({ providedIn: 'root' })
 export class JournalEntryService extends BaseEntityService<JournalEntry> {

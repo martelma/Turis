@@ -121,6 +121,7 @@ export class ServiceService extends BaseEntityService<Service> {
             tags: [],
 
             selected: false,
+            count: undefined,
         };
 
         this._item.next(item);

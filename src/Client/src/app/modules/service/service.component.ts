@@ -3,7 +3,7 @@ import { AfterViewInit, Component, OnInit, ViewChild, ViewEncapsulation } from '
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { ServiceSidebarComponent } from './service-sidebar/service-sidebar.component';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -11,6 +11,7 @@ import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { AppSettings } from 'app/constants';
 import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summary.component';
 import { ServiceService } from './service.service';
+import { ServiceSearchParameters } from './service.types';
 
 @UntilDestroy()
 @Component({
@@ -32,6 +33,8 @@ import { ServiceService } from './service.service';
 export class ServiceComponent implements OnInit, AfterViewInit {
     @ViewChild('drawer') drawer: MatDrawer;
 
+    serviceSearchParameters: ServiceSearchParameters;
+
     drawerFilterMode: 'over' | 'side' = 'side';
     drawerFilterOpened = false;
 
@@ -49,7 +52,14 @@ export class ServiceComponent implements OnInit, AfterViewInit {
         }
     }
 
-    async ngOnInit(): Promise<void> {}
+    async ngOnInit(): Promise<void> {
+        // Query parameters
+        this._serviceService.parameters$
+            .pipe(untilDestroyed(this))
+            .subscribe((queryParameters: ServiceSearchParameters) => {
+                this.serviceSearchParameters = queryParameters;
+            });
+    }
 
     async ngAfterViewInit(): Promise<void> {
         const toggleFilterValue = await this._userSettingsService.getValue(`${AppSettings.Service}:toggleFilter`);
@@ -73,5 +83,23 @@ export class ServiceComponent implements OnInit, AfterViewInit {
             `${AppSettings.Service}:viewList`,
             this._serviceService.getViewList(),
         );
+    }
+
+    serviceFilter(parameters: ServiceSearchParameters) {
+        this.serviceSearchParameters.pattern = parameters.pattern;
+        // this.serviceSearchParameters.onlyBookmarks = parameters.onlyBookmarks;
+        this.serviceSearchParameters.code = parameters.code;
+        this.serviceSearchParameters.title = parameters.title;
+        this.serviceSearchParameters.note = parameters.note;
+        this.serviceSearchParameters.serviceType = parameters.serviceType;
+        this.serviceSearchParameters.durationType = parameters.durationType;
+        this.serviceSearchParameters.languages = parameters.languages;
+
+        if (parameters.dateFrom) {
+            this.serviceSearchParameters.dateFrom = parameters.dateFrom;
+        }
+        if (parameters.dateTo) {
+            this.serviceSearchParameters.dateTo = parameters.dateTo;
+        }
     }
 }

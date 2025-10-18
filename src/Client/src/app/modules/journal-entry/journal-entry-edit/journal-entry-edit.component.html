@@ -4,24 +4,23 @@
     <div
         class="absolute inset-0 flex flex-col flex-0 shadow rounded-2xl overflow-hidden bg-card dark:bg-black dark:bg-opacity-10 m-4">
         <mat-tab-group
-            class="edit-service-tab-group"
+            class="common-tab-group"
             mat-stretch-tabs="false"
             [animationDuration]="'0'"
             (selectedTabChange)="onSelectedTabChange()">
-            <!-- Service Info -->
+            <!-- Info -->
             <mat-tab>
                 <ng-template mat-tab-label>
                     <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:information-circle'"></mat-icon>
                     {{ 'Service.ServiceInfo' | transloco }}
                 </ng-template>
                 <ng-template matTabContent>
-                    <div class="flex flex-col flex-1 overflow-y-auto">
+                    <div class="flex flex-col w-full overflow-y-auto">
                         <!-- Tags -->
                         <app-tag-filters
-                            class="flex flex-1 w-full"
-                            [selectedTags]="service?.tags"
+                            class="flex w-full mb-4"
+                            [selectedTags]="item?.tags"
                             (selectionChange)="onTagsSelectionChange($event)"></app-tag-filters>
-
                         <div class="flex flex-col p-4">
                             <div class="grid grid-cols-12 gap-2 w-full">
                                 <mat-form-field class="col-span-2">
@@ -104,7 +103,7 @@
             </mat-tab>
 
             <!-- Attachments -->
-            <mat-tab>
+            <mat-tab *ngIf="item?.id">
                 <ng-template mat-tab-label>
                     <mat-icon
                         class="icon-size-5 mr-2"
@@ -117,7 +116,8 @@
                         <app-attachments
                             [entityName]="'JournalEntry'"
                             [entityKey]="item?.id"
-                            [edit]="true"></app-attachments>
+                            [edit]="true"
+                            (onListChanged)="loadAttachments()"></app-attachments>
                     </div>
                 </ng-template>
             </mat-tab>

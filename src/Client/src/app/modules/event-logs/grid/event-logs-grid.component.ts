@@ -40,12 +40,11 @@ import { UserDateFormats } from 'app/constants';
     ],
 })
 export class EventLogsGridComponent implements OnInit, OnDestroy, AfterViewInit {
-    userDateFormats = UserDateFormats;
-
     loading = false;
 
     debounce = 500;
     searchControl = new FormControl<string>('');
+    userDateFormats = UserDateFormats;
 
     @Input() entityName: string;
     @Input() entityKey: string;

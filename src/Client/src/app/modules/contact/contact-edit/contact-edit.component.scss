@@ -1,24 +1,6 @@
-.edit-service-tab-group {
-    display: flex;
-    flex: 1;
-    height: 100%;
-    margin-top: 1rem; /* 16px */
-}
+// Tab styles are now imported from src/styles/_components.scss
 
-.edit-service-tab-group .mat-mdc-tab-body-wrapper {
-    flex-grow: 1;
-}
-
-.edit-service-tab-group .mat-mdc-tab-body-content {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-}
-
-.edit-service-tab-group .mat-mdc-tab.mat-mdc-tab-disabled {
+.common-tab-group .mat-mdc-tab.mat-mdc-tab-disabled {
     opacity: 1;
     pointer-events: none;
 }

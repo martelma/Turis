@@ -103,7 +103,6 @@ export class ServiceDetailsComponent implements OnInit {
                 tap(params => {
                     // Activates the create user mode
                     this.isCreate = params.id === 'new';
-                    // this.service.status = StatusTypes[0].value;
                 }),
                 untilDestroyed(this),
             )
@@ -150,7 +149,6 @@ export class ServiceDetailsComponent implements OnInit {
     }
 
     menuItem1(service: Service) {
-        // console.log('menuItem1', service);
         this._confirmationDialogService
             .showWarningMessage({
                 title: 'Are you sure?',
@@ -161,7 +159,7 @@ export class ServiceDetailsComponent implements OnInit {
             .then(result => {
                 if (result.value) {
                     this.loading = true;
-                    this._serviceService.delete(this.service.id).subscribe({
+                    this._serviceService.delete(service.id).subscribe({
                         next: () => {
                             this._refresh();
                         },

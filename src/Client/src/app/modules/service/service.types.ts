@@ -58,6 +58,7 @@ export class Service {
     tags: Tag[] = [];
 
     selected: boolean;
+    count: any;
 }
 
 export type Collaborator = Contact;

@@ -33,7 +33,7 @@
                     [opened]="drawerFilterOpened"
                     #drawer>
                     <!-- sidebar -->
-                    <app-service-sidebar></app-service-sidebar>
+                    <app-service-sidebar (onFilterChanged)="serviceFilter($event)"></app-service-sidebar>
                 </mat-drawer>
 
                 <!-- Drawer content -->

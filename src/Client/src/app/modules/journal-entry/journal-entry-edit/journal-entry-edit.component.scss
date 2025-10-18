@@ -1,15 +1,16 @@
-.edit-service-tab-group {
+.edit-tab-group {
     display: flex;
     flex: 1;
     height: 100%;
-    margin-top: 1rem; /* 16px */
+    margin-top: 1rem;
+    /* 16px */
 }
 
-.edit-service-tab-group .mat-mdc-tab-body-wrapper {
+.edit-tab-group .mat-mdc-tab-body-wrapper {
     flex-grow: 1;
 }
 
-.edit-service-tab-group .mat-mdc-tab-body-content {
+.edit-tab-group .mat-mdc-tab-body-content {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -18,7 +19,7 @@
     display: flex;
 }
 
-.edit-service-tab-group .mat-mdc-tab.mat-mdc-tab-disabled {
+.edit-tab-group .mat-mdc-tab.mat-mdc-tab-disabled {
     opacity: 1;
     pointer-events: none;
 }

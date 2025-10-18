@@ -53,12 +53,43 @@ se un documento è già stato inviato allo SDI, dare evidenza del codice univoco
 In home 
 	admin 
 		nel drill down per ciascun raggruppamento, utilizzare lista già usata in calendar (a cui però dobbiamo aggiungere client e collaborator)
-		introdurre filtro autocomplete sul nominativo dell guida
-		introdurre criteri di ordinamento (potrebbero variare in base al tipo di visualizzazione total,amount,percentage, griglia oppure ci metto tutto che si fa prima e forse anche meglio )
 
+
+-------------------------------------------------------------------
+Componenti
+	fix problema upload attachment
+
+Prima Nota
+	test CRUD
+
+Contacts
+	test CRUD
+	problema con Add
+	
+Servizi
+	test CRUD
+	problema con filtri (parti contacts perchè li un po' meglio vanno)
+	
+Home
+	pensare a MyHome
+	
+Agenda
+	enrich item details
+	introdurre componente calendario così come utilizzata nel box per mettere i badge sui giorni
+-------------------------------------------------------------------
 		
+-------------------------------------------------------------------
+Documenti
+	implementare Edit
+	test CRUD
+
 gestione incassi
+	da fare tutto
+-------------------------------------------------------------------	
 
 
-
+-------------------------------------------------------------------	
+cose fatte:
+-------------------------------------------------------------------	
+-------------------------------------------------------------------	
 

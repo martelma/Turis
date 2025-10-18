@@ -11,42 +11,38 @@ import {
     Output,
     OnDestroy,
 } from '@angular/core';
-import { FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatPaginatorModule, MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatSortModule, MatSort } from '@angular/material/sort';
+import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { DomSanitizer } from '@angular/platform-browser';
-import { RouterLink, Router, ActivatedRoute } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
-import { FuseConfirmationService } from '@fuse/services/confirmation';
-import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { getStatusColorClass, getBillingStatusColorClass, getCommissionStatusColorClass } from 'app/constants';
 import { MaterialModule } from 'app/modules/material.module';
 import { ServiceSidebarComponent } from 'app/modules/service/service-sidebar/service-sidebar.component';
-import { ServiceService } from 'app/modules/service/service.service';
 import { Service, ServiceSearchParameters } from 'app/modules/service/service.types';
 import { trackByFn } from 'app/shared';
 import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
-import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { CalendarSelectorComponent } from '../calendar-selector/calendar-selector.component';
 import { CalendarDetailComponent } from '../calendar-detail/calendar-detail.component';
 import { GlobalShortcutsService } from 'app/components/global-shortcuts/global-shortcuts.service';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
-
-declare let $: any;
+import { CalendarBadgesComponent } from 'app/components/global-shortcuts/ui/search-input/calendar-badges/calendar-badges.component';
+import { FuseCardComponent } from '@fuse/components/card';
 
 @UntilDestroy()
 @Component({
@@ -87,6 +83,7 @@ declare let $: any;
         MatRippleModule,
         MatTooltipModule,
         TranslocoModule,
+        CalendarSelectorComponent,
         SearchInputComponent,
         JsonPipe,
         SearchInputComponent,
@@ -98,6 +95,8 @@ declare let $: any;
         CalendarSelectorComponent,
         CalendarDetailComponent,
         KeyboardShortcutsModule,
+        CalendarBadgesComponent,
+        FuseCardComponent,
     ],
 })
 export class CalendarViewGridComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -140,9 +139,9 @@ export class CalendarViewGridComponent implements OnInit, OnDestroy, AfterViewIn
         },
     ];
 
+    calendarEvents = new Map<string, number>([]);
+
     @ViewChild(CalendarSelectorComponent) private _calendarSelector: CalendarSelectorComponent;
-    @ViewChild(MatPaginator) private _paginator: MatPaginator;
-    @ViewChild(MatSort) private _sort: MatSort;
 
     @Input() dateFrom: Date;
     @Output() dateFromChange = new EventEmitter<Date>();
@@ -157,7 +156,14 @@ export class CalendarViewGridComponent implements OnInit, OnDestroy, AfterViewIn
 
     set services(services: Service[]) {
         this._services = services;
-        // console.log('_services', this._services);
+
+        // Raggruppa i servizi per data e conta quanti ce ne sono per ogni data
+        this.calendarEvents = this._services.reduce((map, item) => {
+            const dateKey = item.date.toISOString().split('T')[0]; // Converte la data in formato 'YYYY-MM-DD'
+            const currentCount = map.get(dateKey) || 0;
+            map.set(dateKey, currentCount + 1);
+            return map;
+        }, new Map());
     }
 
     @Output() readonly onSelectedService: EventEmitter<Service> = new EventEmitter<Service>();
@@ -179,14 +185,6 @@ export class CalendarViewGridComponent implements OnInit, OnDestroy, AfterViewIn
 
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
-        private _fuseConfirmationService: FuseConfirmationService,
-        private _formBuilder: UntypedFormBuilder,
-        private _serviceService: ServiceService,
-        private _translocoService: TranslocoService,
-        private _sanitizer: DomSanitizer,
-        private _userSettingsService: UserSettingsService,
-        private _router: Router,
-        private _activatedRoute: ActivatedRoute,
         public globalShortcutsService: GlobalShortcutsService,
     ) {}
 
@@ -207,7 +205,7 @@ export class CalendarViewGridComponent implements OnInit, OnDestroy, AfterViewIn
         this._changeDetectorRef.detectChanges();
     }
 
-    handlePageEvent(event: PageEvent): void {}
+    handlePageEvent(): void {}
 
     handleItem(item: Service) {
         this.selectedItem = item;
@@ -239,53 +237,6 @@ export class CalendarViewGridComponent implements OnInit, OnDestroy, AfterViewIn
 
         this.onDateChanged.emit();
     }
-
-    /*
-    listData() {
-        const dateTo = new Date();
-        dateTo.setDate(this.currentDate.getDate() + 1);
-
-        const parameters = new ServiceSearchParameters();
-        parameters.dateFrom = toUtcString(this.currentDate);
-        parameters.dateTo = toUtcString(dateTo);
-
-        console.log('parameters', parameters);
-
-        this._serviceService
-            .listEntities({ ...parameters })
-            .pipe(untilDestroyed(this))
-            .subscribe({
-                next: (data: PaginatedListResult<Service>) => {
-                    this.results = data;
-                    console.log('results', this.results.items);
-                    this.services = data.items;
-
-                    // this.list.forEach(item => {
-                    //     if (item.collaborator) {
-                    //         item.collaborator.avatarUrl = item.collaborator.avatar
-                    //             ? this._sanitizer.bypassSecurityTrustResourceUrl(
-                    //                   `data:image/jpg;base64, ${item.collaborator.avatar}`,
-                    //               )
-                    //             : undefined;
-
-                    //         item.collaborator.avatarUrl2 = this._sanitizer.bypassSecurityTrustUrl(
-                    //             item.collaborator?.avatar,
-                    //         );
-                    //     }
-                    // });
-
-                    console.log('_list', this.services);
-                },
-                error: error => {
-                    console.error(error);
-                    // this._toastr.error(error.detail, 'Error!');
-                },
-            })
-            .add(() => {
-                // this.loading = false;
-            });
-    }
-    */
 
     async drawerDetailsChanged(opened: boolean): Promise<void> {
         if (!opened) {

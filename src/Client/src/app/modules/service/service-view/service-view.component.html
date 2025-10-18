@@ -6,7 +6,7 @@
         class="absolute inset-0 flex flex-col flex-0 shadow rounded-2xl overflow-hidden bg-card dark:bg-black dark:bg-opacity-10 m-4">
         <!-- Tabs -->
         <mat-tab-group
-            class="view-service-tab-group"
+            class="common-tab-group"
             mat-stretch-tabs="false"
             [color]="form.valid ? 'primary' : 'warn'"
             [animationDuration]="'0'"
@@ -380,7 +380,8 @@
                         <app-attachments
                             [entityName]="'Service'"
                             [entityKey]="item?.id"
-                            [edit]="false"></app-attachments>
+                            [edit]="false"
+                            (onListChanged)="loadAttachments()"></app-attachments>
                     </div>
                 </ng-template>
             </mat-tab>

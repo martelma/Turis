@@ -3,6 +3,8 @@
 /*  @ Styles from this file will override 'vendors.scss' and Fuse's base styles.
 /* ----------------------------------------------------------------------------------------------------- */
 
+@import 'components';
+
 table {
     width: 100%;
 }

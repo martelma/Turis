@@ -83,31 +83,20 @@ public class AttachmentService(ApplicationDbContext dbContext
 	{
 		var paginator = new Paginator(parameters);
 
-		var query = context.AsNoTracking();
+		var entityKey = parameters.EntityKey.HasValue() ? parameters.EntityKey.ToGuid() : Guid.Empty;
 
-		if (parameters.EntityName.HasValue())
-		{
-			query = query.Where(x => x.EntityName == parameters.EntityName);
-		}
-		if (parameters.EntityKey.HasValue())
-		{
-			query = query.Where(x => x.EntityKey.ToString() == parameters.EntityKey);
-		}
-		if (parameters.Folder.HasValue())
-		{
-			query = query.Where(x => x.Folder == parameters.Folder);
-		}
-		if (parameters.Type.HasValue())
-		{
-			query = query.Where(x => x.Type == parameters.Type);
-		}
+		var query = context.AsNoTracking()
+			.Where(x => x.EntityName == parameters.EntityName)
+			.Where(x => x.EntityKey == entityKey)
+			.WhereIf(parameters.Folder.HasValue(), x => x.Folder == parameters.Folder)
+			.WhereIf(parameters.Type.HasValue(), x => x.Type == parameters.Type)
+			;
 
 		// Filter by search pattern
 		if (parameters.Pattern.HasValue())
 			foreach (var itemPattern in parameters.Pattern.Split(' '))
 			{
-				query = query.Where(x =>
-					(x.Note != null && x.Note.Contains(itemPattern)));
+				query = query.Where(x => x.Note != null && x.Note.Contains(itemPattern));
 			}
 
 		var totalCount = await query.CountAsync();

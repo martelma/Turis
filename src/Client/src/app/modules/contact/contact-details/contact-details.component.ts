@@ -22,7 +22,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
 import { ContactViewComponent } from '../contact-view/contact-view.component';
 import { ContactEditComponent } from '../contact-edit/contact-edit.component';
-import { SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ImageCropperComponent } from 'app/shared/components/image-cropper/image-cropper.component';
 import { MatDialog } from '@angular/material/dialog';
 import { dataURItoBlob } from 'app/shared';
@@ -97,6 +97,7 @@ export class ContactDetailsComponent implements OnInit {
         private _translocoService: TranslocoService,
         private _bookmarkService: BookmarkService,
         private _matDialog: MatDialog,
+        private _sanitizer: DomSanitizer,
         public snackBar: MatSnackBar,
 
         public contactComponent: ContactComponent,
@@ -110,7 +111,6 @@ export class ContactDetailsComponent implements OnInit {
     }
 
     private _subscribeRouteParams() {
-        // console.log('_subscribeRouteParams');
         this._activatedRoute.params
             .pipe(
                 tap(params => {
@@ -141,7 +141,9 @@ export class ContactDetailsComponent implements OnInit {
         this.contact = contact;
 
         // Sets the avatar
-        this.avatarUrl = this.contact.avatarUrl;
+        this.avatarUrl = this.contact?.avatarUrl
+            ? this._sanitizer.bypassSecurityTrustResourceUrl(`data:image/jpg;base64, ${this.contact.avatarUrl}`)
+            : undefined;
     }
 
     private _subscribeContactEdited(): void {
@@ -154,7 +156,7 @@ export class ContactDetailsComponent implements OnInit {
                         this.editMode = true;
                     });
             } else {
-                this.editMode = this.contact.id === undefined;
+                this.editMode = this.contact?.id === undefined;
             }
         });
     }

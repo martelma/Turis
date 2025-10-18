@@ -66,13 +66,7 @@ export class JournalEntryViewComponent implements OnInit {
     getStatusColorClass = getStatusColorClass;
     getStatusText = getStatusText;
 
-    constructor(
-        private _formBuilder: UntypedFormBuilder,
-        private _journalEntryService: JournalEntryService,
-        private _attachmentService: AttachmentService,
-        private router: Router,
-        private _changeDetectorRef: ChangeDetectorRef,
-    ) {}
+    constructor(private _formBuilder: UntypedFormBuilder) {}
 
     ngOnInit(): void {
         // Create the form

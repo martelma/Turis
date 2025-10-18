@@ -22,8 +22,8 @@ import { JournalEntry } from '../journal-entry.types';
 import { JournalEntryViewComponent } from '../journal-entry-view/journal-entry-view.component';
 import { JournalEntryService } from '../journal-entry.service';
 import { JournalEntryEditComponent } from '../journal-entry-edit/journal-entry-edit.component';
-import { TagListComponent } from 'app/modules/configuration/tags/tag-list/tag-list.component';
 import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summary.component';
+import { ConfirmationDialogService } from 'app/shared/services/confirmation-dialog.service';
 
 @UntilDestroy()
 @Component({
@@ -67,6 +67,7 @@ export class JournalEntryDetailsComponent implements OnInit {
     isDownloading = false;
     downloadingData = false;
     validating = false;
+    loading = false;
 
     journalEntry: JournalEntry;
 
@@ -85,6 +86,7 @@ export class JournalEntryDetailsComponent implements OnInit {
         private _translocoService: TranslocoService,
         private _bookmarkService: BookmarkService,
         private _journalEntryService: JournalEntryService,
+        private _confirmationDialogService: ConfirmationDialogService,
         public snackBar: MatSnackBar,
 
         public journalEntriesComponent: JournalEntryComponent,
@@ -210,5 +212,37 @@ export class JournalEntryDetailsComponent implements OnInit {
                     this._journalEntryService.getById(journalEntries.id).pipe(untilDestroyed(this)).subscribe();
                 });
         }
+    }
+
+    menuItem1(journalEntry: JournalEntry) {
+        this._confirmationDialogService
+            .showWarningMessage({
+                title: 'Are you sure?',
+                text: "Confermi l'eliminazione di questo Record?",
+                showCancelButton: true,
+                confirmButtonText: 'Confirm',
+            })
+            .then(result => {
+                if (result.value) {
+                    this.loading = true;
+                    this._journalEntryService.delete(journalEntry.id).subscribe({
+                        next: () => {
+                            this.editMode = false;
+                            this.isCreate = false;
+                            this.isCopy = false;
+                            this.isDownloading = false;
+
+                            this.journalEntry = null;
+
+                            this._refresh();
+                        },
+                        error: error => {
+                            this.loading = false;
+                            console.error(error);
+                            // this._toastr.error(error.detail, 'Error!');
+                        },
+                    });
+                }
+            });
     }
 }

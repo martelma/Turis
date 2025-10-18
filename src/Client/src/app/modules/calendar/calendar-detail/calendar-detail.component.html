@@ -10,6 +10,9 @@
 
         <a [routerLink]="['/service', service?.id]" target="_blank">
             <div class="flex-1 flex-col mt-2">
+                <button class="ml-auto" mat-icon-button>
+                    <mat-icon class="text-current" [svgIcon]="'heroicons_outline:arrow-top-right-on-square'"></mat-icon>
+                </button>
                 <span class="text-lg font-extrabold">[{{ service?.code }}] - {{ service?.title }}</span>
             </div>
         </a>

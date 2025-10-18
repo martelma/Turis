@@ -4,7 +4,7 @@
     <div
         class="absolute inset-0 flex flex-col flex-0 shadow rounded-2xl overflow-hidden bg-card dark:bg-black dark:bg-opacity-10 m-4">
         <mat-tab-group
-            class="edit-contact-tab-group"
+            class="common-tab-group"
             mat-stretch-tabs="false"
             [animationDuration]="'0'"
             (selectedTabChange)="onSelectedTabChange()">
@@ -471,7 +471,7 @@
             </mat-tab>
 
             <!-- Attachments -->
-            <mat-tab>
+            <mat-tab *ngIf="item?.id">
                 <ng-template mat-tab-label>
                     <mat-icon
                         class="icon-size-5 mr-2"
@@ -484,7 +484,8 @@
                         <app-attachments
                             [entityName]="'Contact'"
                             [entityKey]="item?.id"
-                            [edit]="true"></app-attachments>
+                            [edit]="true"
+                            (onListChanged)="_refresh()"></app-attachments>
                     </div>
                 </ng-template>
             </mat-tab>

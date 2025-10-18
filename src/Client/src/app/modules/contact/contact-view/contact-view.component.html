@@ -5,7 +5,7 @@
         class="absolute inset-0 flex flex-col flex-0 shadow rounded-2xl overflow-hidden bg-card dark:bg-black dark:bg-opacity-10 m-4">
         <!-- Tabs -->
         <mat-tab-group
-            class="view-contact-tab-group"
+            class="common-tab-group"
             mat-stretch-tabs="false"
             [color]="form.valid ? 'primary' : 'warn'"
             [animationDuration]="'0'"
@@ -319,7 +319,11 @@
                 </ng-template>
                 <ng-template matTabContent>
                     <div class="flex flex-col flex-1 overflow-y-auto">
-                        <app-attachments [entityName]="'Contact'" [entityKey]="item?.id"></app-attachments>
+                        <app-attachments
+                            [entityName]="'Contact'"
+                            [entityKey]="item?.id"
+                            [edit]="false"
+                            (onListChanged)="loadAttachments()"></app-attachments>
                     </div>
                 </ng-template>
             </mat-tab>

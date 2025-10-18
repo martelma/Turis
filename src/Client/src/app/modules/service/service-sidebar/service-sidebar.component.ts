@@ -87,7 +87,6 @@ export class ServiceSidebarComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        // this._subscribeFilterValueChanges();
         this._subscribeServiceParameters();
         this.loadLanguages();
     }
@@ -109,19 +108,6 @@ export class ServiceSidebarComponent implements OnInit {
             });
     }
 
-    // private _subscribeFilterValueChanges(): void {
-    //     this.filters.valueChanges
-    //         .pipe(
-    //             debounceTime(this.debounce),
-    //             map(value => value),
-    //             untilDestroyed(this),
-    //         )
-    //         .subscribe(value => {
-    //             console.log('_subscribeFilterValueChanges', value);
-    //             this._search(value);
-    //         });
-    // }
-
     clearFilters() {
         this.serviceParameters = new ServiceSearchParameters();
         this.dateFrom = null;
@@ -131,36 +117,9 @@ export class ServiceSidebarComponent implements OnInit {
     }
 
     filter() {
-        // console.log('serviceParameters', this.serviceParameters);
         this.serviceParameters.dateFrom = toUtcString(this.dateFrom);
         this.serviceParameters.dateTo = toUtcString(this.dateTo);
-        this._search(this.serviceParameters);
-    }
 
-    // dateFromChanged(event: any) {
-    //     console.log('dateFromChanged-evet', event);
-    //     if (event.value === '') {
-    //         this.serviceParameters.dateFrom = '';
-    //     } else {
-    //         this.serviceParameters.dateFrom = toUtcString(event.value);
-    //     }
-    //     this._search(this.serviceParameters);
-    // }
-
-    // dateToChanged(event: any) {
-    //     console.log('dateFromChanged-evet', event);
-    //     if (event.value === '') {
-    //         this.serviceParameters.dateTo = '';
-    //     } else {
-    //         this.serviceParameters.dateTo = toUtcString(event.value);
-    //     }
-    //     this._search(this.serviceParameters);
-    // }
-
-    _search(serviceParameters: ServiceSearchParameters): void {
-        this._serviceService
-            .listEntities({ ...this.serviceParameters, ...serviceParameters, pageIndex: 0 })
-            .pipe(untilDestroyed(this))
-            .subscribe();
+        this.onFilterChanged.emit(this.serviceParameters);
     }
 }
