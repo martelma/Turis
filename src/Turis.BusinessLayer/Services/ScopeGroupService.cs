@@ -55,7 +55,7 @@ public class ScopeGroupService(ApplicationDbContext dbContext, ILogger<ScopeGrou
 				}) : null,
 			}).ToListAsync();
 
-		var result = new PaginatedList<ApplicationScopeGroupModel>(data.Take(itemsPerPage), totalCount, data.Count > itemsPerPage);
+		var result = new PaginatedList<ApplicationScopeGroupModel>(data.Take(itemsPerPage), totalCount, pageIndex,itemsPerPage, data.Count > itemsPerPage);
 		return result;
 	}
 

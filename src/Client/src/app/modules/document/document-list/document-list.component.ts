@@ -14,11 +14,12 @@ import {
     ChangeDetectorRef,
     Component,
     ElementRef,
+    Input,
     OnInit,
     ViewChild,
     ViewEncapsulation,
 } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
@@ -35,7 +36,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { trackByFn } from 'app/shared';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
-import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
 import { Document, DocumentSearchParameters } from '../document.types';
 import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -55,6 +56,7 @@ import { DocumentService } from '../document.service';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { DocumentComponent } from '../document.component';
 import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summary.component';
+import { debounceTime, switchMap, Observable } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -98,6 +100,7 @@ import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summa
     ],
 })
 export class DocumentListComponent implements OnInit, AfterViewInit {
+    @Input() debounce = 500;
     @ViewChild('serviceList') serviceList: ElementRef;
 
     drawerFilterMode: 'over' | 'side' = 'side';
@@ -112,6 +115,7 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
     results: PaginatedListResult<Document>;
     list: Document[] = [];
     itemsLoading = false;
+    searchControl = new FormControl('');
     documentParameters: DocumentSearchParameters;
 
     activeLang: string;
@@ -131,7 +135,6 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
         private _router: Router,
         private _activatedRoute: ActivatedRoute,
         private _changeDetectorRef: ChangeDetectorRef,
-        private _serviceService: ServiceService,
         private _documentService: DocumentService,
         private _bookmarkService: BookmarkService,
         private _translocoService: TranslocoService,
@@ -171,6 +174,8 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
             this.activeLang = activeLang;
         });
 
+        this._subscribeSearchControlChanges();
+
         this._subscribeDocumentParameters();
     }
 
@@ -200,6 +205,16 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
         this._list();
     }
 
+    private _subscribeSearchControlChanges(): void {
+        this.searchControl.valueChanges
+            .pipe(
+                debounceTime(this.debounce),
+                switchMap(value => this._search({ pattern: value, pageIndex: 0 })),
+                untilDestroyed(this),
+            )
+            .subscribe();
+    }
+
     private _subscribeDocumentParameters(): void {
         this._documentService.parameters$
             .pipe(untilDestroyed(this))
@@ -218,14 +233,13 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
             onlyBookmarks: !this.documentParameters.onlyBookmarks,
             pageIndex: 0,
             pageSize: this._paginator.pageSize,
-        });
+        }).subscribe();
     }
 
-    private _search(documentParameters: DocumentSearchParameters): void {
-        this._documentService
+    private _search(documentParameters: DocumentSearchParameters): Observable<PaginatedListResult<Document>> {
+        return this._documentService
             .listEntities({ ...this.documentParameters, ...documentParameters })
-            .pipe(untilDestroyed(this))
-            .subscribe();
+            .pipe(untilDestroyed(this));
     }
 
     handleBookmark(document: Document): void {
@@ -238,7 +252,7 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
                     this._documentService.getById(document.id).pipe(untilDestroyed(this)).subscribe();
 
                     // Refresh the list
-                    this._search({});
+                    this._search({}).subscribe();
                 });
         } else {
             this._bookmarkService
@@ -252,7 +266,7 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
                     this._documentService.getById(document.id).pipe(untilDestroyed(this)).subscribe();
 
                     // Refresh the list
-                    this._search({});
+                    this._search({}).subscribe();
                 });
         }
     }

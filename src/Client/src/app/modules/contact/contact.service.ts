@@ -121,6 +121,55 @@ export class ContactService extends BaseEntityService<Contact> {
     /**
      * Create a dummy contact
      */
+
+    createEntity(): Observable<Contact> {
+        const item: Contact = {
+            id: undefined,
+            code: '',
+            externalCode: '',
+            title: '',
+            sex: '',
+            languages: [],
+            firstName: '',
+            lastName: '',
+            fullName: '',
+            displayName: '',
+            fiscalCode: '',
+            taxCode: '',
+            companyName: '',
+            birthDate: undefined,
+            birthDateText: '',
+            birthPlace: '',
+            address: '',
+            city: '',
+            cap: '',
+            regionalCode: '',
+            stateCode: '',
+            phone1: '',
+            phone2: '',
+            fax: '',
+            web: '',
+            eMail: '',
+            eMailAccounting: '',
+            pec: '',
+            sdiCode: '',
+            note: '',
+            documentType: '',
+            contactType: '',
+            percentageGuida: 0,
+            percentageAccompagnamento: 0,
+            monitorStat: false,
+            tags: [],
+            targets: [],
+            bookmarkId: '',
+            selected: false,
+        };
+
+        this._contact.next(item);
+
+        return of(item);
+    }
+    /*
     createEntity(): Observable<Contact> {
         const contact = new Contact();
         contact.id = emptyGuid;
@@ -140,6 +189,7 @@ export class ContactService extends BaseEntityService<Contact> {
             ),
         );
     }
+    */
 
     /**
      * Update contact

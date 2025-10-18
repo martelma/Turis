@@ -18,7 +18,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { trackByFn } from 'app/shared';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
-import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
 import { PaymentTypeService } from '../payment-types.service';
 import { PaymentType, PaymentTypeSearchParameters } from '../payment-types.types';
 

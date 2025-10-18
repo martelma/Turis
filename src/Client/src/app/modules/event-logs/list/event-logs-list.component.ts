@@ -6,7 +6,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { EventLogsService } from '../event-logs.service';
-import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslocoModule } from '@ngneat/transloco';
 

@@ -355,11 +355,28 @@
                         class="h-full w-full"></app-client-summary>
                 </ng-template>
             </mat-tab>
+
             <!-- Target -->
+            <!-- <mat-tab *ngIf="item.contactType === 'Collaborator'">
+                <ng-template mat-tab-label>
+                    <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:chart-bar'"></mat-icon>
+                    {{ 'General.Target' | transloco }}
+                </ng-template>
+                <ng-template matTabContent>
+                    <div class="flex flex-col flex-1 overflow-y-auto">
+                        <div class="flex flex-col">
+                            <app-target [collaboratorId]="item.id" [readOnly]="true"></app-target>
+                        </div>
+                    </div>
+                </ng-template>
+            </mat-tab> -->
+
+            <!-- CommissionStats -->
+            <!-- è corretto mettere solo questo tab ma devo correggere la query per introdurre tutti i mesi anche se non ci sono valori -->
             <mat-tab *ngIf="item.contactType === 'Collaborator'">
                 <ng-template mat-tab-label>
                     <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:chart-bar'"></mat-icon>
-                    {{ 'Common.CommissionStats' | transloco }}
+                    {{ 'General.CommissionStats' | transloco }}
                 </ng-template>
                 <ng-template matTabContent>
                     <div class="flex flex-col flex-1 overflow-y-auto">

@@ -24,4 +24,6 @@ export class JournalEntrySearchParameters extends BaseSearchParameters {
     onlyBookmarks?: boolean;
     dateFrom?: string;
     dateTo?: string;
+    description?: string;
+    note?: string;
 }

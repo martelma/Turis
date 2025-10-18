@@ -1,3 +1,6 @@
+il primo id della lista memorizzata sul portatile
+vivapaperino
+
 Gestione Utenti
 	nel pannello di login manca immagine 
 	
@@ -5,14 +8,6 @@ Gestione Utenti
 siamo d'accordo per 5+5 in questo anno e 5+5 nel prossimo quello dopo ancora riparte il solo canone
 
 
-Servizi	
-	gestire il menù con N opzioni nell'intestazione a dx
-	
-	gestione dei filtri basati sui tags
-
-Prima nota
-	cruscotto in home page con saldo e ultime operazioni
-	
 
 Proposta
 	PropostaDiGuidaToolStripMenuItem_Click
@@ -57,18 +52,23 @@ In home
 
 -------------------------------------------------------------------
 Componenti
-	fix problema upload attachment
-
-Prima Nota
-	test CRUD
+	migliorare feeback su upload attachment (aggiornamento lista per esempio)
 
 Contacts
-	test CRUD
-	problema con Add
-	
+	Account Statement
+		introdurre toggle year come per gli altri casi
+		introdurre link verso servizio
+		introdurre link verso documento
+
+	Account Summary
+		migliorare query (far uscire tutti i mesi anche se non ci sono dati)
+
+	Commissioni
+		migliorare query (far uscire tutti i mesi anche se non ci sono dati)
+
 Servizi
 	test CRUD
-	problema con filtri (parti contacts perchè li un po' meglio vanno)
+	gestione dei filtri basati sui tags
 	
 Home
 	pensare a MyHome
@@ -91,5 +91,6 @@ gestione incassi
 -------------------------------------------------------------------	
 cose fatte:
 -------------------------------------------------------------------	
+Prima Nota
 -------------------------------------------------------------------	
 

@@ -27,7 +27,7 @@ import { fuseAnimations } from '@fuse/animations';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
 import { ServiceService } from 'app/modules/service/service.service';
 import { MaterialModule } from 'app/modules/material.module';
 import { FullCalendarModule } from '@fullcalendar/angular';

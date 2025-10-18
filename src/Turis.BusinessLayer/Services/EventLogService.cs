@@ -35,7 +35,7 @@ public class EventLogService(ApplicationDbContext dbContext, IUserService userSe
 
 		var model = data.ToModel();
 
-		var result = new PaginatedList<EventLogModel>(model, totalCount, data.Count > parameters.PageSize);
+		var result = new PaginatedList<EventLogModel>(model, totalCount, parameters.PageIndex, parameters.PageSize, data.Count > parameters.PageSize);
 		return result;
 	}
 

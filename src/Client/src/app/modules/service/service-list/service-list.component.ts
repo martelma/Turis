@@ -6,11 +6,12 @@ import {
     ChangeDetectorRef,
     Component,
     ElementRef,
+    Input,
     OnInit,
     ViewChild,
     ViewEncapsulation,
 } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
@@ -27,7 +28,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { trackByFn } from 'app/shared';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
-import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
 import { ServiceSearchParameters } from '../service.types';
 import { ServiceService } from '../service.service';
 import { ServiceComponent } from '../service.component';
@@ -46,6 +47,8 @@ import {
 import { ServiceViewComponent } from '../service-view/service-view.component';
 import { TitleCasePipe } from '@angular/common';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
+import { debounceTime, switchMap, Observable } from 'rxjs';
+import { Contact } from 'app/modules/contact/contact.types';
 
 @UntilDestroy()
 @Component({
@@ -91,6 +94,7 @@ import { UserSettingsService } from 'app/shared/services/user-setting.service';
     ],
 })
 export class ServiceListComponent implements OnInit, AfterViewInit {
+    @Input() debounce = 500;
     @ViewChild('serviceList') serviceList: ElementRef;
 
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
@@ -102,6 +106,7 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
     results: PaginatedListResult<Service>;
     list: Service[] = [];
     itemsLoading = false;
+    searchControl = new FormControl('');
     serviceParameters: ServiceSearchParameters;
 
     activeLang: string;
@@ -136,6 +141,12 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
         this.activeLang = this._translocoService.getActiveLang();
 
+        // Services
+        this._serviceService.list$.pipe(untilDestroyed(this)).subscribe((results: PaginatedListResult<Service>) => {
+            this.results = results;
+            this.list = results?.items;
+        });
+
         // Services loading
         this._serviceService.loading$.pipe(untilDestroyed(this)).subscribe((servicesLoading: boolean) => {
             this.itemsLoading = servicesLoading;
@@ -153,6 +164,8 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
             // Get the active lang
             this.activeLang = activeLang;
         });
+
+        this._subscribeSearchControlChanges();
 
         this._subscribeServiceParameters();
     }
@@ -183,6 +196,16 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
         this._list();
     }
 
+    private _subscribeSearchControlChanges(): void {
+        this.searchControl.valueChanges
+            .pipe(
+                debounceTime(this.debounce),
+                switchMap(value => this._search({ pattern: value, pageIndex: 0 })),
+                untilDestroyed(this),
+            )
+            .subscribe();
+    }
+
     private _subscribeServiceParameters(): void {
         this._serviceService.parameters$
             .pipe(untilDestroyed(this))
@@ -201,14 +224,13 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
             onlyBookmarks: !this.serviceParameters.onlyBookmarks,
             pageIndex: 0,
             pageSize: this._paginator.pageSize,
-        });
+        }).subscribe();
     }
 
-    private _search(serviceParameters: ServiceSearchParameters): void {
-        this._serviceService
+    private _search(serviceParameters: ServiceSearchParameters): Observable<PaginatedListResult<Service>> {
+        return this._serviceService
             .listEntities({ ...this.serviceParameters, ...serviceParameters })
-            .pipe(untilDestroyed(this))
-            .subscribe();
+            .pipe(untilDestroyed(this));
     }
 
     handleBookmark(service: Service): void {
@@ -221,7 +243,7 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
                     this._serviceService.getById(service.id).pipe(untilDestroyed(this)).subscribe();
 
                     // Refresh the list
-                    this._search({});
+                    this._search({}).subscribe();
                 });
         } else {
             this._bookmarkService
@@ -235,7 +257,7 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
                     this._serviceService.getById(service.id).pipe(untilDestroyed(this)).subscribe();
 
                     // Refresh the list
-                    this._search({});
+                    this._search({}).subscribe();
                 });
         }
     }

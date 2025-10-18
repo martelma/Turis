@@ -1,0 +1,23 @@
+tr.mat-row.detail-element-row {
+    height: 0;
+}
+
+.element-with-detail-row:not(.example-expanded-row):hover {
+    background: whitesmoke;
+}
+
+.element-with-detail-row:not(.example-expanded-row):active {
+    background: #efefef;
+}
+
+tr.detail-element-row {
+    height: 0;
+}
+
+tr.element-with-detail-row:not(.example-expanded-row)+tr.detail-element-row {
+    display: none;
+}
+
+.detail-element-container {
+    overflow: hidden;
+}

@@ -22,7 +22,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { SearchPipe } from 'app/pipes';
 import { detailExpand } from 'app/shared/animations/detail-expand';
-import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { Target, TargetSearchParameters } from './target.types';
@@ -33,6 +33,7 @@ import {
     FuseConfirmationType,
 } from '@fuse/components/confirmation-dialog/confirmation-dialog.component';
 import { TargetService } from './target.service';
+import { years } from 'app/shared/shared.utils';
 
 export interface TargetsChanged {
     details: Target[];
@@ -42,6 +43,7 @@ export interface TargetsChanged {
 @Component({
     selector: 'app-target',
     templateUrl: './target.component.html',
+    styleUrls: ['./target.component.scss'],
     animations: [detailExpand],
     standalone: true,
     imports: [
@@ -114,13 +116,7 @@ export class TargetComponent implements OnInit, AfterViewInit {
     ) {}
 
     ngOnInit(): void {
-        const nextYear = new Date().getFullYear() + 1;
-        const startYear = nextYear - 5;
-        this.years = [];
-
-        for (let i = 0; i < 5; i++) {
-            this.years.push(startYear + i);
-        }
+        this.years = years(5);
     }
 
     ngAfterViewInit(): void {

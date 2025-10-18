@@ -1,15 +1,6 @@
 import { A11yModule } from '@angular/cdk/a11y';
 import { NgClass, NgIf } from '@angular/common';
-import {
-    ChangeDetectionStrategy,
-    Component,
-    ElementRef,
-    forwardRef,
-    Input,
-    OnInit,
-    ViewChild,
-    ViewEncapsulation,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, forwardRef, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import {
     ControlValueAccessor,
     NG_VALUE_ACCESSOR,
@@ -26,7 +17,8 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { TranslocoModule } from '@ngneat/transloco';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -58,13 +50,13 @@ export class SearchInputComponent implements OnInit, ControlValueAccessor {
 
     @Input() debounce = 500;
     @Input() label?: string;
-    @Input() placeholder = 'Common.Filter';
+    @Input() placeholder = 'General.Filter';
     @Input() floatLabel: FloatLabelType = 'always';
     @Input() appearance: MatFormFieldAppearance = 'fill';
     @Input() subscriptingSizing: SubscriptSizing = 'dynamic';
     @Input() autocomplete = 'off';
     @Input() parentFormGroup: UntypedFormGroup;
-    @Input() controlName = 'searchText';
+    @Input() formControlName = 'searchText';
     @Input() inputClass:
         | string
         | string[]
@@ -78,25 +70,41 @@ export class SearchInputComponent implements OnInit, ControlValueAccessor {
 
     disabled: boolean;
 
-    @ViewChild('searchInput') searchInput: ElementRef;
-
-    private onChange: (val: boolean) => void;
-    private onTouched: () => void;
+    private onChange: (value: string) => void = () => {};
+    private onTouched: () => void = () => {};
 
     get value(): string {
         return this.searchInputControl.value;
     }
 
     ngOnInit(): void {
-        this.parentFormGroup?.addControl(this.controlName, this.searchInputControl);
+        // Add control to parent form group if provided
+        if (this.parentFormGroup && this.formControlName) {
+            this.parentFormGroup.addControl(this.formControlName, this.searchInputControl);
+        }
+
+        // Subscribe to value changes and notify parent form
+        this.searchInputControl.valueChanges
+            .pipe(debounceTime(this.debounce), distinctUntilChanged(), untilDestroyed(this))
+            .subscribe(value => {
+                this.onChange(value);
+                this.onTouched();
+            });
     }
 
     writeValue(value: any) {
-        this.searchInputControl.setValue(value);
+        if (value !== this.searchInputControl.value) {
+            this.searchInputControl.setValue(value, { emitEvent: false });
+        }
     }
 
     setDisabledState(disabled: boolean) {
         this.disabled = disabled;
+        if (disabled) {
+            this.searchInputControl.disable();
+        } else {
+            this.searchInputControl.enable();
+        }
     }
 
     registerOnChange(fn: any) {
@@ -105,9 +113,5 @@ export class SearchInputComponent implements OnInit, ControlValueAccessor {
 
     registerOnTouched(fn: any) {
         this.onTouched = fn;
-    }
-
-    focusOnSearch(): any {
-        this.searchInput.nativeElement.focus();
     }
 }

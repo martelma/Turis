@@ -40,7 +40,8 @@ public class PaymentTypeService(ApplicationDbContext dbContext, ILogger<PaymentT
 			{
 				query = query.Where(x =>
 					x.Name != null && x.Name.Contains(itemPattern)
-					|| x.Note != null && x.Note.Contains(itemPattern));
+					//|| x.Note != null && x.Note.Contains(itemPattern)
+				);
 			}
 
 		var totalCount = await query.CountAsync();

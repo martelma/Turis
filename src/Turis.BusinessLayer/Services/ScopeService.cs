@@ -50,7 +50,7 @@ public class ScopeService(IDbContext dbContext,
 			.ToModel()
 			.ToList();
 
-		var result = new PaginatedList<ApplicationScopeModel>(data.Take(itemsPerPage), totalCount, data.Count > itemsPerPage);
+		var result = new PaginatedList<ApplicationScopeModel>(data.Take(itemsPerPage), totalCount, pageIndex, itemsPerPage, data.Count > itemsPerPage);
 		return result;
 	}
 

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -27,7 +27,6 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Language } from 'app/modules/configuration/languages/language.types';
-import { ServiceService } from 'app/modules/service/service.service';
 import { JournalEntryService } from '../journal-entry.service';
 
 @UntilDestroy()
@@ -70,7 +69,7 @@ export class JournalEntrySidebarComponent implements OnInit {
 
     dateFrom: Date;
     dateTo: Date;
-    journalEntryParameters: JournalEntrySearchParameters;
+    parameters: JournalEntrySearchParameters;
 
     languages: Language[] = [];
 
@@ -79,10 +78,7 @@ export class JournalEntrySidebarComponent implements OnInit {
 
     durationTypes = DurationTypes;
 
-    constructor(
-        private _journalEntryService: JournalEntryService,
-        private _serviceService: ServiceService,
-    ) {}
+    constructor(private _journalEntryService: JournalEntryService) {}
 
     ngOnInit(): void {
         this._subscribeJournalEntryParameters();
@@ -92,12 +88,12 @@ export class JournalEntrySidebarComponent implements OnInit {
         this._journalEntryService.parameters$
             .pipe(untilDestroyed(this))
             .subscribe((journalEntryParameters: JournalEntrySearchParameters) => {
-                this.journalEntryParameters = journalEntryParameters;
+                this.parameters = journalEntryParameters;
             });
     }
 
     clearFilters() {
-        this.journalEntryParameters = new JournalEntrySearchParameters();
+        this.parameters = new JournalEntrySearchParameters();
         this.dateFrom = null;
         this.dateTo = null;
 
@@ -105,15 +101,14 @@ export class JournalEntrySidebarComponent implements OnInit {
     }
 
     filter() {
-        // console.log('JournalEntryParameters', this.journalEntryParameters);
-        this.journalEntryParameters.dateFrom = toUtcString(this.dateFrom);
-        this.journalEntryParameters.dateTo = toUtcString(this.dateTo);
-        this._search(this.journalEntryParameters);
+        this.parameters.dateFrom = toUtcString(this.dateFrom);
+        this.parameters.dateTo = toUtcString(this.dateTo);
+        this._search(this.parameters);
     }
 
     _search(JournalEntryParameters: JournalEntrySearchParameters): void {
         this._journalEntryService
-            .listEntities({ ...this.journalEntryParameters, ...JournalEntryParameters, pageIndex: 0 })
+            .listEntities({ ...this.parameters, ...JournalEntryParameters, pageIndex: 0 })
             .pipe(untilDestroyed(this))
             .subscribe();
     }

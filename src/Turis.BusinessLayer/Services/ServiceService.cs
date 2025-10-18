@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OperationResults;
 using System.Globalization;
+using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Linq.Dynamic.Core.Exceptions;
 using TinyHelpers.Extensions;
@@ -68,7 +69,7 @@ public class ServiceService(ApplicationDbContext dbContext
 			.GetData<Service>()
 			.Include(x => x.Collaborator)
 			.Where(x => x.Date.Year == year);
-		
+
 		var currentYear = DateTime.Now.Year;
 		var startWeek = DateTime.Now.StartWeek();
 		var endWeek = DateTime.Now.EndWeek();
@@ -327,19 +328,10 @@ public class ServiceService(ApplicationDbContext dbContext
 			query = query.Where(x => x.Date <= dateTo);
 		}
 
-		if (parameters.Code.HasValue())
-			query = query.Where(x => x.Code.Contains(parameters.Code));
-
-		if (parameters.Title.HasValue())
-			query = query.Where(x => x.Title.Contains(parameters.Title));
-
-		if (parameters.Note.HasValue())
-			query = query.Where(x => x.Note.Contains(parameters.Note));
-
-		if (parameters.Pattern.HasValue())
-			query = query.Where(x => x.Code.Contains(parameters.Pattern)
-			|| x.Title.Contains(parameters.Pattern)
-			|| x.Note.Contains(parameters.Pattern));
+		query = query.WhereIf(parameters.Code.HasValue(), x => x.Code.Contains(parameters.Code));
+		query = query.WhereIf(parameters.Title.HasValue(), x => x.Title.Contains(parameters.Title));
+		query = query.WhereIf(parameters.Location.HasValue(), x => x.Location.Contains(parameters.Location));
+		query = query.WhereIf(parameters.Note.HasValue(), x => x.Note.Contains(parameters.Note));
 
 		if (parameters.ServiceType.HasValue())
 		{
@@ -355,7 +347,6 @@ public class ServiceService(ApplicationDbContext dbContext
 
 		query = query.WhereIf(parameters.Languages.HasItems(), x => parameters.Languages.Any(y => x.Languages.Contains(y)));
 
-		//query = query.WhereIf(parameters.Statuses.HasItems(), x => x.Status != null && parameters.Statuses.Contains(x.Status.ToString()));		if (parameters.DurationType.HasValue())
 		if (parameters.Status.HasValue())
 		{
 			var status = (ServiceStatus)Enum.Parse(typeof(ServiceStatus), parameters.Status);
@@ -367,6 +358,19 @@ public class ServiceService(ApplicationDbContext dbContext
 			var workflowCollaboratorStatus = (WorkflowCollaboratorStatus)Enum.Parse(typeof(WorkflowCollaboratorStatus), parameters.WorkflowCollaboratorStatus);
 			query = query.Where(x => x.WorkflowCollaboratorStatus == workflowCollaboratorStatus);
 		}
+
+		if (parameters.Pattern.HasValue())
+			foreach (var itemPattern in parameters.Pattern.Split(' '))
+			{
+				query = query.Where(x => x.Code.Contains(itemPattern)
+				                         || x.Title.Contains(itemPattern)
+				                         || x.Location.Contains(itemPattern)
+				                         || x.Client.CompanyName.Contains(itemPattern)
+				                         || x.Collaborator.FirstName.Contains(itemPattern)
+				                         || x.Collaborator.LastName.Contains(itemPattern)
+										 //|| x.Note.Contains(itemPattern)
+				);
+			}
 
 		var totalCount = await query.AsSplitQuery().CountAsync();
 
@@ -393,7 +397,7 @@ public class ServiceService(ApplicationDbContext dbContext
 
 		var model = await data.ToModel(avatarContactService, bookmarks, attachments, tags);
 
-		var result = new PaginatedList<ServiceModel>(model, totalCount, data.Count > parameters.PageSize);
+		var result = new PaginatedList<ServiceModel>(model, totalCount, parameters.PageIndex, parameters.PageSize, data.Count > parameters.PageSize);
 		return result;
 	}
 
@@ -468,7 +472,7 @@ public class ServiceService(ApplicationDbContext dbContext
 		var tags = await entityTagService.ListAsync(EntryName, data.Select(x => x.Id).ToList());
 		var model = await data.ToModel(avatarContactService, bookmarks, attachments, tags);
 
-		var result = new PaginatedList<ServiceModel>(model, totalCount, data.Count > parameters.PageSize);
+		var result = new PaginatedList<ServiceModel>(model, totalCount, parameters.PageIndex, parameters.PageSize, data.Count > parameters.PageSize);
 		return result;
 	}
 
@@ -512,11 +516,12 @@ public class ServiceService(ApplicationDbContext dbContext
 		return randomService;
 	}
 
-	public async Task<Result<ContactSummaryModel>> ContactSummaryAsync(Guid contactId)
+	public async Task<Result<ContactSummaryModel>> ContactSummaryAsync(Guid contactId, int year)
 	{
 		var data = await dbContext
 			.GetData<Service>()
 			.Where(x => x.CollaboratorId == contactId)
+			.Where(x => x.Date.Year == year)
 			.OrderBy(x => x.Date)
 			.ToListAsync();
 
@@ -528,21 +533,25 @@ public class ServiceService(ApplicationDbContext dbContext
 				{
 					ViewOrder = yearGroup.Key,
 					Label = yearGroup.Key.ToString(),
-					Total = yearGroup.Sum(x => x.Commission > 0 ? x.Commission : x.CommissionCalculated), // Calcola il totale per l'anno
-					Payed = yearGroup.Where(x => x.CommissionPaid).Sum(x => x.Commission > 0 ? x.Commission : x.CommissionCalculated), // Calcola il totale pagato
-					Data = yearGroup
-						.GroupBy(x => x.Date.Month) // Raggruppa per mese
-						.Select(x => new ContactDataItemModel
-						{
-							ViewOrder = x.Key, // Numero del mese (1-12)
-							Label = new DateTime(1, x.Key, 1).ToString("MMM"), // Nome del mese
-							Value = x.Sum(y => y.Commission > 0 ? y.Commission : y.CommissionCalculated) // Totale del valore per il mese
+					Total = yearGroup.Sum(x => x.Commission > 0 ? x.Commission : x.CommissionCalculated),
+					Payed = yearGroup.Where(x => x.CommissionPaid).Sum(x => x.Commission > 0 ? x.Commission : x.CommissionCalculated),
+					Data = Enumerable.Range(1, 12)
+						.Select(month => {
+							var monthData = yearGroup
+								.Where(x => x.Date.Month == month)
+								.Sum(y => y.Commission > 0 ? y.Commission : y.CommissionCalculated);
+							return new ContactDataItemModel
+							{
+								ViewOrder = month,
+								Label = new DateTime(1, month, 1).ToString("MMM"),
+								Value = monthData
+							};
 						})
-						.OrderBy(x => x.ViewOrder) // Ordina per ordine cronologico
+						.OrderBy(x => x.ViewOrder)
 						.ToList()
 				})
-				.OrderBy(x => x.ViewOrder) // Ordina per anno
-				.ThenBy(x => x.Data.FirstOrDefault()?.ViewOrder) // Ordina per mese
+				.OrderBy(x => x.ViewOrder)
+				.ThenBy(x => x.Data.FirstOrDefault()?.ViewOrder)
 				.ToList()
 		};
 

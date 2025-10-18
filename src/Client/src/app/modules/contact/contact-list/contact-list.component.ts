@@ -14,11 +14,19 @@ import {
     ChangeDetectorRef,
     Component,
     ElementRef,
+    Input,
     OnInit,
     ViewChild,
     ViewEncapsulation,
 } from '@angular/core';
-import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import {
+    FormControl,
+    FormsModule,
+    ReactiveFormsModule,
+    UntypedFormBuilder,
+    UntypedFormGroup,
+    Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
@@ -36,7 +44,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { trackByFn } from 'app/shared';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
-import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
 import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
@@ -45,9 +53,9 @@ import { ContactService } from '../contact.service';
 import { ContactComponent } from '../contact.component';
 import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
 import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summary.component';
-import { DocumentService } from 'app/modules/document/document.service';
 import { AppSettings } from 'app/constants';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
+import { debounceTime, Observable, switchMap } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -91,6 +99,7 @@ import { UserSettingsService } from 'app/shared/services/user-setting.service';
     ],
 })
 export class ContactListComponent implements OnInit, AfterViewInit {
+    @Input() debounce = 500;
     @ViewChild('contactList') contactList: ElementRef;
 
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
@@ -101,6 +110,7 @@ export class ContactListComponent implements OnInit, AfterViewInit {
     results: PaginatedListResult<Contact>;
     list: Contact[] = [];
     itemsLoading = false;
+    searchControl = new FormControl('');
     contactParameters: ContactSearchParameters;
 
     activeLang: string;
@@ -165,6 +175,8 @@ export class ContactListComponent implements OnInit, AfterViewInit {
             this.activeLang = activeLang;
         });
 
+        this._subscribeSearchControlChanges();
+
         this._subscribeContactParameters();
     }
 
@@ -194,6 +206,16 @@ export class ContactListComponent implements OnInit, AfterViewInit {
         this._list();
     }
 
+    private _subscribeSearchControlChanges(): void {
+        this.searchControl.valueChanges
+            .pipe(
+                debounceTime(this.debounce),
+                switchMap(value => this._search({ pattern: value, pageIndex: 0 })),
+                untilDestroyed(this),
+            )
+            .subscribe();
+    }
+
     private _subscribeContactParameters(): void {
         this._contactService.contactParameters$
             .pipe(untilDestroyed(this))
@@ -207,14 +229,13 @@ export class ContactListComponent implements OnInit, AfterViewInit {
             onlyBookmarks: !this.contactParameters.onlyBookmarks,
             pageIndex: 0,
             pageSize: this._paginator.pageSize,
-        });
+        }).subscribe();
     }
 
-    private _search(contactParameters: ContactSearchParameters): void {
-        this._contactService
+    private _search(contactParameters: ContactSearchParameters): Observable<PaginatedListResult<Contact>> {
+        return this._contactService
             .listEntities({ ...this.contactParameters, ...contactParameters })
-            .pipe(untilDestroyed(this))
-            .subscribe();
+            .pipe(untilDestroyed(this));
     }
 
     handleBookmark(contact: Contact): void {
@@ -227,7 +248,7 @@ export class ContactListComponent implements OnInit, AfterViewInit {
                     this._contactService.getById(contact.id).pipe(untilDestroyed(this)).subscribe();
 
                     // Refresh the list
-                    this._search({});
+                    this._search({}).subscribe();
                 });
         } else {
             this._bookmarkService
@@ -241,7 +262,7 @@ export class ContactListComponent implements OnInit, AfterViewInit {
                     this._contactService.getById(contact.id).pipe(untilDestroyed(this)).subscribe();
 
                     // Refresh the list
-                    this._search({});
+                    this._search({}).subscribe();
                 });
         }
     }
@@ -284,7 +305,8 @@ export class ContactListComponent implements OnInit, AfterViewInit {
 
     filter(value: string): void {
         this.contactParameters = { pattern: value };
-        this._list();
+        // this._list();
+        this._search(this.contactParameters);
     }
 
     createContact(): void {

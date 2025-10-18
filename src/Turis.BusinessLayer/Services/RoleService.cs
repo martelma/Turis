@@ -94,7 +94,7 @@ public class RoleService(IDbContext dbContext,
 				.Select(u => u.First()),
 			}).ToListAsync();
 
-		var result = new PaginatedList<ApplicationRoleModel>(data.Take(itemsPerPage), totalCount, data.Count > itemsPerPage);
+		var result = new PaginatedList<ApplicationRoleModel>(data.Take(itemsPerPage), totalCount, pageIndex, itemsPerPage, data.Count > itemsPerPage);
 		return result;
 	}
 
@@ -151,7 +151,7 @@ public class RoleService(IDbContext dbContext,
 				.Select(u => u.First()),
 			}).ToListAsync();
 
-		var result = new PaginatedList<ApplicationRoleModel>(data.Take(itemsPerPage), totalCount, data.Count > itemsPerPage);
+		var result = new PaginatedList<ApplicationRoleModel>(data.Take(itemsPerPage), totalCount, pageIndex, itemsPerPage, data.Count > itemsPerPage);
 		return result;
 	}
 

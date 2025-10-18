@@ -68,6 +68,7 @@ export class ServiceSearchParameters extends BaseSearchParameters {
     onlyBookmarks?: boolean = false;
     code?: string;
     title?: string;
+    location?: string;
     note?: string;
     serviceType?: string;
     durationType?: string;

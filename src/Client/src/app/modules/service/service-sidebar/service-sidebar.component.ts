@@ -28,7 +28,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Language } from 'app/modules/configuration/languages/language.types';
 import { LanguageService } from 'app/modules/configuration/languages/language.service';
-import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
 
 @UntilDestroy()
 @Component({
@@ -70,7 +70,7 @@ export class ServiceSidebarComponent implements OnInit {
 
     dateFrom: Date;
     dateTo: Date;
-    serviceParameters: ServiceSearchParameters;
+    parameters: ServiceSearchParameters;
 
     languages: Language[] = [];
 
@@ -95,7 +95,7 @@ export class ServiceSidebarComponent implements OnInit {
         this._serviceService.parameters$
             .pipe(untilDestroyed(this))
             .subscribe((serviceParameters: ServiceSearchParameters) => {
-                this.serviceParameters = serviceParameters;
+                this.parameters = serviceParameters;
             });
     }
 
@@ -109,17 +109,27 @@ export class ServiceSidebarComponent implements OnInit {
     }
 
     clearFilters() {
-        this.serviceParameters = new ServiceSearchParameters();
+        this.parameters = new ServiceSearchParameters();
         this.dateFrom = null;
         this.dateTo = null;
 
-        this.filter();
+        this._search(this.parameters);
+        // this.filter();
     }
 
     filter() {
-        this.serviceParameters.dateFrom = toUtcString(this.dateFrom);
-        this.serviceParameters.dateTo = toUtcString(this.dateTo);
+        console.log('parameters', this.parameters);
+        this.parameters.dateFrom = toUtcString(this.dateFrom);
+        this.parameters.dateTo = toUtcString(this.dateTo);
 
-        this.onFilterChanged.emit(this.serviceParameters);
+        this._search(this.parameters);
+        // this.onFilterChanged.emit(this.serviceParameters);
+    }
+
+    _search(parameters: ServiceSearchParameters): void {
+        this._serviceService
+            .listEntities({ ...this.parameters, ...parameters, pageIndex: 0 })
+            .pipe(untilDestroyed(this))
+            .subscribe();
     }
 }

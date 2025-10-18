@@ -142,6 +142,8 @@ export class ContactEditComponent implements OnInit {
 
     checkChanged(): void {
         if (this.contact && this.originalItem) {
+            // console.log('originalItem', this.originalItem);
+            // console.log('contact', this.contact);
             this.changed = JSON.stringify(this.contact) !== JSON.stringify(this.originalItem);
         }
     }
@@ -155,9 +157,9 @@ export class ContactEditComponent implements OnInit {
         this.checkChanged();
     }
 
-    targetChanged(event: TargetsChanged): void {
-        // console.log('onTargetDataChanged', event);
-        this.contact.targets = event.details;
-        this.checkChanged();
-    }
+    // targetChanged(event: TargetsChanged): void {
+    //     // console.log('onTargetDataChanged', event);
+    //     this.contact.targets = event.details;
+    //     this.checkChanged();
+    // }
 }

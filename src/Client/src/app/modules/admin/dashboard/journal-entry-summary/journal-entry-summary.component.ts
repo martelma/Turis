@@ -12,6 +12,7 @@ import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
 import { MatButtonToggleChange, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { AppSettings } from 'app/constants';
+import { years } from 'app/shared/shared.utils';
 
 @UntilDestroy()
 @Component({
@@ -40,7 +41,7 @@ export class JournalEntrySummaryComponent implements OnInit, AfterViewInit {
     ) {
         const currentYear = new Date().getFullYear();
         this.period = `'year_${currentYear}`;
-        this.years = Array.from({ length: 5 }, (_, i) => currentYear - i);
+        this.years = years(5);
     }
 
     ngOnInit(): void {

@@ -33,6 +33,30 @@
         <mat-datepicker #picker2></mat-datepicker>
     </mat-form-field>
 
+    <mat-form-field class="col-span-2">
+        <mat-label for="description">Description</mat-label>
+        <input
+            matInput
+            id="description"
+            name="description"
+            #name="ngModel"
+            class="form-control font-bold"
+            [(ngModel)]="parameters.description"
+            (ngModelChange)="filter()" />
+    </mat-form-field>
+
+    <mat-form-field class="col-span-2">
+        <mat-label for="note">Note</mat-label>
+        <input
+            matInput
+            id="note"
+            name="note"
+            #name="ngModel"
+            class="form-control font-bold"
+            [(ngModel)]="parameters.note"
+            (ngModelChange)="filter()" />
+    </mat-form-field>
+
     <div class="flex space-x-2">
         <button mat-flat-button color="primary" (click)="clearFilters()">
             <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:archive-box-x-mark'"></mat-icon>

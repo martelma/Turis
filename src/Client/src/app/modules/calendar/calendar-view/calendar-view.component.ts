@@ -8,7 +8,7 @@ import {
     ViewChild,
     ViewEncapsulation,
 } from '@angular/core';
-import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, UntypedFormGroup } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
@@ -21,12 +21,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { fuseAnimations } from '@fuse/animations';
-import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { toUtcString, trackByFn } from 'app/shared';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
-import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
 import { Service, ServiceSearchParameters } from 'app/modules/service/service.types';
 import { ServiceService } from 'app/modules/service/service.service';
 import { MaterialModule } from 'app/modules/material.module';
@@ -50,8 +49,8 @@ import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { CalendarViewGridComponent } from '../calendar-view-grid/calendar-view-grid.component';
 import { CalendarDetailComponent } from '../calendar-detail/calendar-detail.component';
 import { CalendarViewCalendarComponent } from '../calendar-view-calendar/calendar-view-calendar.component';
-import { GlobalShortcutsService } from 'app/components/global-shortcuts/global-shortcuts.service';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
+import { GlobalShortcutsService } from 'app/components/ui/global-shortcuts/global-shortcuts.service';
 
 declare let $: any;
 

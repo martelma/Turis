@@ -61,7 +61,7 @@ public class TargetService(ApplicationDbContext dbContext
 
 		var model = await data.ToModelAsync(avatarContactService);
 
-		var result = new PaginatedList<TargetModel>(model, totalCount, data.Count > parameters.PageSize);
+		var result = new PaginatedList<TargetModel>(model, totalCount, parameters.PageIndex, parameters.PageSize, data.Count > parameters.PageSize);
 		return result;
 	}
 
@@ -86,7 +86,7 @@ public class TargetService(ApplicationDbContext dbContext
 			.Skip(paginator.PageIndex * paginator.PageSize).Take(paginator.PageSize + 1)
 			.ToList();
 
-		var result = new PaginatedList<CommissionStat>(data, totalCount, data.Count > parameters.PageSize);
+		var result = new PaginatedList<CommissionStat>(data, totalCount, parameters.PageIndex, parameters.PageSize, data.Count > parameters.PageSize);
 		return result;
 	}
 

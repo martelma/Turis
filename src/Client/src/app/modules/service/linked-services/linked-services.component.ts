@@ -34,7 +34,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { getStatusColorClass, getStatusText } from 'app/constants';
 import { trackByFn } from 'app/shared';
 import { FuseCardComponent } from '@fuse/components/card';
-import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
 
 @UntilDestroy()
 @Component({
@@ -112,7 +112,7 @@ export class LinkedServicesComponent implements OnInit, AfterViewInit, OnChanges
             this.data = linkedServices;
             console.log(linkedServices);
 
-            this.searchInput?.focusOnSearch();
+            // this.searchInput?.focusOnSearch();
             this.results = null;
         });
     }

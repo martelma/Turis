@@ -23,7 +23,7 @@ public interface IServiceService : IService
 	Task<Result<PaginatedList<ServiceModel>>> AccountStatement(AccountStatementParameters parameters);
 	Task<Result<ServiceCheckDataInfo>> CheckDataInfoAsync(Guid serviceId);
 	Service GetRandom();
-	Task<Result<ContactSummaryModel>> ContactSummaryAsync(Guid contactId);
+	Task<Result<ContactSummaryModel>> ContactSummaryAsync(Guid contactId, int year);
 	Task<Result> NotifyProposalAsync(Guid serviceId);
 	Task<Result> AcceptServiceAsync(Guid serviceId);
 	Task<Result> RejectServiceAsync(Guid serviceId);

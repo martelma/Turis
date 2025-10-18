@@ -11,7 +11,7 @@
             name="code"
             #name="ngModel"
             class="form-control font-bold"
-            [(ngModel)]="serviceParameters.code"
+            [(ngModel)]="parameters.code"
             (ngModelChange)="filter()" />
     </mat-form-field>
 
@@ -23,7 +23,19 @@
             name="title"
             #name="ngModel"
             class="form-control font-bold"
-            [(ngModel)]="serviceParameters.title"
+            [(ngModel)]="parameters.title"
+            (ngModelChange)="filter()" />
+    </mat-form-field>
+
+    <mat-form-field class="col-span-2">
+        <mat-label for="location">Location</mat-label>
+        <input
+            matInput
+            id="location"
+            name="location"
+            #name="ngModel"
+            class="form-control font-bold"
+            [(ngModel)]="parameters.location"
             (ngModelChange)="filter()" />
     </mat-form-field>
 
@@ -35,7 +47,7 @@
             name="note"
             #name="ngModel"
             class="form-control font-bold"
-            [(ngModel)]="serviceParameters.note"
+            [(ngModel)]="parameters.note"
             (ngModelChange)="filter()" />
     </mat-form-field>
 
@@ -47,7 +59,7 @@
             id="serviceType"
             name="serviceType"
             #name="ngModel"
-            [(ngModel)]="serviceParameters.serviceType"
+            [(ngModel)]="parameters.serviceType"
             (ngModelChange)="filter()">
             <mat-option *ngFor="let x of serviceTypes" [value]="x.value">
                 {{ x.text }}
@@ -63,7 +75,7 @@
             id="durationType"
             name="durationType"
             #name="ngModel"
-            [(ngModel)]="serviceParameters.durationType"
+            [(ngModel)]="parameters.durationType"
             (ngModelChange)="filter()">
             <mat-option *ngFor="let x of durationTypes" [value]="x.value">
                 {{ x.text }}
@@ -79,7 +91,7 @@
             id="languages"
             name="languages"
             #name="ngModel"
-            [(ngModel)]="serviceParameters.languages"
+            [(ngModel)]="parameters.languages"
             (ngModelChange)="filter()">
             <mat-option *ngFor="let x of languages" [value]="x.code">{{ x.code }}</mat-option>
         </mat-select>
@@ -93,7 +105,7 @@
             id="status"
             name="status"
             #name="ngModel"
-            [(ngModel)]="serviceParameters.status"
+            [(ngModel)]="parameters.status"
             (ngModelChange)="filter()">
             <mat-option *ngFor="let x of statusTypes" [value]="x.value">
                 {{ x.text }}
@@ -108,7 +120,7 @@
             id="status"
             name="status"
             #name="ngModel"
-            [(ngModel)]="serviceParameters.statuses"
+            [(ngModel)]="parameters.statuses"
             (ngModelChange)="filter()">
             <mat-option *ngFor="let x of statusTypes" [value]="x.value">
                 <span [ngClass]="x.colorClass" class="color-box"></span>

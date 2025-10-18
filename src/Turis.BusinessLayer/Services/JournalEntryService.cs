@@ -36,85 +36,6 @@ public class JournalEntryService(ApplicationDbContext dbContext
 		return context.Include(x => x.User);
 	}
 
-	//public async Task<Result<JournalEntrySummaryModel>> Summary()
-	//{
-	//	var startYear = DateTime.Now.StartYear();
-	//	var startMonth = DateTime.Now.StartMonth();
-
-	//	var startWeek = DateTime.Now.StartWeek();
-
-	//	var yearData = await dbContext
-	//		.GetData<JournalEntry>()
-	//		.Where(x => x.Date.Date <= DateTime.UtcNow)
-	//		.Where(x => x.Date.Date >= startYear)
-	//		.ToListAsync();
-	//	var monthData = yearData.Where(x => x.Date.Date >= startMonth).ToList();
-	//	var weekData = yearData.Where(x => x.Date.Date >= startWeek).ToList();
-
-
-	//	var yearDataSymmary = yearData
-	//		.GroupBy(x => x.Date.Month)
-	//		.Select(group => new DataItem
-	//		{
-	//			ViewOrder = group.Key,
-	//			Label = group.Key.ToMonthLabel(),
-	//			Income = group.Where(e => e.Amount > 0).Sum(e => e.Amount), // Totale delle entrate
-	//			Expense = group.Where(e => e.Amount < 0).Sum(e => e.Amount), // Totale delle uscite
-	//			Balance = group.MaxBy(e => e.Date)?.Balance ?? 0 // Saldo di fine periodo
-	//		})
-	//		.OrderBy(x => x.ViewOrder)
-	//		.ToList();
-
-	//	var monthDataSummary = monthData
-	//		.GroupJoin(
-	//			yearData,
-	//			day => day.Date.FirstDayOfMonth(), // Chiave di join (la data completa generata)
-	//			entry => entry.Date.FirstDayOfMonth(), // Chiave di join dei dati originali
-	//			(day, entries) => new DataItem
-	//			{
-	//				ViewOrder = day.Date.Month,
-	//				Label = day.Date.ToString("MM"),
-	//				Income = entries.Where(e => e.Amount > 0).Sum(e => e.Amount), // Entrate
-	//				Expense = entries.Where(e => e.Amount < 0).Sum(e => e.Amount), // Uscite
-	//				Balance = entries.Any()
-	//					? entries.MaxBy(e => e.Date.FirstDayOfMonth())?.Balance ?? 0
-	//					: 0 // Saldo
-	//			}
-	//		)
-	//		.OrderBy(x => x.ViewOrder)
-	//		.ToList();
-
-	//	var weekDataSummary = weekData
-	//		.GroupBy(x => x.Date.DayOfWeek)
-	//		.Select(group => new DataItem
-	//		{
-	//			ViewOrder = (int)group.Key,
-	//			Label = group.Key.ToDayLabel(),
-	//			Income = group.Where(e => e.Amount > 0).Sum(e => e.Amount), // Totale delle entrate
-	//			Expense = group.Where(e => e.Amount < 0).Sum(e => e.Amount), // Totale delle uscite
-	//			Balance = group.MaxBy(e => e.Date)?.Balance ?? 0 // Saldo di fine periodo
-	//		})
-	//		.OrderBy(x => x.ViewOrder)
-	//		.ToList();
-	//	var model = new JournalEntrySummaryModel
-	//	{
-	//		YearData = new SummaryData
-	//		{
-	//			Data = yearDataSymmary
-	//		},
-	//		MonthData = new SummaryData
-	//		{
-	//			Data = monthDataSummary
-	//		},
-	//		WeekData = new SummaryData
-	//		{
-	//			Data = weekDataSummary
-	//		}
-	//	};
-
-	//	return await Task.FromResult(model);
-	//}
-
 	public async Task<Result<SummaryData>> YearSummary(int year)
 	{
 		var yearData = await dbContext
@@ -288,13 +209,17 @@ public class JournalEntryService(ApplicationDbContext dbContext
 			query = query.Where(x => x.Date <= dateTo);
 		}
 
+		query = query.WhereIf(parameters.Description.HasValue(), x => x.Description.Contains(parameters.Description));
+		query = query.WhereIf(parameters.Note.HasValue(), x => x.Note.Contains(parameters.Note));
+
 		// Filter by search pattern
 		if (parameters.Pattern.HasValue())
 			foreach (var itemPattern in parameters.Pattern.Split(' '))
 			{
 				query = query.Where(x =>
 					(x.Description != null && x.Description.Contains(itemPattern))
-					|| (x.Note != null && x.Note.Contains(itemPattern)));
+					|| (x.Note != null && x.Note.Contains(itemPattern))
+				);
 			}
 
 		var totalCount = await query.CountAsync();

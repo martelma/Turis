@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -70,7 +70,7 @@ export class DocumentSidebarComponent implements OnInit {
 
     dateFrom: Date;
     dateTo: Date;
-    documentParameters: DocumentSearchParameters;
+    parameters: DocumentSearchParameters;
 
     languages: Language[] = [];
 
@@ -93,12 +93,12 @@ export class DocumentSidebarComponent implements OnInit {
         this._documentService.parameters$
             .pipe(untilDestroyed(this))
             .subscribe((documentParameters: DocumentSearchParameters) => {
-                this.documentParameters = documentParameters;
+                this.parameters = documentParameters;
             });
     }
 
     clearFilters() {
-        this.documentParameters = new DocumentSearchParameters();
+        this.parameters = new DocumentSearchParameters();
         this.dateFrom = null;
         this.dateTo = null;
 
@@ -107,14 +107,14 @@ export class DocumentSidebarComponent implements OnInit {
 
     filter() {
         // console.log('documentParameters', this.documentParameters);
-        this.documentParameters.dateFrom = toUtcString(this.dateFrom);
-        this.documentParameters.dateTo = toUtcString(this.dateTo);
-        this._search(this.documentParameters);
+        this.parameters.dateFrom = toUtcString(this.dateFrom);
+        this.parameters.dateTo = toUtcString(this.dateTo);
+        this._search(this.parameters);
     }
 
     _search(documentParameters: DocumentSearchParameters): void {
         this._documentService
-            .listEntities({ ...this.documentParameters, ...documentParameters, pageIndex: 0 })
+            .listEntities({ ...this.parameters, ...documentParameters, pageIndex: 0 })
             .pipe(untilDestroyed(this))
             .subscribe();
     }

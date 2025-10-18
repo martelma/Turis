@@ -1,14 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-    AfterViewInit,
-    ChangeDetectorRef,
-    Component,
-    EventEmitter,
-    OnInit,
-    Output,
-    ViewChild,
-    ViewEncapsulation,
-} from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -35,6 +26,7 @@ import {
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { AppSettings } from 'app/constants';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
+import { years } from 'app/shared/shared.utils';
 
 export type ChartOptions = {
     series: ApexAxisChartSeries;
@@ -88,11 +80,10 @@ export class ServiceSummaryComponent implements OnInit, AfterViewInit {
     constructor(
         private _serviceService: ServiceService,
         private _userSettingsService: UserSettingsService,
-        private _changeDetectorRef: ChangeDetectorRef,
     ) {
         const currentYear = new Date().getFullYear();
         this.year = currentYear;
-        this.years = Array.from({ length: 5 }, (_, i) => currentYear - i);
+        this.years = years(5);
     }
 
     ngOnInit(): void {

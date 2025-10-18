@@ -35,13 +35,13 @@ import { MaterialModule } from 'app/modules/material.module';
 import { ServiceSidebarComponent } from 'app/modules/service/service-sidebar/service-sidebar.component';
 import { Service, ServiceSearchParameters } from 'app/modules/service/service.types';
 import { trackByFn } from 'app/shared';
-import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { CalendarSelectorComponent } from '../calendar-selector/calendar-selector.component';
 import { CalendarDetailComponent } from '../calendar-detail/calendar-detail.component';
-import { GlobalShortcutsService } from 'app/components/global-shortcuts/global-shortcuts.service';
+import { GlobalShortcutsService } from 'app/components/ui/global-shortcuts/global-shortcuts.service';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
-import { CalendarBadgesComponent } from 'app/components/global-shortcuts/ui/search-input/calendar-badges/calendar-badges.component';
+import { CalendarBadgesComponent } from 'app/components/ui/calendar-badges/calendar-badges.component';
 import { FuseCardComponent } from '@fuse/components/card';
 
 @UntilDestroy()

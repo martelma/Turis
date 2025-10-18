@@ -176,6 +176,7 @@ export class ServiceService extends BaseEntityService<Service> {
         httpParams = httpParams.append('onlyBookmarks', params?.onlyBookmarks ? 'true' : 'false');
         httpParams = httpParams.append('code', params?.code ?? '');
         httpParams = httpParams.append('title', params?.title ?? '');
+        httpParams = httpParams.append('location', params?.location ?? '');
         httpParams = httpParams.append('note', params?.note ?? '');
         httpParams = httpParams.append('serviceType', params?.serviceType ?? '');
         httpParams = httpParams.append('durationType', params?.durationType ?? '');
@@ -341,10 +342,10 @@ export class ServiceService extends BaseEntityService<Service> {
         );
     }
 
-    listContactSummary(contactId: string): Observable<ContactSummary> {
+    listContactSummary(contactId: string, year: number): Observable<ContactSummary> {
         this._loading.next(true);
 
-        const url = `contact-summary/${contactId}`;
+        const url = `contact-summary/${contactId}/${year}`;
 
         return this.apiGet<ContactSummary>(url).pipe(
             map((data: ContactSummary) => {

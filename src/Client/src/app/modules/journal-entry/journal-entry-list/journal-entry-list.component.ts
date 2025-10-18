@@ -15,11 +15,12 @@ import {
     ChangeDetectorRef,
     Component,
     ElementRef,
+    Input,
     OnInit,
     ViewChild,
     ViewEncapsulation,
 } from '@angular/core';
-import { FormsModule, ReactiveFormsModule, UntypedFormGroup } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormGroup } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
@@ -36,7 +37,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { trackByFn } from 'app/shared';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
-import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
 import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
@@ -46,6 +47,7 @@ import { JournalEntryService } from '../journal-entry.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TagListComponent } from 'app/modules/configuration/tags/tag-list/tag-list.component';
 import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summary.component';
+import { debounceTime, switchMap, Observable } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -89,6 +91,7 @@ import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summa
     ],
 })
 export class JournalEntryListComponent implements OnInit, AfterViewInit {
+    @Input() debounce = 500;
     @ViewChild('serviceList') serviceList: ElementRef;
 
     drawerFilterMode: 'over' | 'side' = 'side';
@@ -102,6 +105,7 @@ export class JournalEntryListComponent implements OnInit, AfterViewInit {
     results: PaginatedListResult<JournalEntry>;
     list: JournalEntry[] = [];
     itemsLoading = false;
+    searchControl = new FormControl('');
     journalEntryParameters: JournalEntrySearchParameters;
 
     activeLang: string;
@@ -151,6 +155,8 @@ export class JournalEntryListComponent implements OnInit, AfterViewInit {
             this.activeLang = activeLang;
         });
 
+        this._subscribeSearchControlChanges();
+
         this._subscribeJournalEntryParameters();
     }
 
@@ -178,6 +184,16 @@ export class JournalEntryListComponent implements OnInit, AfterViewInit {
         this._list();
     }
 
+    private _subscribeSearchControlChanges(): void {
+        this.searchControl.valueChanges
+            .pipe(
+                debounceTime(this.debounce),
+                switchMap(value => this._search({ pattern: value, pageIndex: 0 })),
+                untilDestroyed(this),
+            )
+            .subscribe();
+    }
+
     private _subscribeJournalEntryParameters(): void {
         this._journalEntryService.parameters$
             .pipe(untilDestroyed(this))
@@ -191,14 +207,15 @@ export class JournalEntryListComponent implements OnInit, AfterViewInit {
             onlyBookmarks: !this.journalEntryParameters.onlyBookmarks,
             pageIndex: 0,
             pageSize: this._paginator.pageSize,
-        });
+        }).subscribe();
     }
 
-    private _search(journalEntryParameters: JournalEntrySearchParameters): void {
-        this._journalEntryService
+    private _search(
+        journalEntryParameters: JournalEntrySearchParameters,
+    ): Observable<PaginatedListResult<JournalEntry>> {
+        return this._journalEntryService
             .listEntities({ ...this.journalEntryParameters, ...journalEntryParameters })
-            .pipe(untilDestroyed(this))
-            .subscribe();
+            .pipe(untilDestroyed(this));
     }
 
     handleBookmark(journalEntries: JournalEntry): void {
@@ -211,7 +228,7 @@ export class JournalEntryListComponent implements OnInit, AfterViewInit {
                     this._journalEntryService.getById(journalEntries.id).pipe(untilDestroyed(this)).subscribe();
 
                     // Refresh the list
-                    this._search({});
+                    this._search({}).subscribe();
                 });
         } else {
             this._bookmarkService
@@ -225,7 +242,7 @@ export class JournalEntryListComponent implements OnInit, AfterViewInit {
                     this._journalEntryService.getById(journalEntries.id).pipe(untilDestroyed(this)).subscribe();
 
                     // Refresh the list
-                    this._search({});
+                    this._search({}).subscribe();
                 });
         }
     }

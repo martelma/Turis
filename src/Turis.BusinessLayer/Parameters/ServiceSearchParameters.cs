@@ -18,6 +18,8 @@ public class ServiceSearchParameters : BaseSearchParameters
 	[FromQuery]
 	public string Title { get; set; }
 	[FromQuery]
+	public string Location { get; set; }
+	[FromQuery]
 	public string Note { get; set; }
 	[FromQuery]
 	public string ServiceType { get; set; }

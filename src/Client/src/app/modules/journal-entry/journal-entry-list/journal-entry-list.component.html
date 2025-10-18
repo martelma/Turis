@@ -32,8 +32,8 @@
                 <!-- Filter -->
                 <app-search-input
                     class="m-4 flex-1"
-                    [placeholder]="'Document.FilterByName'"
-                    (callbackFn)="filter($event)">
+                    [placeholder]="'General.Search' | transloco"
+                    [searchInputControl]="searchControl">
                 </app-search-input>
             </div>
 
@@ -146,7 +146,7 @@
     <ng-template #noDocument>
         <div class="z-100 flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
             <mat-icon class="icon-size-24" [svgIcon]="'heroicons_outline:circle-stack'"></mat-icon>
-            <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">There are no document</div>
+            <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">There are no data</div>
         </div>
     </ng-template>
 

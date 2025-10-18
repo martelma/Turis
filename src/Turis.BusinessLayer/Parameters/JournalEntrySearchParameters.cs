@@ -13,4 +13,8 @@ public class JournalEntrySearchParameters: BaseSearchParameters
 	public string DateFrom { get; set; }
 	[FromQuery]
 	public string DateTo { get; set; }
+	[FromQuery]
+	public string Description { get; set; }
+	[FromQuery]
+	public string Note { get; set; }
 }

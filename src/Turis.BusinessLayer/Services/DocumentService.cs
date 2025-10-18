@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
 using OperationResults;
 using System.Globalization;
+using JeMa.Shared.Extensions;
 using TinyHelpers.Extensions;
 using Turis.BusinessLayer.Extensions;
 using Turis.BusinessLayer.Parameters;
@@ -27,7 +28,7 @@ public class DocumentService(ApplicationDbContext dbContext
 
 	private readonly DbSet<Document> context = dbContext.Documents;
 
-	private async Task<List<Bookmark>> GetMyBookmarks() 
+	private async Task<List<Bookmark>> GetMyBookmarks()
 		=> await bookmarkService.ListAsync(userService.GetUserId(), EntryName);
 
 	private IIncludableQueryable<Document, Contact> Query()
@@ -43,7 +44,7 @@ public class DocumentService(ApplicationDbContext dbContext
 	public async Task<Result<DocumentModel>> GetAsync(Guid id)
 	{
 		var bookmarks = await bookmarkService.ListAsync(userService.GetUserId(), EntryName);
-	
+
 		var record = await Query()
 			.FirstOrDefaultAsync(x => x.Id == id);
 
@@ -56,7 +57,7 @@ public class DocumentService(ApplicationDbContext dbContext
 	public async Task<Result<DocumentModel>> GetAsync(string sectional, int number)
 	{
 		var bookmarks = await bookmarkService.ListAsync(userService.GetUserId(), EntryName);
-	
+
 		var record = await Query()
 			.FirstOrDefaultAsync(x => x.Sectional == sectional && x.Number == number);
 
@@ -115,8 +116,14 @@ public class DocumentService(ApplicationDbContext dbContext
 		if (parameters.Pattern.HasValue())
 			foreach (var itemPattern in parameters.Pattern.Split(' '))
 			{
+				var number = itemPattern.IsNumeric() ? Convert.ToInt32(itemPattern) : 0;
+
 				query = query.Where(x =>
-					(x.Sectional != null && x.Sectional.Contains(itemPattern)));
+					(x.Sectional != null && x.Sectional.Contains(itemPattern))
+					|| (number > 0 && x.Number == number)
+					|| (number > 0 && x.Date.Year == number)
+					|| (x.Client != null && x.Client.CompanyName.Contains(itemPattern))
+				);
 			}
 
 		var totalCount = await query.CountAsync();
@@ -140,7 +147,7 @@ public class DocumentService(ApplicationDbContext dbContext
 		else
 			query = query.OrderByDescending(x => x.Sectional)
 				.ThenByDescending(x => x.Number);
-		
+
 		try
 		{
 			var page = query

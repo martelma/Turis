@@ -11,7 +11,7 @@
             id="documentType"
             name="documentType"
             #name="ngModel"
-            [(ngModel)]="documentParameters.documentType"
+            [(ngModel)]="parameters.documentType"
             (ngModelChange)="filter()">
             <mat-option *ngFor="let x of documentTypes" [value]="x.value">
                 {{ x.text }}
@@ -27,7 +27,7 @@
             name="sectional"
             #name="ngModel"
             class="form-control font-bold"
-            [(ngModel)]="documentParameters.sectional"
+            [(ngModel)]="parameters.sectional"
             (ngModelChange)="filter()" />
     </mat-form-field>
 
@@ -40,7 +40,7 @@
             name="numberFrom"
             #name="ngModel"
             class="form-control font-bold"
-            [(ngModel)]="documentParameters.numberFrom"
+            [(ngModel)]="parameters.numberFrom"
             (ngModelChange)="filter()" />
     </mat-form-field>
 
@@ -53,7 +53,7 @@
             name="numberTo"
             #name="ngModel"
             class="form-control font-bold"
-            [(ngModel)]="documentParameters.numberTo"
+            [(ngModel)]="parameters.numberTo"
             (ngModelChange)="filter()" />
     </mat-form-field>
 

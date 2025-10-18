@@ -146,6 +146,7 @@
     <tr
         mat-row
         *matRowDef="let element; columns: columns"
+        [ngClass]="{ 'active-row dark:dark-active-row': element === expandedElement }"
         class="element-with-detail-row"
         [class.example-expanded-row]="element.edit"
         (dblclick)="edit(element)"></tr>

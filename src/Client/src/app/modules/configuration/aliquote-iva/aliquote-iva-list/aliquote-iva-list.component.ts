@@ -20,7 +20,7 @@ import { trackByFn } from 'app/shared';
 import { AliquotaIva, AliquotaIvaSearchParameters } from '../aliquota-iva.types';
 import { AliquotaIvaService } from '../aliquote-iva.service';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
-import { SearchInputComponent } from 'app/components/global-shortcuts/ui/search-input/search-input.component';
+import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
 
 @UntilDestroy()
 @Component({

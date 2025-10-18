@@ -31,6 +31,8 @@ public class ContactService(ApplicationDbContext dbContext
 {
 	private const string EntryName = nameof(Contact);
 
+	private readonly DbSet<Contact> context = dbContext.Contacts;
+
 	private async Task<List<Bookmark>> GetMyBookmarks()
 		=> await bookmarkService.ListAsync(userService.GetUserId(), EntryName);
 
@@ -97,11 +99,25 @@ public class ContactService(ApplicationDbContext dbContext
 			query = query.Where(x => x.Note.Contains(parameters.Note));
 
 		if (parameters.Pattern.HasValue())
-			query = query.Where(x => x.Code.Contains(parameters.Pattern)
-									 || x.FirstName.Contains(parameters.Pattern)
-									 || x.LastName.Contains(parameters.Pattern)
-									 || x.CompanyName.Contains(parameters.Pattern)
-									 || x.Note.Contains(parameters.Pattern));
+			foreach (var itemPattern in parameters.Pattern.Split(' '))
+			{
+				query = query.Where(x => x.Code.Contains(itemPattern)
+				                         || x.FirstName.Contains(itemPattern)
+				                         || x.LastName.Contains(itemPattern)
+				                         || x.CompanyName.Contains(itemPattern)
+				                         || x.City.Contains(itemPattern)
+				                         || x.Address.Contains(itemPattern)
+				                         || x.FiscalCode.Contains(itemPattern)
+				                         || x.TaxCode.Contains(itemPattern)
+				                         || x.EMail.Contains(itemPattern)
+				                         || x.EMailAccounting.Contains(itemPattern)
+				                         || x.Pec.Contains(itemPattern)
+				                         || x.Phone1.Contains(itemPattern)
+				                         || x.Phone2.Contains(itemPattern)
+				                         //|| x.Note.Contains(itemPattern)
+				);
+			}
+
 
 		var totalCount = await query.CountAsync();
 
@@ -134,7 +150,7 @@ public class ContactService(ApplicationDbContext dbContext
 				: null;
 		}
 
-		var result = new PaginatedList<ContactModel>(model, totalCount, data.Count > parameters.PageSize);
+		var result = new PaginatedList<ContactModel>(model, totalCount, parameters.PageIndex, parameters.PageSize, data.Count > parameters.PageSize);
 		return result;
 	}
 
@@ -161,16 +177,16 @@ public class ContactService(ApplicationDbContext dbContext
 
 	public async Task<Result<ContactModel>> SaveAsync(ContactRequest request)
 	{
-		var record = await dbContext.GetData<Contact>(true)
-			.FirstOrDefaultAsync(x => x.Id == request.Id);
-
-		if (record is null)
+		var record = request.Id != Guid.Empty ? await context.FindAsync(request.Id) : null;
+		if (record == null)
 		{
-			record = new Contact();
-			dbContext.Insert(record);
+			record = new Contact
+			{
+				Id = Guid.NewGuid()
+			};
+			await context.AddAsync(record);
 		}
 
-		record.Id = request.Id != Guid.Empty ? request.Id : record.Id;
 		record.Code = request.Code;
 		record.ExternalCode = request.ExternalCode;
 		record.Title = request.Title;
@@ -215,7 +231,7 @@ public class ContactService(ApplicationDbContext dbContext
 
 		await entityTagService.UpdateTagsAsync(EntryName, record.Id, request.Tags);
 
-		await dbContext.SaveAsync();
+		await dbContext.SaveChangesAsync();
 
 		await trackingService.AddOrUpdate(EntryName, record.Id);
 

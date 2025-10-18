@@ -41,7 +41,7 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 				return operation;
 			});
 
-		templateApiGroup.MapGet("contact-summary/{contactId:guid}", ContactSummaryAsync)
+		templateApiGroup.MapGet("contact-summary/{contactId:guid}/{year}", ContactSummaryAsync)
 			.Produces<PaginatedList<ServiceModel>>(StatusCodes.Status200OK)
 			.WithOpenApi(operation =>
 			{
@@ -267,8 +267,8 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 	private static async Task<IResult> ToBeBilledAsync(HttpContext httpContext, IServiceService service, Guid clientId)
 		=> (await service.ToBeBilledAsync(clientId)).ToResponse(httpContext);
 
-	private static async Task<IResult> ContactSummaryAsync(HttpContext httpContext, IServiceService service, Guid contactId)
-		=> (await service.ContactSummaryAsync(contactId)).ToResponse(httpContext);
+	private static async Task<IResult> ContactSummaryAsync(HttpContext httpContext, IServiceService service, Guid contactId, int year)
+		=> (await service.ContactSummaryAsync(contactId, year)).ToResponse(httpContext);
 
 	private static async Task<IResult> ListAsync(HttpContext httpContext, IServiceService service, [AsParameters] ServiceSearchParameters parameters)
 		=> (await service.ListAsync(parameters)).ToResponse(httpContext);

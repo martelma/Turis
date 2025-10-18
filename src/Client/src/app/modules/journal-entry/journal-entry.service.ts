@@ -131,6 +131,8 @@ export class JournalEntryService extends BaseEntityService<JournalEntry> {
         httpParams = httpParams.append('onlyBookmarks', params?.onlyBookmarks ? 'true' : 'false');
         httpParams = httpParams.append('dateFrom', params?.dateFrom ?? '');
         httpParams = httpParams.append('dateTo', params?.dateTo ?? '');
+        httpParams = httpParams.append('description', params?.description ?? '');
+        httpParams = httpParams.append('note', params?.note ?? '');
         const queryString = httpParams.toString();
 
         const url = `?${queryString}`;

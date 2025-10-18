@@ -24,22 +24,18 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { FuseScrollResetDirective } from '@fuse/directives/scroll-reset';
-import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { fuseAnimations } from '@fuse/animations';
 import { SpinnerButtonComponent } from 'app/shared/components/ui/spinner-button/spinner-button.component';
-import { ContactService } from '../contact.service';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { BookmarkService } from 'app/modules/bookmark/bookmark.service';
 import { ContactViewComponent } from '../contact-view/contact-view.component';
 import { ContactEditComponent } from '../contact-edit/contact-edit.component';
-import { MatDialog } from '@angular/material/dialog';
 import { FuseCardComponent } from '@fuse/components/card';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { ServiceService } from 'app/modules/service/service.service';
@@ -50,10 +46,17 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
-import { getBillingStatusColorClass, getCommissionStatusColorClass, getStatusColorClass } from 'app/constants';
+import {
+    AppSettings,
+    getBillingStatusColorClass,
+    getCommissionStatusColorClass,
+    getStatusColorClass,
+} from 'app/constants';
 import { ContactSummary, ContactSummaryData } from 'app/modules/admin/dashboard/dashboard.types';
 import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggleModule } from '@angular/material/button-toggle';
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
+import { years } from 'app/shared/shared.utils';
+import { UserSettingsService } from 'app/shared/services/user-setting.service';
 
 @UntilDestroy()
 @Component({
@@ -108,6 +111,8 @@ import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
 })
 export class CollaboratorSummaryComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
     _contactId: string;
+    year: number;
+    years: number[];
 
     @Input()
     set contactId(val: string) {
@@ -134,18 +139,21 @@ export class CollaboratorSummaryComponent implements OnInit, AfterViewInit, OnCh
     constructor(
         private _serviceService: ServiceService,
         private _changeDetectorRef: ChangeDetectorRef,
+        private _userSettingsService: UserSettingsService,
         public snackBar: MatSnackBar,
     ) {}
 
     ngOnInit(): void {
+        this.years = years(5);
+
         this._serviceService.contactSummary$.pipe(untilDestroyed(this)).subscribe((data: ContactSummary) => {
             this.data = data;
 
             this._changeDetectorRef.detectChanges();
 
-            if (!this.summarySelector?.value) {
-                this.summarySelector.value = new Date().getFullYear().toString(); // Imposta un valore iniziale selezionato
-            }
+            // if (!this.summarySelector?.value) {
+            //     this.summarySelector.value = new Date().getFullYear(); // Imposta un valore iniziale selezionato
+            // }
         });
 
         // Services loading
@@ -154,29 +162,52 @@ export class CollaboratorSummaryComponent implements OnInit, AfterViewInit, OnCh
         });
     }
 
-    ngAfterViewInit() {
+    async ngAfterViewInit() {
+        this.year =
+            (await this._userSettingsService.getNumberValue(`${AppSettings.Contact}:stat-year`)) ??
+            new Date().getFullYear();
+
+        // console.log('year', this.year);
+
+        // Verifichiamo che summarySelector esista prima di impostarne il valore
+        if (this.summarySelector) {
+            setTimeout(() => {
+                this.summarySelector.value = this.year;
+                this._changeDetectorRef.markForCheck();
+            });
+        }
+
         this.loadData();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        this.contactId = changes.currentValue.currentValue;
+        if (changes['contactId']) {
+            this.contactId = changes['contactId'].currentValue;
+        }
     }
 
     ngOnDestroy(): void {}
 
     loadData() {
-        if (this._contactId) {
-            this._serviceService.listContactSummary(this._contactId).pipe(untilDestroyed(this)).subscribe();
+        if (this._contactId && this.year > 0) {
+            this._serviceService
+                .listContactSummary(this._contactId, this.year)
+                .pipe(untilDestroyed(this))
+                .subscribe(() => {
+                    this.prepareChartData();
+                });
         }
     }
 
     onToggleChange(event: MatButtonToggleChange): void {
-        this.summarySelector.value = event.value;
-        this.prepareChartData();
+        this.year = event.value;
+        this._userSettingsService.setNumberValue(`${AppSettings.Contact}:stat-year`, this.year);
+        this.summarySelector.value = this.year;
+        this.loadData();
     }
 
     private prepareChartData(): void {
-        this.currentData = this.data.years.filter(x => x.label === this.summarySelector?.value)[0];
+        this.currentData = this.data.years[0];
 
         this.chartData = {
             chart: {

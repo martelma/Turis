@@ -1,256 +1,259 @@
 {
-  "Navigation": {
-    "Home": "Home",
-    "Admin": "Admin",
-    "Elmah": "Elmah",
-    "Swagger": "Swagger",
-    "Hangfire": "Hangfire",
-    "Tags": "Tags",
-    "Users": "Users",
-    "UserManagement": "User Management",
-    "Roles": "Roles",
-    "ScopeGroups": "Scope Groups",
-    "Scopes": "Scopes",
-    "Console": "Console",
-    "Configuration": "Configuration",
-    "Languages": "Lingue",
-    "AliquoteIva": "Aliquote Iva",
-    "PriceList": "Price List",
-    "Calendar": "Calendar",
-    "Service": "Service",
-    "Contact": "Contact",
-    "Document": "Document",
-    "JournalEntry": "Journal Entry",
-    "Back": "Back",
-    "Feedback": "Feedback",
-    "PaymentTypes": "Payment Types"
-  },
-  "General": {
-    "RemoveBookmark": "Remove Bookmark",
-    "MarkAsBookmark": "Mark As Bookmark",
-    "Add": "Add",
-    "Delete": "Delete",
-    "Cancel": "Cancel",
-    "Update": "Update",
-    "Save": "Save",
-    "Edit": "Edit",
-    "For": "for",
-    "Status": "Status",
-    "Languages": "Languages",
-    "Information": "Information",
-    "New": "New",
-    "Search": "Search",
-    "UnselectAll": "Unselect All",
-    "SelectAll": "Select All",
-    "ExpandAll": "Expand All",
-    "CollapseAll": "Collapse All",
-    "Filters": "Filters",
-    "ClearFilters": "Clear Filters",
-    "Notes": "Notes",
-    "Client": "Client",
-    "Collaborator": "Collaborator",
-    "Attachments": "Attachments",
-    "ShowOnlyBookmarked": "Show Only Bookmarked",
-    "ShowAll": "Show All",
-    "Json": "Json",
-    "Commission": "Commission",
-    "Truncate": "Truncate",
-    "Dismiss": "Dismiss",
-    "EventLogs": "Event Logs",
-    "LinkedServices": "Linked Services",
-    "Accept": "Accept",
-    "Reject": "Reject",
-    "Abort": "Abort",
-    "AddIncasso": "Add Incasso"
-  },
-  "Dashboard": {
-    "WelcomeBack": "Welcome back"
-  },
-  "Tags": {
-    "Name": "Name",
-    "Description": "Description",
-    "Color": "Color"
-  },
-  "SignIn": {
-    "WelcomeTo": "Welcome to",
-    "NoAccountLabel": "Don't have an account?",
-    "ContactUs": "Contact us",
-    "UserNameOrEmailAddress": "Username or email address",
-    "UserNameOrEmailAddressIsRequired": "Username or email address is required",
-    "EmailIsNotValid": "Please enter a valid email address",
-    "UserNameNotValid": "The provided username is invalid",
-    "Password": "Password",
-    "PasswordIsRequired": "Password is required",
-    "ForgotPassword": "Forgot password?",
-    "SignIn": "Sign in",
-    "LoginFailed": "Login failed. Did you forget your user name or password?",
-    "ResetPassword": "Reset Password",
-    "PasswordConfirmation": "Confirm Password",
-    "PasswordConfirmationIsRequired": "Password is required"
-  },
-  "SignOut": {
-    "Goodbye": "See you soon!",
-    "SignOut": "You have signed out!",
-    "RedirectingIn": "Redirecting in",
-    "BeingRedirected": "You are now being redirected!",
-    "GoTo": "Go to",
-    "SignIn": "Sign in"
-  },
-  "Contact": {
-    "Code": "Code",
-    "Name": "Name"
-  },
-  "Document": {
-    "SelectADocument": "Select a document"
-  },
-  "DocumentItem": {
-    "Code": "Code",
-    "Description": "Description",
-    "AliquotaIVA": "Aliquota IVA",
-    "CodiceEsigibilitaIVA": "Codice Esigibilità IVA",
-    "CodiceNatura": "Codice Natura",
-    "RiferimentoNormativo": "Riferimento Normativo",
-    "Quantity": "Quantity",
-    "Price": "Price",
-    "DiscountPercentage": "Discount %",
-    "RowAmount": "Row Amount",
-    "VatRate": "Vat Rate"
-  },
-  "Languages": {
-    "Code": "Code",
-    "Name": "Name",
-    "CodeIso": "Code Iso"
-  },
-  "Calendar": {
-    "Code": "Code",
-    "Name": "Name"
-  },
-  "Service": {
-    "Date": "Date",
-    "Code": "Code",
-    "Title": "Title",
-    "ServiceType": "Type",
-    "DurationType": "Duration",
-    "People": "People",
-    "PriceCalculated": "Price Calculated",
-    "Price": "Price",
-    "Note": "Note",
-    "CommissionCalculated": "Commission Calculated",
-    "ServiceInfo": "Info",
-    "FilterByCode": "Code",
-    "FilterByTitle": "Title",
-    "FilterByNote": "Note",
-    "FilterByServiceType": "Service Type",
-    "FilterByDurationType": "Duration Type",
-    "FilterByDateFrom": "Date From",
-    "FilterByDateTo": "Date To",
-    "ContactAccountStatement": "Account Statement",
-    "Checked": "Checked",
-    "ToBeCheck": "To Be Check"
-  },
-  "Attachment": {
-    "Empty": "No attachment available"
-  },
-  "PriceList": {
-    "Code": "Code",
-    "Name": "Name"
-  },
-  "AliquotaIva": {
-    "Code": "Code",
-    "Name": "Name",
-    "Description": "Description",
-    "Aliquota": "Aliquota",
-    "CodiceNatura": "Codice Natura"
-  },
-  "Users": {
-    "ShowUser": "Show User",
-    "NoRoles": "There are currently no roles defined for the selected application",
-    "ResetPassword": "Reset password",
-    "ResetDefaultPassword": "Reset default password",
-    "NoScopeGroups": "There are currently no scope groups for the selected application",
-    "NoScopesInScopeGroup": "There are yet no scopes assigned to this scope group",
-    "NoScopes": "There are currently no scopes defined for the selected application",
-    "NoScopesInRole": "There are yey no scopes assigned to this role"
-  },
-  "Admin": {
-    "Console": {
-      "Title": "Admin Console",
-      "TruncateElmah": "Truncate Elmah",
-      "TruncateJobs": "Truncate Jobs",
-      "BackendConfiguration": "Backend Configuration",
-      "Configuration": "Configuration",
-      "ClientConfiguration": "Client Configuration",
-      "Utilities": "Utilities",
-      "MailNotification": "Mail Notification",
-      "MailProposal": "Mail Proposal",
-      "Value": "Value",
-      "Key": "Key"
+    "Navigation": {
+        "Home": "Home",
+        "Admin": "Admin",
+        "Elmah": "Elmah",
+        "Swagger": "Swagger",
+        "Hangfire": "Hangfire",
+        "Tags": "Tags",
+        "Users": "Users",
+        "UserManagement": "User Management",
+        "Roles": "Roles",
+        "ScopeGroups": "Scope Groups",
+        "Scopes": "Scopes",
+        "Console": "Console",
+        "Configuration": "Configuration",
+        "Languages": "Lingue",
+        "AliquoteIva": "Aliquote Iva",
+        "PriceList": "Price List",
+        "Calendar": "Calendar",
+        "Service": "Service",
+        "Contact": "Contact",
+        "Document": "Document",
+        "JournalEntry": "Journal Entry",
+        "Back": "Back",
+        "Feedback": "Feedback",
+        "PaymentTypes": "Payment Types"
+    },
+    "General": {
+        "RemoveBookmark": "Remove Bookmark",
+        "MarkAsBookmark": "Mark As Bookmark",
+        "Add": "Add",
+        "Delete": "Delete",
+        "Cancel": "Cancel",
+        "Update": "Update",
+        "Save": "Save",
+        "Edit": "Edit",
+        "For": "for",
+        "Status": "Status",
+        "Languages": "Languages",
+        "Information": "Information",
+        "New": "New",
+        "Search": "Search",
+        "UnselectAll": "Unselect All",
+        "SelectAll": "Select All",
+        "ExpandAll": "Expand All",
+        "CollapseAll": "Collapse All",
+        "Filters": "Filters",
+        "ClearFilters": "Clear Filters",
+        "Notes": "Notes",
+        "Client": "Client",
+        "Collaborator": "Collaborator",
+        "Attachments": "Attachments",
+        "ShowOnlyBookmarked": "Show Only Bookmarked",
+        "ShowAll": "Show All",
+        "Json": "Json",
+        "Commission": "Commission",
+        "Truncate": "Truncate",
+        "Dismiss": "Dismiss",
+        "EventLogs": "Event Logs",
+        "LinkedServices": "Linked Services",
+        "Accept": "Accept",
+        "Reject": "Reject",
+        "Abort": "Abort",
+        "AddIncasso": "Add Incasso",
+        "Target": "Target",
+        "CommissionStats": "Commissions"
+    },
+    "Dashboard": {
+        "WelcomeBack": "Welcome back"
+    },
+    "Tags": {
+        "Name": "Name",
+        "Description": "Description",
+        "Color": "Color"
+    },
+    "SignIn": {
+        "WelcomeTo": "Welcome to",
+        "NoAccountLabel": "Don't have an account?",
+        "ContactUs": "Contact us",
+        "UserNameOrEmailAddress": "Username or email address",
+        "UserNameOrEmailAddressIsRequired": "Username or email address is required",
+        "EmailIsNotValid": "Please enter a valid email address",
+        "UserNameNotValid": "The provided username is invalid",
+        "Password": "Password",
+        "PasswordIsRequired": "Password is required",
+        "ForgotPassword": "Forgot password?",
+        "SignIn": "Sign in",
+        "LoginFailed": "Login failed. Did you forget your user name or password?",
+        "ResetPassword": "Reset Password",
+        "PasswordConfirmation": "Confirm Password",
+        "PasswordConfirmationIsRequired": "Password is required"
+    },
+    "SignOut": {
+        "Goodbye": "See you soon!",
+        "SignOut": "You have signed out!",
+        "RedirectingIn": "Redirecting in",
+        "BeingRedirected": "You are now being redirected!",
+        "GoTo": "Go to",
+        "SignIn": "Sign in"
+    },
+    "Contact": {
+        "Code": "Code",
+        "Name": "Name"
+    },
+    "Document": {
+        "SelectADocument": "Select a document"
+    },
+    "DocumentItem": {
+        "Code": "Code",
+        "Description": "Description",
+        "AliquotaIVA": "Aliquota IVA",
+        "CodiceEsigibilitaIVA": "Codice Esigibilità IVA",
+        "CodiceNatura": "Codice Natura",
+        "RiferimentoNormativo": "Riferimento Normativo",
+        "Quantity": "Quantity",
+        "Price": "Price",
+        "DiscountPercentage": "Discount %",
+        "RowAmount": "Row Amount",
+        "VatRate": "Vat Rate"
+    },
+    "Languages": {
+        "Code": "Code",
+        "Name": "Name",
+        "CodeIso": "Code Iso"
+    },
+    "Calendar": {
+        "Code": "Code",
+        "Name": "Name"
+    },
+    "Service": {
+        "Date": "Date",
+        "Code": "Code",
+        "Title": "Title",
+        "ServiceType": "Type",
+        "DurationType": "Duration",
+        "People": "People",
+        "PriceCalculated": "Price Calculated",
+        "Price": "Price",
+        "Note": "Note",
+        "CommissionCalculated": "Commission Calculated",
+        "ServiceInfo": "Info",
+        "FilterByCode": "Code",
+        "FilterByTitle": "Title",
+        "FilterByNote": "Note",
+        "FilterByServiceType": "Service Type",
+        "FilterByDurationType": "Duration Type",
+        "FilterByDateFrom": "Date From",
+        "FilterByDateTo": "Date To",
+        "ContactAccountSummary": "Account Summary",
+        "ContactAccountStatement": "Account Statement",
+        "Checked": "Checked",
+        "ToBeCheck": "To Be Check"
+    },
+    "Attachment": {
+        "Empty": "No attachment available"
+    },
+    "PriceList": {
+        "Code": "Code",
+        "Name": "Name"
+    },
+    "AliquotaIva": {
+        "Code": "Code",
+        "Name": "Name",
+        "Description": "Description",
+        "Aliquota": "Aliquota",
+        "CodiceNatura": "Codice Natura"
+    },
+    "Users": {
+        "ShowUser": "Show User",
+        "NoRoles": "There are currently no roles defined for the selected application",
+        "ResetPassword": "Reset password",
+        "ResetDefaultPassword": "Reset default password",
+        "NoScopeGroups": "There are currently no scope groups for the selected application",
+        "NoScopesInScopeGroup": "There are yet no scopes assigned to this scope group",
+        "NoScopes": "There are currently no scopes defined for the selected application",
+        "NoScopesInRole": "There are yey no scopes assigned to this role"
+    },
+    "Admin": {
+        "Console": {
+            "Title": "Admin Console",
+            "TruncateElmah": "Truncate Elmah",
+            "TruncateJobs": "Truncate Jobs",
+            "BackendConfiguration": "Backend Configuration",
+            "Configuration": "Configuration",
+            "ClientConfiguration": "Client Configuration",
+            "Utilities": "Utilities",
+            "MailNotification": "Mail Notification",
+            "MailProposal": "Mail Proposal",
+            "Value": "Value",
+            "Key": "Key"
+        }
+    },
+    "Unauthorized": {
+        "ErrorMessage": "You are not authorized to view this page",
+        "GoBackToHome": "Go back to Home"
+    },
+    "User": {
+        "SignedInAs": "Signed in as",
+        "Profile": "Profile",
+        "SignOut": "Sign out"
+    },
+    "ChangePassword": {
+        "Title": "Change Password",
+        "OldPassword": "Old Password",
+        "NewPassword": "New Password",
+        "PasswordConfirmation": "Confirm Password",
+        "OldPasswordRequiredError": "Old password is required",
+        "NewPasswordRequiredError": "New password is required",
+        "PasswordConfirmationRequiredError": "Password confirmation is required",
+        "PasswordsMustMatchError": "Le must match"
+    },
+    "UserProfile": {
+        "ChangePassword": "Change Password"
+    },
+    "ForgotPassword": {
+        "Title": "Forgot password?",
+        "SubTitle": "Fill the form to reset your password",
+        "EmailAddress": "Email address",
+        "EmailAddressIsRequired": "Email address is required",
+        "PleaseEnterAValidEmailAddress": "Please enter a valid email address",
+        "SendResetLink": "Send reset link",
+        "ReturnTo": "Return to",
+        "SignIn": "sign in"
+    },
+    "ResetPassword": {
+        "Title": "Reset your password",
+        "SubTitle": "Create a new password for your account",
+        "Password": "Password",
+        "PasswordIsRequired": "Password is required",
+        "PasswordConfirmation": "Password (Confirm)",
+        "PasswordConfirmationIsRequired": "Password confirmation is required",
+        "PasswordsMustMatch": "Passwords must match",
+        "ResetYourPassword": "Reset your password",
+        "SignIn": "sign in"
+    },
+    "ServiceUnavailable": {
+        "ErrorMessage": "The Turis Workspace is currently unavailable or temporarily down",
+        "ContactHelpDesk": "Please contact the IT HelpDesk"
+    },
+    "Messages": {
+        "MailProposalSuccessfullySent": "Mail Proposal Successfully Sent",
+        "ElmahSuccessfullyTruncated": "Elmah Successfully Truncated",
+        "RecordSuccessfullySaved": "Record successfully saved"
+    },
+    "LinkedService": {
+        "Empty": "No linked service available"
+    },
+    "PaymentType": {
+        "Code": "Code",
+        "Name": "Name",
+        "Note": "Note",
+        "SdiCode": "Sdi Code",
+        "SdiName": "Sdi Name"
+    },
+    "Target": {
+        "Year": "Year",
+        "Month": "Month"
     }
-  },
-  "Unauthorized": {
-    "ErrorMessage": "You are not authorized to view this page",
-    "GoBackToHome": "Go back to Home"
-  },
-  "User": {
-    "SignedInAs": "Signed in as",
-    "Profile": "Profile",
-    "SignOut": "Sign out"
-  },
-  "ChangePassword": {
-    "Title": "Change Password",
-    "OldPassword": "Old Password",
-    "NewPassword": "New Password",
-    "PasswordConfirmation": "Confirm Password",
-    "OldPasswordRequiredError": "Old password is required",
-    "NewPasswordRequiredError": "New password is required",
-    "PasswordConfirmationRequiredError": "Password confirmation is required",
-    "PasswordsMustMatchError": "Le must match"
-  },
-  "UserProfile": {
-    "ChangePassword": "Change Password"
-  },
-  "ForgotPassword": {
-    "Title": "Forgot password?",
-    "SubTitle": "Fill the form to reset your password",
-    "EmailAddress": "Email address",
-    "EmailAddressIsRequired": "Email address is required",
-    "PleaseEnterAValidEmailAddress": "Please enter a valid email address",
-    "SendResetLink": "Send reset link",
-    "ReturnTo": "Return to",
-    "SignIn": "sign in"
-  },
-  "ResetPassword": {
-    "Title": "Reset your password",
-    "SubTitle": "Create a new password for your account",
-    "Password": "Password",
-    "PasswordIsRequired": "Password is required",
-    "PasswordConfirmation": "Password (Confirm)",
-    "PasswordConfirmationIsRequired": "Password confirmation is required",
-    "PasswordsMustMatch": "Passwords must match",
-    "ResetYourPassword": "Reset your password",
-    "SignIn": "sign in"
-  },
-  "ServiceUnavailable": {
-    "ErrorMessage": "The Turis Workspace is currently unavailable or temporarily down",
-    "ContactHelpDesk": "Please contact the IT HelpDesk"
-  },
-  "Messages": {
-    "MailProposalSuccessfullySent": "Mail Proposal Successfully Sent",
-    "ElmahSuccessfullyTruncated": "Elmah Successfully Truncated",
-    "RecordSuccessfullySaved": "Record successfully saved"
-  },
-  "LinkedService": {
-    "Empty": "No linked service available"
-  },
-  "PaymentType": {
-    "Code": "Code",
-    "Name": "Name",
-    "Note": "Note",
-    "SdiCode": "Sdi Code",
-    "SdiName": "Sdi Name"
-  },
-  "Target": {
-    "Year": "Year",
-    "Month": "Month"
-  }
 }

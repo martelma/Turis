@@ -72,3 +72,14 @@ export function generateGuid(): string {
 export const isProductionMode = environment.production;
 export const isStagingMode = environment.staging;
 export const isDevMode = environment.dev;
+
+export function years(number: number): number[] {
+    const nextYear = new Date().getFullYear() + 1;
+    const startYear = nextYear - number;
+    const years: number[] = [];
+
+    for (let i = 0; i < 5; i++) {
+        years.push(startYear + i);
+    }
+    return years;
+}

@@ -2,7 +2,7 @@
 
 public class Paginator(BaseSearchParameters parameters)
 {
-	public int PageIndex { get; set; } = parameters.PageIndex.GetValueOrDefault(0);
-	public int PageSize { get; set; } = parameters.PageSize.GetValueOrDefault(int.MaxValue);
+	public int PageIndex { get; set; } = parameters.PageIndex;
+	public int PageSize { get; set; } = parameters.PageSize;
     public string OrderBy { get; set; }
 }

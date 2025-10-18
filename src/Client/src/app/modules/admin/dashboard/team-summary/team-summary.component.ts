@@ -6,7 +6,7 @@ import { User } from 'app/core/user/user.types';
 import { Router } from '@angular/router';
 import { CommissionStat, TeamSummary } from '../dashboard.types';
 import { ContactService } from 'app/modules/contact/contact.service';
-import { log } from 'app/shared/shared.utils';
+import { log, years } from 'app/shared/shared.utils';
 import { Contact } from 'app/modules/contact/contact.types';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -151,9 +151,7 @@ export class TeamSummaryComponent implements OnInit, AfterViewInit {
             this.teamSummary = data;
         });
 
-        const currentYear = new Date().getFullYear();
-        this.year = currentYear;
-        this.years = Array.from({ length: 5 }, (_, i) => currentYear - i);
+        this.years = years(5);
     }
 
     async ngAfterViewInit(): Promise<void> {
