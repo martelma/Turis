@@ -20,7 +20,7 @@ public class ContactEndpoints : IEndpointRouteHandlerBuilder
 		templateApiGroup.MapGet("filter-clients/{pattern}", FilterClients);
 		templateApiGroup.MapGet("filter-collaborators/{pattern}", FilterCollaborators);
 		templateApiGroup.MapGet("collaborators-with-monitor", CollaboratorsWithMonitor);
-		templateApiGroup.MapGet("unbilled-list", UnbilledSummaryAsync).AllowAnonymous();
+		templateApiGroup.MapGet("unbilled-list", UnbilledSummaryAsync);
 		templateApiGroup.MapPost(string.Empty, Save);
 		templateApiGroup.MapPut(string.Empty, Save);
 		templateApiGroup.MapDelete("{id:guid}", Delete);

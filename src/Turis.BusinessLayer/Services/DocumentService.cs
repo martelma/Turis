@@ -3,11 +3,12 @@ using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
 using OperationResults;
 using System.Globalization;
+using JeMa.Shared.AspNetCore.Extensions;
 using JeMa.Shared.Extensions;
+using JeMa.Shared.Parameters.Base;
 using TinyHelpers.Extensions;
 using Turis.BusinessLayer.Extensions;
 using Turis.BusinessLayer.Parameters;
-using Turis.BusinessLayer.Parameters.Base;
 using Turis.BusinessLayer.Services.Interfaces;
 using Turis.Common.Enums;
 using Turis.Common.Models;
@@ -51,7 +52,7 @@ public class DocumentService(ApplicationDbContext dbContext
 		if (record is null)
 			return Result.Fail(FailureReasons.ItemNotFound);
 
-		return await record.ToModel(bookmarks);
+		return await record.ToModelAsync(bookmarks);
 	}
 
 	public async Task<Result<DocumentModel>> GetAsync(string sectional, int number)
@@ -64,7 +65,7 @@ public class DocumentService(ApplicationDbContext dbContext
 		if (record is null)
 			return Result.Fail(FailureReasons.ItemNotFound);
 
-		return await record.ToModel(bookmarks);
+		return await record.ToModelAsync(bookmarks);
 	}
 
 	public async Task<Result<PaginatedList<DocumentModel>>> ListAsync(DocumentSearchParameters parameters)
@@ -150,16 +151,15 @@ public class DocumentService(ApplicationDbContext dbContext
 
 		try
 		{
-			var page = query
-				.Skip(paginator.PageIndex * paginator.PageSize)
-				.Take(paginator.PageSize)
-				.ToList();
+			query = query.TakePage(parameters);
 
-			var list = await page.ToModel(bookmarks);
+			var list = await query.ToListAsync();
 
-			var result = new PaginatedList<DocumentModel>(list, totalCount, paginator.PageIndex, paginator.PageSize);
+			var model = await list.ToModelAsync(bookmarks);
 
-			return await Task.FromResult(result);
+			var result = model.ToPaginatedList(totalCount, parameters);
+
+			return result;
 		}
 		catch (Exception ex)
 		{

@@ -1,17 +1,15 @@
-﻿using FatturaElettronicaAttiva;
-using JeMa.Shared.Extensions;
+﻿using JeMa.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OperationResults;
 using System.Globalization;
-using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Linq.Dynamic.Core.Exceptions;
+using JeMa.Shared.Parameters.Base;
 using TinyHelpers.Extensions;
 using Turis.BusinessLayer.Events;
 using Turis.BusinessLayer.Extensions;
 using Turis.BusinessLayer.Parameters;
-using Turis.BusinessLayer.Parameters.Base;
 using Turis.BusinessLayer.Resources;
 using Turis.BusinessLayer.Services.Email;
 using Turis.BusinessLayer.Services.Interfaces;
@@ -386,6 +384,8 @@ public class ServiceService(ApplicationDbContext dbContext
 				return Result.Fail(FailureReasons.ClientError, string.Format(Errors.OrderByError, parameters.OrderBy));
 			}
 		}
+
+		var log = query.ToQueryString();
 
 		// Prova a prendere un elemento in più di quelli richiesti per controllare se ci sono pagine successive.
 		var data = query

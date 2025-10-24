@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Turis.BusinessLayer.Parameters.Base;
+﻿using JeMa.Shared.Parameters.Base;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Turis.BusinessLayer.Parameters;
 
-public class EventLogSearchParameters : BaseSearchParameters
+public class EventLogSearchParameters : PaginationParameters
 {
 	[FromQuery]
 	public string EntityName { get; set; }

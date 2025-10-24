@@ -14,8 +14,8 @@
         </div>
         <!-- Actions -->
         <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
-            <app-search-input class="min-w-90" [placeholder]="'General.Filter'" (callbackFn)="filter($event)">
-            </app-search-input>
+            <!-- <app-search-input class="min-w-90" [placeholder]="'General.Filter'" (callbackFn)="filter($event)">
+            </app-search-input> -->
 
             <button class="ml-4" mat-flat-button [color]="'primary'" (click)="createService()">
                 <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
@@ -36,7 +36,7 @@
             <span class="ml-2">{{ 'General.Filters' | transloco }}</span>
         </button>
 
-        <button mat-flat-button color="primary" class="ml-2" (click)="toggleViewMode()">
+        <!-- <button mat-flat-button color="primary" class="ml-2" (click)="toggleViewMode()">
             <mat-icon
                 *ngIf="viewMode === 'calendar'"
                 class="icon-size-5 mr-2"
@@ -46,7 +46,7 @@
                 class="icon-size-5 mr-2"
                 [svgIcon]="'heroicons_outline:calendar'"></mat-icon>
             <span class="ml-2">{{ viewMode === 'calendar' ? 'Switch to List View' : 'Switch to Calendar View' }}</span>
-        </button>
+        </button> -->
     </div>
 
     <!-- Main -->

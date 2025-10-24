@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Turis.BusinessLayer.Parameters.Base;
+﻿using JeMa.Shared.Parameters.Base;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Turis.BusinessLayer.Parameters;
 
-public class CollaboratorSearchParameters : BaseSearchParameters
+public class CollaboratorSearchParameters : PaginationParameters
 {
 	[FromQuery]
 	public string Pattern { get; set; }

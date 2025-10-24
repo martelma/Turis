@@ -1,13 +1,13 @@
 ﻿using System.Globalization;
 using FluentDateTimeOffset;
 using JeMa.Shared.Extensions;
+using JeMa.Shared.Parameters.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OperationResults;
 using TinyHelpers.Extensions;
 using Turis.BusinessLayer.Extensions;
 using Turis.BusinessLayer.Parameters;
-using Turis.BusinessLayer.Parameters.Base;
 using Turis.BusinessLayer.Services.Interfaces;
 using Turis.Common.Models;
 using Turis.Common.Models.Requests;

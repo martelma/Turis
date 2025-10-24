@@ -3,20 +3,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Turis.BusinessLayer.Parameters;
 
-public class ContactSearchParameters : PaginationParameters
+public class PaymentSearchParameters: PaginationParameters
 {
 	[FromQuery]
 	public bool OnlyBookmarks { get; set; } = false;
 	[FromQuery]
 	public string Pattern { get; set; }
 	[FromQuery]
-	public string Code { get; set; }
+	public int NumberFrom { get; set; }
 	[FromQuery]
-	public string FirstName { get; set; }
+	public int NumberTo { get; set; }
 	[FromQuery]
-	public string LastName { get; set; }
+	public string DateFrom { get; set; }
 	[FromQuery]
-	public string CompanyName { get; set; }
-	[FromQuery]
-	public string Note { get; set; }
+	public string DateTo { get; set; }
 }

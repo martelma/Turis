@@ -1,13 +1,13 @@
 ﻿using System.Linq.Dynamic.Core;
 using System.Linq.Dynamic.Core.Exceptions;
 using JeMa.Shared.Extensions;
+using JeMa.Shared.Parameters.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OperationResults;
 using TinyHelpers.Extensions;
 using Turis.BusinessLayer.Extensions;
 using Turis.BusinessLayer.Parameters;
-using Turis.BusinessLayer.Parameters.Base;
 using Turis.BusinessLayer.Resources;
 using Turis.BusinessLayer.Services.Interfaces;
 using Turis.Common.Enums;

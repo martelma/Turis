@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Turis.BusinessLayer.Parameters.Base;
+﻿using JeMa.Shared.Parameters.Base;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Turis.BusinessLayer.Parameters;
 
-public class DocumentSearchParameters: BaseSearchParameters
+public class DocumentSearchParameters: PaginationParameters
 {
 	[FromQuery]
 	public bool OnlyBookmarks { get; set; } = false;

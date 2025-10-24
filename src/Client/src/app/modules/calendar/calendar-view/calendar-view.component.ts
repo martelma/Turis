@@ -124,7 +124,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy, AfterViewInit {
     drawerDetailMode: 'over' | 'side' = 'side';
 
     // viewMode: 'calendar' | 'list' = 'calendar';
-    viewMode = 'calendar';
+    viewMode = 'list';
 
     flashMessage: 'success' | 'error' | null = null;
 
@@ -204,6 +204,8 @@ export class CalendarViewComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     async toggleViewMode() {
+        return;
+
         this.viewMode = this.viewMode === 'calendar' ? 'list' : 'calendar';
         this._userSettingsService.setValue(`${AppSettings.Calendar}:toggleViewMode`, this.viewMode);
     }
@@ -290,7 +292,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     createService() {
-        this._router.navigate(['service', 'new'], { relativeTo: this._activatedRoute });
+        this._router.navigate(['../service', 'new'], { relativeTo: this._activatedRoute });
     }
 
     closeDrawer(): void {

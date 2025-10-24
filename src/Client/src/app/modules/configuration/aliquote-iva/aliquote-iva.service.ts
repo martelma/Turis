@@ -17,7 +17,7 @@ export class AliquotaIvaService extends BaseEntityService<AliquotaIva> {
     });
     constructor(http: HttpClient) {
         super(http);
-        this.defaultApiController = 'aliquotaIva';
+        this.defaultApiController = 'aliquota-iva';
     }
 
     /**

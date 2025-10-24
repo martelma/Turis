@@ -60,12 +60,6 @@ Contacts
 		introdurre link verso servizio
 		introdurre link verso documento
 
-	Account Summary
-		migliorare query (far uscire tutti i mesi anche se non ci sono dati)
-
-	Commissioni
-		migliorare query (far uscire tutti i mesi anche se non ci sono dati)
-
 Servizi
 	test CRUD
 	gestione dei filtri basati sui tags
@@ -76,6 +70,11 @@ Home
 Agenda
 	enrich item details
 	introdurre componente calendario così come utilizzata nel box per mettere i badge sui giorni
+	
+Calendar
+	gestire filtro in alto a dx
+	test filtri
+
 -------------------------------------------------------------------
 		
 -------------------------------------------------------------------
@@ -94,3 +93,7 @@ cose fatte:
 Prima Nota
 -------------------------------------------------------------------	
 
+
+migration:
+	manca da gestire la parte documenti
+	

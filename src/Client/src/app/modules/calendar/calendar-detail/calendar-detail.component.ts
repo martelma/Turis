@@ -1,35 +1,24 @@
 import { CommonModule, CurrencyPipe, JsonPipe, NgClass, NgFor, NgIf, NgStyle, NgTemplateOutlet } from '@angular/common';
-import {
-    ChangeDetectorRef,
-    Component,
-    EventEmitter,
-    Input,
-    OnInit,
-    Output,
-    ViewChild,
-    ViewEncapsulation,
-} from '@angular/core';
-import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormsModule, ReactiveFormsModule, UntypedFormGroup } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatSortModule } from '@angular/material/sort';
 import { fuseAnimations } from '@fuse/animations';
-import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { trackByFn } from 'app/shared';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
 import { Service, ServiceSearchParameters } from 'app/modules/service/service.types';
-import { ServiceService } from 'app/modules/service/service.service';
 import { MaterialModule } from 'app/modules/material.module';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import {
@@ -43,10 +32,9 @@ import { ServiceSidebarComponent } from 'app/modules/service/service-sidebar/ser
 import { MatDrawer } from '@angular/material/sidenav';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { UserSettingsService } from 'app/shared/services/user-setting.service';
+import { RouterLink } from '@angular/router';
 import { CalendarViewGridComponent } from '../calendar-view-grid/calendar-view-grid.component';
+import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summary.component';
 
 @UntilDestroy()
 @Component({
@@ -88,6 +76,7 @@ import { CalendarViewGridComponent } from '../calendar-view-grid/calendar-view-g
         FuseDrawerComponent,
         ServiceSidebarComponent,
         CalendarViewGridComponent,
+        TagSummaryComponent,
     ],
 })
 export class CalendarDetailComponent implements OnInit {

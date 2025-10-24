@@ -1,5 +1,4 @@
-﻿using Turis.Common.Enums;
-using Turis.Common.Models.Base;
+﻿using Turis.Common.Models.Base;
 
 namespace Turis.Common.Models;
 

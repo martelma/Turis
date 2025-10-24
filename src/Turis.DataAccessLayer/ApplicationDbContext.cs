@@ -22,6 +22,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 	public DbSet<Contact> Contacts { get; set; }
 	public DbSet<Document> Documents { get; set; }
 	public DbSet<DocumentItem> DocumentItems { get; set; }
+	public DbSet<Payment> Payments { get; set; }
+	public DbSet<PaymentItem> PaymentItems { get; set; }
 	public DbSet<Bookmark> Bookmarks { get; set; }
 	public DbSet<Attachment> Attachments { get; set; }
 	public DbSet<EntityTag> EntityTags { get; set; }
@@ -47,7 +49,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 		// Configura il DTO come keyless entity per le stored procedure
 		modelBuilder.Entity<CommissionStat>().HasNoKey();
 	}
-
 
 	protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
 	{

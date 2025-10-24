@@ -239,6 +239,8 @@ export class ContactService extends BaseEntityService<Contact> {
         let httpParams = new HttpParams();
         httpParams = httpParams.append('year', year);
         httpParams = httpParams.append('pattern', pattern ?? '');
+        httpParams = httpParams.append('pageIndex', 0);
+        httpParams = httpParams.append('pageSize', 1000);
         const queryString = httpParams.toString();
 
         const url = `team-summary?${queryString}`;

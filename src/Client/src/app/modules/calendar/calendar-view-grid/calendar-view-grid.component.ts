@@ -1,4 +1,14 @@
-import { NgIf, NgFor, NgClass, NgStyle, CurrencyPipe, NgTemplateOutlet, JsonPipe, CommonModule } from '@angular/common';
+import {
+    NgIf,
+    NgFor,
+    NgClass,
+    NgStyle,
+    CurrencyPipe,
+    NgTemplateOutlet,
+    JsonPipe,
+    CommonModule,
+    DatePipe,
+} from '@angular/common';
 import {
     Component,
     ViewEncapsulation,
@@ -43,6 +53,11 @@ import { GlobalShortcutsService } from 'app/components/ui/global-shortcuts/globa
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { CalendarBadgesComponent } from 'app/components/ui/calendar-badges/calendar-badges.component';
 import { FuseCardComponent } from '@fuse/components/card';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
+import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summary.component';
 
 @UntilDestroy()
 @Component({
@@ -52,7 +67,7 @@ import { FuseCardComponent } from '@fuse/components/card';
     styles: [
         `
             .list-grid {
-                grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
             }
         `,
     ],
@@ -64,6 +79,7 @@ import { FuseCardComponent } from '@fuse/components/card';
         NgFor,
         NgClass,
         NgStyle,
+        DatePipe,
         CurrencyPipe,
         RouterLink,
         FormsModule,
@@ -82,6 +98,10 @@ import { FuseCardComponent } from '@fuse/components/card';
         MatCheckboxModule,
         MatRippleModule,
         MatTooltipModule,
+        MatTabsModule,
+        MatTableModule,
+        MatMenuModule,
+        MatBadgeModule,
         TranslocoModule,
         CalendarSelectorComponent,
         SearchInputComponent,
@@ -97,6 +117,7 @@ import { FuseCardComponent } from '@fuse/components/card';
         KeyboardShortcutsModule,
         CalendarBadgesComponent,
         FuseCardComponent,
+        TagSummaryComponent,
     ],
 })
 export class CalendarViewGridComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -149,6 +170,7 @@ export class CalendarViewGridComponent implements OnInit, OnDestroy, AfterViewIn
     @Output() dateToChange = new EventEmitter<Date>();
 
     private _services: Service[] = [];
+    dataSource: any;
     @Input()
     get services(): Service[] {
         return this._services;
@@ -156,6 +178,10 @@ export class CalendarViewGridComponent implements OnInit, OnDestroy, AfterViewIn
 
     set services(services: Service[]) {
         this._services = services;
+
+        setTimeout(async () => {
+            this.dataSource = new MatTableDataSource(this._services);
+        }, 0);
 
         // Raggruppa i servizi per data e conta quanti ce ne sono per ogni data
         this.calendarEvents = this._services.reduce((map, item) => {
@@ -182,6 +208,19 @@ export class CalendarViewGridComponent implements OnInit, OnDestroy, AfterViewIn
     results: PaginatedListResult<Service>;
 
     selectedItem: Service;
+
+    columnsToDisplay: string[] = [
+        'status',
+        'tags',
+        'date',
+        'serviceType',
+        'durationType',
+        'people',
+        'languages',
+        'title',
+        'client',
+        'collaborator',
+    ];
 
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,

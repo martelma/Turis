@@ -1,10 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using JeMa.Shared.AspNetCore.Extensions;
+using JeMa.Shared.Extensions;
+using JeMa.Shared.Parameters.Base;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OperationResults;
 using TinyHelpers.Extensions;
 using Turis.BusinessLayer.Extensions;
 using Turis.BusinessLayer.Parameters;
-using Turis.BusinessLayer.Parameters.Base;
 using Turis.BusinessLayer.Services.Interfaces;
 using Turis.Common.Enums;
 using Turis.Common.Models;
@@ -78,15 +80,15 @@ public class PriceListService(ApplicationDbContext dbContext
 		else
 			query = query.OrderBy(x => x.Name);
 
-		var list = await query
-			.Skip(paginator.PageIndex * paginator.PageSize)
-			.Take(paginator.PageSize)
-			.Select(x => x.ToModel())
-			.ToListAsync();
+		query = query.TakePage(parameters);
 
-		var result = new PaginatedList<PriceListModel>(list, totalCount, paginator.PageIndex, paginator.PageSize);
+		var list = await query.ToListAsync();
 
-		return await Task.FromResult(result);
+		var model = list.ToModel();
+
+		var result = model.ToPaginatedList(totalCount, parameters);
+
+		return result;
 	}
 
 	public async Task<Result> SaveAsync(PriceListRequest model)

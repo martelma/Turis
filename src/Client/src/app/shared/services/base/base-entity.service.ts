@@ -46,7 +46,14 @@ export class BaseEntityService<T> extends BaseService {
                   [header: string]: string | string[];
               },
     ): Observable<PaginatedList<T>> {
-        const queryString = httpParams?.toString();
+        let params = httpParams || new HttpParams();
+        if (!params.has('pageIndex')) {
+            params = params.set('pageIndex', 0);
+        }
+        if (!params.has('pageSize')) {
+            params = params.set('pageSize', 1000);
+        }
+        const queryString = params?.toString();
         if (queryString) {
             return this.apiGet<PaginatedList<T>>(`?${queryString}`, apiController, httpHeaders);
         } else {

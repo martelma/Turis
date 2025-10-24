@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Turis.BusinessLayer.Parameters.Base;
+﻿using JeMa.Shared.Parameters.Base;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Turis.BusinessLayer.Parameters;
 
-public class TagSearchParameters: BaseSearchParameters
+public class TagSearchParameters: PaginationParameters
 {
 	[FromQuery]
 	public string Pattern { get; set; }

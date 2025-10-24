@@ -6,7 +6,7 @@ namespace Turis.BusinessLayer.Extensions;
 
 public static class DocumentExtensions
 {
-	public static async Task<DocumentModel> ToModel(this Document entity, IEnumerable<Bookmark> bookmarks)
+	public static async Task<DocumentModel> ToModelAsync(this Document entity, IEnumerable<Bookmark> bookmarks)
 	{
 		var bookmarkId = bookmarks?.FirstOrDefault(x => x.EntityId == entity.Id)?.Id;
 
@@ -48,17 +48,17 @@ public static class DocumentExtensions
 		model.Items = await entity.Items.ToModel();
 
 		if (entity.DocumentRef != null)
-			model.DocumentRef = await entity.DocumentRef.ToModel(bookmarks);
+			model.DocumentRef = await entity.DocumentRef.ToModelAsync(bookmarks);
 
 		return model;
 	}
 
-	public static async Task<List<DocumentModel>> ToModel(this IEnumerable<Document> list, IEnumerable<Bookmark> bookmarks)
+	public static async Task<List<DocumentModel>> ToModelAsync(this IEnumerable<Document> list, IEnumerable<Bookmark> bookmarks)
 	{
 		var model = new List<DocumentModel>();
 		if (list != null)
 			foreach (var item in list)
-				model.Add(await item.ToModel(bookmarks));
+				model.Add(await item.ToModelAsync(bookmarks));
 
 		return model;
 	}
