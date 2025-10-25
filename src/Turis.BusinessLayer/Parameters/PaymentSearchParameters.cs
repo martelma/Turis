@@ -9,10 +9,10 @@ public class PaymentSearchParameters: PaginationParameters
 	public bool OnlyBookmarks { get; set; } = false;
 	[FromQuery]
 	public string Pattern { get; set; }
-	[FromQuery]
-	public int NumberFrom { get; set; }
-	[FromQuery]
-	public int NumberTo { get; set; }
+	//[FromQuery]
+	//public int NumberFrom { get; set; }
+	//[FromQuery]
+	//public int NumberTo { get; set; }
 	[FromQuery]
 	public string DateFrom { get; set; }
 	[FromQuery]

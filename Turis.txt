@@ -47,6 +47,7 @@ se un documento è già stato inviato allo SDI, dare evidenza del codice univoco
 
 In home 
 	admin 
+		controllare conteggi della dashboard admin
 		nel drill down per ciascun raggruppamento, utilizzare lista già usata in calendar (a cui però dobbiamo aggiungere client e collaborator)
 
 

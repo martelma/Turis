@@ -1,0 +1,13 @@
+<div class="flex items-center w-full">
+    <mat-button-toggle-group
+        *ngIf="years.length > 0"
+        #summarySelector="matButtonToggleGroup"
+        name="currentYear"
+        #name="ngModel"
+        [(ngModel)]="currentYear"
+        (change)="onToggleChange($event)">
+        <mat-button-toggle *ngFor="let year of years" [value]="year">
+            {{ year }}
+        </mat-button-toggle>
+    </mat-button-toggle-group>
+</div>

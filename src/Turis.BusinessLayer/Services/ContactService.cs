@@ -289,21 +289,40 @@ public class ContactService(ApplicationDbContext dbContext
 		return Task.FromResult<Result<IEnumerable<ContactModel>>>(model);
 	}
 
-	public async Task<Result<List<ClientBillingSummaryModel>>> UnbilledSummaryAsync()
+	public async Task<Result<List<ClientBillingSummaryModel>>> UnbilledSummaryAsync(int year)
 	{
-		var list = (
-			from s in dbContext.GetData<DataAccessLayer.Entities.Service>()
-			join di in dbContext.GetData<DocumentItem>() on s.Id equals di.ServiceId into gj
-			from subDi in gj.DefaultIfEmpty()
-			where subDi == null && s.ClientId != null
-			group s by s.Client into g
-			select new
+		//var list = (
+		//	from s in dbContext.GetData<DataAccessLayer.Entities.Service>()
+		//	join di in dbContext.GetData<DocumentItem>() on s.Id equals di.ServiceId into gj
+		//	from subDi in gj.DefaultIfEmpty()
+		//	where subDi == null && s.ClientId != null
+		//	group s by s.Client into g
+		//	select new
+		//	{
+		//		Client = g.Key,
+		//		ServiceCount = g.Count(),
+		//		TotalAmount = g.Sum(x => x.PriceCalculated)
+		//	}
+		//).ToList();
+
+		var list = dbContext.GetData<DataAccessLayer.Entities.Service>()
+			.Where(x => x.Date.Year == year)
+			.Where(x => x.ClientId != null)
+			.GroupJoin(
+				dbContext.GetData<DocumentItem>(),
+				s => s.Id,
+				di => di.ServiceId,
+				(s, diGroup) => new { Service = s, HasDocument = diGroup.Any() }
+			)
+			.Where(x => !x.HasDocument)
+			.GroupBy(x => x.Service.Client)
+			.Select(g => new
 			{
 				Client = g.Key,
 				ServiceCount = g.Count(),
-				TotalAmount = g.Sum(x => x.PriceCalculated)
-			}
-		).ToList();
+				TotalAmount = g.Sum(x => x.Service.PriceCalculated)
+			})
+			.ToList();
 
 		var model = new List<ClientBillingSummaryModel>();
 		foreach (var item in list)
@@ -316,13 +335,69 @@ public class ContactService(ApplicationDbContext dbContext
 			});
 		}
 
-		return model;
+		return model.OrderByDescending(x => x.TotalAmount).ToList();
+	}
+
+	public async Task<Result<List<CollaboratorPaymentSummary>>> UnpaidSummaryAsync(int year)
+	{
+		//var list = (
+		//	from s in dbContext.GetData<DataAccessLayer.Entities.Service>()
+		//	join di in dbContext.GetData<PaymentItem>() on s.Id equals di.ServiceId into gj
+		//	from subDi in gj.DefaultIfEmpty()
+		//	where subDi == null && s.ClientId != null
+		//	group s by s.Client into g
+		//	select new
+		//	{
+		//		Collaborator = g.Key,
+		//		ServiceCount = g.Count(),
+		//		TotalAmount = g.Sum(x => x.PriceCalculated)
+		//	}
+		//).ToList();
+
+		var list = dbContext.GetData<DataAccessLayer.Entities.Service>()
+			.Where(x => x.Date.Year == year)
+			.Where(x => x.CollaboratorId != null)
+			.GroupJoin(
+				dbContext.GetData<PaymentItem>(),
+				s => s.Id,
+				di => di.ServiceId,
+				(s, diGroup) => new { Service = s, HasDocument = diGroup.Any() }
+			)
+			.Where(x => !x.HasDocument)
+			.GroupBy(x => x.Service.Collaborator)
+			.Select(g => new
+			{
+				Collaborator = g.Key,
+				ServiceCount = g.Count(),
+				TotalAmount = g.Sum(x => x.Service.PriceCalculated)
+			})
+			.ToList();
+
+		var model = new List<CollaboratorPaymentSummary>();
+		foreach (var item in list)
+		{
+			model.Add(new CollaboratorPaymentSummary
+			{
+				Collaborator = item.Collaborator.ToModel(),
+				ServiceCount = item.ServiceCount,
+				TotalAmount = item.TotalAmount
+			});
+		}
+
+		return model.OrderByDescending(x=>x.TotalAmount).ToList();
 	}
 }
 
 public class ClientBillingSummaryModel
 {
 	public ContactModel Client { get; set; }
+	public int ServiceCount { get; set; }
+	public decimal TotalAmount { get; set; }
+}
+
+public class CollaboratorPaymentSummary
+{
+	public ContactModel Collaborator { get; set; }
 	public int ServiceCount { get; set; }
 	public decimal TotalAmount { get; set; }
 }

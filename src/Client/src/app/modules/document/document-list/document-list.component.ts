@@ -101,7 +101,7 @@ import { debounceTime, switchMap, Observable } from 'rxjs';
 })
 export class DocumentListComponent implements OnInit, AfterViewInit {
     @Input() debounce = 500;
-    @ViewChild('serviceList') serviceList: ElementRef;
+    // @ViewChild('serviceList') serviceList: ElementRef;
 
     drawerFilterMode: 'over' | 'side' = 'side';
     drawerFilterOpened = false;
@@ -180,7 +180,7 @@ export class DocumentListComponent implements OnInit, AfterViewInit {
     }
 
     async ngAfterViewInit(): Promise<void> {
-        this.viewList = await this._userSettingsService.getBooleanValue(`${AppSettings.Document}:viewList`);
+        this.viewList = await this._userSettingsService.getBooleanValue(`${AppSettings.Document}:viewList`, true);
 
         if (this._sort && this._paginator) {
             // Set the initial sort

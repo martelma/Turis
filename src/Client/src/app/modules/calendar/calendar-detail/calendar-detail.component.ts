@@ -40,6 +40,7 @@ import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summa
 @Component({
     selector: 'app-calendar-detail',
     templateUrl: './calendar-detail.component.html',
+    styleUrls: ['./calendar-detail.component.scss'],
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations,
     standalone: true,
@@ -80,6 +81,8 @@ import { TagSummaryComponent } from 'app/shared/components/tag-summary/tag-summa
     ],
 })
 export class CalendarDetailComponent implements OnInit {
+    // Stato hover per ogni riga della sezione Information
+    infoRowHover: boolean[] = Array(10).fill(false);
     @ViewChild('detailsDrawer') detailsDrawer: MatDrawer;
 
     @Input() service: Service;
@@ -109,6 +112,8 @@ export class CalendarDetailComponent implements OnInit {
 
     serviceTypes = ServiceTypes;
     durationTypes = DurationTypes;
+
+    clientInfoBg = false;
 
     trackByFn = trackByFn;
 

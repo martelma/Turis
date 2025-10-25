@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
 using OperationResults;
 using System.Globalization;
+using JeMa.Shared.AspNetCore.Extensions;
 using JeMa.Shared.Parameters.Base;
 using TinyHelpers.Extensions;
 using Turis.BusinessLayer.Extensions;
@@ -48,7 +49,7 @@ public class PaymentService(ApplicationDbContext dbContext
 		if (record is null)
 			return Result.Fail(FailureReasons.ItemNotFound);
 
-		return await record.ToModel(bookmarks);
+		return await record.ToModelAsync(bookmarks);
 	}
 
 	public async Task<Result<PaginatedList<PaymentModel>>> ListAsync(PaymentSearchParameters parameters)
@@ -122,16 +123,15 @@ public class PaymentService(ApplicationDbContext dbContext
 
 		try
 		{
-			var page = query
-				.Skip(paginator.PageIndex * paginator.PageSize)
-				.Take(paginator.PageSize)
-				.ToList();
+			query = query.TakePage(parameters);
 
-			var list = await page.ToModel(bookmarks);
+			var list = await query.ToListAsync();
 
-			var result = new PaginatedList<PaymentModel>(list, totalCount, paginator.PageIndex, paginator.PageSize);
+			var model = await list.ToModelAsync(bookmarks);
 
-			return await Task.FromResult(result);
+			var result = model.ToPaginatedList(totalCount, parameters);
+
+			return result;
 		}
 		catch (Exception ex)
 		{

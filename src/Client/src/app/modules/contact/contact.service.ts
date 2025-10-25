@@ -20,14 +20,13 @@ import { BaseEntityService } from 'app/shared/services';
 import { environment } from 'environments/environment';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TeamSummary } from '../admin/dashboard/dashboard.types';
-import { ClientBillingSummary } from '../document/document.types';
+import { ClientBillingSummary, CollaboratorPaymentSummary } from '../document/document.types';
 import { CollaboratorSearchParameters } from '../collaborator/collaborator.types';
 
 @Injectable({ providedIn: 'root' })
 export class ContactService extends BaseEntityService<Contact> {
     selectedContactChanged: BehaviorSubject<any> = new BehaviorSubject(null);
     private _contactEdited: BehaviorSubject<string> = new BehaviorSubject(null);
-    private _contactCopied: BehaviorSubject<string> = new BehaviorSubject(null);
 
     private _teamSummary: BehaviorSubject<TeamSummary> = new BehaviorSubject(null);
     private _contacts: BehaviorSubject<PaginatedListResult<Contact>> = new BehaviorSubject(null);
@@ -101,9 +100,14 @@ export class ContactService extends BaseEntityService<Contact> {
         );
     }
 
-    listClientsToBeBilled(): Observable<ClientBillingSummary[]> {
-        const url = `unbilled-list`;
+    listClientsToBeBilled(year: number): Observable<ClientBillingSummary[]> {
+        const url = `unbilled-list/${year}`;
         return this.apiGet<ClientBillingSummary[]>(url);
+    }
+
+    listCollaboratorsToBePaid(year: number): Observable<CollaboratorPaymentSummary[]> {
+        const url = `unpaid-list/${year}`;
+        return this.apiGet<CollaboratorPaymentSummary[]>(url);
     }
 
     collaboratorsWithMonitor(params: CollaboratorSearchParameters): Observable<Collaborator[]> {

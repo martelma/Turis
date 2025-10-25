@@ -11,7 +11,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { DatePipe, JsonPipe, NgFor, NgIf, NgClass, DecimalPipe } from '@angular/common';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Router, RouterLink } from '@angular/router';
-import { AppSettings, getStatusColorClass, getStatusText } from 'app/constants';
+import { getStatusColorClass, getStatusText } from 'app/constants';
 import { AttachmentsComponent } from 'app/shared/components/attachments/attachments.component';
 import { AttachmentService } from 'app/shared/components/attachments/attachment.service';
 import { DocumentService } from '../document.service';

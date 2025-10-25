@@ -30,13 +30,24 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 		templateApiGroup.MapGet("summary-details-todo", SummaryDetailsToDoAsync);
 		templateApiGroup.MapGet("summary-details-done", SummaryDetailsDoneAsync);
 
-		templateApiGroup.MapGet("to-be-billed/{clientId}", ToBeBilledAsync)
+		templateApiGroup.MapGet("to-be-billed/{year}/{clientId:guid}", ToBeBilledAsync)
 			.Produces<IEnumerable<ServiceModel>>(StatusCodes.Status200OK)
 			.WithOpenApi(operation =>
 			{
 				operation.Summary = "Gets the services to be billed";
 
 				operation.Response(StatusCodes.Status200OK).Description = "The services to be billed";
+
+				return operation;
+			});
+
+		templateApiGroup.MapGet("to-be-paid/{year}/{collaboratorId:guid}", ToBePaidAsync)
+			.Produces<IEnumerable<ServiceModel>>(StatusCodes.Status200OK)
+			.WithOpenApi(operation =>
+			{
+				operation.Summary = "Gets the services to be paid";
+
+				operation.Response(StatusCodes.Status200OK).Description = "The services to be paid";
 
 				return operation;
 			});
@@ -264,8 +275,11 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 	private static async Task<IResult> SummaryDetailsDoneAsync(HttpContext httpContext, IServiceService service)
 		=> (await service.SummaryDetailsDoneAsync()).ToResponse(httpContext);
 
-	private static async Task<IResult> ToBeBilledAsync(HttpContext httpContext, IServiceService service, Guid clientId)
-		=> (await service.ToBeBilledAsync(clientId)).ToResponse(httpContext);
+	private static async Task<IResult> ToBeBilledAsync(HttpContext httpContext, IServiceService service, int year, Guid clientId)
+		=> (await service.ToBeBilledAsync(year, clientId)).ToResponse(httpContext);
+
+	private static async Task<IResult> ToBePaidAsync(HttpContext httpContext, IServiceService service, int year, Guid collaboratorId)
+		=> (await service.ToBePaidAsync(year, collaboratorId)).ToResponse(httpContext);
 
 	private static async Task<IResult> ContactSummaryAsync(HttpContext httpContext, IServiceService service, Guid contactId, int year)
 		=> (await service.ContactSummaryAsync(contactId, year)).ToResponse(httpContext);

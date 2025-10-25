@@ -16,5 +16,6 @@ public interface IContactService : IService
 	Task<Result<IEnumerable<ContactModel>>> FilterClients(string pattern);
 	Task<Result<IEnumerable<ContactModel>>> FilterCollaborators(string pattern);
 	Task<Result<IEnumerable<ContactModel>>> CollaboratorsWithMonitor(CollaboratorSearchParameters parameters);
-	Task<Result<List<ClientBillingSummaryModel>>> UnbilledSummaryAsync();
+	Task<Result<List<ClientBillingSummaryModel>>> UnbilledSummaryAsync(int year);
+	Task<Result<List<CollaboratorPaymentSummary>>> UnpaidSummaryAsync(int year);
 }

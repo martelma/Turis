@@ -1,3 +1,4 @@
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -19,7 +20,6 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { EsigibilitaIVATypes, MY_DATE_FORMATS } from 'app/constants';
-import { PriceListService } from 'app/modules/configuration/price-list/price-list.service';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import {
     DateAdapter,
@@ -48,6 +48,7 @@ import { ConfirmationDialogService } from 'app/shared/services/confirmation-dial
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { PaymentTypeService } from 'app/modules/configuration/payment-types/payment-types.service';
 import { PaymentType } from 'app/modules/configuration/payment-types/payment-types.types';
+import { YearsToggleComponent } from 'app/shared/components/years-toggle/years-toggle.component';
 
 @UntilDestroy()
 @Component({
@@ -86,6 +87,7 @@ import { PaymentType } from 'app/modules/configuration/payment-types/payment-typ
         MatProgressSpinnerModule,
         MatTabsModule,
         MatTooltipModule,
+        MatButtonToggleModule,
         MatPaginatorModule,
         MatMenuModule,
         MatExpansionModule,
@@ -95,6 +97,7 @@ import { PaymentType } from 'app/modules/configuration/payment-types/payment-typ
         FuseDrawerComponent,
         MatSidenavModule,
         NgTemplateOutlet,
+        YearsToggleComponent,
     ],
 })
 export class DocumentNewComponent implements OnInit {
@@ -123,8 +126,9 @@ export class DocumentNewComponent implements OnInit {
     totalServiceCount = 0;
     totalBillingAmount = 0;
 
+    currentYear: number = new Date().getFullYear();
+
     constructor(
-        private _formBuilder: UntypedFormBuilder,
         private _documentService: DocumentService,
         private _contactService: ContactService,
         private _serviceService: ServiceService,
@@ -157,6 +161,11 @@ export class DocumentNewComponent implements OnInit {
 
     onDataChange(value: Contact) {}
 
+    onYearChange(year: number) {
+        this.currentYear = year;
+        this.loadClientsToBeBill();
+    }
+
     private _filterClients(value: string): Observable<Contact[]> {
         return this._contactService.filterClients(value);
     }
@@ -168,7 +177,7 @@ export class DocumentNewComponent implements OnInit {
     }
 
     loadClientsToBeBill() {
-        this._contactService.listClientsToBeBilled().subscribe(data => {
+        this._contactService.listClientsToBeBilled(this.currentYear).subscribe(data => {
             this.clientsToBeBilled = data;
             // console.log('clientsToBeBilled', this.clientsToBeBilled);
             this.countClientsToBeBilled = this.clientsToBeBilled.length;
@@ -184,7 +193,7 @@ export class DocumentNewComponent implements OnInit {
     }
 
     loadServicesToBeBill() {
-        this._serviceService.listServicesToBeBilled(this.document.clientId).subscribe(services => {
+        this._serviceService.listServicesToBeBilled(this.currentYear, this.document.clientId).subscribe(services => {
             this.servicesToBeBilled = services;
             // console.log('servicesToBeBilled', this.servicesToBeBilled);
         });
@@ -311,11 +320,11 @@ export class DocumentNewComponent implements OnInit {
         item = this.refreshAmounts(item);
     }
 
-    setBillTo() {
-        this._contactService.getById('76ddf85d-259a-4bf0-9452-9757ecf7b072').subscribe(selectedClient => {
-            this.setClient(selectedClient);
-        });
-    }
+    // setBillTo() {
+    //     this._contactService.getById('76ddf85d-259a-4bf0-9452-9757ecf7b072').subscribe(selectedClient => {
+    //         this.setClient(selectedClient);
+    //     });
+    // }
 
     dropDocumentItem(event: CdkDragDrop<DocumentItem[]>) {
         moveItemInArray(this.document.items, event.previousIndex, event.currentIndex);

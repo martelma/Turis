@@ -5,7 +5,7 @@ namespace Turis.BusinessLayer.Extensions;
 
 public static class PaymentExtensions
 {
-	public static async Task<PaymentModel> ToModel(this Payment entity, IEnumerable<Bookmark> bookmarks = null)
+	public static async Task<PaymentModel> ToModelAsync(this Payment entity, IEnumerable<Bookmark> bookmarks = null)
 	{
 		var bookmarkId = bookmarks?.FirstOrDefault(x => x.EntityId == entity.Id)?.Id;
 
@@ -30,12 +30,12 @@ public static class PaymentExtensions
 		return model;
 	}
 
-	public static async Task<List<PaymentModel>> ToModel(this IEnumerable<Payment> list, IEnumerable<Bookmark> bookmarks)
+	public static async Task<List<PaymentModel>> ToModelAsync(this IEnumerable<Payment> list, IEnumerable<Bookmark> bookmarks = null)
 	{
 		var model = new List<PaymentModel>();
 		if (list != null)
 			foreach (var item in list)
-				model.Add(await ToModel(item, bookmarks));
+				model.Add(await ToModelAsync(item, bookmarks));
 
 		return model;
 	}

@@ -361,12 +361,12 @@ public class ServiceService(ApplicationDbContext dbContext
 			foreach (var itemPattern in parameters.Pattern.Split(' '))
 			{
 				query = query.Where(x => x.Code.Contains(itemPattern)
-				                         || x.Title.Contains(itemPattern)
-				                         || x.Location.Contains(itemPattern)
-				                         || x.Client.CompanyName.Contains(itemPattern)
-				                         || x.Collaborator.FirstName.Contains(itemPattern)
-				                         || x.Collaborator.LastName.Contains(itemPattern)
-										 //|| x.Note.Contains(itemPattern)
+										 || x.Title.Contains(itemPattern)
+										 || x.Location.Contains(itemPattern)
+										 || x.Client.CompanyName.Contains(itemPattern)
+										 || x.Collaborator.FirstName.Contains(itemPattern)
+										 || x.Collaborator.LastName.Contains(itemPattern)
+				//|| x.Note.Contains(itemPattern)
 				);
 			}
 
@@ -536,7 +536,8 @@ public class ServiceService(ApplicationDbContext dbContext
 					Total = yearGroup.Sum(x => x.Commission > 0 ? x.Commission : x.CommissionCalculated),
 					Payed = yearGroup.Where(x => x.CommissionPaid).Sum(x => x.Commission > 0 ? x.Commission : x.CommissionCalculated),
 					Data = Enumerable.Range(1, 12)
-						.Select(month => {
+						.Select(month =>
+						{
 							var monthData = yearGroup
 								.Where(x => x.Date.Month == month)
 								.Sum(y => y.Commission > 0 ? y.Commission : y.CommissionCalculated);
@@ -678,23 +679,58 @@ public class ServiceService(ApplicationDbContext dbContext
 		return model;
 	}
 
-	public async Task<Result<List<ServiceEasyModel>>> ToBeBilledAsync(Guid clientId)
+	public async Task<Result<List<ServiceEasyModel>>> ToBeBilledAsync(int year, Guid clientId)
 	{
-		var list = (
-			from s in dbContext.GetData<Service>()
-			join di in dbContext.GetData<DocumentItem>() on s.Id equals di.ServiceId into gj
-			from subDi in gj.DefaultIfEmpty()
-			where subDi == null && s.ClientId == clientId
-			select s
-		).ToList();
+		//var list = (
+		//	from s in dbContext.GetData<Service>()
+		//	join di in dbContext.GetData<DocumentItem>() on s.Id equals di.ServiceId into gj
+		//	from subDi in gj.DefaultIfEmpty()
+		//	where subDi == null && s.ClientId == clientId
+		//	select s
+		//).ToList();
 
-		//var list = dbContext
-		//	.GetData<Service>()
-		//	.Include(x => x.Collaborator)
-		//	.Where(x => x.ClientId == clientId)
-		//	//TODO: impostare condizione per estrarre solo i servizi da fatturare
-		//	//.Where(x=>x. == )
-		//	.ToList();
+		var list = dbContext.GetData<Service>()
+			.Include(x => x.Collaborator)
+			.Where(x => x.Date.Year == year)
+			.Where(x => x.ClientId == clientId)
+			.GroupJoin(
+				dbContext.GetData<DocumentItem>(),
+				s => s.Id,
+				di => di.ServiceId,
+				(s, diGroup) => new { Service = s, HasDocument = diGroup.Any() }
+			)
+			.Where(x => !x.HasDocument)
+			.Select(x => x.Service)
+			.ToList();
+
+		var model = await list.ToModelEasyAsync(avatarContactService);
+
+		return model.ToList();
+	}
+
+	public async Task<Result<List<ServiceEasyModel>>> ToBePaidAsync(int year, Guid collaboratorId)
+	{
+		//var list = (
+		//	from s in dbContext.GetData<Service>()
+		//	join di in dbContext.GetData<PaymentItem>() on s.Id equals di.ServiceId into gj
+		//	from subDi in gj.DefaultIfEmpty()
+		//	where subDi == null && s.CollaboratorId == collaboratorId
+		//	select s
+		//).ToList();
+
+		var list = dbContext.GetData<Service>()
+			.Include(x => x.Client)
+			.Where(x => x.Date.Year == year)
+			.Where(x => x.CollaboratorId == collaboratorId)
+			.GroupJoin(
+				dbContext.GetData<PaymentItem>(),
+				s => s.Id,
+				di => di.ServiceId,
+				(s, diGroup) => new { Service = s, HasDocument = diGroup.Any() }
+			)
+			.Where(x => !x.HasDocument)
+			.Select(x => x.Service)
+			.ToList();
 
 		var model = await list.ToModelEasyAsync(avatarContactService);
 

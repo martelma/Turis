@@ -11,16 +11,10 @@ public static class PaymentItemExtensions
 		{
 			Id = entity.Id,
 			PaymentId = entity.PaymentId,
-			Payment = await entity.Payment.ToModel(),
+			//Payment = await entity.Payment.ToModelAsync(),
 			ServiceId = entity.ServiceId,
 			Service = await entity.Service.ToModelInfoAsync(),
 		};
-
-		if (entity.Payment != null)
-			model.Payment = await entity.Payment.ToModel();
-
-		if (entity.Service != null)
-			model.Service = await entity.Service.ToModelInfoAsync();
 
 		return model;
 	}

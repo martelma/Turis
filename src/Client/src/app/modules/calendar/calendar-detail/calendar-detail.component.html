@@ -24,7 +24,11 @@
         <!-- Information -->
         <div class="text-lg font-semibold mt-4">Information</div>
         <div class="flex flex-col mt-4 border-t border-b divide-y font-medium">
-            <div class="flex items-center justify-between py-3">
+            <div
+                class="flex items-center justify-between py-3 cursor-pointer"
+                (mouseenter)="infoRowHover[0] = true"
+                (mouseleave)="infoRowHover[0] = false"
+                [ngClass]="{ 'mat-row-hover': infoRowHover[0] }">
                 <div class="text-secondary">Status</div>
                 <div>
                     <span
@@ -41,21 +45,36 @@
                         [matTooltip]="service?.commissionStatus"></span>
                 </div>
             </div>
-            <div class="flex items-center justify-between py-3">
+            <div
+                class="flex items-center justify-between py-3 cursor-pointer"
+                (mouseenter)="infoRowHover[1] = true"
+                (mouseleave)="infoRowHover[1] = false"
+                [ngClass]="{ 'mat-row-hover': infoRowHover[1] }">
                 <div class="text-secondary">Date</div>
                 <div>{{ service?.dateText }}</div>
             </div>
-            <div class="flex items-center justify-between py-3">
+            <div
+                class="flex items-center justify-between py-3 cursor-pointer"
+                (mouseenter)="infoRowHover[2] = true"
+                (mouseleave)="infoRowHover[2] = false"
+                [ngClass]="{ 'mat-row-hover': infoRowHover[2] }">
                 <div class="text-secondary">Location</div>
                 <div>{{ service?.location }}</div>
             </div>
-            <div class="flex items-center justify-between py-3">
+            <div
+                class="flex items-center justify-between py-3 cursor-pointer"
+                (mouseenter)="infoRowHover[3] = true"
+                (mouseleave)="infoRowHover[3] = false"
+                [ngClass]="{ 'mat-row-hover': infoRowHover[3] }">
                 <div class="text-secondary">People</div>
                 <div>{{ service?.people }}</div>
             </div>
-            <div class="flex items-center justify-between py-3">
+            <div
+                class="flex items-center justify-between py-3 cursor-pointer"
+                (mouseenter)="infoRowHover[4] = true"
+                (mouseleave)="infoRowHover[4] = false"
+                [ngClass]="{ 'mat-row-hover': infoRowHover[4] }">
                 <div class="text-secondary">Languages</div>
-                <!-- <div>{{ service?.languages }}</div> -->
                 <div class="flex space-x-2 items-center">
                     <div *ngFor="let lang of service?.languages">
                         <span
@@ -64,77 +83,97 @@
                     </div>
                 </div>
             </div>
-            <div class="flex items-center justify-between py-3">
+            <div
+                class="flex items-center justify-between py-3 cursor-pointer"
+                (mouseenter)="infoRowHover[5] = true"
+                (mouseleave)="infoRowHover[5] = false"
+                [ngClass]="{ 'mat-row-hover': infoRowHover[5] }">
                 <div class="text-secondary">Service Type</div>
                 <div>{{ service?.serviceType }}</div>
             </div>
-            <div class="flex items-center justify-between py-3">
+            <div
+                class="flex items-center justify-between py-3 cursor-pointer"
+                (mouseenter)="infoRowHover[6] = true"
+                (mouseleave)="infoRowHover[6] = false"
+                [ngClass]="{ 'mat-row-hover': infoRowHover[6] }">
                 <div class="text-secondary">Duration Type</div>
                 <div>{{ service?.durationType }}</div>
             </div>
-            <div class="flex items-center justify-between py-3">
+            <div
+                class="flex items-center justify-between py-3 cursor-pointer"
+                (mouseenter)="infoRowHover[7] = true"
+                (mouseleave)="infoRowHover[7] = false"
+                [ngClass]="{ 'mat-row-hover': infoRowHover[7] }">
                 <div class="text-secondary">Meeting Place</div>
                 <div>{{ service?.meetingPlace }}</div>
             </div>
-            <div class="flex items-center justify-between py-3">
+            <div
+                class="flex items-center justify-between py-3 cursor-pointer"
+                (mouseenter)="infoRowHover[8] = true"
+                (mouseleave)="infoRowHover[8] = false"
+                [ngClass]="{ 'mat-row-hover': infoRowHover[8] }">
                 <div class="text-secondary">Referent</div>
                 <div>{{ service?.referent }}</div>
             </div>
-            <div class="flex items-center justify-between py-3">
+            <div
+                class="flex items-center justify-between py-3 cursor-pointer"
+                (mouseenter)="infoRowHover[9] = true"
+                (mouseleave)="infoRowHover[9] = false"
+                [ngClass]="{ 'mat-row-hover': infoRowHover[9] }">
                 <div class="text-secondary">Referent Phone</div>
                 <div>{{ service?.referentPhone }}</div>
             </div>
         </div>
 
-        <div class="text-secondary mt-3 mb-1">Client</div>
-        <div class="flex w-full items-center mt-3">
-            <a [routerLink]="['/contact', service?.client?.id]" target="_blank">
+        <a
+            #clientInfo
+            [routerLink]="['/contact', service?.clientId]"
+            target="_blank"
+            (mouseenter)="infoRowHover[10] = true"
+            (mouseleave)="infoRowHover[10] = false"
+            [ngClass]="{ 'mat-row-hover': infoRowHover[10] }">
+            <div class="text-secondary mt-3 mb-1">Client</div>
+            <div class="flex w-full items-center mt-3">
                 <div class="flex h-10 w-10 flex-0 items-center justify-center overflow-hidden rounded-full">
                     <img alt="Avatar" class="h-full w-full" [src]="service?.client?.avatarUrl" />
                 </div>
-            </a>
-            <div class="ml-4 min-w-0">
-                <div class="truncate font-extrabold">{{ service?.client?.fullName }}</div>
+                <div class="ml-4 min-w-0">
+                    <div class="truncate font-extrabold">{{ service?.client?.fullName }}</div>
 
-                <div class="flex space-x-2 items-center">
-                    <div *ngFor="let lang of service?.client?.languages">
-                        <span
-                            [matTooltip]="lang"
-                            [ngClass]="'fi fi-' + ((lang | lowercase) === 'en' ? 'gb' : (lang | lowercase))"></span>
+                    <div class="flex space-x-2 items-center">
+                        <div *ngFor="let lang of service?.client?.languages">
+                            <span
+                                [matTooltip]="lang"
+                                [ngClass]="'fi fi-' + ((lang | lowercase) === 'en' ? 'gb' : (lang | lowercase))"></span>
+                        </div>
                     </div>
                 </div>
-
-                <!-- <div class="truncate font-semibold">{{ service?.collaborator?.fullName }}</div> -->
-                <!-- <div class="mt-0.5 flex items-center leading-5">
-            <div>to</div>
-            <div class="ml-1 font-semibold">me</div>
-        </div> -->
             </div>
-        </div>
+        </a>
 
-        <div class="text-secondary mt-3 mb-1">Collaborator</div>
-        <div class="flex w-full items-center mt-3">
-            <a [routerLink]="['/contact', service?.collaborator?.id]" target="_blank">
+        <a
+            *ngIf="service?.collaborator"
+            [routerLink]="['/contact', service?.collaboratorId]"
+            target="_blank"
+            (mouseenter)="infoRowHover[11] = true"
+            (mouseleave)="infoRowHover[11] = false"
+            [ngClass]="{ 'mat-row-hover': infoRowHover[11] }">
+            <div class="text-secondary mt-3 mb-1">Collaborator</div>
+            <div class="flex w-full items-center mt-3">
                 <div class="flex h-10 w-10 flex-0 items-center justify-center overflow-hidden rounded-full">
                     <img alt="Avatar" class="h-full w-full" [src]="service?.collaborator?.avatarUrl" />
                 </div>
-            </a>
-            <div class="ml-4 min-w-0">
-                <div class="truncate font-extrabold">{{ service?.collaborator?.fullName }}</div>
+                <div class="ml-4 min-w-0">
+                    <div class="truncate font-extrabold">{{ service?.collaborator?.fullName }}</div>
 
-                <div class="flex space-x-2 items-center">
-                    <div *ngFor="let lang of service?.collaborator?.languages">
-                        <span [matTooltip]="lang" [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
+                    <div class="flex space-x-2 items-center">
+                        <div *ngFor="let lang of service?.collaborator?.languages">
+                            <span [matTooltip]="lang" [ngClass]="'fi fi-' + (lang === 'en' ? 'gb' : lang)"></span>
+                        </div>
                     </div>
                 </div>
-
-                <!-- <div class="truncate font-semibold">{{ service?.collaborator?.fullName }}</div> -->
-                <!-- <div class="mt-0.5 flex items-center leading-5">
-                <div>to</div>
-                <div class="ml-1 font-semibold">me</div>
-            </div> -->
             </div>
-        </div>
+        </a>
 
         <!-- Note -->
         <div class="text-lg font-medium mt-8">Note</div>

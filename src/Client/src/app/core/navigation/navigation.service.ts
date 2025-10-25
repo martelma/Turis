@@ -96,6 +96,13 @@ export class NavigationService {
                     link: '/document',
                 },
                 {
+                    id: 'payment',
+                    title: 'Navigation.Payment',
+                    type: 'basic',
+                    icon: 'mat_solid:payments',
+                    link: '/payment',
+                },
+                {
                     id: 'journal-entry',
                     title: 'Navigation.JournalEntry',
                     type: 'basic',

@@ -20,7 +20,8 @@ public class ContactEndpoints : IEndpointRouteHandlerBuilder
 		templateApiGroup.MapGet("filter-clients/{pattern}", FilterClients);
 		templateApiGroup.MapGet("filter-collaborators/{pattern}", FilterCollaborators);
 		templateApiGroup.MapGet("collaborators-with-monitor", CollaboratorsWithMonitor);
-		templateApiGroup.MapGet("unbilled-list", UnbilledSummaryAsync);
+		templateApiGroup.MapGet("unbilled-list/{year}", UnbilledSummaryAsync);
+		templateApiGroup.MapGet("unpaid-list/{year}", UnpaidSummaryAsync);
 		templateApiGroup.MapPost(string.Empty, Save);
 		templateApiGroup.MapPut(string.Empty, Save);
 		templateApiGroup.MapDelete("{id:guid}", Delete);
@@ -129,6 +130,9 @@ public class ContactEndpoints : IEndpointRouteHandlerBuilder
 		return response;
 	}
 
-	private static async Task<IResult> UnbilledSummaryAsync(HttpContext httpContext, IContactService service)
-		=> (await service.UnbilledSummaryAsync()).ToResponse(httpContext);
+	private static async Task<IResult> UnbilledSummaryAsync(HttpContext httpContext, IContactService service, int year)
+		=> (await service.UnbilledSummaryAsync(year)).ToResponse(httpContext);
+
+	private static async Task<IResult> UnpaidSummaryAsync(HttpContext httpContext, IContactService service, int year)
+		=> (await service.UnpaidSummaryAsync(year)).ToResponse(httpContext);
 }

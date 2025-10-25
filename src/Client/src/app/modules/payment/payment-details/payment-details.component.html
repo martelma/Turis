@@ -1,0 +1,114 @@
+<div class="flex flex-col flex-auto overflow-y-auto lg:overflow-hidden bg-card dark:bg-default">
+    <ng-container *ngIf="payment; else selectPaymentToView">
+        <!-- Header -->
+        <div class="z-10 relative flex flex-col flex-0 w-full border-b">
+            <!-- Toolbar -->
+            <div class="flex items-center min-h-16 px-4 md:px-6 border-b bg-gray-50 dark:bg-transparent space-x-2">
+                <!-- Back button -->
+                <a class="lg:hidden md:-ml-2" mat-icon-button [routerLink]="['./../']">
+                    <mat-icon [svgIcon]="'heroicons_outline:arrow-long-left'"></mat-icon>
+                </a>
+
+                <!-- View Mode -->
+                <ng-container *ngIf="!editMode">
+                    <div class="flex flex-1 justify-between items-center">
+                        <div class="flex space-x-2">
+                            <!-- Edit Payment -->
+                            <button *ngIf="userCanUpdatePayment" mat-flat-button color="primary" (click)="edit()">
+                                <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
+                                <span>{{ 'General.Edit' | transloco }}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Toolbar -->
+                    <div class="flex items-center min-h-16 px-4 md:px-6 border-b bg-gray-50 dark:bg-transparent">
+                        <!-- Back button -->
+                        <a class="lg:hidden md:-ml-2" mat-icon-button [routerLink]="['./../']">
+                            <mat-icon [svgIcon]="'heroicons_outline:arrow-long-left'"></mat-icon>
+                        </a>
+
+                        <!-- Other actions button & menu -->
+                        <button class="ml-2" mat-icon-button [matMenuTriggerFor]="mailMenu">
+                            <mat-icon [svgIcon]="'heroicons_outline:ellipsis-vertical'"></mat-icon>
+                        </button>
+                        <mat-menu #mailMenu="matMenu">
+                            <button mat-menu-item (click)="menuItem1(payment)">
+                                <mat-icon class="text-red-500" [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                                <span>Delete</span>
+                            </button>
+                        </mat-menu>
+                    </div>
+                </ng-container>
+
+                <!-- Edit Mode -->
+                <ng-container *ngIf="editMode">
+                    <!-- Cancel Edit Payment -->
+                    <button mat-stroked-button (click)="cancel()">
+                        <span>{{ 'General.Cancel' | transloco }}</span>
+                    </button>
+
+                    <!-- Save Payment -->
+                    <button
+                        *ngIf="userCanUpdatePayment"
+                        mat-flat-button
+                        color="primary"
+                        (click)="save()"
+                        [disabled]="!editPayment?.changed">
+                        <span>{{ 'General.Save' | transloco }}</span>
+                    </button>
+                </ng-container>
+            </div>
+
+            <ng-container *ngIf="!editMode">
+                <!-- Payment Info -->
+                <div class="flex flex-wrap items-center py-4 px-6">
+                    <div class="relative flex flex-auto flex-col text-2xl">
+                        <div class="flex justify-between mb-4">
+                            <div class="flex flex-1 items-center space-x-2 z-10">
+                                <mat-icon
+                                    (click)="handleBookmark(payment)"
+                                    class="icon-size-2"
+                                    [ngClass]="payment.bookmarkId ? 'text-yellow-500' : ''"
+                                    [svgIcon]="payment.bookmarkId ? 'heroicons_solid:star' : 'heroicons_outline:star'"
+                                    [matTooltip]="
+                                        (payment.bookmarkId ? 'General.RemoveBookmark' : 'General.MarkAsBookmark')
+                                            | transloco
+                                    "></mat-icon>
+
+                                <div class="px-5 py-4">
+                                    <div class="font-semibold">[{{ payment.date | date: 'dd/MM/yyyy' }}]</div>
+                                    <div class="text-sm text-secondary">
+                                        {{ payment.userFullName }} [{{ payment.timeStamp | date: 'dd/MM/yyyy HH:mm' }}]
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <tag-summary [tags]="payment?.tags" [viewMode]="'full'"></tag-summary>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+
+        <!-- View Mode -->
+        <ng-container *ngIf="!editMode">
+            <!-- not edit mode -->
+            <app-journal-entry-view #viewPayment class="flex flex-1" [payment]="payment"></app-journal-entry-view>
+        </ng-container>
+
+        <!-- Edit Mode -->
+        <ng-container *ngIf="editMode">
+            <!-- edit mode -->
+            <app-journal-entry-edit #editPayment class="flex flex-1" [payment]="payment"></app-journal-entry-edit>
+        </ng-container>
+    </ng-container>
+
+    <!-- Select payment to view template -->
+    <ng-template #selectPaymentToView>
+        <div class="flex flex-col flex-auto items-center justify-center bg-gray-100 dark:bg-transparent">
+            <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">
+                {{ 'Payment.SelectAPayment' | transloco }}
+            </div>
+        </div>
+    </ng-template>
+</div>

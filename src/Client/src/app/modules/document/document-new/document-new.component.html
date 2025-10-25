@@ -10,7 +10,7 @@
             <div *ngIf="!document.client" class="flex items-start">
                 <div class="grid grid-cols-max w-6/12 place-items-start gap-y-2">
                     <mat-form-field class="example-full-width w-full" appearance="fill">
-                        <mat-label for="status" (click)="setBillTo()">Search Client</mat-label>
+                        <mat-label for="status">Search Client</mat-label>
                         <input
                             type="text"
                             class="form-control font-bold w-full"
@@ -32,7 +32,12 @@
                         </mat-autocomplete>
                     </mat-form-field>
                 </div>
-                <div *ngIf="!document.client" class="grid grid-cols-max w-6/12 place-items-end gap-y-2">
+                <div *ngIf="!document.client" class="grid grid-cols-max w-6/12 place-items-end gap-y-2 mr-5">
+                    <years-toggle
+                        [number]="5"
+                        [currentYear]="currentYear"
+                        (yearChange)="onYearChange($event)"></years-toggle>
+
                     <div class="grid grid-cols-2 gap-x-4 text-right">
                         <div class="text-gray-600">Clienti da fatturare:</div>
                         <div class="font-semibold">{{ countClientsToBeBilled }}</div>
@@ -496,11 +501,20 @@
                             class="p-2 rounded bg-gray-100 dark:bg-gray-800 flex items-center">
                             <mat-checkbox [(ngModel)]="service.selected" class="mr-3"></mat-checkbox>
                             <div class="flex-1">
-                                <div class="font-semibold">{{ service.code }}</div>
-                                <div class="font-semibold">{{ service.title }}</div>
-                                <div class="font-semibold">{{ service.collaborator?.fullName }}</div>
-                                <div class="text-sm text-gray-600">{{ service.location }}</div>
-                                <div class="text-sm">Importo: € {{ service.priceCalculated | number: '2.2' }}</div>
+                                <div class="text-sm">
+                                    {{ service.date | date: 'dd/MM/yyyy' }} - {{ service.location }}
+                                </div>
+                                <div class="font-semibold">
+                                    <a [routerLink]="['/service', service?.id]" target="_blank">
+                                        {{ service.code }} - {{ service.title }}
+                                    </a>
+                                </div>
+                                <div class="font-semibold">
+                                    <a [routerLink]="['/contact', service?.collaboratorId]" target="_blank">
+                                        {{ service.collaborator?.fullName }}
+                                    </a>
+                                </div>
+                                <div class="text-sm">Price: € {{ service.priceCalculated | number: '2.2' }}</div>
                             </div>
                         </li>
                     </ul>

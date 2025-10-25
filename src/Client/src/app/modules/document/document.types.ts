@@ -1,3 +1,4 @@
+import { Collaborator } from 'app/modules/service/service.types';
 import { Contact } from 'app/modules/contact/contact.types';
 import { BaseSearchParameters } from 'app/shared/types/shared.types';
 import { Service } from '../service/service.types';
@@ -82,6 +83,12 @@ export class DocumentItem {
 
 export class ClientBillingSummary {
     client: Contact;
+    serviceCount: number;
+    totalAmount: number;
+}
+
+export class CollaboratorPaymentSummary {
+    collaborator: Contact;
     serviceCount: number;
     totalAmount: number;
 }

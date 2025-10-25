@@ -9,10 +9,10 @@ public class PaymentItemConfiguration : BaseEntityConfiguration<Entities.Payment
 	{
 		base.Configure(builder);
 
-		builder.HasOne(x => x.Payment)
-			.WithMany()
-			.HasForeignKey(x => x.PaymentId)
-			.IsRequired();
+		//builder.HasOne(x => x.Payment)
+		//	.WithMany(x => x.Items)
+		//	.HasForeignKey(x => x.PaymentId)
+		//	.IsRequired();
 
 		builder.HasOne(x => x.Service)
 			.WithMany()

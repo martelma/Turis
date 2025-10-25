@@ -44,8 +44,8 @@ export class UserSettingsService extends BaseService {
         this.setValue(key, value ? 'true' : 'false');
     }
 
-    async getBooleanValue(key: string): Promise<boolean> {
+    async getBooleanValue(key: string, defaultValue: boolean): Promise<boolean> {
         const value = await this.getValue(key);
-        return value === 'true';
+        return value === 'true' ? true : defaultValue;
     }
 }

@@ -171,7 +171,7 @@ export class ServiceListComponent implements OnInit, AfterViewInit {
     }
 
     async ngAfterViewInit(): Promise<void> {
-        this.viewList = await this._userSettingsService.getBooleanValue(`${AppSettings.Service}:viewList`);
+        this.viewList = await this._userSettingsService.getBooleanValue(`${AppSettings.Service}:viewList`, true);
 
         if (this._sort && this._paginator) {
             // Set the initial sort

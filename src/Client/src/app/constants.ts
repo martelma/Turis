@@ -88,6 +88,7 @@ export const AppSettings = {
     Contact: 'Contact',
     Service: 'Service',
     Document: 'Document',
+    Payment: 'Payment',
     JournalEntry: 'JournalEntry',
 };
 
