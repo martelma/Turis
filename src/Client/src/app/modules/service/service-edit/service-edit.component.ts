@@ -104,6 +104,8 @@ export class ServiceEditComponent implements OnInit {
     @ViewChild(MatTabGroup) matTabGroup: MatTabGroup;
 
     item: Service;
+    serviceTime = ''; // Ora estratta da item.date in formato HH:mm
+
     @Input()
     set service(value: Service) {
         this.item = value;
@@ -117,6 +119,14 @@ export class ServiceEditComponent implements OnInit {
 
         this.clientControl.setValue(this.item.client?.companyName);
         this.collaboratorControl.setValue(this.item.collaborator?.fullName);
+
+        // Estrai l'ora da item.date se presente (in formato UTC)
+        if (this.item.date) {
+            const date = new Date(this.item.date);
+            const hours = date.getUTCHours().toString().padStart(2, '0');
+            const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+            this.serviceTime = `${hours}:${minutes}`;
+        }
 
         this.onDataChange(value);
     }
@@ -244,6 +254,17 @@ export class ServiceEditComponent implements OnInit {
     checkChanged(): void {
         if (this.service && this.originalItem) {
             this.changed = JSON.stringify(this.service) !== JSON.stringify(this.originalItem);
+        }
+    }
+
+    onTimeChange(): void {
+        if (this.serviceTime && this.item.date) {
+            const [hours, minutes] = this.serviceTime.split(':').map(Number);
+            const date = new Date(this.item.date);
+            date.setUTCHours(hours);
+            date.setUTCMinutes(minutes);
+            this.item.date = date;
+            this.checkChanged();
         }
     }
 

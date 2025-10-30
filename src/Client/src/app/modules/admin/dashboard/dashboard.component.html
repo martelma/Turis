@@ -39,8 +39,15 @@
                 [animationDuration]="'0'"
                 [selectedIndex]="selectedTabIndex"
                 (selectedIndexChange)="onTabChanged($event)">
-                <!-- Applications -->
-                <mat-tab label="My Home" class="h-full"> </mat-tab>
+                <mat-tab label="My Home" class="h-full">
+                    <ng-template matTabContent>
+                        <div class="flex-auto h-full overflow-hidden">
+                            <app-calendar-collaborator
+                                [collaboratorId]="user?.id"
+                                class="h-full"></app-calendar-collaborator>
+                        </div>
+                    </ng-template>
+                </mat-tab>
                 <mat-tab label="Admin" class="h-full">
                     <ng-template matTabContent>
                         <div class="h-full">

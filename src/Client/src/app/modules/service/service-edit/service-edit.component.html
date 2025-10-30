@@ -68,7 +68,7 @@
                                         class="form-control font-bold"
                                         id="date"
                                         name="date"
-                                        #name="ngModel"
+                                        #date="ngModel"
                                         required
                                         [matDatepickerMin]="minDate"
                                         [matDatepickerMax]="maxDate"
@@ -86,6 +86,55 @@
                                             Date must be before {{ maxDate | date: 'shortDate' }}.
                                         </div>
                                     </div>
+                                </mat-form-field>
+                                <mat-form-field class="col-span-1">
+                                    <mat-label for="time">Time</mat-label>
+                                    <input
+                                        matInput
+                                        type="time"
+                                        class="form-control font-bold"
+                                        id="time"
+                                        name="time"
+                                        #time="ngModel"
+                                        [(ngModel)]="serviceTime"
+                                        (ngModelChange)="onTimeChange()" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-1">
+                                    <mat-label for="people">People</mat-label>
+                                    <input
+                                        matInput
+                                        type="number"
+                                        class="form-control font-bold"
+                                        id="people"
+                                        name="people"
+                                        #name="ngModel"
+                                        required
+                                        min="1"
+                                        class="form-control font-bold"
+                                        [(ngModel)]="item.people"
+                                        (ngModelChange)="rebuild()" />
+                                    <div *ngIf="people?.invalid && (people?.dirty || people?.touched)">
+                                        <div *ngIf="people?.errors?.required">People is required.</div>
+                                        <div *ngIf="people.errors?.min">People must be greater than 0.</div>
+                                    </div>
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label for="languages">Language</mat-label>
+                                    <mat-select
+                                        multiple
+                                        class="form-control font-bold"
+                                        id="languages"
+                                        name="languages"
+                                        #name="ngModel"
+                                        [(ngModel)]="item.languages"
+                                        (ngModelChange)="checkChanged()">
+                                        <mat-option *ngFor="let x of languages" [value]="x.code">{{
+                                            x.code
+                                        }}</mat-option>
+                                    </mat-select>
+                                    <!-- <div *ngIf="languages?.invalid">
+                                        <div *ngIf="languages?.errors?.required">Language is required.</div>
+                                    </div> -->
                                 </mat-form-field>
                                 <mat-form-field class="col-span-2">
                                     <mat-label for="serviceType">Type</mat-label>
@@ -124,43 +173,6 @@
                                     <div *ngIf="durationType?.invalid">
                                         <div *ngIf="durationType?.errors?.required">Duration is required.</div>
                                     </div>
-                                </mat-form-field>
-                                <mat-form-field class="col-span-2">
-                                    <mat-label for="people">People</mat-label>
-                                    <input
-                                        matInput
-                                        type="number"
-                                        class="form-control font-bold"
-                                        id="people"
-                                        name="people"
-                                        #name="ngModel"
-                                        required
-                                        min="1"
-                                        class="form-control font-bold"
-                                        [(ngModel)]="item.people"
-                                        (ngModelChange)="rebuild()" />
-                                    <div *ngIf="people?.invalid && (people?.dirty || people?.touched)">
-                                        <div *ngIf="people?.errors?.required">People is required.</div>
-                                        <div *ngIf="people.errors?.min">People must be greater than 0.</div>
-                                    </div>
-                                </mat-form-field>
-                                <mat-form-field class="col-span-2">
-                                    <mat-label for="languages">Language</mat-label>
-                                    <mat-select
-                                        multiple
-                                        class="form-control font-bold"
-                                        id="languages"
-                                        name="languages"
-                                        #name="ngModel"
-                                        [(ngModel)]="item.languages"
-                                        (ngModelChange)="checkChanged()">
-                                        <mat-option *ngFor="let x of languages" [value]="x.code">{{
-                                            x.code
-                                        }}</mat-option>
-                                    </mat-select>
-                                    <!-- <div *ngIf="languages?.invalid">
-                                        <div *ngIf="languages?.errors?.required">Language is required.</div>
-                                    </div> -->
                                 </mat-form-field>
                                 <mat-form-field class="col-span-2">
                                     <mat-label for="status">Status</mat-label>

@@ -17,16 +17,16 @@ import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatSortModule } from '@angular/material/sort';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { toUtcString, trackByFn } from 'app/shared';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { trackByFn } from 'app/shared';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
 import { Service, ServiceSearchParameters } from 'app/modules/service/service.types';
@@ -43,7 +43,6 @@ import {
     ServiceTypes,
 } from 'app/constants';
 import { ServiceSidebarComponent } from 'app/modules/service/service-sidebar/service-sidebar.component';
-import { MatDrawer } from '@angular/material/sidenav';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ez } from '@fullcalendar/core/internal-common';

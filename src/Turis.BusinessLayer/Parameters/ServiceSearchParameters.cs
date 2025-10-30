@@ -33,4 +33,6 @@ public class ServiceSearchParameters : PaginationParameters
 	public string[] Statuses { get; set; }
 	[FromQuery]
 	public string WorkflowCollaboratorStatus { get; set; }
+	[FromQuery]
+	public string CollaboratorId { get; set; }
 }

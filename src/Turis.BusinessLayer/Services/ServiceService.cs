@@ -326,6 +326,7 @@ public class ServiceService(ApplicationDbContext dbContext
 			query = query.Where(x => x.Date <= dateTo);
 		}
 
+		query = query.WhereIf(parameters.CollaboratorId.HasValue(), x => x.CollaboratorId == parameters.CollaboratorId.ToGuid());
 		query = query.WhereIf(parameters.Code.HasValue(), x => x.Code.Contains(parameters.Code));
 		query = query.WhereIf(parameters.Title.HasValue(), x => x.Title.Contains(parameters.Title));
 		query = query.WhereIf(parameters.Location.HasValue(), x => x.Location.Contains(parameters.Location));
@@ -491,6 +492,7 @@ public class ServiceService(ApplicationDbContext dbContext
 			Title = service.Title,
 			Date = service.Date,
 			DateText = service.Date.ToString("dd/MM/yyyy"),
+			TimeText = service.Date.ToString("HH:mm"),
 			ServiceType = service.ServiceType.ToString(),
 			DurationType = service.DurationType.ToString(),
 			Status = service.Status.ToString(),
@@ -761,7 +763,9 @@ public class ServiceService(ApplicationDbContext dbContext
 		dbService.ServiceType = (Common.Enums.ServiceType)Enum.Parse(typeof(Common.Enums.ServiceType), service.ServiceType);
 		dbService.DurationType = (DurationType)Enum.Parse(typeof(DurationType), service.DurationType);
 		dbService.People = service.People;
-		dbService.PriceListId = service.PriceListId;
+
+		if (service.PriceListId.HasValue())
+			dbService.PriceListId = service.PriceListId;
 
 		dbService.Location = service.Location;
 		dbService.Languages = service.Languages?.ToCSV();

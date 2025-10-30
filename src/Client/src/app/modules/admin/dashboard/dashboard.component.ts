@@ -21,7 +21,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatBadgeModule } from '@angular/material/badge';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { AppSettings } from 'app/constants';
-import { MatButtonToggleChange } from '@angular/material/button-toggle';
+import { CalendarCollaboratorComponent } from 'app/modules/calendar/calendar-collaborator/calendar-collaborator.component';
 
 @UntilDestroy()
 @Component({
@@ -42,6 +42,7 @@ import { MatButtonToggleChange } from '@angular/material/button-toggle';
         ServiceSummaryComponent,
         TeamSummaryComponent,
         JournalEntrySummaryComponent,
+        CalendarCollaboratorComponent,
     ],
 })
 export class DashboardComponent implements OnInit, AfterViewInit {

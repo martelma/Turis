@@ -75,6 +75,7 @@ export class ServiceService extends BaseEntityService<Service> {
             title: '',
             date: undefined,
             dateText: undefined,
+            timeText: undefined,
             start: undefined,
             end: undefined,
             serviceType: undefined,

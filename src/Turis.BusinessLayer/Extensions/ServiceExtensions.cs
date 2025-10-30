@@ -1,5 +1,6 @@
 ﻿using JeMa.Shared.Extensions;
 using TinyHelpers.Extensions;
+using Turis.BusinessLayer.Resources;
 using Turis.BusinessLayer.Services.Interfaces;
 using Turis.Common.Mailing;
 using Turis.Common.Models;
@@ -19,6 +20,7 @@ public static class ServiceExtensions
 			Title = entity.Title,
 			Date = entity.Date,
 			DateText = entity.Date.ToString("dd/MM/yyyy"),
+			TimeText = entity.Date.ToString("HH:mm"),
 			ServiceType = entity.ServiceType.ToString(),
 			DurationType = entity.DurationType.ToString(),
 			Languages = entity.Languages?.SplitCsv()?.ToArray(),
@@ -86,6 +88,7 @@ public static class ServiceExtensions
 			Title = entity.Title,
 			Date = entity.Date,
 			DateText = entity.Date.ToString("dd/MM/yyyy"),
+			TimeText = entity.Date.ToString("HH:mm"),
 			ServiceType = entity.ServiceType.ToString(),
 			DurationType = entity.DurationType.ToString(),
 			Languages = entity.Languages?.SplitCsv()?.ToArray(),
@@ -155,6 +158,7 @@ public static class ServiceExtensions
 			Title = entity.Title,
 			Date = entity.Date,
 			DateText = entity.Date.ToString("dd/MM/yyyy"),
+			TimeText = entity.Date.ToString("HH:mm"),
 			ServiceType = entity.ServiceType.ToString(),
 			DurationType = entity.DurationType.ToString(),
 			Languages = entity.Languages?.SplitCsv()?.ToArray(),

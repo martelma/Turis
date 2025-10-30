@@ -10,6 +10,7 @@ export class Service {
     title: string;
     date: Date;
     dateText: string;
+    timeText: string;
     start: Date;
     end: Date;
     serviceType: string;
@@ -78,6 +79,7 @@ export class ServiceSearchParameters extends BaseSearchParameters {
     workflowCollaboratorStatus?: string;
     dateFrom?: string;
     dateTo?: string;
+    collaboratorId?: string;
 }
 
 export class AccountStatementParameters extends BaseSearchParameters {

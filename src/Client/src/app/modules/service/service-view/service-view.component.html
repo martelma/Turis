@@ -52,6 +52,33 @@
                                         [readonly]="true"
                                         [value]="item?.dateText ? item.dateText : ''" />
                                 </mat-form-field>
+                                <mat-form-field class="col-span-1">
+                                    <mat-label>Time</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="form-control font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.timeText ? item.timeText : ''" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-1">
+                                    <mat-label>People</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.people ? item.people : ''" />
+                                </mat-form-field>
+                                <mat-form-field class="col-span-2">
+                                    <mat-label>Language</mat-label>
+                                    <input
+                                        matInput
+                                        type="text"
+                                        class="font-bold"
+                                        [readonly]="true"
+                                        [value]="item?.languages ? item.languages : ''" />
+                                </mat-form-field>
                                 <mat-form-field class="col-span-2">
                                     <mat-label>Type</mat-label>
                                     <input
@@ -69,24 +96,6 @@
                                         class="font-bold"
                                         [readonly]="true"
                                         [value]="item?.durationType ? item.durationType : ''" />
-                                </mat-form-field>
-                                <mat-form-field class="col-span-2">
-                                    <mat-label>People</mat-label>
-                                    <input
-                                        matInput
-                                        type="text"
-                                        class="font-bold"
-                                        [readonly]="true"
-                                        [value]="item?.people ? item.people : ''" />
-                                </mat-form-field>
-                                <mat-form-field class="col-span-2">
-                                    <mat-label>Language</mat-label>
-                                    <input
-                                        matInput
-                                        type="text"
-                                        class="font-bold"
-                                        [readonly]="true"
-                                        [value]="item?.languages ? item.languages : ''" />
                                 </mat-form-field>
                                 <mat-form-field class="col-span-2">
                                     <mat-label>Status</mat-label>

@@ -7,6 +7,7 @@ public class ServiceCheckDataInfo
 	public string Title { get; set; }
 	public DateTimeOffset Date { get; set; }
 	public string DateText { get; set; }
+	public string TimeText { get; set; }
 	public string ServiceType { get; set; }
 	public string DurationType { get; set; }
 	public string Status { get; set; }

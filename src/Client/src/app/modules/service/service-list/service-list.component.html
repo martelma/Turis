@@ -97,7 +97,7 @@
 
                                 <div class="flex space-x-2 items-center">
                                     <div class="ml-auto text-md text-right whitespace-nowrap text-hint">
-                                        {{ item.date | date: 'EEE dd MMM y' : '' : 'it-IT' | titlecase }}
+                                        {{ item.date | date: 'EEE dd MMM y - HH:mm' : 'UTC' : 'it-IT' | titlecase }}
                                     </div>
                                 </div>
                             </div>

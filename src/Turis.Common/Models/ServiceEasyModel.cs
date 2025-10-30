@@ -8,6 +8,7 @@ public class ServiceEasyModel : BaseModel
 	public string Title { get; set; }
 	public DateTimeOffset Date { get; set; }
 	public string DateText { get; set; }
+	public string TimeText { get; set; }
 	public DateTime Start => Date.Date.AddHours(8);
 	public DateTime End => Date.Date.AddHours(20);
 	public string ServiceType { get; set; }
