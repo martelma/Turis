@@ -30,4 +30,5 @@ public interface IServiceService : IService
 	Task<Result<LinkedServiceModel>> LinkedServicesAsync(Guid serviceId);
 	Task<Result<List<ServiceEasyModel>>> ToBeBilledAsync(int year, Guid clientId);
 	Task<Result<List<ServiceEasyModel>>> ToBePaidAsync(int year, Guid collaboratorId);
+	Task<Result<List<CalendarInfo>>>  ListSummaryAsync(CalendarInfoParameters parameters);
 }

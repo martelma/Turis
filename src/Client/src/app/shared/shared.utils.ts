@@ -83,3 +83,13 @@ export function years(number: number): number[] {
     }
     return years;
 }
+
+export const getMonthBoundaries = (date: Date): { dateFrom: string; dateTo: string } => {
+    const year = date.getFullYear();
+    const month = date.getMonth(); // 0-based index
+
+    const dateFrom = new Date(Date.UTC(year, month, 1));
+    const dateTo = new Date(Date.UTC(year, month + 1, 0)); // Day 0 of next month = last day of current month
+
+    return { dateFrom: dateFrom.toISOString(), dateTo: dateTo.toISOString() };
+};

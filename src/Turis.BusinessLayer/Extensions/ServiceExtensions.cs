@@ -1,6 +1,5 @@
 ﻿using JeMa.Shared.Extensions;
 using TinyHelpers.Extensions;
-using Turis.BusinessLayer.Resources;
 using Turis.BusinessLayer.Services.Interfaces;
 using Turis.Common.Mailing;
 using Turis.Common.Models;

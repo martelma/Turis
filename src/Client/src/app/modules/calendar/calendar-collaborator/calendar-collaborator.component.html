@@ -1,111 +1,17 @@
-<ng-keyboard-shortcuts [shortcuts]="globalShortcutsService.shortcuts$ | async"></ng-keyboard-shortcuts>
-<div
-    class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent h-full">
-    <!-- Header -->
-    <div
-        class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
-        <div class="flex-1 min-w-0">
-            <!-- Title -->
-            <div class="flex space-x-2 items-center">
-                <mat-icon class="icon-size-12" [svgIcon]="'heroicons_outline:calendar'"></mat-icon>
-                <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
-                    {{ 'Navigation.Calendar' | transloco }}
-                </h2>
-            </div>
-        </div>
-        <!-- Actions -->
-        <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
-            <!-- <app-search-input class="min-w-90" [placeholder]="'General.Filter'" (callbackFn)="filter($event)">
-            </app-search-input> -->
+<div class="grid grid-cols-1 gap-6 w-full min-w-0">
+    <div class="mt-3 mb-3 sm:mt-0 sm:ml-2 flex items-center justify-between">
+        <!-- <div class="flex space-x-2 items-center">
+            <mat-icon class="icon-size-12" [svgIcon]="'heroicons_outline:calendar'"></mat-icon>
+            <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                {{ 'Navigation.Calendar' | transloco }}
+            </h2>
+        </div> -->
 
-            <button class="ml-4" mat-flat-button [color]="'primary'" (click)="createService()">
-                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
-                <span class="ml-2 mr-1">{{ 'General.Add' | transloco }}</span>
-            </button>
-        </div>
-    </div>
-    <div class="flex space-x-2 mb-2">
-        <button mat-flat-button color="primary" class="ml-2" (click)="toggleFilter()">
-            <mat-icon
-                *ngIf="!drawerFilterOpened"
-                class="icon-size-5 mr-2"
-                [svgIcon]="'heroicons_outline:chevron-double-right'"></mat-icon>
-            <mat-icon
-                *ngIf="drawerFilterOpened"
-                class="icon-size-5 mr-2"
-                [svgIcon]="'heroicons_outline:chevron-double-left'"></mat-icon>
-            <span class="ml-2">{{ 'General.Filters' | transloco }}</span>
-        </button>
-
-        <!-- <button mat-flat-button color="primary" class="ml-2" (click)="toggleViewMode()">
-            <mat-icon
-                *ngIf="viewMode === 'calendar'"
-                class="icon-size-5 mr-2"
-                [svgIcon]="'heroicons_outline:list-bullet'"></mat-icon>
-            <mat-icon
-                *ngIf="viewMode === 'list'"
-                class="icon-size-5 mr-2"
-                [svgIcon]="'heroicons_outline:calendar'"></mat-icon>
-            <span class="ml-2">{{ viewMode === 'calendar' ? 'Switch to List View' : 'Switch to Calendar View' }}</span>
-        </button> -->
-    </div>
-
-    <!-- Main -->
-    <div class="relative flex flex-col flex-auto items-center justify-center h-full p-3">
-        <div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
-            <mat-drawer-container class="flex-auto h-full">
-                <!-- Drawer -->
-                <mat-drawer
-                    class="w-90 dark:bg-gray-900"
-                    [mode]="drawerFilterMode"
-                    [opened]="drawerFilterOpened"
-                    #drawer>
-                    <app-service-sidebar (onFilterChanged)="serviceFilter($event)"></app-service-sidebar>
-                </mat-drawer>
-
-                <!-- Drawer content -->
-                <mat-drawer-content class="flex flex-col overflow-hidden">
-                    <mat-drawer-container class="flex-auto sm:h-full">
-                        <mat-drawer-content class="flex flex-col">
-                            <!-- Main -->
-                            <div class="flex flex-auto w-full overflow-hidden">
-                                <div *ngIf="viewMode === 'calendar'" class="w-full">
-                                    <app-calendar-view-calendar
-                                        class="w-full"
-                                        [(dateFrom)]="dateFrom"
-                                        [(dateTo)]="dateTo"
-                                        [services]="services"
-                                        (onDateChanged)="list()"
-                                        (onSelectedService)="selectedService($event)"></app-calendar-view-calendar>
-                                </div>
-                                <div *ngIf="viewMode === 'list'" class="w-full">
-                                    <app-calendar-view-grid
-                                        class="w-full"
-                                        [(dateFrom)]="dateFrom"
-                                        [(dateTo)]="dateTo"
-                                        [services]="services"
-                                        (onDateChanged)="list()"
-                                        (onSelectedService)="selectedService($event)"></app-calendar-view-grid>
-                                </div>
-                            </div>
-                        </mat-drawer-content>
-                    </mat-drawer-container>
-                </mat-drawer-content>
-            </mat-drawer-container>
+        <div class="flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden">
+            <app-calendar-badges
+                [events]="calendarEvents"
+                (dateSelected)="onDateSelected($event)"
+                (viewChanged)="onCalendarViewChanged($event)"></app-calendar-badges>
         </div>
     </div>
 </div>
-
-<fuse-drawer
-    class="w-screen min-w-screen sm:w-128 sm:min-w-128 z-999"
-    fixed
-    [mode]="'over'"
-    [name]="'detailsDrawer'"
-    [position]="'right'"
-    (openedChanged)="drawerDetailsChanged($event)"
-    #detailsDrawer>
-    <app-calendar-detail
-        class="w-full"
-        [service]="currentService"
-        (onCloseDrawer)="closeDrawer()"></app-calendar-detail>
-</fuse-drawer>

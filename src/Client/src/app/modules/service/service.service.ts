@@ -4,7 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, filter, finalize, map, of, switchMap, take, tap, throwError } from 'rxjs';
 import { BaseEntityService } from 'app/shared/services';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
-import { AccountStatementParameters, Service, ServiceSearchParameters } from './service.types';
+import { AccountStatementParameters, CalendarInfo, Service, ServiceSearchParameters } from './service.types';
 import { ContactSummary, ServiceSummary } from '../admin/dashboard/dashboard.types';
 import { LinkedService } from './linkedService';
 
@@ -17,6 +17,7 @@ export class ServiceService extends BaseEntityService<Service> {
     private _contactSummary: BehaviorSubject<ContactSummary> = new BehaviorSubject(null);
 
     private _list: BehaviorSubject<PaginatedListResult<Service>> = new BehaviorSubject(null);
+    private _listSummary: BehaviorSubject<CalendarInfo[]> = new BehaviorSubject(null);
     private _item: BehaviorSubject<Service> = new BehaviorSubject(null);
     private _loading: BehaviorSubject<boolean> = new BehaviorSubject(false);
     private _parameters: BehaviorSubject<ServiceSearchParameters> = new BehaviorSubject({
@@ -166,6 +167,46 @@ export class ServiceService extends BaseEntityService<Service> {
         );
     }
 
+    listSummary(collaboratorId: string, dateFrom: Date, dateTo: Date): Observable<CalendarInfo[]> {
+        this._loading.next(true);
+
+        let httpParams = new HttpParams();
+        httpParams = httpParams.append('collaboratorId', collaboratorId);
+        httpParams = httpParams.append('dateFrom', dateFrom ? this.toUtcString(dateFrom) : '');
+        httpParams = httpParams.append('dateTo', dateTo ? this.toUtcString(dateTo) : '');
+
+        const serviceString = httpParams.toString();
+
+        const url = `list-summary?${serviceString}`;
+
+        return this.apiGet<CalendarInfo[]>(url).pipe(
+            map((data: CalendarInfo[]) => {
+                this._listSummary.next(data);
+
+                return data;
+            }),
+            finalize(() => {
+                this._loading.next(false);
+            }),
+        );
+    }
+
+    private toUtcString(date: Date): string {
+        if (date === null || date === undefined) {
+            return '';
+        }
+
+        const d = new Date(date);
+        let month = '' + (d.getMonth() + 1);
+        let day = '' + d.getDate();
+        const year = d.getFullYear();
+
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+
+        return [year, month, day].join('');
+    }
+
     listEntities(params?: ServiceSearchParameters): Observable<PaginatedListResult<Service>> {
         this._loading.next(true);
 
@@ -184,6 +225,7 @@ export class ServiceService extends BaseEntityService<Service> {
         httpParams = httpParams.append('status', params?.status ?? '');
         httpParams = httpParams.append('dateFrom', params?.dateFrom ?? '');
         httpParams = httpParams.append('dateTo', params?.dateTo ?? '');
+        httpParams = httpParams.append('collaboratorId', params?.collaboratorId ?? '');
         params?.languages?.forEach(x => {
             httpParams = httpParams.append('languages', x);
         });

@@ -4,8 +4,10 @@ import {
     ChangeDetectorRef,
     Component,
     Input,
+    OnChanges,
     OnDestroy,
     OnInit,
+    SimpleChanges,
     ViewChild,
     ViewEncapsulation,
 } from '@angular/core';
@@ -27,7 +29,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { toUtcString, trackByFn } from 'app/shared';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
-import { Service, ServiceSearchParameters } from 'app/modules/service/service.types';
+import { CalendarInfo, Service, ServiceSearchParameters } from 'app/modules/service/service.types';
 import { ServiceService } from 'app/modules/service/service.service';
 import { MaterialModule } from 'app/modules/material.module';
 import { EventApi } from '@fullcalendar/core';
@@ -50,6 +52,9 @@ import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { CalendarDetailComponent } from '../calendar-detail/calendar-detail.component';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { GlobalShortcutsService } from 'app/components/ui/global-shortcuts/global-shortcuts.service';
+import { CalendarBadgesComponent } from 'app/components/ui/calendar-badges/calendar-badges.component';
+import { finalize } from 'rxjs';
+import { getMonthBoundaries } from 'app/shared/shared.utils';
 
 declare let $: any;
 
@@ -95,19 +100,11 @@ declare let $: any;
         FuseDrawerComponent,
         ServiceSidebarComponent,
         CalendarDetailComponent,
+        CalendarBadgesComponent,
     ],
 })
-export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterViewInit {
+export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
     currentPageTitle = 'Calendar';
-    private _componentShortcuts = [
-        {
-            key: 'ctrl + shift + plus',
-            preventDefault: true,
-            label: this.currentPageTitle,
-            description: 'Toggle ViewMode',
-            command: () => this.toggleViewMode(),
-        },
-    ];
 
     @Input() collaboratorId: string;
 
@@ -116,6 +113,10 @@ export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterVi
     getStatusColorClass = getStatusColorClass;
     getBillingStatusColorClass = getBillingStatusColorClass;
     getCommissionStatusColorClass = getCommissionStatusColorClass;
+
+    currentCalendarDate: Date = new Date(); // The currently displayed date in the calendar to filter events
+    calendarEvents = new Map<string, number>([]);
+    selectedDayInfo: CalendarInfo = null;
 
     drawerFilterMode: 'over' | 'side' = 'side';
     drawerFilterOpened = true;
@@ -129,7 +130,7 @@ export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterVi
 
     results: PaginatedListResult<Service>;
     services: Service[] = [];
-    itemsLoading = false;
+    loading = false;
     serviceSearchParameters: ServiceSearchParameters;
     currentService: Service;
     dateFrom: Date;
@@ -156,11 +157,6 @@ export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterVi
     ) {}
 
     ngOnInit(): void {
-        setTimeout(() => {
-            this.globalShortcutsService.addShortcuts(this.currentPageTitle, this._componentShortcuts);
-        });
-        this._changeDetectorRef.detectChanges();
-
         this.activeLang = this._translocoService.getActiveLang();
 
         // Services
@@ -171,7 +167,7 @@ export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterVi
 
         // Services loading
         this._serviceService.loading$.pipe(untilDestroyed(this)).subscribe((servicesLoading: boolean) => {
-            this.itemsLoading = servicesLoading;
+            this.loading = servicesLoading;
         });
 
         // Query parameters
@@ -195,18 +191,16 @@ export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterVi
         const toggleViewModeValue = await this._userSettingsService.getValue(`${AppSettings.Calendar}:toggleViewMode`);
         this.viewMode = toggleViewModeValue === '' ? 'calendar' : toggleViewModeValue;
 
+        this.listSummary();
         this.list();
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        this._changeDetectorRef.detectChanges();
     }
 
     ngOnDestroy(): void {
         this.globalShortcutsService.removeShortcuts(this.currentPageTitle);
-    }
-
-    async toggleViewMode() {
-        return;
-
-        this.viewMode = this.viewMode === 'calendar' ? 'list' : 'calendar';
-        this._userSettingsService.setValue(`${AppSettings.Calendar}:toggleViewMode`, this.viewMode);
     }
 
     serviceFilter(parameters: ServiceSearchParameters) {
@@ -232,6 +226,43 @@ export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterVi
         this.list();
     }
 
+    private listSummary(): void {
+        const { dateFrom, dateTo } = getMonthBoundaries(this.currentCalendarDate);
+
+        this.dateFrom = new Date(dateFrom);
+        this.dateTo = new Date(dateTo);
+
+        this._serviceService
+            .listSummary(this.collaboratorId, this.dateFrom, this.dateTo)
+            .pipe(
+                finalize(() => {
+                    this.loading = false;
+                }),
+                untilDestroyed(this),
+            )
+            .subscribe({
+                next: (data: CalendarInfo[]) => {
+                    this.calendarEvents = new Map(
+                        data.map(item => {
+                            const dateKey =
+                                typeof item.date === 'string'
+                                    ? item.date.split('T')[0]
+                                    : item.date.toISOString().split('T')[0];
+                            return [dateKey, item.count];
+                        }),
+                    );
+                    console.log('calendarEvents', this.calendarEvents);
+                },
+                error: error => {
+                    console.error(error);
+                    // this._toastr.error(error.detail, 'Error!');
+                },
+            })
+            .add(() => {
+                // this.loading = false;
+            });
+    }
+
     private list(): void {
         this.serviceSearchParameters.pageIndex = 0;
         this.serviceSearchParameters.pageSize = 100;
@@ -241,9 +272,16 @@ export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterVi
 
         console.log('serviceSearchParameters', this.serviceSearchParameters);
 
+        this.loading = true;
+
         this._serviceService
             .listEntities({ ...this.serviceSearchParameters })
-            .pipe(untilDestroyed(this))
+            .pipe(
+                finalize(() => {
+                    this.loading = false;
+                }),
+                untilDestroyed(this),
+            )
             .subscribe({
                 next: (data: PaginatedListResult<Service>) => {
                     this.services = data.items;
@@ -262,7 +300,7 @@ export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterVi
                         }
                     });
 
-                    // console.log('services', this.services);
+                    console.log('services', this.services);
                 },
                 error: error => {
                     console.error(error);
@@ -272,6 +310,24 @@ export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterVi
             .add(() => {
                 // this.loading = false;
             });
+    }
+
+    onDateSelected($event: { date: Date; eventCount: number }): void {
+        console.log('onDateSelected', $event);
+
+        this.dateFrom = $event.date;
+        this.dateTo = new Date($event.date);
+        this.dateTo.setDate(this.dateTo.getDate() + 1);
+
+        this.currentCalendarDate = $event.date;
+
+        this.list();
+    }
+
+    onCalendarViewChanged(date: Date): void {
+        this.currentCalendarDate = date;
+
+        this.listSummary();
     }
 
     selectedService(service: Service) {

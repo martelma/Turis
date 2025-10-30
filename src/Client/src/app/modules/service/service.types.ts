@@ -142,3 +142,8 @@ export class ServiceEasy {
 
     selected: boolean;
 }
+
+export class CalendarInfo {
+    date: string | Date;
+    count: number;
+}

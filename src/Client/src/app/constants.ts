@@ -147,6 +147,17 @@ export function getCommissionStatusText(item: Service) {
     return CommissionStatusTypes.find(x => x.value === item?.commissionStatus)?.text || '';
 }
 
+// export function getWorkflowCollaboratorStatusColorClass(item: Service) {
+//     return (
+//         WorkflowCollaboratorStatusTypes.find(x => x.value === item?.workflowCollaboratorStatus)?.colorClass ||
+//         'bg-default'
+//     );
+// }
+
+// export function getWorkflowCollaboratorStatusText(item: Service) {
+//     return WorkflowCollaboratorStatusTypes.find(x => x.value === item?.workflowCollaboratorStatus)?.text || '';
+// }
+
 export function getDocumentStatusColorClass(item: Document) {
     return DocumentStatus.find(x => x.value === item?.status)?.colorClass || 'bg-default';
 }

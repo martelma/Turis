@@ -40,12 +40,14 @@
                 [selectedIndex]="selectedTabIndex"
                 (selectedIndexChange)="onTabChanged($event)">
                 <mat-tab label="My Home" class="h-full">
+                    <ng-template mat-tab-label>
+                        <span class="inline-flex items-center space-x-2">
+                            <span class="">My Home</span>
+                        </span>
+                    </ng-template>
                     <ng-template matTabContent>
-                        <div class="flex-auto h-full overflow-hidden">
-                            <app-calendar-collaborator
-                                [collaboratorId]="user?.id"
-                                class="h-full"></app-calendar-collaborator>
-                        </div>
+                        <app-calendar-collaborator
+                            [collaboratorId]="'439f28fc-619a-457b-84fc-69f3a9b28d0c'"></app-calendar-collaborator>
                     </ng-template>
                 </mat-tab>
                 <mat-tab label="Admin" class="h-full">

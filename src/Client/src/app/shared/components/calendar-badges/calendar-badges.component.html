@@ -1,0 +1,11 @@
+<div class="mx-auto max-w-md sm:max-w-full">
+    <mat-calendar
+        [(selected)]="selectedDate"
+        [dateClass]="dateClass"
+        (viewChanged)="onViewChanged($event)"
+        (monthSelected)="onViewChanged($event)"
+        (yearSelected)="onViewChanged($event)"
+        (selectedChange)="onDateSelected($event)"
+        watchCalendarNavigation>
+    </mat-calendar>
+</div>

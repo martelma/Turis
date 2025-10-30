@@ -26,6 +26,7 @@ import {
     getBillingStatusColorClass,
     getCommissionStatusColorClass,
     getStatusColorClass,
+    getWorkflowCollaboratorStatusColorClass,
     ServiceTypes,
 } from 'app/constants';
 import { ServiceSidebarComponent } from 'app/modules/service/service-sidebar/service-sidebar.component';
@@ -91,6 +92,7 @@ export class CalendarDetailComponent implements OnInit {
     getStatusColorClass = getStatusColorClass;
     getBillingStatusColorClass = getBillingStatusColorClass;
     getCommissionStatusColorClass = getCommissionStatusColorClass;
+    getWorkflowCollaboratorStatusColorClass = getWorkflowCollaboratorStatusColorClass;
 
     drawerFilterMode: 'over' | 'side' = 'side';
     drawerFilterOpened = true;

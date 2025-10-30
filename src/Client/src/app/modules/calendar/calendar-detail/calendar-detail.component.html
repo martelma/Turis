@@ -41,8 +41,12 @@
                         [matTooltip]="service?.billingStatus"></span>
                     <span
                         [ngClass]="getCommissionStatusColorClass(service)"
-                        class="color-box"
+                        class="color-box mr-3"
                         [matTooltip]="service?.commissionStatus"></span>
+                    <span
+                        [ngClass]="getWorkflowCollaboratorStatusColorClass(service)"
+                        class="color-box"
+                        [matTooltip]="service?.workflowCollaboratorStatus"></span>
                 </div>
             </div>
             <div
@@ -60,6 +64,14 @@
                 [ngClass]="{ 'mat-row-hover': infoRowHover[2] }">
                 <div class="text-secondary">Location</div>
                 <div>{{ service?.location }}</div>
+            </div>
+            <div
+                class="flex items-center justify-between py-3 cursor-pointer"
+                (mouseenter)="infoRowHover[7] = true"
+                (mouseleave)="infoRowHover[7] = false"
+                [ngClass]="{ 'mat-row-hover': infoRowHover[7] }">
+                <div class="text-secondary">Meeting Place</div>
+                <div>{{ service?.meetingPlace }}</div>
             </div>
             <div
                 class="flex items-center justify-between py-3 cursor-pointer"
@@ -98,14 +110,6 @@
                 [ngClass]="{ 'mat-row-hover': infoRowHover[6] }">
                 <div class="text-secondary">Duration Type</div>
                 <div>{{ service?.durationType }}</div>
-            </div>
-            <div
-                class="flex items-center justify-between py-3 cursor-pointer"
-                (mouseenter)="infoRowHover[7] = true"
-                (mouseleave)="infoRowHover[7] = false"
-                [ngClass]="{ 'mat-row-hover': infoRowHover[7] }">
-                <div class="text-secondary">Meeting Place</div>
-                <div>{{ service?.meetingPlace }}</div>
             </div>
             <div
                 class="flex items-center justify-between py-3 cursor-pointer"

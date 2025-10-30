@@ -115,6 +115,19 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 				return operation;
 			});
 
+		templateApiGroup.MapGet("list-summary", ListSummaryAsync)
+			.Produces<IEnumerable<CalendarInfo>>(StatusCodes.Status200OK)
+			.Produces(StatusCodes.Status404NotFound)
+			.WithOpenApi(operation =>
+			{
+				operation.Summary = "Retrieves the linked services";
+
+				operation.Response(StatusCodes.Status200OK).Description = "The service";
+				operation.Response(StatusCodes.Status404NotFound).Description = "service not found";
+
+				return operation;
+			});
+
 		templateApiGroup.MapPost(string.Empty, SaveAsync)
 			//.WithValidation<ServiceRequest>()
 			//.Produces<ServiceModel>(StatusCodes.Status200OK)
@@ -298,6 +311,9 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 
 	private static async Task<IResult> LinkedServicesAsync(HttpContext httpContext, IServiceService service, Guid serviceId)
 		=> (await service.LinkedServicesAsync(serviceId)).ToResponse(httpContext);
+
+	private static async Task<IResult> ListSummaryAsync(HttpContext httpContext, IServiceService service, [AsParameters] CalendarInfoParameters parameters)
+		=> (await service.ListSummaryAsync(parameters)).ToResponse(httpContext);
 
 	private static async Task<IResult> SaveAsync(HttpContext httpContext, IServiceService service, ServiceRequest request)
 		=> (await service.SaveAsync(request)).ToResponse(httpContext);

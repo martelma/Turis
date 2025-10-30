@@ -40,7 +40,12 @@ import { fuseAnimations } from '@fuse/animations';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { getStatusColorClass, getBillingStatusColorClass, getCommissionStatusColorClass } from 'app/constants';
+import {
+    getStatusColorClass,
+    getBillingStatusColorClass,
+    getCommissionStatusColorClass,
+    getWorkflowCollaboratorStatusColorClass,
+} from 'app/constants';
 import { MaterialModule } from 'app/modules/material.module';
 import { ServiceSidebarComponent } from 'app/modules/service/service-sidebar/service-sidebar.component';
 import { Service, ServiceSearchParameters } from 'app/modules/service/service.types';
@@ -185,9 +190,12 @@ export class CalendarViewGridComponent implements OnInit, OnDestroy, AfterViewIn
 
         // Raggruppa i servizi per data e conta quanti ce ne sono per ogni data
         this.calendarEvents = this._services.reduce((map, item) => {
-            const dateKey = item.date.toISOString().split('T')[0]; // Converte la data in formato 'YYYY-MM-DD'
-            const currentCount = map.get(dateKey) || 0;
-            map.set(dateKey, currentCount + 1);
+            if (item.date) {
+                const date = new Date(item.date);
+                const dateKey = date.toISOString().split('T')[0]; // Converte la data in formato 'YYYY-MM-DD'
+                const currentCount = map.get(dateKey) || 0;
+                map.set(dateKey, currentCount + 1);
+            }
             return map;
         }, new Map());
     }
@@ -198,6 +206,7 @@ export class CalendarViewGridComponent implements OnInit, OnDestroy, AfterViewIn
     getStatusColorClass = getStatusColorClass;
     getBillingStatusColorClass = getBillingStatusColorClass;
     getCommissionStatusColorClass = getCommissionStatusColorClass;
+    getWorkflowCollaboratorStatusColorClass = getWorkflowCollaboratorStatusColorClass;
 
     trackByFn = trackByFn;
 
@@ -213,12 +222,13 @@ export class CalendarViewGridComponent implements OnInit, OnDestroy, AfterViewIn
         'status',
         'tags',
         'date',
-        'serviceType',
-        'durationType',
         'people',
         'languages',
-        'title',
+        'location',
+        'serviceType',
+        // 'durationType',
         'client',
+        'title',
         'collaborator',
     ];
 
