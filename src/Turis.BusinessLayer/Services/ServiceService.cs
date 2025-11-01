@@ -741,22 +741,23 @@ public class ServiceService(ApplicationDbContext dbContext
 
 	public async Task<Result<List<CalendarInfo>>> ListSummaryAsync(CalendarInfoParameters parameters)
 	{
-			var dateFrom = DateTime.ParseExact(parameters.DateFrom, "yyyyMMdd", CultureInfo.InvariantCulture);
-			var dateTo = DateTime.ParseExact(parameters.DateTo, "yyyyMMdd", CultureInfo.InvariantCulture);
-		
-			var data = await dbContext.GetData<Service>()
-				.Where(x => x.CollaboratorId == parameters.CollaboratorId)
-				.Where(x => x.Date.Date >= dateFrom)
-				.Where(x => x.Date <= dateTo)
-				.GroupBy(x => x.Date.Date)
-				.Select(x => new CalendarInfo
-				{
-					Date = x.Key,
-					Count = x.Count()
-				})
-				.ToListAsync();
+		var dateFrom = DateTime.ParseExact(parameters.DateFrom, "yyyyMMdd", CultureInfo.InvariantCulture);
+		var dateTo = DateTime.ParseExact(parameters.DateTo, "yyyyMMdd", CultureInfo.InvariantCulture);
 
-			return data;
+		var data = await dbContext.GetData<Service>()
+			.Where(x => x.CollaboratorId == parameters.CollaboratorId)
+			.Where(x => x.Date.Date >= dateFrom)
+			.Where(x => x.Date <= dateTo)
+			.GroupBy(x => x.Date.Date)
+			.Select(x => new CalendarInfo
+			{
+				Date = x.Key,
+				CountConfirmed = x.Count(x => x.WorkflowCollaboratorStatus == WorkflowCollaboratorStatus.Confirmed),
+				CountPending = x.Count(x => x.WorkflowCollaboratorStatus == WorkflowCollaboratorStatus.Pending)
+			})
+			.ToListAsync();
+
+		return data;
 	}
 
 	public async Task<Result<ServiceModel>> SaveAsync(ServiceRequest service)

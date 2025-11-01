@@ -1,0 +1,46 @@
+/* Dashboard Component Styles */
+
+/* Force full height for Angular Material tab containers */
+:host {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Use global styles to override Angular Material */
+:host ::ng-deep .mat-mdc-tab-group {
+    height: 100% !important;
+    min-height: 0;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+:host ::ng-deep .mat-mdc-tab-header {
+    flex-shrink: 0 !important;
+}
+
+:host ::ng-deep .mat-mdc-tab-body-wrapper {
+    height: 100% !important;
+    min-height: 0 !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+:host ::ng-deep .mat-mdc-tab-body {
+    height: 100% !important;
+    min-height: 0 !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+:host ::ng-deep .mat-mdc-tab-body-content {
+    height: 100% !important;
+    min-height: 0 !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}

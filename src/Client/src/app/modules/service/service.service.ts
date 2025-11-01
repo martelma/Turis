@@ -168,6 +168,10 @@ export class ServiceService extends BaseEntityService<Service> {
     }
 
     listSummary(collaboratorId: string, dateFrom: Date, dateTo: Date): Observable<CalendarInfo[]> {
+        if (!collaboratorId) {
+            return of([]);
+        }
+
         this._loading.next(true);
 
         let httpParams = new HttpParams();
@@ -178,6 +182,7 @@ export class ServiceService extends BaseEntityService<Service> {
         const serviceString = httpParams.toString();
 
         const url = `list-summary?${serviceString}`;
+        console.log('listSummary url', url);
 
         return this.apiGet<CalendarInfo[]>(url).pipe(
             map((data: CalendarInfo[]) => {

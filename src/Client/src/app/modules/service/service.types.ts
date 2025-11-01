@@ -145,5 +145,6 @@ export class ServiceEasy {
 
 export class CalendarInfo {
     date: string | Date;
-    count: number;
+    countConfirmed: number;
+    countPending: number;
 }

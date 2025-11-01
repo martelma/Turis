@@ -98,3 +98,18 @@ Prima Nota
 migration:
 	manca da gestire la parte documenti
 	
+	
+	
+duplica servizio da aggiungere al menù
+
+in myhome finire agenda personale 
+	dettagli del servizio
+	shortcut di navigazione nel calendario
+
+
+
+
+
+settima prossima ok sempre
+poi il 3 e il 4
+non c'è dal 10 al 18

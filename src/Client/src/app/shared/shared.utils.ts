@@ -83,13 +83,30 @@ export function years(number: number): number[] {
     }
     return years;
 }
-
-export const getMonthBoundaries = (date: Date): { dateFrom: string; dateTo: string } => {
+// Versione che restituisce Date objects
+export const getMonthDateRange = (date: Date): { dateFrom: Date; dateTo: Date } => {
     const year = date.getFullYear();
-    const month = date.getMonth(); // 0-based index
+    const month = date.getMonth();
 
-    const dateFrom = new Date(Date.UTC(year, month, 1));
-    const dateTo = new Date(Date.UTC(year, month + 1, 0)); // Day 0 of next month = last day of current month
+    const dateFrom = new Date(year, month, 1);
+    const dateTo = new Date(year, month + 1, 0);
 
-    return { dateFrom: dateFrom.toISOString(), dateTo: dateTo.toISOString() };
+    return { dateFrom, dateTo };
 };
+
+// Versione che restituisce ISO strings (quella originale)
+export const getMonthBoundaries = (date: Date): { dateFrom: string; dateTo: string } => {
+    const { dateFrom, dateTo } = getMonthDateRange(date);
+    return {
+        dateFrom: dateFrom.toISOString(),
+        dateTo: dateTo.toISOString(),
+    };
+};
+
+export function getFirstDayOfMonth(date: Date = new Date()): Date {
+    return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+
+export function getLastDayOfMonth(date: Date = new Date()): Date {
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+}

@@ -12,7 +12,7 @@ import {
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatCalendar, MatCalendarCellClassFunction, MatDatepickerModule } from '@angular/material/datepicker';
 import { WatchCalendarNavigationDirective } from './watch-calendar-navigation.pipe';
-import { CalendarInfo } from 'app/modules/service/service.types';
+import { getFirstDayOfMonth } from 'app/shared/shared.utils';
 
 @Component({
     selector: 'app-calendar-badges',
@@ -23,12 +23,12 @@ import { CalendarInfo } from 'app/modules/service/service.types';
 })
 export class CalendarBadgesComponent implements OnChanges {
     @Input() events = new Map<string, number>([]);
+    @Input() startDate: Date; //= getFirstDayOfMonth(new Date());
+    @Input() selectedDate: Date = new Date();
     @Output() dateSelected = new EventEmitter<{ date: Date; eventCount: number }>();
     @Output() viewChanged = new EventEmitter<Date>();
 
     @ViewChild(MatCalendar) calendar?: MatCalendar<Date>;
-
-    selectedDate: Date | null = null;
 
     activeDate: Date = new Date();
 
@@ -47,6 +47,20 @@ export class CalendarBadgesComponent implements OnChanges {
                 if (this.calendar) {
                     this.calendar.updateTodaysDate();
                 }
+            }, 0);
+        }
+
+        if (changes['startDate'] && changes['startDate'].currentValue) {
+            // Update the active date to reflect the new start date
+            this.activeDate = new Date(changes['startDate'].currentValue);
+
+            setTimeout(() => {
+                // Force calendar to update its view to the new month
+                if (this.calendar) {
+                    this.calendar.activeDate = this.activeDate;
+                    this.calendar.updateTodaysDate();
+                }
+                this._changeDetectorRef.detectChanges();
             }, 0);
         }
     }

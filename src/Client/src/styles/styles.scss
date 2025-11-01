@@ -9,6 +9,39 @@ table {
     width: 100%;
 }
 
+/* Fix Angular Material Tabs Height Issue */
+app-dashboard .mat-mdc-tab-group {
+    height: 100% !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+app-dashboard .mat-mdc-tab-body-wrapper {
+    height: 100% !important;
+    min-height: 0 !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+app-dashboard .mat-mdc-tab-body {
+    height: 100% !important;
+    min-height: 0 !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+app-dashboard .mat-mdc-tab-body-content {
+    height: 100% !important;
+    min-height: 0 !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
 tr.example-detail-row {
     height: 0 !important;
 }

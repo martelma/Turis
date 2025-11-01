@@ -23,6 +23,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { fuseAnimations } from '@fuse/animations';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -46,6 +47,8 @@ import { ServiceSidebarComponent } from 'app/modules/service/service-sidebar/ser
 import { MatDrawer } from '@angular/material/sidenav';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTableModule } from '@angular/material/table';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UserSettingsService } from 'app/shared/services/user-setting.service';
@@ -54,9 +57,8 @@ import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { GlobalShortcutsService } from 'app/components/ui/global-shortcuts/global-shortcuts.service';
 import { CalendarBadgesComponent } from 'app/components/ui/calendar-badges/calendar-badges.component';
 import { finalize } from 'rxjs';
-import { getMonthBoundaries } from 'app/shared/shared.utils';
-
-declare let $: any;
+import { getFirstDayOfMonth, getLastDayOfMonth, getMonthBoundaries, getMonthDateRange } from 'app/shared/shared.utils';
+import { addDays } from '@fullcalendar/core/internal';
 
 @UntilDestroy()
 @Component({
@@ -90,10 +92,12 @@ declare let $: any;
         MatCheckboxModule,
         MatRippleModule,
         MatTooltipModule,
+        MatTableModule,
+        MatProgressSpinnerModule,
+        MatSidenavModule,
         TranslocoModule,
         SearchInputComponent,
         JsonPipe,
-        SearchInputComponent,
         CommonModule,
         MaterialModule,
         FullCalendarModule,
@@ -114,14 +118,12 @@ export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterVi
     getBillingStatusColorClass = getBillingStatusColorClass;
     getCommissionStatusColorClass = getCommissionStatusColorClass;
 
+    startDate: Date = getFirstDayOfMonth(new Date());
     currentCalendarDate: Date = new Date(); // The currently displayed date in the calendar to filter events
     calendarEvents = new Map<string, number>([]);
     selectedDayInfo: CalendarInfo = null;
 
-    drawerFilterMode: 'over' | 'side' = 'side';
-    drawerFilterOpened = true;
-
-    drawerDetailMode: 'over' | 'side' = 'side';
+    drawerDetailMode: 'over' | 'side' = 'over';
 
     // viewMode: 'calendar' | 'list' = 'calendar';
     viewMode = 'list';
@@ -131,7 +133,7 @@ export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterVi
     results: PaginatedListResult<Service>;
     services: Service[] = [];
     loading = false;
-    serviceSearchParameters: ServiceSearchParameters;
+    serviceSearchParameters: ServiceSearchParameters = {};
     currentService: Service;
     dateFrom: Date;
     dateTo: Date;
@@ -143,7 +145,26 @@ export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterVi
     serviceTypes = ServiceTypes;
     durationTypes = DurationTypes;
 
+    displayedColumns: string[] = ['date', 'people', 'languages', 'location', 'serviceType', 'client', 'title'];
+
     trackByFn = trackByFn;
+
+    private _componentShortcuts = [
+        {
+            key: 'ctrl + right',
+            preventDefault: true,
+            label: this.currentPageTitle,
+            description: 'Next Day',
+            command: () => this.setNextDay(),
+        },
+        {
+            key: 'ctrl + left',
+            preventDefault: true,
+            label: this.currentPageTitle,
+            description: 'Previous Day',
+            command: () => this.setPreviousDay(),
+        },
+    ];
 
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
@@ -157,6 +178,8 @@ export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterVi
     ) {}
 
     ngOnInit(): void {
+        this.globalShortcutsService.addShortcuts(this.currentPageTitle, this._componentShortcuts);
+
         this.activeLang = this._translocoService.getActiveLang();
 
         // Services
@@ -185,22 +208,42 @@ export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterVi
     }
 
     async ngAfterViewInit(): Promise<void> {
-        const toggleFilterValue = await this._userSettingsService.getValue(`${AppSettings.Calendar}:toggleFilter`);
-        this.drawerFilterOpened = toggleFilterValue === '' ? false : toggleFilterValue === 'true';
-
         const toggleViewModeValue = await this._userSettingsService.getValue(`${AppSettings.Calendar}:toggleViewMode`);
         this.viewMode = toggleViewModeValue === '' ? 'calendar' : toggleViewModeValue;
 
         this.listSummary();
-        this.list();
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
+    ngOnChanges(_changes: SimpleChanges): void {
         this._changeDetectorRef.detectChanges();
     }
 
     ngOnDestroy(): void {
         this.globalShortcutsService.removeShortcuts(this.currentPageTitle);
+    }
+
+    setPreviousDay() {
+        this.currentCalendarDate = addDays(this.currentCalendarDate, -1);
+
+        const { dateFrom, dateTo } = getMonthDateRange(this.currentCalendarDate);
+        if (this.startDate < dateFrom || this.startDate > dateTo) {
+            this.startDate = getLastDayOfMonth(this.currentCalendarDate);
+            this.listSummary();
+        }
+
+        this.list();
+    }
+
+    setNextDay() {
+        this.currentCalendarDate = addDays(this.currentCalendarDate, 1);
+
+        const { dateFrom, dateTo } = getMonthDateRange(this.currentCalendarDate);
+        if (this.startDate < dateFrom || this.startDate > dateTo) {
+            this.startDate = getFirstDayOfMonth(this.currentCalendarDate);
+            this.listSummary();
+        }
+
+        this.list();
     }
 
     serviceFilter(parameters: ServiceSearchParameters) {
@@ -264,6 +307,10 @@ export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterVi
     }
 
     private list(): void {
+        this.dateFrom = this.currentCalendarDate;
+        this.dateTo = new Date(this.currentCalendarDate);
+        this.dateTo.setDate(this.dateTo.getDate() + 1);
+
         this.serviceSearchParameters.pageIndex = 0;
         this.serviceSearchParameters.pageSize = 100;
         this.serviceSearchParameters.dateFrom = toUtcString(this.dateFrom);
@@ -315,10 +362,6 @@ export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterVi
     onDateSelected($event: { date: Date; eventCount: number }): void {
         console.log('onDateSelected', $event);
 
-        this.dateFrom = $event.date;
-        this.dateTo = new Date($event.date);
-        this.dateTo.setDate(this.dateTo.getDate() + 1);
-
         this.currentCalendarDate = $event.date;
 
         this.list();
@@ -336,14 +379,7 @@ export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterVi
         this.detailsDrawer.toggle();
     }
 
-    async toggleFilter() {
-        this.drawerFilterOpened = !this.drawerFilterOpened;
-
-        const value = this.drawerFilterOpened ? 'true' : 'false';
-        this._userSettingsService.setValue(`${AppSettings.Calendar}:toggleFilter`, value);
-    }
-
-    handleEvents(events: EventApi[]) {
+    handleEvents(_events: EventApi[]) {
         // console.log('handleEvents', events);
     }
 

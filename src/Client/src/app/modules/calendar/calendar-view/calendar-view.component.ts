@@ -240,6 +240,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy, AfterViewInit {
         this.serviceSearchParameters.pageSize = 100;
         this.serviceSearchParameters.dateFrom = toUtcString(this.dateFrom);
         this.serviceSearchParameters.dateTo = toUtcString(this.dateTo);
+        this.serviceSearchParameters.collaboratorId = null;
 
         console.log('serviceSearchParameters', this.serviceSearchParameters);
 

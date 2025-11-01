@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, isDevMode, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -28,6 +28,7 @@ import { CalendarCollaboratorComponent } from 'app/modules/calendar/calendar-col
     selector: 'app-dashboard',
     standalone: true,
     templateUrl: './dashboard.component.html',
+    styleUrls: ['./dashboard.component.scss'],
     encapsulation: ViewEncapsulation.None,
     imports: [
         CommonModule,
@@ -47,6 +48,7 @@ import { CalendarCollaboratorComponent } from 'app/modules/calendar/calendar-col
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
     public user: User;
+    public userId: string;
     public isScreenSmall: boolean;
 
     selectedTabIndex = 0;
@@ -97,6 +99,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
             .pipe(untilDestroyed(this))
             .subscribe((user: User) => {
                 this.user = user;
+                this.userId = user.id;
+
+                if (isDevMode()) {
+                    this.userId = '439f28fc-619a-457b-84fc-69f3a9b28d0c';
+                }
             });
     }
 

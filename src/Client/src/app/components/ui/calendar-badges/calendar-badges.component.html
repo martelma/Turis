@@ -1,5 +1,7 @@
 <div class="max-w-md">
     <mat-calendar
+        #calendar
+        [startAt]="startDate"
         [(selected)]="selectedDate"
         [dateClass]="dateClass"
         (viewChanged)="onViewChanged($event)"

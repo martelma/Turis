@@ -248,10 +248,7 @@ export class CalendarViewGridComponent implements OnInit, OnDestroy, AfterViewIn
     }
 
     ngOnDestroy(): void {
-        setTimeout(() => {
-            this.globalShortcutsService.addShortcuts(this.currentPageTitle, this._componentShortcuts);
-        });
-        this._changeDetectorRef.detectChanges();
+        this.globalShortcutsService.removeShortcuts(this.currentPageTitle);
     }
 
     handlePageEvent(): void {}
