@@ -110,6 +110,8 @@ per adesso funziona solo se lo imposto io nel db
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+nella distribution rimuovere il .local.json
+
 
 settima prossima ok sempre
 poi il 3 e il 4
