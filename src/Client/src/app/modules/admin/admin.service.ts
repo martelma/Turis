@@ -1,13 +1,18 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BaseService } from 'app/shared/services';
 import { Observable } from 'rxjs';
 import { KeyValue } from './console/console.types';
+import { APPLICATION_CONFIGURATION_TOKEN } from 'app/configurations/application-configuration.token';
+import { ApplicationConfiguration } from 'app/configurations/application-configuration.types';
 
 @Injectable({ providedIn: 'root' })
 export class AdminService extends BaseService {
-    constructor(http: HttpClient) {
-        super(http);
+    constructor(
+        http: HttpClient,
+        @Inject(APPLICATION_CONFIGURATION_TOKEN) protected _applicationConfig: ApplicationConfiguration,
+    ) {
+        super(http, _applicationConfig);
 
         this.defaultApiController = 'admin';
     }

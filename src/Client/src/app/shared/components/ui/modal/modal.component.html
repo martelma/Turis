@@ -1,0 +1,73 @@
+<div
+    *ngIf="!showBackground"
+    #modal
+    class="bg-card flex max-w-full flex-col overflow-y-auto rounded-none border-2 p-4 shadow-xl sm:overflow-hidden sm:rounded-2xl"
+    @fadeIn
+    @fadeOut
+    [ngClass]="{
+        'z-99': isOnTop,
+        'fixed inset-0 translate-x-0 translate-y-0 transform': isScreenSmall,
+        'z-90': !isOnTop,
+        resize: resizable,
+    }"
+    cdkDragBoundary=".drag-container"
+    cdkDrag
+    [id]="uuId">
+    <div class="flex w-full">
+        <button mat-icon-button class="cursor-move" [class.hidden]="!draggable || isScreenSmall" cdkDragHandle>
+            <mat-icon>open_with</mat-icon>
+        </button>
+
+        <button mat-icon-button class="ml-auto" (click)="closeEvent()" *ngIf="closable">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <ng-container *ngIf="false; else modalContent"></ng-container>
+</div>
+
+<div
+    *ngIf="showBackground"
+    class="drag-container fixed inset-0 z-80 flex h-full w-full items-center justify-center bg-black bg-opacity-10 backdrop-blur-sm"
+    @fadeIn
+    @fadeOut
+    (click)="closeOnClickOut ? closeEvent() : null"
+    tabindex="0"
+    (keypress)="$event.preventDefault()">
+    <div
+        #modal
+        class="bg-card relative z-90 flex flex-col overflow-y-auto rounded-none p-4 sm:overflow-hidden sm:rounded-2xl"
+        [class.z-999]="isOnTop"
+        [class.resize]="resizable"
+        cdkDragBoundary=".drag-container"
+        cdkDrag
+        [id]="uuId"
+        (click)="$event.stopPropagation()"
+        tabindex="0"
+        (keypress)="$event.preventDefault()">
+        <div class="flex w-full">
+            <button mat-icon-button class="cursor-move" [class.hidden]="!draggable || isScreenSmall" cdkDragHandle>
+                <mat-icon>open_with</mat-icon>
+            </button>
+
+            <button mat-icon-button class="ml-auto" (click)="closeEvent()" *ngIf="closable">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+
+        <ng-container *ngIf="false; else modalContent"></ng-container>
+    </div>
+</div>
+
+<ng-template #modalContent>
+    <div class="flex w-full flex-col items-center">
+        <span class="mt-3 w-full text-center text-3xl font-extrabold" *ngIf="modalTitle">
+            {{ modalTitle }}
+        </span>
+        <span class="text-secondary mb-3 w-full text-center" *ngIf="description">
+            {{ description }}
+        </span>
+    </div>
+
+    <ng-content select="[modal-content]"></ng-content>
+</ng-template>

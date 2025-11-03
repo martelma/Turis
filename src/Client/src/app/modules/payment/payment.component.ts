@@ -53,8 +53,10 @@ export class PaymentComponent implements OnInit, AfterViewInit {
     async ngOnInit(): Promise<void> {}
 
     async ngAfterViewInit(): Promise<void> {
-        const toggleFilterValue = await this._userSettingsService.getValue(`${AppSettings.Payment}:toggleFilter`);
-        this.drawerFilterOpened = toggleFilterValue === '' ? false : toggleFilterValue === 'true';
+        this.drawerFilterOpened = await this._userSettingsService.getBooleanValue(
+            `${AppSettings.Payment}:toggleFilter`,
+            false,
+        );
     }
 
     createPayment(): void {

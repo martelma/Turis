@@ -13,7 +13,6 @@ import {
     AfterViewInit,
     ChangeDetectorRef,
     Component,
-    ElementRef,
     Input,
     OnInit,
     ViewChild,

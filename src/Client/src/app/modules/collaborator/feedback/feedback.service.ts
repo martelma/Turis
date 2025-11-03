@@ -1,9 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { BaseService } from 'app/shared/services';
 import { Service } from 'app/modules/service/service.types';
 import { ServiceService } from 'app/modules/service/service.service';
+import { APPLICATION_CONFIGURATION_TOKEN } from 'app/configurations/application-configuration.token';
+import { ApplicationConfiguration } from 'app/configurations/application-configuration.types';
 
 @Injectable({ providedIn: 'root' })
 export class FeedbackService extends BaseService {
@@ -11,10 +13,11 @@ export class FeedbackService extends BaseService {
     private _servicesLoading: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
     constructor(
-        http: HttpClient,
+        protected http: HttpClient,
+        @Inject(APPLICATION_CONFIGURATION_TOKEN) protected _applicationConfig: ApplicationConfiguration,
         private serviceService: ServiceService,
     ) {
-        super(http);
+        super(http, _applicationConfig);
     }
 
     get service$(): Observable<Service> {

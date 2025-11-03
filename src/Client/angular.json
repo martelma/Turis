@@ -23,7 +23,9 @@
                         "outputPath": "../../_deploy/app",
                         "index": "src/index.html",
                         "main": "src/main.ts",
-                        "polyfills": ["zone.js"],
+                        "polyfills": [
+                            "zone.js"
+                        ],
                         "tsConfig": "tsconfig.app.json",
                         "inlineStyleLanguage": "scss",
                         "allowedCommonJsDependencies": [
@@ -42,6 +44,7 @@
                             "src/favicon.ico",
                             "src/application-config.json",
                             "src/application-config.local.json",
+                            "src/version-info.json",
                             "src/assets",
                             {
                                 "glob": "**/*",
@@ -51,7 +54,10 @@
                             "src/web.config"
                         ],
                         "stylePreprocessorOptions": {
-                            "includePaths": ["src/@fuse/styles"]
+                            "includePaths": [
+                                "src/@fuse/styles",
+                                "src/styles"
+                            ]
                         },
                         "styles": [
                             "src/@fuse/styles/tailwind.scss",
@@ -78,12 +84,6 @@
                                     "maximumError": "90kb"
                                 }
                             ],
-                            "fileReplacements": [
-                                {
-                                    "replace": "src/environments/environment.ts",
-                                    "with": "src/environments/environment.production.ts"
-                                }
-                            ],
                             "outputHashing": "all"
                         },
                         "development": {
@@ -92,13 +92,7 @@
                             "vendorChunk": true,
                             "extractLicenses": false,
                             "sourceMap": true,
-                            "namedChunks": true,
-                            "fileReplacements": [
-                                {
-                                    "replace": "src/environments/environment.ts",
-                                    "with": "src/environments/environment.local.ts"
-                                }
-                            ]
+                            "namedChunks": true
                         }
                     },
                     "defaultConfiguration": "production"
@@ -124,18 +118,30 @@
                 "test": {
                     "builder": "@angular-devkit/build-angular:karma",
                     "options": {
-                        "polyfills": ["zone.js", "zone.js/testing"],
+                        "polyfills": [
+                            "zone.js",
+                            "zone.js/testing"
+                        ],
                         "tsConfig": "tsconfig.spec.json",
                         "inlineStyleLanguage": "scss",
-                        "assets": ["src/favicon-16x16.png", "src/favicon-32x32.png", "src/assets"],
-                        "styles": ["src/styles/styles.scss"],
+                        "assets": [
+                            "src/favicon-16x16.png",
+                            "src/favicon-32x32.png",
+                            "src/assets"
+                        ],
+                        "styles": [
+                            "src/styles/styles.scss"
+                        ],
                         "scripts": []
                     }
                 },
                 "lint": {
                     "builder": "@angular-eslint/builder:lint",
                     "options": {
-                        "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+                        "lintFilePatterns": [
+                            "src/**/*.ts",
+                            "src/**/*.html"
+                        ]
                     }
                 }
             }
@@ -143,6 +149,8 @@
     },
     "cli": {
         "analytics": false,
-        "schematicCollections": ["@angular-eslint/schematics"]
+        "schematicCollections": [
+            "@angular-eslint/schematics"
+        ]
     }
 }

@@ -6,6 +6,7 @@ import {
     Component,
     forwardRef,
     HostBinding,
+    Inject,
     Input,
     OnDestroy,
     OnInit,
@@ -23,6 +24,8 @@ import { FuseVerticalNavigationSpacerItemComponent } from '@fuse/components/navi
 import { FuseVerticalNavigationComponent } from '@fuse/components/navigation/vertical/vertical.component';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { APPLICATION_CONFIGURATION_TOKEN } from 'app/configurations/application-configuration.token';
+import { ApplicationConfiguration } from 'app/configurations/application-configuration.types';
 import { isItemVisibleForUser } from 'app/core/navigation/navigation.utils';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
@@ -74,6 +77,7 @@ export class FuseVerticalNavigationCollapsableItemComponent implements OnInit, O
         private _router: Router,
         private _fuseNavigationService: FuseNavigationService,
         private _userService: UserService,
+        @Inject(APPLICATION_CONFIGURATION_TOKEN) protected applicationConfig: ApplicationConfiguration,
     ) {}
 
     // -----------------------------------------------------------------------------------------------------

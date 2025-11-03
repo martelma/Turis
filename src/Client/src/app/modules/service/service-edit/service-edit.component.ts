@@ -8,7 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { Collaborator, Service } from '../service.types';
-import { AsyncPipe, JsonPipe, NgFor, NgIf, NgClass } from '@angular/common';
+import { AsyncPipe, JsonPipe, NgFor, NgIf, NgClass, DatePipe } from '@angular/common';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -72,6 +72,7 @@ import { LinkedServicesComponent } from '../linked-services/linked-services.comp
         NgFor,
         NgClass,
         AsyncPipe,
+        DatePipe,
         JsonPipe,
         FormsModule,
         RouterOutlet,

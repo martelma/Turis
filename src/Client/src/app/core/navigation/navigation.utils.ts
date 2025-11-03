@@ -1,10 +1,16 @@
 import { FuseNavigationItem } from '@fuse/components/navigation';
+import { ApplicationConfiguration } from 'app/configurations/application-configuration.types';
 import { User } from 'app/core/user/user.types';
-import { environment } from 'environments/environment';
 import { Roles } from '../user/user.roles';
 
-export const isItemVisibleForUser = (user: User, item: FuseNavigationItem): boolean => {
-    const workspaceApp = user?.applications.find(a => a.id.toLowerCase() === environment.applicationId.toLowerCase());
+export const isItemVisibleForUser = (
+    user: User,
+    item: FuseNavigationItem,
+    applicationConfig: ApplicationConfiguration,
+): boolean => {
+    const workspaceApp = user?.applications.find(
+        a => a.id.toLowerCase() === applicationConfig.applicationId.toLowerCase(),
+    );
 
     // Owner always can see the item
     if (workspaceApp?.roles?.some(x => x.name.toLowerCase() === Roles.OWNER.toLowerCase())) {
@@ -25,14 +31,14 @@ export const isItemVisibleForUser = (user: User, item: FuseNavigationItem): bool
 
         // Otherwise, checks whether the user has the specific role
         return item?.roles?.some(role =>
-            workspaceApp?.roles.some(appRole => appRole.name.toLowerCase() === role.toLowerCase()),
+            workspaceApp?.roles?.some(appRole => appRole.name.toLowerCase() === role.toLowerCase()),
         );
     }
 
     // Otherwise, checks whether the user has the specific scope
     return item?.scopes?.some(scope =>
-        workspaceApp?.roles.some(appRole =>
-            appRole.scopes.some(appScope => appScope.name.toLowerCase() === scope.toLowerCase()),
+        workspaceApp?.roles?.some(appRole =>
+            appRole.scopes?.some(appScope => appScope.name.toLowerCase() === scope.toLowerCase()),
         ),
     );
 };

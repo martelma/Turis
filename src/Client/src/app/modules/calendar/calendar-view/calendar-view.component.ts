@@ -192,11 +192,15 @@ export class CalendarViewComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     async ngAfterViewInit(): Promise<void> {
-        const toggleFilterValue = await this._userSettingsService.getValue(`${AppSettings.Calendar}:toggleFilter`);
-        this.drawerFilterOpened = toggleFilterValue === '' ? false : toggleFilterValue === 'true';
+        this.drawerFilterOpened = await this._userSettingsService.getBooleanValue(
+            `${AppSettings.Calendar}:toggleFilter`,
+            false,
+        );
 
-        const toggleViewModeValue = await this._userSettingsService.getValue(`${AppSettings.Calendar}:toggleViewMode`);
-        this.viewMode = toggleViewModeValue === '' ? 'calendar' : toggleViewModeValue;
+        this.viewMode = await this._userSettingsService.getStringValue(
+            `${AppSettings.Calendar}:toggleViewMode`,
+            'list',
+        );
 
         this.list();
     }

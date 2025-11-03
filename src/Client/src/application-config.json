@@ -1,9 +1,9 @@
 {
     "applicationId": "70B35A7C-BB04-41FE-AB76-AA99B20D30B0",
-    "production": false,
+    "production": true,
     "staging": false,
-    "dev": true,
+    "dev": false,
     "baseUrl": "https://localhost:44370",
-    "appUrl": "http://localhost:5200",
+    "appUrl": "http://localhost:5201",
     "signalrHubUrl": "https://localhost:44370/notificationHub"
 }

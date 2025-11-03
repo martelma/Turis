@@ -18,6 +18,7 @@ export interface User {
     isActive?: boolean;
     twoFactorEnabled?: boolean;
     language?: string;
+    contactId?: string;
 
     accountType?: AccountType;
     roles: string[];

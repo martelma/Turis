@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { UserService } from 'app/core/user/user.service';
-import { environment } from 'environments/environment';
 import {
     Observable,
     of,
@@ -18,18 +17,26 @@ import {
 import { CreateUserRequest, User } from '../user/user.types';
 import { Login, Otp, PartialLogin, ResetPasswordRequest, SecurityCode, isPartialLogin } from './auth.types';
 import { ChangePasswordRequest } from 'app/modules/admin/users/users.types';
+import { ApplicationConfiguration } from 'app/configurations/application-configuration.types';
+import { APPLICATION_CONFIGURATION_TOKEN } from 'app/configurations/application-configuration.token';
+import { BaseService } from 'app/shared/services';
 
 @Injectable({ providedIn: 'root' })
-export class AuthService {
+export class AuthService extends BaseService {
     private _authenticated = false;
 
     private _resettingPassword: BehaviorSubject<boolean> = new BehaviorSubject(false);
     private _resettingDefaultPassword: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
     constructor(
-        private _httpClient: HttpClient,
+        protected http: HttpClient,
+        @Inject(APPLICATION_CONFIGURATION_TOKEN) protected _applicationConfig: ApplicationConfiguration,
         private _userService: UserService,
-    ) {}
+    ) {
+        super(http, _applicationConfig);
+        this.defaultBaseUrl = this._applicationConfig.baseUrl;
+        this.defaultApiController = 'auth';
+    }
 
     set accessToken(token: string) {
         localStorage.setItem('accessToken', token);
@@ -76,12 +83,12 @@ export class AuthService {
     }
 
     registerUser(request: CreateUserRequest): Observable<any> {
-        return this._httpClient.post(`${environment.baseUrl}/api/auth/register`, request);
+        return this.http.post(`${this.defaultBaseUrl}/api/auth/register`, request);
     }
 
     resetPasswordRequest(info: { email: string }): Observable<any> {
         this._resettingPassword.next(true);
-        return this._httpClient.post(`${environment.baseUrl}/api/auth/reset-password-request`, info).pipe(
+        return this.http.post(`${this.defaultBaseUrl}/api/auth/reset-password-request`, info).pipe(
             finalize(() => {
                 this._resettingPassword.next(false);
             }),
@@ -90,7 +97,7 @@ export class AuthService {
 
     resetDefaultPassword(info: { userId: string }): Observable<any> {
         this._resettingDefaultPassword.next(true);
-        return this._httpClient.post(`${environment.baseUrl}/api/auth/reset-default-password`, info).pipe(
+        return this.http.post(`${this.defaultBaseUrl}/api/auth/reset-default-password`, info).pipe(
             finalize(() => {
                 this._resettingDefaultPassword.next(false);
             }),
@@ -98,11 +105,11 @@ export class AuthService {
     }
 
     resetPassword(password: ResetPasswordRequest): Observable<any> {
-        return this._httpClient.post(`${environment.baseUrl}/api/auth/reset-password`, password);
+        return this.http.post(`${this.defaultBaseUrl}/api/auth/reset-password`, password);
     }
 
     changePassword(request: ChangePasswordRequest) {
-        return this._httpClient.post(`${environment.baseUrl}/api/auth/change-password`, request);
+        return this.http.post(`${this.defaultBaseUrl}/api/auth/change-password`, request);
     }
 
     signIn(credentials: { usernameEmail: string; password: string }): Observable<Login | PartialLogin> {
@@ -111,8 +118,8 @@ export class AuthService {
             return throwError(() => 'User is already logged in.');
         }
 
-        return this._httpClient
-            .post(`${environment.baseUrl}/api/auth/login`, {
+        return this.http
+            .post(`${this.defaultBaseUrl}/api/auth/login`, {
                 password: credentials.password,
                 userName: credentials.usernameEmail,
             })
@@ -163,7 +170,7 @@ export class AuthService {
     }
 
     signUp(user: { name: string; email: string; password: string; company: string }): Observable<any> {
-        return this._httpClient.post(`${environment.baseUrl}/api/auth/sign-up`, user);
+        return this.http.post(`${this.defaultBaseUrl}/api/auth/sign-up`, user);
     }
 
     static redirectToHomepage(): void {
@@ -177,7 +184,8 @@ export class AuthService {
         }
 
         // If the access token exists, and it didn't expire, sign in using it
-        return this._httpClient.get(`${environment.baseUrl}/api/auth/check`).pipe(
+        // return this.http.get(`${this.defaultBaseUrl}/api/auth/check`).pipe(
+        return this.apiGet(`check`).pipe(
             take(1),
             switchMap(() => {
                 return this._userService.me().pipe(
@@ -203,11 +211,11 @@ export class AuthService {
     }
 
     createSecurityCode(): Observable<SecurityCode> {
-        return this._httpClient.post<SecurityCode>(`${environment.baseUrl}/api/auth/security-code`, null);
+        return this.http.post<SecurityCode>(`${this.defaultBaseUrl}/api/auth/security-code`, null);
     }
 
     generateOtp(): Observable<Otp> {
-        return this._httpClient.get(`${environment.baseUrl}/api/auth/otp`);
+        return this.http.get(`${this.defaultBaseUrl}/api/auth/otp`);
     }
 
     refreshAccessToken(): Observable<any> {
@@ -215,73 +223,69 @@ export class AuthService {
         const accessToken = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
 
-        return this._httpClient
-            .post(`${environment.baseUrl}/api/auth/refresh-token`, { accessToken, refreshToken })
-            .pipe(
-                take(1),
-                switchMap((response: Login | PartialLogin) => {
-                    if (isPartialLogin(response)) {
-                        return of(response);
-                    }
+        return this.http.post(`${this.defaultBaseUrl}/api/auth/refresh-token`, { accessToken, refreshToken }).pipe(
+            take(1),
+            switchMap((response: Login | PartialLogin) => {
+                if (isPartialLogin(response)) {
+                    return of(response);
+                }
 
-                    const login = response as Login;
+                const login = response as Login;
 
-                    // Store the access token in the local storage
-                    this.accessToken = login.accessToken;
-                    this.refreshToken = login.refreshToken;
+                // Store the access token in the local storage
+                this.accessToken = login.accessToken;
+                this.refreshToken = login.refreshToken;
 
-                    return combineLatest([from(this._userService.me()), of(response)]);
-                }),
-                switchMap((response: PartialLogin | [User, Login]) => {
-                    if (isPartialLogin(response)) {
-                        return of(response);
-                    }
+                return combineLatest([from(this._userService.me()), of(response)]);
+            }),
+            switchMap((response: PartialLogin | [User, Login]) => {
+                if (isPartialLogin(response)) {
+                    return of(response);
+                }
 
-                    // Set the authenticated flag to true
-                    this._authenticated = true;
+                // Set the authenticated flag to true
+                this._authenticated = true;
 
-                    const [me, resp] = response;
+                const [me, resp] = response;
 
-                    const user: User = me as User;
-                    // Store the user on the user service
+                const user: User = me as User;
+                // Store the user on the user service
 
-                    this._userService.user = user;
-                    this.storageUser = user;
+                this._userService.user = user;
+                this.storageUser = user;
 
-                    // Return a new observable with the response
-                    return this.createSecurityCode().pipe(
-                        take(1),
-                        map((securityCode: SecurityCode) => {
-                            // Sets the security code in the local storage
-                            localStorage.setItem('securityCode', securityCode.code);
+                // Return a new observable with the response
+                return this.createSecurityCode().pipe(
+                    take(1),
+                    map((securityCode: SecurityCode) => {
+                        // Sets the security code in the local storage
+                        localStorage.setItem('securityCode', securityCode.code);
 
-                            // Security Code freshly generated
-                            return resp;
-                        }),
-                    );
-                }),
-                catchError(error => {
-                    // Handle refresh token error (e.g., redirect to login page)
-                    console.error('Error refreshing access token:', error);
-                    return throwError(error);
-                }),
-            );
-    }
-
-    remainingLoginAttempts(userName: string): Observable<number> {
-        return this._httpClient.get<number>(
-            `${environment.baseUrl}/api/auth/remaining-login-attempts?userName=${userName}`,
+                        // Security Code freshly generated
+                        return resp;
+                    }),
+                );
+            }),
+            catchError(error => {
+                // Handle refresh token error (e.g., redirect to login page)
+                console.error('Error refreshing access token:', error);
+                return throwError(error);
+            }),
         );
     }
 
+    remainingLoginAttempts(userName: string): Observable<number> {
+        return this.http.get<number>(`${this.defaultBaseUrl}/api/auth/remaining-login-attempts?userName=${userName}`);
+    }
+
     requestUnlock(userName: string): Observable<void> {
-        return this._httpClient.post<void>(`${environment.baseUrl}/api/auth/request-unlock`, {
+        return this.http.post<void>(`${this.defaultBaseUrl}/api/auth/request-unlock`, {
             userName,
         });
     }
 
     unlockUser(userName: string): Observable<void> {
-        return this._httpClient.post<void>(`${environment.baseUrl}/api/auth/unlock`, {
+        return this.http.post<void>(`${this.defaultBaseUrl}/api/auth/unlock`, {
             userName,
         });
     }

@@ -1,5 +1,3 @@
-import { environment } from 'environments/environment';
-
 export const goToLink = (relativeUrl: string, newTab = false) => {
     if (newTab) {
         window.open(relativeUrl, '_blank');
@@ -68,10 +66,6 @@ export function generateGuid(): string {
         return v.toString(16);
     });
 }
-
-export const isProductionMode = environment.production;
-export const isStagingMode = environment.staging;
-export const isDevMode = environment.dev;
 
 export function years(number: number): number[] {
     const nextYear = new Date().getFullYear() + 1;

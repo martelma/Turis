@@ -27,6 +27,7 @@ export class JournalEntrySummaryComponent implements OnInit, AfterViewInit {
     public isScreenSmall: boolean;
 
     years: number[] = [];
+    defaultPeriod: string;
     period: string;
 
     journalEntrySummary: SummaryData = new SummaryData();
@@ -40,7 +41,8 @@ export class JournalEntrySummaryComponent implements OnInit, AfterViewInit {
         private _journalEntryService: JournalEntryService,
     ) {
         const currentYear = new Date().getFullYear();
-        this.period = `'year_${currentYear}`;
+        this.defaultPeriod = `year_${currentYear}`;
+        this.period = `year_${currentYear}`;
         this.years = years(5);
     }
 
@@ -49,9 +51,11 @@ export class JournalEntrySummaryComponent implements OnInit, AfterViewInit {
     }
 
     async ngAfterViewInit() {
-        this.period = await this._userSettingsService.getValue(
+        this.period = await this._userSettingsService.getStringValue(
             `${AppSettings.HomePage}:journal-entry-summary-current-period`,
+            this.defaultPeriod,
         );
+        this._userSettingsService.setValue(`${AppSettings.HomePage}:journal-entry-summary-current-period`, this.period);
         this.changePeriod();
     }
 

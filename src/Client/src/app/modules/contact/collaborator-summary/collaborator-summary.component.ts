@@ -111,6 +111,7 @@ import { UserSettingsService } from 'app/shared/services/user-setting.service';
 })
 export class CollaboratorSummaryComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
     _contactId: string;
+    currentYear: number;
     year: number;
     years: number[];
 
@@ -144,6 +145,8 @@ export class CollaboratorSummaryComponent implements OnInit, AfterViewInit, OnCh
     ) {}
 
     ngOnInit(): void {
+        this.currentYear = new Date().getFullYear();
+        this.year = this.currentYear;
         this.years = years(5);
 
         this._serviceService.contactSummary$.pipe(untilDestroyed(this)).subscribe((data: ContactSummary) => {
@@ -163,11 +166,10 @@ export class CollaboratorSummaryComponent implements OnInit, AfterViewInit, OnCh
     }
 
     async ngAfterViewInit() {
-        this.year =
-            (await this._userSettingsService.getNumberValue(`${AppSettings.Contact}:stat-year`)) ??
-            new Date().getFullYear();
-
-        // console.log('year', this.year);
+        this.year = await this._userSettingsService.getNumberValue(
+            `${AppSettings.Contact}:stat-year`,
+            this.currentYear,
+        );
 
         // Verifichiamo che summarySelector esista prima di impostarne il valore
         if (this.summarySelector) {

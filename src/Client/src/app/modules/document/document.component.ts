@@ -53,8 +53,10 @@ export class DocumentComponent implements OnInit, AfterViewInit {
     async ngOnInit(): Promise<void> {}
 
     async ngAfterViewInit(): Promise<void> {
-        const toggleFilterValue = await this._userSettingsService.getValue(`${AppSettings.Document}:toggleFilter`);
-        this.drawerFilterOpened = toggleFilterValue === '' ? false : toggleFilterValue === 'true';
+        this.drawerFilterOpened = await this._userSettingsService.getBooleanValue(
+            `${AppSettings.Document}:toggleFilter`,
+            false,
+        );
     }
 
     createDocument(): void {

@@ -1,4 +1,3 @@
-import { environment } from 'environments/environment';
 import { Roles } from './user.roles';
 import { User } from './user.types';
 

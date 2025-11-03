@@ -1,7 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, map, of } from 'rxjs';
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
-import { environment } from 'environments/environment';
 import { CreateUserRequest, UpdateUserRequest, User } from 'app/core/user/user.types';
 import { BaseEntityService } from 'app/shared/services';
 import { XApplicationIdHeader } from '../admin.types';
@@ -10,6 +9,8 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ApplicationRole } from '../roles/role.types';
 import { Application } from 'app/shared/services/shared.types';
+import { APPLICATION_CONFIGURATION_TOKEN } from 'app/configurations/application-configuration.token';
+import { ApplicationConfiguration } from 'app/configurations/application-configuration.types';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService extends BaseEntityService<User> {
@@ -43,11 +44,12 @@ export class UsersService extends BaseEntityService<User> {
     });
 
     constructor(
-        protected httpClient: HttpClient,
+        protected http: HttpClient,
         private _authService: AuthService,
         private _sanitizer: DomSanitizer,
+        @Inject(APPLICATION_CONFIGURATION_TOKEN) protected _applicationConfig: ApplicationConfiguration,
     ) {
-        super(httpClient);
+        super(http, _applicationConfig);
         this.defaultApiController = 'users';
     }
 
@@ -235,7 +237,7 @@ export class UsersService extends BaseEntityService<User> {
     }
 
     saveAvatar(formData: FormData, userId: string): Observable<ArrayBuffer> {
-        return this.httpClient.post<ArrayBuffer>(`${environment.baseUrl}/api/users/${userId}/avatar/`, formData);
+        return this.http.post<ArrayBuffer>(`${this._applicationConfig.baseUrl}/api/users/${userId}/avatar/`, formData);
     }
 
     resetAvatar(userId: string): Observable<void> {
@@ -243,7 +245,7 @@ export class UsersService extends BaseEntityService<User> {
             return of(null);
         }
 
-        return this.httpClient.delete<void>(`${environment.baseUrl}/api/users/${userId}/avatar`, {});
+        return this.http.delete<void>(`${this._applicationConfig.baseUrl}/api/users/${userId}/avatar`, {});
     }
 
     getAvatar(userId: string): Observable<any> {
@@ -251,8 +253,8 @@ export class UsersService extends BaseEntityService<User> {
             return of(null);
         }
 
-        return this.httpClient
-            .get(`${environment.baseUrl}/api/users/${userId}/avatar/`, {
+        return this.http
+            .get(`${this._applicationConfig.baseUrl}/api/users/${userId}/avatar/`, {
                 observe: 'response',
                 responseType: 'arraybuffer',
             })
@@ -267,7 +269,7 @@ export class UsersService extends BaseEntityService<User> {
     }
 
     copySettingsFromUser(userTargetId: string, userSourceId: string, applicationId: string) {
-        return this.httpClient.post(`${environment.baseUrl}/api/users/copy-settings`, {
+        return this.http.post(`${this._applicationConfig.baseUrl}/api/users/copy-settings`, {
             applicationId,
             userSourceId,
             userTargetId,
@@ -275,7 +277,7 @@ export class UsersService extends BaseEntityService<User> {
     }
 
     updateUserLanguage(userId: string, language: string) {
-        return this.httpClient.put(`${environment.baseUrl}/api/users/${userId}/language`, {
+        return this.http.put(`${this._applicationConfig.baseUrl}/api/users/${userId}/language`, {
             language,
         });
     }

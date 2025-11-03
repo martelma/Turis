@@ -98,15 +98,16 @@ Prima Nota
 migration:
 	manca da gestire la parte documenti
 	
-	
-	
 duplica servizio da aggiungere al menù
 
-in myhome finire agenda personale 
-	dettagli del servizio
-	shortcut di navigazione nel calendario
+in myhome finire agenda personale (vedi problema sotto)
+	dettagli del servizio con drawer (fare un template più lite di quello presente in calendar)
 
-
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+PROBLEMA: devo trovare il modo di linkare il contatto con lo user!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+per adesso ho messo contactid su user ma devo gestire il dato lato client nella gestione utenti. 
+per adesso funziona solo se lo imposto io nel db
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 

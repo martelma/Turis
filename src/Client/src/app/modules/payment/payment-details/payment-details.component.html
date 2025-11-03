@@ -93,13 +93,13 @@
         <!-- View Mode -->
         <ng-container *ngIf="!editMode">
             <!-- not edit mode -->
-            <app-journal-entry-view #viewPayment class="flex flex-1" [payment]="payment"></app-journal-entry-view>
+            <app-payment-view #viewPayment class="flex flex-1" [payment]="payment"></app-payment-view>
         </ng-container>
 
         <!-- Edit Mode -->
         <ng-container *ngIf="editMode">
             <!-- edit mode -->
-            <app-journal-entry-edit #editPayment class="flex flex-1" [payment]="payment"></app-journal-entry-edit>
+            <app-payment-edit #editPayment class="flex flex-1" [payment]="payment"></app-payment-edit>
         </ng-container>
     </ng-container>
 

@@ -1,5 +1,5 @@
 <div
-    *ngIf="isItemVisibleForUser(user, item)"
+    *ngIf="isItemVisibleForUser(user, item, applicationConfig)"
     class="fuse-vertical-navigation-item-wrapper"
     [class.fuse-vertical-navigation-item-has-subtitle]="!!item.subtitle"
     [ngClass]="item.classes?.wrapper">

@@ -1,12 +1,19 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Navigation } from 'app/core/navigation/navigation.types';
 import { Observable, ReplaySubject, of, tap } from 'rxjs';
 import { Roles } from '../user/user.roles';
-import { environment } from 'environments/environment';
+import { APPLICATION_CONFIGURATION_TOKEN } from 'app/configurations/application-configuration.token';
+import { ApplicationConfiguration } from 'app/configurations/application-configuration.types';
+import { UserService } from '../user/user.service';
 
 @Injectable({ providedIn: 'root' })
 export class NavigationService {
     private _navigation: ReplaySubject<Navigation> = new ReplaySubject<Navigation>(1);
+
+    constructor(
+        private userService: UserService,
+        @Inject(APPLICATION_CONFIGURATION_TOKEN) private _applicationConfig: ApplicationConfiguration,
+    ) {}
 
     get navigation$(): Observable<Navigation> {
         return this._navigation.asObservable();
@@ -36,7 +43,7 @@ export class NavigationService {
                             title: 'Navigation.Elmah',
                             type: 'basic',
                             icon: 'heroicons_outline:circle-stack',
-                            link: `${environment.baseUrl}/elmah?securityCode=${securityCode}`,
+                            link: `${this._applicationConfig.baseUrl}/elmah?securityCode=${securityCode}`,
                             externalLink: true,
                             target: '_blank',
                         },
@@ -45,7 +52,7 @@ export class NavigationService {
                             title: 'Navigation.Swagger',
                             type: 'basic',
                             icon: 'heroicons_outline:wrench-screwdriver',
-                            link: `${environment.baseUrl}/swagger`,
+                            link: `${this._applicationConfig.baseUrl}/swagger`,
                             externalLink: true,
                             target: '_blank',
                         },
@@ -54,7 +61,7 @@ export class NavigationService {
                             title: 'Navigation.Hangfire',
                             type: 'basic',
                             icon: 'heroicons_outline:fire',
-                            link: `${environment.baseUrl}/hangfire?securityCode=${securityCode}`,
+                            link: `${this._applicationConfig.baseUrl}/hangfire?securityCode=${securityCode}`,
                             externalLink: true,
                             target: '_blank',
                         },

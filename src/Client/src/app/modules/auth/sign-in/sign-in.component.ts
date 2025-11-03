@@ -1,13 +1,5 @@
 import { JsonPipe, NgClass, NgIf } from '@angular/common';
-import {
-    ChangeDetectorRef,
-    Component,
-    ElementRef,
-    isDevMode,
-    OnInit,
-    ViewChild,
-    ViewEncapsulation,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -25,8 +17,9 @@ import { emailOrUsernameValidator } from './sign-in.validators';
 import { Login, Otp, PartialLogin, isPartialLogin } from 'app/core/auth/auth.types';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { A11yModule } from '@angular/cdk/a11y';
-import { environment } from 'environments/environment';
 import { HttpStatusCode } from '@angular/common/http';
+import { APPLICATION_CONFIGURATION_TOKEN } from 'app/configurations/application-configuration.token';
+import { ApplicationConfiguration } from 'app/configurations/application-configuration.types';
 
 @UntilDestroy()
 @Component({
@@ -82,6 +75,7 @@ export class SignInComponent implements OnInit {
         private _router: Router,
         private _route: ActivatedRoute,
         private _changeDetectorRef: ChangeDetectorRef,
+        @Inject(APPLICATION_CONFIGURATION_TOKEN) private _applicationConfig: ApplicationConfiguration,
     ) {
         this._route.queryParams.subscribe(params => {
             this._redirectURL = params['redirectURL'];
@@ -90,7 +84,7 @@ export class SignInComponent implements OnInit {
 
     ngOnInit(): void {
         // Create the login form
-        if (!environment.production) {
+        if (this._applicationConfig.dev) {
             this.signInForm = this._formBuilder.group({
                 usernameEmail: ['mario', [Validators.required, emailOrUsernameValidator(/[a-zA-Z0-9]{3,}/)]],
                 password: ['Abcd.1234', Validators.required],

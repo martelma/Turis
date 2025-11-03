@@ -1,5 +1,3 @@
-import { environment } from 'environments/environment';
-
 export const goToLink = (relativeUrl: string, newTab = false) => {
     if (newTab) {
         window.open(relativeUrl, '_blank');
@@ -79,7 +77,3 @@ export const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
     }
     return window.btoa(binary);
 };
-
-export const isProductionMode = environment.production;
-export const isStagingMode = environment.staging;
-export const isDevMode = environment.dev;

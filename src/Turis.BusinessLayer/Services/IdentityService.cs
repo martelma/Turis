@@ -66,6 +66,7 @@ public class IdentityService(ApplicationDbContext dbContext,
 			Email = request.Email,
 			EmailConfirmed = true,
 			Language = request.Language,
+			ContactId = request.ContactId,
 			LockoutEnd = request.IsActive ? null : DateTimeOffset.MaxValue
 		};
 
@@ -143,6 +144,7 @@ public class IdentityService(ApplicationDbContext dbContext,
 		user.LastName = request.LastName;
 		user.Email = request.Email.ToLowerInvariant();
 		user.Language = request.Language;
+		user.ContactId = request.ContactId;
 		user.LockoutEnd = request.IsActive ? null : DateTimeOffset.MaxValue;
 
 		var result = await userManager.UpdateAsync(user);
@@ -256,7 +258,8 @@ public class IdentityService(ApplicationDbContext dbContext,
 				new(ClaimTypes.Name, user.UserName),
 				new(ClaimTypes.GivenName, user.FirstName ?? string.Empty),
 				new(ClaimTypes.Surname, user.LastName ?? string.Empty),
-				new(ClaimTypes.Locality, user.Language ?? string.Empty)
+				new(ClaimTypes.Locality, user.Language ?? string.Empty),
+				new(ClaimTypes.Sid, user.ContactId?.ToString() ?? string.Empty),
 			}
 			.Union(userRoles.Select(r => new Claim(ClaimTypes.Role, r.Name)))
 			.Union(userRoles.SelectMany(r => r.Scopes.Select(s => new Claim(ClaimNames.Scope, s.Scope.Name))))
@@ -310,6 +313,7 @@ public class IdentityService(ApplicationDbContext dbContext,
 				UserName = u.UserName,
 				FirstName = u.FirstName,
 				LastName = u.LastName,
+				ContactId = u.ContactId,
 				Email = u.Email,
 				Language = u.Language,
 				IsActive = u.LockoutEnd.GetValueOrDefault(DateTimeOffset.MinValue) < DateTime.UtcNow,
@@ -351,6 +355,7 @@ public class IdentityService(ApplicationDbContext dbContext,
 			LastName = dbUser.LastName,
 			Email = dbUser.Email,
 			Language = dbUser.Language,
+			ContactId = dbUser.ContactId,
 			IsActive = dbUser.LockoutEnd.GetValueOrDefault(DateTimeOffset.MinValue) < DateTime.UtcNow,
 			AccountType = dbUser.PasswordHash != null ? AccountType.Local : AccountType.AzureActiveDirectory,
 			Applications = applications.Select(a => new ApplicationModel
@@ -418,6 +423,7 @@ public class IdentityService(ApplicationDbContext dbContext,
 			LastName = dbUser.LastName,
 			Email = dbUser.Email,
 			Language = dbUser.Language,
+			ContactId = dbUser.ContactId,
 			IsActive = true,
 		};
 
@@ -436,6 +442,7 @@ public class IdentityService(ApplicationDbContext dbContext,
 				LastName = u.LastName,
 				Email = u.Email,
 				Language = u.Language,
+				ContactId = u.ContactId,
 				IsActive = true,
 			})
 			.ToListAsync();
@@ -457,6 +464,7 @@ public class IdentityService(ApplicationDbContext dbContext,
 				LastName = u.LastName,
 				Email = u.Email,
 				Language = u.Language,
+				ContactId = u.ContactId,
 				IsActive = true,
 			})
 			.ToListAsync();

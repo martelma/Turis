@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { UserService } from 'app/core/user/user.service';
-import { environment } from 'environments/environment';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { User } from 'app/models';
+import { APPLICATION_CONFIGURATION_TOKEN } from 'app/configurations/application-configuration.token';
+import { ApplicationConfiguration } from 'app/configurations/application-configuration.types';
 
 @UntilDestroy()
 @Component({
@@ -18,12 +19,15 @@ export class BaseComponent implements OnInit {
     public isDevMode: boolean;
     public user: User;
 
-    constructor(protected userService: UserService) {}
+    constructor(
+        protected userService: UserService,
+        @Inject(APPLICATION_CONFIGURATION_TOKEN) private _applicationConfig: ApplicationConfiguration,
+    ) {}
 
     ngOnInit(): void {
-        this.isProductionMode = environment.production;
-        this.isStagingMode = environment.staging;
-        this.isDevMode = environment.dev;
+        this.isProductionMode = this._applicationConfig.production;
+        this.isStagingMode = this._applicationConfig.staging;
+        this.isDevMode = this._applicationConfig.dev;
 
         // Subscribe to the user service
         this.userService.user$.pipe(untilDestroyed(this)).subscribe((user: User) => {

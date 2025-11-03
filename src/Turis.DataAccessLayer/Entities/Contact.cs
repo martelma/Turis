@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using TinyHelpers.Extensions;
+using Turis.Authentication.Entities;
 using Turis.Common.Enums;
 using Turis.DataAccessLayer.Entities.Base;
 

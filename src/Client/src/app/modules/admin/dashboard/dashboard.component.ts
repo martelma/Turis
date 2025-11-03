@@ -6,8 +6,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AuthService } from 'app/core/auth/auth.service';
 import { MaterialModule } from 'app/modules/material.module';
 import { User } from 'app/core/user/user.types';
-import { Otp } from 'app/core/auth/auth.types';
-import { Observable } from 'rxjs';
 import { UserService } from 'app/core/user/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ServiceSummaryComponent } from './service-summary/service-summary.component';
@@ -48,7 +46,7 @@ import { CalendarCollaboratorComponent } from 'app/modules/calendar/calendar-col
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
     public user: User;
-    public userId: string;
+    public contactId: string;
     public isScreenSmall: boolean;
 
     selectedTabIndex = 0;
@@ -83,6 +81,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     async ngAfterViewInit(): Promise<void> {
         this.selectedTabIndex = await this._userSettingsService.getNumberValue(
             `${AppSettings.HomePage}:selectedTabIndex`,
+            0,
         );
 
         this._changeDetectorRef.detectChanges();
@@ -99,16 +98,12 @@ export class DashboardComponent implements OnInit, AfterViewInit {
             .pipe(untilDestroyed(this))
             .subscribe((user: User) => {
                 this.user = user;
-                this.userId = user.id;
+                this.contactId = user.contactId;
 
-                if (isDevMode()) {
-                    this.userId = '439f28fc-619a-457b-84fc-69f3a9b28d0c';
-                }
+                // if (isDevMode()) {
+                //     this.userId = '439f28fc-619a-457b-84fc-69f3a9b28d0c';
+                // }
             });
-    }
-
-    private _getSiteOtp(): Observable<Otp> {
-        return this._authService.generateOtp();
     }
 
     serviceSummaryDetails(event: any): void {
@@ -142,7 +137,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
             .pipe(untilDestroyed(this))
             .subscribe(items => {
                 this.services = items;
-                console.log('loadServiceSummaryDetails', items);
+                // console.log('loadServiceSummaryDetails', items);
             });
     }
 

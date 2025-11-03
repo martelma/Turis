@@ -93,6 +93,7 @@ export class TeamSummaryComponent implements OnInit, AfterViewInit {
     @Input() minLength = 2;
 
     years: number[] = [];
+    currentYear: number;
     year: number;
     viewMode = 'total';
     searchFilter: string;
@@ -141,6 +142,10 @@ export class TeamSummaryComponent implements OnInit, AfterViewInit {
     ) {}
 
     ngOnInit(): void {
+        this.currentYear = new Date().getFullYear();
+        this.year = this.currentYear;
+        this.years = years(5);
+
         this._subscribeSearchInputControlValueChanges();
 
         this._contactService.collaboratorsWithMonitor(this.queryParameters).subscribe(items => {
@@ -150,15 +155,19 @@ export class TeamSummaryComponent implements OnInit, AfterViewInit {
         this._contactService.teamSummary$.pipe(untilDestroyed(this)).subscribe((data: TeamSummary) => {
             this.teamSummary = data;
         });
-
-        this.years = years(5);
     }
 
     async ngAfterViewInit(): Promise<void> {
-        this.year = await this._userSettingsService.getNumberValue(`${AppSettings.HomePage}:team-summary-current-year`);
+        this.year = await this._userSettingsService.getNumberValue(
+            `${AppSettings.HomePage}:team-summary-current-year`,
+            this.currentYear,
+        );
 
         setTimeout(async () => {
-            this.viewMode = await this._userSettingsService.getValue(`${AppSettings.HomePage}:team-summary-view-mode`);
+            this.viewMode = await this._userSettingsService.getStringValue(
+                `${AppSettings.HomePage}:team-summary-view-mode`,
+                'total',
+            );
         }, 0);
 
         this.loadData();

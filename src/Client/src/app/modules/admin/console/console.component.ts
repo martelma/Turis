@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    Inject,
+    OnInit,
+    ViewEncapsulation,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
@@ -12,9 +19,10 @@ import { SpinnerButtonComponent } from 'app/shared/components/ui/spinner-button/
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { KeyValue } from './console.types';
-import { environment } from 'environments/environment';
 import { AdminService } from '../admin.service';
 import { finalize } from 'rxjs';
+import { APPLICATION_CONFIGURATION_TOKEN } from 'app/configurations/application-configuration.token';
+import { ApplicationConfiguration } from 'app/configurations/application-configuration.types';
 
 @UntilDestroy()
 @Component({
@@ -57,6 +65,7 @@ export class ConsoleComponent implements OnInit {
         private _translocoService: TranslocoService,
         private _changeDetectorRef: ChangeDetectorRef,
         public snackBar: MatSnackBar,
+        @Inject(APPLICATION_CONFIGURATION_TOKEN) protected applicationConfig: ApplicationConfiguration,
     ) {
         const snapshot = this._activatedRoute.snapshot;
         const params = { ...snapshot.queryParams };
@@ -171,9 +180,9 @@ export class ConsoleComponent implements OnInit {
 
     private _loadClientConfiguration(): void {
         this.clientConfigurations = [];
-        this.clientConfigurations.push({ key: 'applicationId', value: environment.applicationId });
-        this.clientConfigurations.push({ key: 'production', value: environment.production.toString() });
-        this.clientConfigurations.push({ key: 'baseUrl', value: environment.baseUrl });
+        this.clientConfigurations.push({ key: 'applicationId', value: this.applicationConfig.applicationId });
+        this.clientConfigurations.push({ key: 'production', value: this.applicationConfig.production.toString() });
+        this.clientConfigurations.push({ key: 'baseUrl', value: this.applicationConfig.baseUrl });
         this.clientDataSource = new MatTableDataSource(this.clientConfigurations);
     }
 

@@ -8,7 +8,14 @@ import { CONFIGURATION_HTTP_CLIENT_TOKEN } from './configuration-http-client.pro
 export class ApplicationConfigurationService {
     private _configData: ApplicationConfiguration;
 
-    constructor(@Inject(CONFIGURATION_HTTP_CLIENT_TOKEN) private configurationHttpClient: HttpClient) {}
+    constructor(@Inject(CONFIGURATION_HTTP_CLIENT_TOKEN) private configurationHttpClient: HttpClient) {
+        // Usa la configurazione pre-caricata se disponibile
+        const preloadedConfig = (window as any).__APP_CONFIG__;
+        if (preloadedConfig) {
+            this._configData = preloadedConfig;
+            console.log('Using preloaded configuration');
+        }
+    }
 
     get configData(): ApplicationConfiguration {
         if (!this._configData) {
@@ -28,7 +35,7 @@ export class ApplicationConfigurationService {
                         this._configData = data as ApplicationConfiguration;
                     }),
                     catchError((error: HttpErrorResponse) => {
-                        console.log('configuration not found!', error);
+                        console.error('configuration not found!', error);
                         throw error;
                     }),
                 );

@@ -1,5 +1,5 @@
 import { NgClass, NgIf, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { IsActiveMatchOptions, RouterLink, RouterLinkActive } from '@angular/router';
@@ -9,6 +9,8 @@ import { FuseVerticalNavigationComponent } from '@fuse/components/navigation/ver
 import { FuseUtilsService } from '@fuse/services/utils/utils.service';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { APPLICATION_CONFIGURATION_TOKEN } from 'app/configurations/application-configuration.token';
+import { ApplicationConfiguration } from 'app/configurations/application-configuration.types';
 import { isItemVisibleForUser } from 'app/core/navigation/navigation.utils';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
@@ -50,6 +52,7 @@ export class FuseVerticalNavigationBasicItemComponent implements OnInit, OnDestr
         private _fuseNavigationService: FuseNavigationService,
         private _fuseUtilsService: FuseUtilsService,
         private _userService: UserService,
+        @Inject(APPLICATION_CONFIGURATION_TOKEN) protected applicationConfig: ApplicationConfiguration,
     ) {
         // Set the equivalent of {exact: false} as default for active match options.
         // We are not assigning the item.isActiveMatchOptions directly to the

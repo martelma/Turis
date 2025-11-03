@@ -211,8 +211,10 @@ export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterVi
     }
 
     async ngAfterViewInit(): Promise<void> {
-        const toggleViewModeValue = await this._userSettingsService.getValue(`${AppSettings.Calendar}:toggleViewMode`);
-        this.viewMode = toggleViewModeValue === '' ? 'calendar' : toggleViewModeValue;
+        const toggleViewModeValue = await this._userSettingsService.getStringValue(
+            `${AppSettings.Calendar}:toggleViewMode`,
+            'list',
+        );
 
         this.listSummary();
     }

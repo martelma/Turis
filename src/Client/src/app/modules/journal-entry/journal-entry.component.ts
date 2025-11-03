@@ -48,8 +48,10 @@ export class JournalEntryComponent implements OnInit, AfterViewInit {
     async ngOnInit(): Promise<void> {}
 
     async ngAfterViewInit(): Promise<void> {
-        const toggleFilterValue = await this._userSettingsService.getValue(`${AppSettings.JournalEntry}:toggleFilter`);
-        this.drawerFilterOpened = toggleFilterValue === '' ? false : toggleFilterValue === 'true';
+        this.drawerFilterOpened = await this._userSettingsService.getBooleanValue(
+            `${AppSettings.JournalEntry}:toggleFilter`,
+            false,
+        );
     }
 
     createJournalEntry(): void {

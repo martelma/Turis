@@ -12,4 +12,5 @@ public class CollaboratorModel : BaseModel
 	public string PhoneNumber { get; set; }
 	public string Language { get; set; }
 	public string AvatarUrl { get; set; }
+	public Guid? ContactId { get; set; }
 }

@@ -1,5 +1,5 @@
 import { PriceList } from 'app/modules/configuration/price-list/price-list.types';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, filter, finalize, map, of, switchMap, take, tap, throwError } from 'rxjs';
 import { BaseEntityService } from 'app/shared/services';
@@ -7,6 +7,8 @@ import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { AccountStatementParameters, CalendarInfo, Service, ServiceSearchParameters } from './service.types';
 import { ContactSummary, ServiceSummary } from '../admin/dashboard/dashboard.types';
 import { LinkedService } from './linkedService';
+import { APPLICATION_CONFIGURATION_TOKEN } from 'app/configurations/application-configuration.token';
+import { ApplicationConfiguration } from 'app/configurations/application-configuration.types';
 
 @Injectable({ providedIn: 'root' })
 export class ServiceService extends BaseEntityService<Service> {
@@ -26,8 +28,11 @@ export class ServiceService extends BaseEntityService<Service> {
         pageSize: 10,
     });
 
-    constructor(http: HttpClient) {
-        super(http);
+    constructor(
+        protected http: HttpClient,
+        @Inject(APPLICATION_CONFIGURATION_TOKEN) protected _applicationConfig: ApplicationConfiguration,
+    ) {
+        super(http, _applicationConfig);
         this.defaultApiController = 'service';
     }
 

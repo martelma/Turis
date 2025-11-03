@@ -1,3 +1,4 @@
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {
     AfterViewInit,
     Component,
@@ -62,6 +63,7 @@ import { SearchInputComponent } from 'app/components/ui/search-input/search-inpu
         MatProgressBarModule,
         MatPaginatorModule,
         MatSortModule,
+        MatTooltipModule,
         FuseScrollResetDirective,
         TranslocoModule,
         AttachmentsComponent,

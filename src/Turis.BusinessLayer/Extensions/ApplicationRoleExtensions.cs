@@ -29,6 +29,7 @@ public static class ApplicationRoleExtensions
 					LastName = ur.User.LastName,
 					Email = ur.User.Email,
 					Language = ur.User.Language,
+					ContactId = ur.User.ContactId,
 					IsActive = ur.User.LockoutEnd.GetValueOrDefault(DateTimeOffset.MinValue) < DateTime.UtcNow,
 					AccountType = ur.User.PasswordHash != null ? AccountType.Local : AccountType.AzureActiveDirectory
 				})

@@ -14,6 +14,7 @@ public class UserModel : BaseModel
 	public bool IsActive { get; set; }
 	public AccountType AccountType { get; set; }
 	public string Language { get; set; }
+	public Guid? ContactId { get; set; }
 
 	public IEnumerable<ApplicationModel> Applications { get; set; } = [];
 	public IEnumerable<string> Roles { get; set; } = [];

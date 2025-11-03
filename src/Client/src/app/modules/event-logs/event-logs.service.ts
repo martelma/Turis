@@ -1,9 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, finalize, map, Observable } from 'rxjs';
 import { BaseService } from 'app/shared/services';
 import { EventLog, EventLogSearchParameters } from 'app/shared/event-log';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
+import { APPLICATION_CONFIGURATION_TOKEN } from 'app/configurations/application-configuration.token';
+import { ApplicationConfiguration } from 'app/configurations/application-configuration.types';
 
 @Injectable({ providedIn: 'root' })
 export class EventLogsService extends BaseService {
@@ -15,8 +17,11 @@ export class EventLogsService extends BaseService {
         pageSize: 10,
     });
 
-    constructor(protected http: HttpClient) {
-        super(http);
+    constructor(
+        protected http: HttpClient,
+        @Inject(APPLICATION_CONFIGURATION_TOKEN) protected _applicationConfig: ApplicationConfiguration,
+    ) {
+        super(http, _applicationConfig);
         this.defaultApiController = 'event-logs';
     }
 

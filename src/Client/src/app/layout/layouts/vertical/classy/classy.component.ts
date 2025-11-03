@@ -1,5 +1,5 @@
 import { NgIf } from '@angular/common';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterOutlet } from '@angular/router';
@@ -24,8 +24,9 @@ import { CdModalComponent } from 'app/shared/components/cd-modal/cd-modal.compon
 import { ErrorModalCommand } from 'app/shared/types/error-modal.types';
 import { filter, map, tap } from 'rxjs';
 import packageInfo from '../../../../../../package.json';
-import { isDevMode, isStagingMode } from 'app/shared/utils';
 import { AdminService } from 'app/modules/admin/admin.service';
+import { APPLICATION_CONFIGURATION_TOKEN } from 'app/configurations/application-configuration.token';
+import { ApplicationConfiguration } from 'app/configurations/application-configuration.types';
 
 @UntilDestroy()
 @Component({
@@ -54,8 +55,8 @@ import { AdminService } from 'app/modules/admin/admin.service';
 export class ClassyLayoutComponent implements OnInit {
     isScreenSmall: boolean;
     navigation: Navigation;
-    isDevMode = isDevMode;
-    isStagingMode = isStagingMode;
+    isDevMode = this.applicationConfig.dev;
+    isStagingMode = this.applicationConfig.staging;
     user: User;
 
     public errorModal: ErrorModalCommand = undefined;
@@ -70,6 +71,7 @@ export class ClassyLayoutComponent implements OnInit {
         private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _fuseNavigationService: FuseNavigationService,
         private _adminService: AdminService,
+        @Inject(APPLICATION_CONFIGURATION_TOKEN) protected applicationConfig: ApplicationConfiguration,
     ) {}
 
     get currentYear(): number {

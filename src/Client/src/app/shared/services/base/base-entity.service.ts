@@ -1,13 +1,18 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { BaseService } from './base.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { PaginatedList } from '../../types/shared.types';
+import { APPLICATION_CONFIGURATION_TOKEN } from 'app/configurations/application-configuration.token';
+import { ApplicationConfiguration } from 'app/configurations/application-configuration.types';
 
 @Injectable({ providedIn: 'root' })
 export class BaseEntityService<T> extends BaseService {
-    constructor(protected http: HttpClient) {
-        super(http);
+    constructor(
+        protected http: HttpClient,
+        @Inject(APPLICATION_CONFIGURATION_TOKEN) protected _applicationConfig: ApplicationConfiguration,
+    ) {
+        super(http, _applicationConfig);
     }
 
     private viewListSubject = new BehaviorSubject<boolean>(true);

@@ -15,6 +15,7 @@ public static class ApplicationUserExtensions
 			LastName = item.LastName,
 			Email = item.Email,
 			Language = item.Language,
+			ContactId = item.ContactId,
 		};
 
 		return model;
@@ -36,6 +37,7 @@ public static class ApplicationUserExtensions
 			Email = item.Email,
 			PhoneNumber = item.PhoneNumber,
 			Language = item.Language,
+			ContactId = item.ContactId,
 		};
 
 		return model;

@@ -32,6 +32,7 @@ public class AuthenticationDbContext(DbContextOptions options)
 			entity.Property(e => e.LastName).IsRequired().HasMaxLength(128);
 			entity.Property(x => x.AvatarUrl).HasMaxLength(150);
 			entity.Property(x => x.Language).HasMaxLength(5);
+			entity.Property(x => x.ContactId);
 		});
 
 		builder.Entity<ApplicationRole>(entity =>

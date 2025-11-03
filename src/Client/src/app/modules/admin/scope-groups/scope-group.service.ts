@@ -1,9 +1,11 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { BaseEntityService } from 'app/shared/services';
 import { emptyGuid, PaginatedListResult } from 'app/shared/services/shared.types';
 import { BehaviorSubject, filter, finalize, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
 import { ApplicationScopeGroup, ApplicationScopeGroupSearchParameters } from './scope-group.types';
+import { APPLICATION_CONFIGURATION_TOKEN } from 'app/configurations/application-configuration.token';
+import { ApplicationConfiguration } from 'app/configurations/application-configuration.types';
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationScopeGroupService extends BaseEntityService<ApplicationScopeGroup> {
@@ -17,8 +19,11 @@ export class ApplicationScopeGroupService extends BaseEntityService<ApplicationS
         pageIndex: 0,
         pageSize: 10,
     });
-    constructor(http: HttpClient) {
-        super(http);
+    constructor(
+        protected http: HttpClient,
+        @Inject(APPLICATION_CONFIGURATION_TOKEN) protected _applicationConfig: ApplicationConfiguration,
+    ) {
+        super(http, _applicationConfig);
         this.defaultApiController = 'scope-groups';
     }
 

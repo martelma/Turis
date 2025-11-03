@@ -52,8 +52,10 @@ export class ContactComponent implements OnInit, AfterViewInit {
     async ngOnInit(): Promise<void> {}
 
     async ngAfterViewInit(): Promise<void> {
-        const toggleFilterValue = await this._userSettingsService.getValue(`${AppSettings.Contact}:toggleFilter`);
-        this.drawerFilterOpened = toggleFilterValue === '' ? false : toggleFilterValue === 'true';
+        this.drawerFilterOpened = await this._userSettingsService.getBooleanValue(
+            `${AppSettings.Contact}:toggleFilter`,
+            false,
+        );
     }
 
     createContact(): void {

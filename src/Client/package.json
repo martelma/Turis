@@ -1,6 +1,6 @@
 {
     "name": "turis",
-    "version": "1.0.3",
+    "version": "1.0.6",
     "description": "A JeMa solution for Turis Management",
     "private": true,
     "scripts": {

@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { environment } from 'environments/environment';
+import { APPLICATION_CONFIGURATION_TOKEN } from './configurations/application-configuration.token';
+import { ApplicationConfiguration } from './configurations/application-configuration.types';
 
 @Component({
     selector: 'app-root',
@@ -12,15 +13,15 @@ import { environment } from 'environments/environment';
 export class AppComponent implements OnInit {
     favIcon: HTMLLinkElement | null = document.querySelector('#appFavIcon');
 
-    constructor() {}
+    constructor(@Inject(APPLICATION_CONFIGURATION_TOKEN) private _applicationConfig: ApplicationConfiguration) {}
 
     ngOnInit(): void {
-        // if (environment.staging) {
-        //     this._updateFavicon('./assets/images/favicon-staging.png');
-        // }
-        // if (environment.dev) {
-        //     this._updateFavicon('./assets/images/favicon-dev.png');
-        // }
+        if (this._applicationConfig.staging) {
+            this._updateFavicon('./assets/images/favicon-staging.png');
+        }
+        if (this._applicationConfig.dev) {
+            this._updateFavicon('./assets/images/favicon-dev.png');
+        }
     }
 
     private _updateFavicon(iconUrl: string): void {
@@ -38,7 +39,5 @@ export class AppComponent implements OnInit {
 
         // Append the new favicon to the document head
         document.head.appendChild(newFavIcon);
-
-        // console.log('Favicon updated to:', newFavIcon.href);
     }
 }

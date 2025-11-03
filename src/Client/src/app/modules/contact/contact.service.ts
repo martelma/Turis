@@ -1,5 +1,5 @@
 import { Collaborator } from './../service/service.types';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import {
     BehaviorSubject,
@@ -15,13 +15,14 @@ import {
     throwError,
 } from 'rxjs';
 import { Contact, ContactSearchParameters } from './contact.types';
-import { emptyGuid, PaginatedListResult } from 'app/shared/services/shared.types';
+import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { BaseEntityService } from 'app/shared/services';
-import { environment } from 'environments/environment';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TeamSummary } from '../admin/dashboard/dashboard.types';
 import { ClientBillingSummary, CollaboratorPaymentSummary } from '../document/document.types';
 import { CollaboratorSearchParameters } from '../collaborator/collaborator.types';
+import { APPLICATION_CONFIGURATION_TOKEN } from 'app/configurations/application-configuration.token';
+import { ApplicationConfiguration } from 'app/configurations/application-configuration.types';
 
 @Injectable({ providedIn: 'root' })
 export class ContactService extends BaseEntityService<Contact> {
@@ -38,10 +39,11 @@ export class ContactService extends BaseEntityService<Contact> {
         pageSize: 10,
     });
     constructor(
-        http: HttpClient,
+        protected http: HttpClient,
+        @Inject(APPLICATION_CONFIGURATION_TOKEN) protected _applicationConfig: ApplicationConfiguration,
         private _sanitizer: DomSanitizer,
     ) {
-        super(http);
+        super(http, _applicationConfig);
         this.defaultApiController = 'contact';
     }
 
@@ -372,7 +374,7 @@ export class ContactService extends BaseEntityService<Contact> {
         }
 
         return this.http
-            .get(`${environment.baseUrl}/api/contact/${contactId}/avatar`, {
+            .get(`${this._applicationConfig.baseUrl}/api/contact/${contactId}/avatar`, {
                 observe: 'response',
                 responseType: 'arraybuffer',
             })

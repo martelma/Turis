@@ -22,7 +22,6 @@ export class SpinnerButtonComponent {
     @Input() diameter = 24;
     @Input() label = '';
     @Input() svgIcon: string;
-    @Input() mode = 'indeterminate';
     @Input() type: 'button' | 'submit' | 'reset' = 'button';
     @Input() style: 'flat' | 'raised' | 'stroked' = 'stroked';
 

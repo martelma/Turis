@@ -22,7 +22,7 @@ public class AuthEndpoints : IEndpointRouteHandlerBuilder
 				return operation;
 			});
 
-		templateApiGroup.MapPost("SecurityCode", SecurityCode);
+		//templateApiGroup.MapPost("SecurityCode", SecurityCode);
 
 		templateApiGroup.MapPost("login", LoginAsync)
 			.AllowAnonymous()

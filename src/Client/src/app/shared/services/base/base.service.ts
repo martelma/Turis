@@ -1,15 +1,20 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from 'environments/environment';
+import { ApplicationConfiguration } from 'app/configurations/application-configuration.types';
 import { replace } from 'lodash';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class BaseService {
     protected defaultApiController = '';
-    protected defaultBaseUrl: string = environment.baseUrl;
+    protected defaultBaseUrl: string;
 
-    constructor(protected http: HttpClient) {}
+    constructor(
+        protected http: HttpClient,
+        protected _applicationConfig: ApplicationConfiguration,
+    ) {
+        this.defaultBaseUrl = this._applicationConfig.baseUrl;
+    }
 
     prepareUrl(relativeUrl?: string, apiController?: string): string {
         let url: string;

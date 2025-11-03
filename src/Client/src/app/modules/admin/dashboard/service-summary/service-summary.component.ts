@@ -57,6 +57,7 @@ export class ServiceSummaryComponent implements OnInit, AfterViewInit {
     @Output() dillDownOn = new EventEmitter<string>();
 
     years: number[] = [];
+    currentYear: number;
     year: number;
 
     public user: User;
@@ -81,8 +82,8 @@ export class ServiceSummaryComponent implements OnInit, AfterViewInit {
         private _serviceService: ServiceService,
         private _userSettingsService: UserSettingsService,
     ) {
-        const currentYear = new Date().getFullYear();
-        this.year = currentYear;
+        this.currentYear = new Date().getFullYear();
+        this.year = this.currentYear;
         this.years = years(5);
     }
 
@@ -95,6 +96,7 @@ export class ServiceSummaryComponent implements OnInit, AfterViewInit {
     async ngAfterViewInit(): Promise<void> {
         this.year = await this._userSettingsService.getNumberValue(
             `${AppSettings.HomePage}:service-summary-current-year`,
+            this.currentYear,
         );
 
         this.loadData();
