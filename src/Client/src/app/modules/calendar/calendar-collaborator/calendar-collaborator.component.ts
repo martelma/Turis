@@ -55,7 +55,10 @@ import { UserSettingsService } from 'app/shared/services/user-setting.service';
 import { CalendarDetailComponent } from '../calendar-detail/calendar-detail.component';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { GlobalShortcutsService } from 'app/components/ui/global-shortcuts/global-shortcuts.service';
-import { CalendarBadgesComponent } from 'app/components/ui/calendar-badges/calendar-badges.component';
+import {
+    CalendarBadgesComponent,
+    CalendarEventData,
+} from 'app/components/ui/calendar-badges/calendar-badges.component';
 import { finalize } from 'rxjs';
 import { getFirstDayOfMonth, getLastDayOfMonth, getMonthBoundaries, getMonthDateRange } from 'app/shared/shared.utils';
 import { addDays } from '@fullcalendar/core/internal';
@@ -120,7 +123,7 @@ export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterVi
 
     startDate: Date = getFirstDayOfMonth(new Date());
     currentCalendarDate: Date = new Date(); // The currently displayed date in the calendar to filter events
-    calendarEvents = new Map<string, number>([]);
+    calendarEvents = new Map<string, CalendarEventData>([]);
     selectedDayInfo: CalendarInfo = null;
 
     drawerDetailMode: 'over' | 'side' = 'over';
@@ -291,7 +294,7 @@ export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterVi
                                 typeof item.date === 'string'
                                     ? item.date.split('T')[0]
                                     : item.date.toISOString().split('T')[0];
-                            return [dateKey, item.count];
+                            return [dateKey, { primary: item.countConfirmed, secondary: item.countPending }];
                         }),
                     );
                     console.log('calendarEvents', this.calendarEvents);

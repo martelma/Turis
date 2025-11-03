@@ -4,41 +4,126 @@
 }
 
 ::ng-deep .mat-calendar-body-cell-content {
-    border-radius: 0.5rem; /* Tailwind rounded-lg */
+    border-radius: 0.5rem;
+    /* Tailwind rounded-lg */
 }
 
-/* Small red badge in top right corner */
-::ng-deep .mat-calendar-body-cell.has-events::after {
-    content: attr(data-badge);
-    position: relative;
-    background-color: #ef4444; /* Tailwind red-500 */
-    color: white;
-    border-radius: 9999px; /* Tailwind rounded-full */
-    width: 18px;
-    height: 18px;
-    font-size: 10px;
-    font-weight: 700; /* Tailwind font-bold */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-    z-index: 10;
-    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); /* Tailwind shadow */
-    margin-left: 36px;
-    margin-bottom: 36px;
+/* Primary red badge - only primary events - FORCE RIGHT POSITION */
+::ng-deep .mat-calendar-body-cell.has-primary-events:not(.has-secondary-events)::after {
+    content: attr(data-badge) !important;
+    position: absolute !important;
+    top: 2px !important;
+    right: 2px !important;
+    left: auto !important;
+    /* Force left to auto */
+    background-color: #ef4444 !important;
+    color: white !important;
+    border-radius: 9999px !important;
+    width: 16px !important;
+    height: 16px !important;
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    z-index: 10 !important;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1) !important;
+    margin: 0 !important;
+    /* Remove any margins */
+    padding: 0 !important;
+    /* Remove any padding that could affect positioning */
+    transform: none !important;
+    /* Remove any transforms */
 }
 
-/* Badge on selected date - keep red but add white border */
-::ng-deep .mat-calendar-body-selected.has-events::after {
-    background-color: #ef4444;
-    color: white;
-    box-shadow: 0 0 0 2px white;
+/* DISABILITATO - Usiamo solo JavaScript per creare tutti i badge */
+/* ::ng-deep .mat-calendar-body-cell.has-secondary-events:not(.has-primary-events)::after {
+    content: attr(data-secondary-badge) !important;
+    position: absolute !important;
+    top: 2px !important;
+    right: 2px !important;
+    background-color: #eab308 !important;
+    color: white !important;
+    border-radius: 9999px !important;
+    width: 16px !important;
+    height: 16px !important;
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    z-index: 10 !important;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1) !important;
+} */
+
+/* Both badges - we'll use JavaScript to create both */
+::ng-deep .mat-calendar-body-cell.has-primary-events.has-secondary-events::after {
+    content: '';
+    display: none;
+    /* Hide this, we'll create badges via JS */
 }
 
-/* Badge on today's date */
-::ng-deep .mat-calendar-body-today.has-events::after {
-    background-color: #ef4444;
-    color: white;
+/* Backward compatibility: if only has-events class, show primary badge */
+::ng-deep .mat-calendar-body-cell.has-events:not(.has-primary-events):not(.has-secondary-events)::after {
+    content: attr(data-badge) !important;
+    position: absolute !important;
+    top: 2px !important;
+    right: 2px !important;
+    background-color: #ef4444 !important;
+    color: white !important;
+    border-radius: 9999px !important;
+    width: 16px !important;
+    height: 16px !important;
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    z-index: 10 !important;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1) !important;
+}
+
+/* Primary badge on selected date - keep red but add white border */
+::ng-deep .mat-calendar-body-selected.has-primary-events:not(.has-secondary-events)::after,
+::ng-deep .mat-calendar-body-selected.has-events:not(.has-primary-events):not(.has-secondary-events)::after {
+    position: absolute !important;
+    top: 2px !important;
+    right: 2px !important;
+    background-color: #ef4444 !important;
+    color: white !important;
+    box-shadow: 0 0 0 2px white !important;
+}
+
+/* Secondary badge on selected date - keep yellow but add white border */
+::ng-deep .mat-calendar-body-selected.has-secondary-events:not(.has-primary-events)::after {
+    position: absolute !important;
+    top: 2px !important;
+    right: 2px !important;
+    background-color: #eab308 !important;
+    color: white !important;
+    box-shadow: 0 0 0 2px white !important;
+}
+
+/* Primary badge on today's date */
+::ng-deep .mat-calendar-body-today.has-primary-events:not(.has-secondary-events)::after,
+::ng-deep .mat-calendar-body-today.has-events:not(.has-primary-events):not(.has-secondary-events)::after {
+    position: absolute !important;
+    top: 2px !important;
+    right: 2px !important;
+    background-color: #ef4444 !important;
+    color: white !important;
+}
+
+/* Secondary badge on today's date */
+::ng-deep .mat-calendar-body-today.has-secondary-events:not(.has-primary-events)::after {
+    position: absolute !important;
+    top: 2px !important;
+    right: 2px !important;
+    background-color: #eab308 !important;
+    color: white !important;
 }
 
 /* Adjust Material Calendar styles to work better with Tailwind */
@@ -47,16 +132,17 @@
 }
 
 ::ng-deep .mat-calendar-body-selected {
-    background-color: #4f46e5; /* Tailwind indigo-600 */
+    background-color: #4f46e5;
+    /* Tailwind indigo-600 */
 }
 
 ::ng-deep .mat-calendar-body-today:not(.mat-calendar-body-selected) {
-    border-color: #4f46e5; /* Tailwind indigo-600 */
+    border-color: #4f46e5;
+    /* Tailwind indigo-600 */
 }
 
 /* Remove the thin blue hover line */
-::ng-deep
-    .mat-calendar-body-cell:hover
-    .mat-calendar-body-cell-content:not(.mat-calendar-body-selected):not(.mat-calendar-body-disabled) {
-    background-color: rgba(79, 70, 229, 0.1); /* Subtle indigo hover */
+::ng-deep .mat-calendar-body-cell:hover .mat-calendar-body-cell-content:not(.mat-calendar-body-selected):not(.mat-calendar-body-disabled) {
+    background-color: rgba(79, 70, 229, 0.1);
+    /* Subtle indigo hover */
 }
