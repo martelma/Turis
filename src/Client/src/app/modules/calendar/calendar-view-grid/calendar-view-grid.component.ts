@@ -38,7 +38,7 @@ import { RouterLink } from '@angular/router';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import {
     getStatusColorClass,

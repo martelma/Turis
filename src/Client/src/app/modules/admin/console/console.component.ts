@@ -14,7 +14,7 @@ import { CommonModule, NgIf } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { SpinnerButtonComponent } from 'app/shared/components/ui/spinner-button/spinner-button.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';

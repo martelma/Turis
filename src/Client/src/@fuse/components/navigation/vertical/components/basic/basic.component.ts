@@ -7,7 +7,7 @@ import { FuseNavigationService } from '@fuse/components/navigation/navigation.se
 import { FuseNavigationItem } from '@fuse/components/navigation/navigation.types';
 import { FuseVerticalNavigationComponent } from '@fuse/components/navigation/vertical/vertical.component';
 import { FuseUtilsService } from '@fuse/services/utils/utils.service';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { APPLICATION_CONFIGURATION_TOKEN } from 'app/configurations/application-configuration.token';
 import { ApplicationConfiguration } from 'app/configurations/application-configuration.types';

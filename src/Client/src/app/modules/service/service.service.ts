@@ -201,6 +201,49 @@ export class ServiceService extends BaseEntityService<Service> {
         );
     }
 
+    myCalendar(collaboratorId: string, params: ServiceSearchParameters): Observable<PaginatedListResult<Service>> {
+        if (!collaboratorId) {
+            return of();
+        }
+
+        this._loading.next(true);
+
+        let httpParams = new HttpParams();
+        httpParams = httpParams.append('pageIndex', params?.pageIndex ?? 0);
+        httpParams = httpParams.append('pageSize', params?.pageSize ?? 10);
+        httpParams = httpParams.append('orderBy', params?.orderBy?.toString() ?? '');
+        httpParams = httpParams.append('pattern', params?.pattern ?? '');
+        httpParams = httpParams.append('onlyBookmarks', params?.onlyBookmarks ? 'true' : 'false');
+        httpParams = httpParams.append('code', params?.code ?? '');
+        httpParams = httpParams.append('title', params?.title ?? '');
+        httpParams = httpParams.append('location', params?.location ?? '');
+        httpParams = httpParams.append('note', params?.note ?? '');
+        httpParams = httpParams.append('serviceType', params?.serviceType ?? '');
+        httpParams = httpParams.append('durationType', params?.durationType ?? '');
+        httpParams = httpParams.append('status', params?.status ?? '');
+        httpParams = httpParams.append('dateFrom', params?.dateFrom ?? '');
+        httpParams = httpParams.append('dateTo', params?.dateTo ?? '');
+        httpParams = httpParams.append('collaboratorId', params?.collaboratorId ?? '');
+        params?.languages?.forEach(x => {
+            httpParams = httpParams.append('languages', x);
+        });
+
+        const serviceString = httpParams.toString();
+
+        const url = `${collaboratorId}/calendar?${serviceString}`;
+
+        return this.apiGet<PaginatedListResult<Service>>(url).pipe(
+            map((data: PaginatedListResult<Service>) => {
+                this._list.next(data);
+
+                return data;
+            }),
+            finalize(() => {
+                this._loading.next(false);
+            }),
+        );
+    }
+
     private toUtcString(date: Date): string {
         if (date === null || date === undefined) {
             return '';

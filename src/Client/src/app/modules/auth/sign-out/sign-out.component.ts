@@ -1,7 +1,7 @@
 import { I18nPluralPipe, NgIf } from '@angular/common';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AuthService } from 'app/core/auth/auth.service';
 import { finalize, takeWhile, tap, timer } from 'rxjs';

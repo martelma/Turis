@@ -11,7 +11,7 @@ import { CdModalComponent } from 'app/shared/components/cd-modal/cd-modal.compon
 import { MatSelectModule } from '@angular/material/select';
 import { ApplicationScopeGroup } from 'app/modules/admin/applications/applications.types';
 import { Guid } from 'guid-typescript';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 import { A11yModule } from '@angular/cdk/a11y';
 
 @Component({

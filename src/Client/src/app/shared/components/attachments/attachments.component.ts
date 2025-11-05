@@ -29,7 +29,7 @@ import { Attachment, AttachmentSearchParameters } from './attachment.types';
 import { AttachmentService } from './attachment.service';
 import { ConfirmationDialogService } from 'app/shared/services/confirmation-dialog.service';
 import { PaginatedList } from 'app/shared/types/shared.types';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 import { finalize } from 'rxjs';
 
 @UntilDestroy()

@@ -25,7 +25,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
-import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
 import { ServiceService } from 'app/modules/service/service.service';

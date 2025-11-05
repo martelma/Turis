@@ -29,7 +29,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
 import { Tag } from '../tag.types';
 import { TagService } from '../tag.service';

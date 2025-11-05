@@ -1,21 +1,11 @@
-import { APP_INITIALIZER, EnvironmentProviders, importProvidersFrom, inject, Provider } from '@angular/core';
-import {
-    getBrowserLang,
-    TRANSLOCO_CONFIG,
-    TRANSLOCO_LOADER,
-    translocoConfig,
-    TranslocoModule,
-    TranslocoService,
-} from '@ngneat/transloco';
+import { APP_INITIALIZER, EnvironmentProviders, inject, Provider } from '@angular/core';
+import { getBrowserLang, provideTransloco as provideTranslocoCore, TranslocoService } from '@jsverse/transloco';
 import { TranslocoHttpLoader } from 'app/core/transloco/transloco.http-loader';
 
 export const provideTransloco = (): Array<Provider | EnvironmentProviders> => {
     return [
-        importProvidersFrom(TranslocoModule),
-        {
-            // Provide the default Transloco configuration
-            provide: TRANSLOCO_CONFIG,
-            useValue: translocoConfig({
+        provideTranslocoCore({
+            config: {
                 availableLangs: [
                     {
                         id: 'en',
@@ -42,13 +32,9 @@ export const provideTransloco = (): Array<Provider | EnvironmentProviders> => {
                 fallbackLang: 'en',
                 reRenderOnLangChange: true,
                 prodMode: true,
-            }),
-        },
-        {
-            // Provide the default Transloco loader
-            provide: TRANSLOCO_LOADER,
-            useClass: TranslocoHttpLoader,
-        },
+            },
+            loader: TranslocoHttpLoader,
+        }),
         {
             // Preload the default language before the app starts to prevent empty/jumping content
             provide: APP_INITIALIZER,

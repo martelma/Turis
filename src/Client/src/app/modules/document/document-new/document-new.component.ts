@@ -2,7 +2,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
-import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { FuseScrollResetDirective } from '@fuse/directives/scroll-reset';
 import { MatFormFieldModule } from '@angular/material/form-field';

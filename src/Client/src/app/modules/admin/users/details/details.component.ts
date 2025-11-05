@@ -17,7 +17,7 @@ import { FuseFindByKeyPipe } from '@fuse/pipes/find-by-key/find-by-key.pipe';
 import { UserService } from 'app/core/user/user.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { User } from 'app/core/user/user.types';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 import { trackByFn } from '../../../../shared/utils';
 import { MatTabsModule } from '@angular/material/tabs';
 import { FuseAlertComponent } from '@fuse/components/alert';

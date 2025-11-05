@@ -1,6 +1,6 @@
 import { CommonModule, DatePipe, NgClass, NgIf } from '@angular/common';
 import { Component, OnInit, ViewEncapsulation, ViewChild, Input, AfterViewInit } from '@angular/core';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { User } from 'app/core/user/user.types';
 import { Router } from '@angular/router';

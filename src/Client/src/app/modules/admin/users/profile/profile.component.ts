@@ -16,7 +16,7 @@ import { UserService } from 'app/core/user/user.service';
 import { ChangePasswordComponent } from '../change-password/change-password.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 import { ImageCropperComponent } from 'app/shared/components/image-cropper/image-cropper.component';
 import { Observable, tap } from 'rxjs';
 import { SafeUrl } from '@angular/platform-browser';

@@ -17,7 +17,7 @@ import { RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent } from '@fuse/components/alert';
 import { Location } from '@angular/common';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 import { BackButtonComponent } from 'app/shared/components/back-button/back-button.component';
 
 @Component({

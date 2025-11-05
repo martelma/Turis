@@ -25,7 +25,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { fuseAnimations } from '@fuse/animations';
-import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { toUtcString, trackByFn } from 'app/shared';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
@@ -322,12 +322,12 @@ export class CalendarCollaboratorComponent implements OnInit, OnDestroy, AfterVi
         this.serviceSearchParameters.dateTo = toUtcString(this.dateTo);
         this.serviceSearchParameters.collaboratorId = this.collaboratorId;
 
-        console.log('serviceSearchParameters', this.serviceSearchParameters);
+        // console.log('serviceSearchParameters', this.serviceSearchParameters);
 
         this.loading = true;
 
         this._serviceService
-            .listEntities({ ...this.serviceSearchParameters })
+            .myCalendar(this.collaboratorId, { ...this.serviceSearchParameters })
             .pipe(
                 finalize(() => {
                     this.loading = false;

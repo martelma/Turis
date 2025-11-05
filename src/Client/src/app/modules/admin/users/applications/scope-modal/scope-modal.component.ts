@@ -13,7 +13,7 @@ import { ApplicationScope, ApplicationScopeGroup } from 'app/modules/admin/appli
 import { trackByFn } from '../../../../../shared/utils';
 import { Guid } from 'guid-typescript';
 import { A11yModule } from '@angular/cdk/a11y';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
     selector: 'user-application-scope-modal',

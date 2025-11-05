@@ -386,7 +386,7 @@ public class ServiceService(ApplicationDbContext dbContext
 			}
 		}
 
-		var log = query.ToQueryString();
+		//var log = query.ToQueryString();
 
 		// Prova a prendere un elemento in più di quelli richiesti per controllare se ci sono pagine successive.
 		var data = query

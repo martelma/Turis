@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { fuseAnimations } from '@fuse/animations';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 import { MaterialModule } from 'app/modules/material.module';
 import { trackByFn } from 'app/shared/utils';
 import { User } from 'app/core/user/user.types';

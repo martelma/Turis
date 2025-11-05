@@ -74,6 +74,17 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 				return operation;
 			});
 
+		templateApiGroup.MapGet("{contactId:guid}/calendar", CalendarAsync)
+			.Produces<PaginatedList<ServiceModel>>(StatusCodes.Status200OK)
+			.WithOpenApi(operation =>
+			{
+				operation.Summary = "Gets the list of services available for a single contact";
+
+				operation.Response(StatusCodes.Status200OK).Description = "The list of services";
+
+				return operation;
+			});
+
 		templateApiGroup.MapGet("{serviceId:guid}", GetAsync)
 			.Produces<ServiceModel>(StatusCodes.Status200OK)
 			.Produces(StatusCodes.Status404NotFound)
@@ -299,6 +310,12 @@ public class ServiceEndpoints : IEndpointRouteHandlerBuilder
 
 	private static async Task<IResult> ListAsync(HttpContext httpContext, IServiceService service, [AsParameters] ServiceSearchParameters parameters)
 		=> (await service.ListAsync(parameters)).ToResponse(httpContext);
+
+	private static async Task<IResult> CalendarAsync(HttpContext httpContext, IServiceService service, Guid contactId, [AsParameters] ServiceSearchParameters parameters)
+	{
+		parameters.CollaboratorId = contactId.ToString();
+		return (await service.ListAsync(parameters)).ToResponse(httpContext);
+	}
 
 	private static async Task<IResult> GetAsync(HttpContext httpContext, IServiceService service, Guid serviceId)
 		=> (await service.GetAsync(serviceId)).ToResponse(httpContext);

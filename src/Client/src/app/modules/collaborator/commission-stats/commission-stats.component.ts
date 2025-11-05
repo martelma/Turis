@@ -18,7 +18,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { FuseAlertComponent } from '@fuse/components/alert';
 import { FuseCardComponent } from '@fuse/components/card';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { SearchPipe } from 'app/pipes';
 import { detailExpand } from 'app/shared/animations/detail-expand';

@@ -8,7 +8,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { EventLogsService } from '../event-logs.service';
 import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @UntilDestroy()
 @Component({

@@ -12,7 +12,7 @@ import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { debounceTime, map } from 'rxjs';
 import { UsersService } from '../users.service';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { User } from 'app/core/user/user.types';
 import { BackButtonComponent } from 'app/shared/components/back-button/back-button.component';

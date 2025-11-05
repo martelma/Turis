@@ -4,7 +4,7 @@ import { trackByFn } from 'app/shared/shared.utils';
 import { NgFor, NgIf, NgStyle } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { getContrastYIQ, Tag } from 'app/modules/configuration/tags/tag.types';
 import { TagSummaryViewMode } from './tag-summary.types';

@@ -4,6 +4,6 @@
     "staging": false,
     "dev": false,
     "baseUrl": "https://localhost:44370",
-    "appUrl": "http://localhost:5201",
+    "appUrl": "http://localhost:5200",
     "signalrHubUrl": "https://localhost:44370/notificationHub"
 }

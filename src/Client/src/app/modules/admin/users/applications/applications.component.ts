@@ -16,7 +16,7 @@ import {
     ApplicationScopeGroup,
 } from '../../applications/applications.types';
 import { User } from 'app/core/user/user.types';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormControl } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';

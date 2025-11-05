@@ -2,7 +2,7 @@ import { NgFor, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
-import { AvailableLangs, TranslocoService } from '@ngneat/transloco';
+import { AvailableLangs, TranslocoService } from '@jsverse/transloco';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';

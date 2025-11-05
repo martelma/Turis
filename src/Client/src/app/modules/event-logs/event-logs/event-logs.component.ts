@@ -8,7 +8,7 @@ import { userDateFormats } from 'app/shared/services/shared.types';
 import { EventLogsService } from '../event-logs.service';
 import { EventLogsGridComponent } from '../grid/event-logs-grid.component';
 import { EventLogsListComponent } from '../list/event-logs-list.component';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
     selector: 'app-event-logs',

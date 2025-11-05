@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabGroup, MatTabsModule } from '@angular/material/tabs';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FuseScrollResetDirective } from '@fuse/directives/scroll-reset';
 import { MatFormFieldModule } from '@angular/material/form-field';

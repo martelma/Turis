@@ -13,7 +13,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { PaginatedListResult } from 'app/shared/services/shared.types';
 import { Observable, of, tap, switchMap, catchError, throwError, finalize, debounceTime } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { SearchInputComponent } from 'app/components/ui/search-input/search-input.component';
 import { UserDateFormats } from 'app/constants';
